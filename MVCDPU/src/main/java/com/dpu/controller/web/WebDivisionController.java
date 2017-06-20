@@ -2,21 +2,31 @@ package com.dpu.controller.web;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.dpu.entity.Status;
 import com.dpu.model.DivisionReq;
 import com.dpu.service.DivisionService;
+import com.dpu.service.StatusService;
 
 @Controller
 public class WebDivisionController {
 
 	@Autowired
 	DivisionService divisionService;
+	
+	@Autowired
+	StatusService statusService;
 	
 	Logger logger = Logger.getLogger(WebDivisionController.class);
 	
@@ -29,32 +39,33 @@ public class WebDivisionController {
 		return modelAndView;
 	}
 	
-	/*@RequestMapping(value = "/saveCat" , method = RequestMethod.POST)
-	public ModelAndView saveCategory(@RequestParam("uploadFile") MultipartFile multipart, @RequestParam("title") String title, @RequestParam("status") int status, HttpServletRequest request) {
-		ModelAndView modelAndView = null;
+	@RequestMapping(value = "/getStatus" , method = RequestMethod.GET)
+	@ResponseBody public List<Status> getStatus() {
+		List<Status> status = null;
 		try {
-			modelAndView = new ModelAndView();
-			CategoryBean categoryBean = new CategoryBean();
-			categoryBean.setTitle(title);
-			categoryBean.setStatus(status);
-			HttpSession session = request.getSession();
-			String createdBy = "";
-			if(session != null) {
-				createdBy = session.getAttribute("un").toString();
-			}
-			categoryBean.setCreatedBy(createdBy);
-			categoryBean.setCreatedOn(new Date());
-			categoryBean.setImageName(multipart.getOriginalFilename());
-			categoryService.addCategory(categoryBean);
-			uploadUtil.processRequest(multipart, title);
-			modelAndView.setViewName("redirect:/showcat");
+			status = statusService.getAll();
 		} catch (Exception e) {
-			System.out.println("CategoryController: Exception is: " + e);
+			System.out.println(e);
 		}
+		return status;
+	}
+	
+	@RequestMapping(value = "/savedivision" , method = RequestMethod.POST)
+	public ModelAndView saveDivision(@ModelAttribute("division") DivisionReq divisionReq, HttpServletRequest request) {
+		ModelAndView modelAndView = new ModelAndView();
+		HttpSession session = request.getSession();
+		String createdBy = "";
+		if(session != null) {
+			createdBy = session.getAttribute("un").toString();
+		}
+//		divisionReq.setCreatedBy(createdBy);
+//		divisionReq.setCreatedOn(new Date());
+		divisionService.add(divisionReq);
+		modelAndView.setViewName("redirect:showdivision");
 		return modelAndView;
 	}
 	
-	@RequestMapping(value = "/updateCat" , method = RequestMethod.POST)
+	/*@RequestMapping(value = "/updateCat" , method = RequestMethod.POST)
 	public ModelAndView updateCategory(@ModelAttribute("cat") CategoryBean categoryBean, @RequestParam("categoryid") int categoryId) {
 		ModelAndView modelAndView = new ModelAndView();
 		categoryBean.setCategoryId(categoryId);

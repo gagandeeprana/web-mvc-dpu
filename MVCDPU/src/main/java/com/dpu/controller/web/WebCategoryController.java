@@ -2,14 +2,20 @@ package com.dpu.controller.web;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.dpu.model.CategoryReq;
+import com.dpu.model.DivisionReq;
 import com.dpu.service.CategoryService;
 
 @Controller
@@ -26,6 +32,32 @@ public class WebCategoryController {
 		List<CategoryReq> lstCategories = categoryService.getAll();
 		modelAndView.addObject("LIST_CATEGORY", lstCategories);
 		modelAndView.setViewName("category");
+		return modelAndView;
+	}
+	
+	@RequestMapping(value = "/getopenadd" , method = RequestMethod.GET)
+	@ResponseBody public CategoryReq getOpenAdd() {
+		CategoryReq categoryReq = null;
+		try {
+			categoryReq = categoryService.getOpenAdd();
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		return categoryReq;
+	}
+	
+	@RequestMapping(value = "/savecategory" , method = RequestMethod.POST)
+	public ModelAndView saveCategory(@ModelAttribute("category") CategoryReq categoryReq, HttpServletRequest request) {
+		ModelAndView modelAndView = new ModelAndView();
+		HttpSession session = request.getSession();
+		String createdBy = "";
+		if(session != null) {
+			createdBy = session.getAttribute("un").toString();
+		}
+//		divisionReq.setCreatedBy(createdBy);
+//		divisionReq.setCreatedOn(new Date());
+		categoryService.addCategory(categoryReq);
+		modelAndView.setViewName("redirect:showcategory");
 		return modelAndView;
 	}
 	

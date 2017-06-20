@@ -52,7 +52,7 @@ textarea{
 </script>
 <script type="text/javascript">
 	function checkFlag(field) {
-		document.getElementById("addUpdateFlag").value = field;
+		/* document.getElementById("addUpdateFlag").value = field;
 		if(field == 'update') {
 			document.getElementById("frm1").action = "updateQuestion";
 			document.getElementById("btnSave").value = "Update";
@@ -70,46 +70,37 @@ textarea{
 			document.getElementById("frm1").method = "GET";
 			document.getElementById("frm1").action = "showques";
 			document.getElementById("frm1").submit();
-		}
+		} */
 	}
 </script>
 <script type="text/javascript">
         function onClickMethodQuestion(quesId){
-        	var cId = 0;
-        	if(quesId != 0) {
-				$.get("getQues/quesId",{"quesId" : quesId}, function(data) {
-		            cId = data.categoryBean.categoryId;
-	            	document.getElementById('question').value = data.question;
-	            	CKEDITOR.instances['answer'].setData(data.answer);
-	            	//$("#cke_1_contents").html(data.answer);
-		            document.getElementById("questionid").value = data.questionId;
-		            if(data.status == 1) {
-		               	document.getElementById('status').selectedIndex = 0;            		
-		            }
-		            else {
-		               	document.getElementById('status').selectedIndex = 1;            		            		
-		            }
-		            
-		            var cats = document.getElementById("categoryId");
-		            for(var i = 0;i < cats.length;i++) {
-		            	if(cats[i].value == cId) {
-		            		document.getElementById("categoryId").selectedIndex = i;
-		            		break;
-		            	}
-		            } 
-            	});
-        	}
+        	document.getElementById("status").innerHTML = "";
+        	$.get("getopenadd", function(data) {
+	           
+	            var status = document.getElementById("status");
+	            for(var i = 0;i < data.statusList.length;i++) {
+	            	status.options[status.options.length] = new Option(data.statusList[i].status);
+	            	status.options[i].value = data.statusList[i].id;
+	            } 
+	            
+	            var type = document.getElementById("type");
+	            for(var i = 0;i < data.typeList.length;i++) {
+	            	type.options[type.options.length] = new Option(data.typeList[i].typeName);
+	            	type.options[i].value = data.typeList[i].id;
+	            }
+	            
+	            var highlight = document.getElementById("highlight");
+	            for(var i = 0;i < data.highlightList.length;i++) {
+	            	highlight.options[highlight.options.length] = new Option(data.highlightList[i].typeName);
+	            	highlight.options[i].value = data.highlightList[i].id;
+	            }
+	        });
         }
 </script>
 <script src="//cdn.ckeditor.com/4.5.11/basic/ckeditor.js"></script>
 </head>
 <body>
-	<%
-		/*List<QuestionBean> lstQuestions = ((List<QuestionBean>) request.getAttribute("LIST_QUES"));
-		pageContext.setAttribute("LIST_QUES", lstQuestions);
-		List<CategoryBean> lstCategories = ((List<CategoryBean>) request.getAttribute("LIST_CAT"));
-		pageContext.setAttribute("LIST_CAT", lstCategories); */
-	%>
 	<jsp:include page="header.jsp"></jsp:include>
 	<div class="container">
 		<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="checkFlag('add'); onClickMethodQuestion('0');" >Add New</button>
@@ -118,7 +109,7 @@ textarea{
 			<div class="col-sm-8">
 					<div class="modal fade" id="myModal" role="dialog">
 					    <div class="modal-dialog">
-						<form action="saveQues" method="POST" name="ques" id="frm1">
+						<form action="savecategory" method="POST" name="category" id="frm1">
 						<input type="hidden" id = "questionid" name= "quesid" value = "" />					
 						<input type="hidden" id = "addUpdateFlag" value = "" />					
 	
@@ -138,9 +129,7 @@ textarea{
 													<span class="input-group-addon">
 														 <i class="glyphicon glyphicon-list-alt"></i>												
 													</span>
-													<select class="form-control" name="status" id="status">
-														<option value="1">Active</option>
-														<option value="0">Inactive</option>
+													<select class="form-control" name="typeId" id="type">
 													</select>
 												</div>
 											</div>
@@ -153,7 +142,7 @@ textarea{
 												<span class="input-group-addon">
 													 <i class="glyphicon glyphicon-inbox"></i>												
 												</span>
-												<input type="text" class="form-control" placeHolder="Enter CategoryName" id="category" name="category" value="" autofocus />
+												<input type="text" class="form-control" placeHolder="Enter CategoryName" id="category" name="name" value="" autofocus />
 											</div>
 											</div>
 										</div>
@@ -165,9 +154,7 @@ textarea{
 													<span class="input-group-addon">
 														 <i class="glyphicon glyphicon-list-alt"></i>												
 													</span>
-													<select class="form-control" name="status" id="status">
-														<option value="1">Active</option>
-														<option value="0">Inactive</option>
+													<select class="form-control" name="statusId" id="status">
 													</select>
 												</div>
 											</div>
@@ -180,9 +167,7 @@ textarea{
 													<span class="input-group-addon">
 														 <i class="glyphicon glyphicon-list-alt"></i>												
 													</span>
-													<select class="form-control" name="status" id="status">
-														<option value="1">Active</option>
-														<option value="0">Inactive</option>
+													<select class="form-control" name="highlightId" id="highlight">
 													</select>
 												</div>
 											</div>

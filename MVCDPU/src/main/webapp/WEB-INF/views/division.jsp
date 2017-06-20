@@ -53,7 +53,7 @@ textarea{
 </script>
 <script type="text/javascript">
 	function checkFlag(field) {
-		document.getElementById("addUpdateFlag").value = field;
+		/* document.getElementById("addUpdateFlag").value = field;
 		if(field == 'update') {
 			document.getElementById("frm1").action = "updateQuestion";
 			document.getElementById("btnSave").value = "Update";
@@ -71,35 +71,22 @@ textarea{
 			document.getElementById("frm1").method = "GET";
 			document.getElementById("frm1").action = "showques";
 			document.getElementById("frm1").submit();
-		}
+		} */
 	}
 </script>
 <script type="text/javascript">
         function onClickMethodQuestion(quesId){
-        	var cId = 0;
-        	if(quesId != 0) {
-				$.get("getQues/quesId",{"quesId" : quesId}, function(data) {
-		            cId = data.categoryBean.categoryId;
-	            	document.getElementById('question').value = data.question;
-	            	CKEDITOR.instances['answer'].setData(data.answer);
-	            	//$("#cke_1_contents").html(data.answer);
-		            document.getElementById("questionid").value = data.questionId;
-		            if(data.status == 1) {
-		               	document.getElementById('status').selectedIndex = 0;            		
-		            }
-		            else {
-		               	document.getElementById('status').selectedIndex = 1;            		            		
-		            }
-		            
-		            var cats = document.getElementById("categoryId");
-		            for(var i = 0;i < cats.length;i++) {
-		            	if(cats[i].value == cId) {
-		            		document.getElementById("categoryId").selectedIndex = i;
-		            		break;
-		            	}
-		            } 
-            	});
-        	}
+        	
+        	document.getElementById("status").innerHTML = "";
+        	$.get("getStatus", function(data) {
+	           
+	            var status = document.getElementById("status");
+	            for(var i = 0;i < data.length;i++) {
+	            	//alert(data[0].status);
+	            	status.options[status.options.length] = new Option(data[i].status);
+	            	status.options[i].value = data[i].id;
+	            } 
+	        });
         }
 </script>
 <script src="//cdn.ckeditor.com/4.5.11/basic/ckeditor.js"></script>
@@ -115,7 +102,7 @@ textarea{
 				    <div class="modal-dialog">
 
 				      <!-- Modal content-->
-				      	<form action="saveCat" method="POST" name="cat" id="frm1" enctype = "multipart/form-data">
+				      	<form action="savedivision" method="POST" name="division" id="frm1" enctype = "multipart/form-data">
 						<input type="hidden" id = "addUpdateFlag" value = "" />
 						<input type="hidden" id = "categoryid" name = "categoryid" value = "" />					      
 				      <div class="modal-content">
@@ -155,9 +142,7 @@ textarea{
 													<span class="input-group-addon">
 														 <i class="glyphicon glyphicon-list-alt"></i>												
 													</span>
-													<select class="form-control" name="status" id="status">
-														<option value="1">Active</option>
-														<option value="0">Inactive</option>
+													<select class="form-control" name="statusId" id="status">
 													</select>
 												</div>
 											</div>
@@ -166,7 +151,7 @@ textarea{
 													<span class="input-group-addon">
 														 <i class="glyphicon glyphicon-inbox"></i>												
 													</span>
-													<input type="text" class="form-control" placeHolder="Enter Federal" id="federal" name="federal" value="" />
+													<input type="text" class="form-control" placeHolder="Enter Federal" id="federal" name="fedral" value="" />
 												</div>
 											</div>
 										</div>
