@@ -275,7 +275,7 @@ public class TrailerServiceImpl implements TrailerService{
 			trailer.setCategoryList(categoryList);
 		
 		
-			List<Object[]> divisionListObj =  divisionDao.getSpecificData(session,"Division", "divisionId", "divisionId");
+			List<Object[]> divisionListObj =  divisionDao.getSpecificData(session,"Division", "divisionId", "divisionName");
 		
 			List<DivisionReq> divisionList = new ArrayList<DivisionReq>();
 			Iterator<Object[]> divisionIt = divisionListObj.iterator();

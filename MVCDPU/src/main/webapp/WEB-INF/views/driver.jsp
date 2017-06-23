@@ -52,7 +52,7 @@ textarea{
 </script>
 <script type="text/javascript">
 	function checkFlag(field) {
-		document.getElementById("addUpdateFlag").value = field;
+		/* document.getElementById("addUpdateFlag").value = field;
 		if(field == 'update') {
 			document.getElementById("frm1").action = "updateQuestion";
 			document.getElementById("btnSave").value = "Update";
@@ -70,46 +70,59 @@ textarea{
 			document.getElementById("frm1").method = "GET";
 			document.getElementById("frm1").action = "showques";
 			document.getElementById("frm1").submit();
-		}
+		} */
 	}
 </script>
 <script type="text/javascript">
         function onClickMethodQuestion(quesId){
-        	var cId = 0;
-        	if(quesId != 0) {
-				$.get("getQues/quesId",{"quesId" : quesId}, function(data) {
-		            cId = data.categoryBean.categoryId;
-	            	document.getElementById('question').value = data.question;
-	            	CKEDITOR.instances['answer'].setData(data.answer);
-	            	//$("#cke_1_contents").html(data.answer);
-		            document.getElementById("questionid").value = data.questionId;
-		            if(data.status == 1) {
-		               	document.getElementById('status').selectedIndex = 0;            		
-		            }
-		            else {
-		               	document.getElementById('status').selectedIndex = 1;            		            		
-		            }
-		            
-		            var cats = document.getElementById("categoryId");
-		            for(var i = 0;i < cats.length;i++) {
-		            	if(cats[i].value == cId) {
-		            		document.getElementById("categoryId").selectedIndex = i;
-		            		break;
-		            	}
-		            } 
-            	});
-        	}
+        	document.getElementById("statusId").innerHTML = "";
+        	document.getElementById("divisionId").innerHTML = "";
+        	document.getElementById("terminalId").innerHTML = "";
+        	document.getElementById("categoryId").innerHTML = "";
+        	document.getElementById("roleId").innerHTML = "";
+        	document.getElementById("classId").innerHTML = "";        	
+        	$.get("driver/getopenadd", function(data) {
+	           
+	            var status = document.getElementById("statusId");
+	            for(var i = 0;i < data.statusList.length;i++) {
+	            	status.options[status.options.length] = new Option(data.statusList[i].status);
+	            	status.options[i].value = data.statusList[i].id;
+	            } 
+	            
+	            var division = document.getElementById("divisionId");
+	            for(var i = 0;i < data.divisionList.length;i++) {
+	            	division.options[division.options.length] = new Option(data.divisionList[i].divisionName);
+	            	division.options[i].value = data.divisionList[i].divisionId;
+	            }
+	            
+	            var terminal = document.getElementById("terminalId");
+	            for(var i = 0;i < data.terminalList.length;i++) {
+	            	terminal.options[terminal.options.length] = new Option(data.terminalList[i].terminalName);
+	            	terminal.options[i].value = data.terminalList[i].terminalId;
+	            }
+	            
+	            var category = document.getElementById("categoryId");
+	            for(var i = 0;i < data.categoryList.length;i++) {
+	            	category.options[category.options.length] = new Option(data.categoryList[i].name);
+	            	category.options[i].value = data.categoryList[i].categoryId;
+	            }
+	            
+	            var role = document.getElementById("roleId");
+	            for(var i = 0;i < data.roleList.length;i++) {
+	            	role.options[role.options.length] = new Option(data.roleList[i].typeName);
+	            	role.options[i].value = data.roleList[i].typeId;
+	            }
+	            
+	            var driverClass = document.getElementById("classId");
+	            for(var i = 0;i < data.driverClassList.length;i++) {
+	            	driverClass.options[driverClass.options.length] = new Option(data.driverClassList[i].driverClassName);
+	            	driverClass.options[i].value = data.driverClassList[i].driverClassId;
+	            }
+	        });
         }
 </script>
-<script src="//cdn.ckeditor.com/4.5.11/basic/ckeditor.js"></script>
 </head>
 <body>
-	<%
-		/*List<QuestionBean> lstQuestions = ((List<QuestionBean>) request.getAttribute("LIST_QUES"));
-		pageContext.setAttribute("LIST_QUES", lstQuestions);
-		List<CategoryBean> lstCategories = ((List<CategoryBean>) request.getAttribute("LIST_CAT"));
-		pageContext.setAttribute("LIST_CAT", lstCategories); */
-	%>
 	<jsp:include page="header.jsp"></jsp:include>
 	<div class="container">
 		<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="checkFlag('add'); onClickMethodQuestion('0');" >Add New</button>
@@ -232,9 +245,7 @@ textarea{
 													<span class="input-group-addon">
 														 <i class="glyphicon glyphicon-list-alt"></i>												
 													</span>
-													<select class="form-control" name="status" id="status">
-														<option value="1">Active</option>
-														<option value="0">Inactive</option>
+													<select class="form-control" name="divisionId" id="divisionId">
 													</select>
 												</div>
 											</div>	
@@ -256,9 +267,7 @@ textarea{
 													<span class="input-group-addon">
 														 <i class="glyphicon glyphicon-list-alt"></i>												
 													</span>
-													<select class="form-control" name="status" id="status">
-														<option value="1">Active</option>
-														<option value="0">Inactive</option>
+													<select class="form-control" name="terminalId" id="terminalId">
 													</select>
 												</div>
 											</div>	
@@ -294,9 +303,7 @@ textarea{
 														<span class="input-group-addon">
 															 <i class="glyphicon glyphicon-list-alt"></i>												
 														</span>
-														<select class="form-control" name="status" id="status">
-															<option value="1">Active</option>
-															<option value="0">Inactive</option>
+														<select class="form-control" name="categoryId" id="categoryId">
 														</select>
 													</div>
 													</div>
@@ -305,9 +312,7 @@ textarea{
 														<span class="input-group-addon">
 															 <i class="glyphicon glyphicon-list-alt"></i>												
 														</span>
-														<select class="form-control" name="status" id="status">
-															<option value="1">Active</option>
-															<option value="0">Inactive</option>
+														<select class="form-control" name="roleId" id="roleId">
 														</select>
 													</div>
 													</div>								
@@ -325,9 +330,7 @@ textarea{
 														<span class="input-group-addon">
 															 <i class="glyphicon glyphicon-list-alt"></i>												
 														</span>
-														<select class="form-control" name="status" id="status">
-															<option value="1">Active</option>
-															<option value="0">Inactive</option>
+														<select class="form-control" name="statusId" id="statusId">
 														</select>
 													</div>
 													</div>
@@ -336,9 +339,7 @@ textarea{
 														<span class="input-group-addon">
 															 <i class="glyphicon glyphicon-list-alt"></i>												
 														</span>
-														<select class="form-control" name="status" id="status">
-															<option value="1">Active</option>
-															<option value="0">Inactive</option>
+														<select class="form-control" name="classId" id="classId">
 														</select>
 													</div>
 													</div>													

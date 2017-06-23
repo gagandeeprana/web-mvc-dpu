@@ -76,6 +76,8 @@ textarea{
 <script type="text/javascript">
         function onClickMethodQuestion(quesId){
         	document.getElementById("status").innerHTML = "";
+        	document.getElementById("type").innerHTML = "";
+        	document.getElementById("highlight").innerHTML = "";
         	$.get("getopenadd", function(data) {
 	           
 	            var status = document.getElementById("status");
@@ -87,18 +89,17 @@ textarea{
 	            var type = document.getElementById("type");
 	            for(var i = 0;i < data.typeList.length;i++) {
 	            	type.options[type.options.length] = new Option(data.typeList[i].typeName);
-	            	type.options[i].value = data.typeList[i].id;
+	            	type.options[i].value = data.typeList[i].typeId;
 	            }
 	            
 	            var highlight = document.getElementById("highlight");
 	            for(var i = 0;i < data.highlightList.length;i++) {
 	            	highlight.options[highlight.options.length] = new Option(data.highlightList[i].typeName);
-	            	highlight.options[i].value = data.highlightList[i].id;
+	            	highlight.options[i].value = data.highlightList[i].typeId;
 	            }
 	        });
         }
 </script>
-<script src="//cdn.ckeditor.com/4.5.11/basic/ckeditor.js"></script>
 </head>
 <body>
 	<jsp:include page="header.jsp"></jsp:include>
@@ -109,9 +110,9 @@ textarea{
 			<div class="col-sm-8">
 					<div class="modal fade" id="myModal" role="dialog">
 					    <div class="modal-dialog">
-						<form action="savecategory" method="POST" name="category" id="frm1">
-						<input type="hidden" id = "questionid" name= "quesid" value = "" />					
-						<input type="hidden" id = "addUpdateFlag" value = "" />					
+						<form action="savecategory" method="POST" name="cat" id="frm1" enctype = "multipart/form-data">
+<!-- 						<input type="hidden" id = "questionid" name= "quesid" value = "" />					
+ -->						<input type="hidden" id = "addUpdateFlag" value = "" />					
 	
 					      <!-- Modal content-->
 					      <div class="modal-content">

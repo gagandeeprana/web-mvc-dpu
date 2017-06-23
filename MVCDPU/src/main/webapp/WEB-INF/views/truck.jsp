@@ -52,7 +52,7 @@ textarea{
 </script>
 <script type="text/javascript">
 	function checkFlag(field) {
-		document.getElementById("addUpdateFlag").value = field;
+		/* document.getElementById("addUpdateFlag").value = field;
 		if(field == 'update') {
 			document.getElementById("frm1").action = "updateQuestion";
 			document.getElementById("btnSave").value = "Update";
@@ -70,46 +70,52 @@ textarea{
 			document.getElementById("frm1").method = "GET";
 			document.getElementById("frm1").action = "showques";
 			document.getElementById("frm1").submit();
-		}
+		} */
 	}
 </script>
 <script type="text/javascript">
         function onClickMethodQuestion(quesId){
-        	var cId = 0;
-        	if(quesId != 0) {
-				$.get("getQues/quesId",{"quesId" : quesId}, function(data) {
-		            cId = data.categoryBean.categoryId;
-	            	document.getElementById('question').value = data.question;
-	            	CKEDITOR.instances['answer'].setData(data.answer);
-	            	//$("#cke_1_contents").html(data.answer);
-		            document.getElementById("questionid").value = data.questionId;
-		            if(data.status == 1) {
-		               	document.getElementById('status').selectedIndex = 0;            		
-		            }
-		            else {
-		               	document.getElementById('status').selectedIndex = 1;            		            		
-		            }
-		            
-		            var cats = document.getElementById("categoryId");
-		            for(var i = 0;i < cats.length;i++) {
-		            	if(cats[i].value == cId) {
-		            		document.getElementById("categoryId").selectedIndex = i;
-		            		break;
-		            	}
-		            } 
-            	});
-        	}
+        	document.getElementById("statusId").innerHTML = "";
+        	document.getElementById("divisionId").innerHTML = "";
+        	document.getElementById("terminalId").innerHTML = "";
+        	document.getElementById("categoryId").innerHTML = "";
+        	document.getElementById("truckTypeId").innerHTML = "";
+        	$.get("truck/getopenadd", function(data) {
+	           
+	            var status = document.getElementById("statusId");
+	            for(var i = 0;i < data.statusList.length;i++) {
+	            	status.options[status.options.length] = new Option(data.statusList[i].status);
+	            	status.options[i].value = data.statusList[i].id;
+	            } 
+	            
+	            var division = document.getElementById("divisionId");
+	            for(var i = 0;i < data.divisionList.length;i++) {
+	            	division.options[division.options.length] = new Option(data.divisionList[i].divisionName);
+	            	division.options[i].value = data.divisionList[i].divisionId;
+	            }
+	            
+	            var terminal = document.getElementById("terminalId");
+	            for(var i = 0;i < data.terminalList.length;i++) {
+	            	terminal.options[terminal.options.length] = new Option(data.terminalList[i].terminalName);
+	            	terminal.options[i].value = data.terminalList[i].terminalId;
+	            }
+	            
+	            var category = document.getElementById("categoryId");
+	            for(var i = 0;i < data.categoryList.length;i++) {
+	            	category.options[category.options.length] = new Option(data.categoryList[i].name);
+	            	category.options[i].value = data.categoryList[i].categoryId;
+	            }
+	            
+	            var truckType = document.getElementById("truckTypeId");
+	            for(var i = 0;i < data.truckTypeList.length;i++) {
+	            	truckType.options[truckType.options.length] = new Option(data.truckTypeList[i].typeName);
+	            	truckType.options[i].value = data.truckTypeList[i].typeId;
+	            }
+	        });
         }
 </script>
-<script src="//cdn.ckeditor.com/4.5.11/basic/ckeditor.js"></script>
 </head>
 <body>
-	<%
-		/*List<QuestionBean> lstQuestions = ((List<QuestionBean>) request.getAttribute("LIST_QUES"));
-		pageContext.setAttribute("LIST_QUES", lstQuestions);
-		List<CategoryBean> lstCategories = ((List<CategoryBean>) request.getAttribute("LIST_CAT"));
-		pageContext.setAttribute("LIST_CAT", lstCategories); */
-	%>
 	<jsp:include page="header.jsp"></jsp:include>
 	<div class="container">
 		<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="checkFlag('add'); onClickMethodQuestion('0');" >Add New</button>
@@ -118,7 +124,7 @@ textarea{
 			<div class="col-sm-8">
 					<div class="modal fade" id="myModal" role="dialog">
 					    <div class="modal-dialog">
-						<form action="saveQues" method="POST" name="ques" id="frm1">
+						<form action="savetruck" method="POST" name="truck" id="frm1">
 						<input type="hidden" id = "questionid" name= "quesid" value = "" />					
 						<input type="hidden" id = "addUpdateFlag" value = "" />					
 	
@@ -146,7 +152,7 @@ textarea{
 													<span class="input-group-addon">
 														 <i class="glyphicon glyphicon-inbox"></i>												
 													</span>
-													<input type="text" class="form-control" placeHolder="Enter Usage" id="usage" name="usage" value="" />
+													<input type="text" class="form-control" placeHolder="Enter Usage" id="usage" name="truchUsage" value="" />
 												</div>
 											</div>
 										</div>
@@ -166,9 +172,7 @@ textarea{
 													<span class="input-group-addon">
 														<i class="glyphicon glyphicon-list-alt"></i>												
 													</span>
-													<select class="form-control" name="status" id="status">
-														<option value="1">Active</option>
-														<option value="0">Inactive</option>
+													<select class="form-control" name="divisionId" id="divisionId">
 													</select>
 												</div>
 											</div>
@@ -190,9 +194,7 @@ textarea{
 													<span class="input-group-addon">
 														<i class="glyphicon glyphicon-list-alt"></i>												
 													</span>
-													<select class="form-control" name="status" id="status">
-														<option value="1">Active</option>
-														<option value="0">Inactive</option>
+													<select class="form-control" name="terminalId" id="terminalId">
 													</select>
 												</div>
 											</div>
@@ -206,9 +208,7 @@ textarea{
 													<span class="input-group-addon">
 														<i class="glyphicon glyphicon-list-alt"></i>												
 													</span>
-													<select class="form-control" name="status" id="status">
-														<option value="1">Active</option>
-														<option value="0">Inactive</option>
+													<select class="form-control" name="categoryId" id="categoryId">
 													</select>
 												</div>
 											</div>
@@ -217,9 +217,7 @@ textarea{
 													<span class="input-group-addon">
 														<i class="glyphicon glyphicon-list-alt"></i>												
 													</span>
-													<select class="form-control" name="status" id="status">
-														<option value="1">Active</option>
-														<option value="0">Inactive</option>
+													<select class="form-control" name="truckTypeId" id="truckTypeId">
 													</select>
 												</div>
 											</div>
@@ -233,7 +231,7 @@ textarea{
 													<span class="input-group-addon">
 														<i class="glyphicon glyphicon-list-alt"></i>												
 													</span>
-													<select class="form-control" name="status" id="status">
+													<select class="form-control" name="statusId" id="statusId">
 														<option value="1">Active</option>
 														<option value="0">Inactive</option>
 													</select>
@@ -244,7 +242,7 @@ textarea{
 													<span class="input-group-addon">
 														 <i class="glyphicon glyphicon-inbox"></i>												
 													</span>
-													<input type="text" class="form-control" placeHolder="Enter City" id="city" name="city" value="" />
+													<input type="text" class="form-control" placeHolder="Enter Finance" id="finance" name="finance" value="" />
 												</div>
 											</div>	
 										</div>

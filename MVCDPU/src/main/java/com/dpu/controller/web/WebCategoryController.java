@@ -47,7 +47,7 @@ public class WebCategoryController {
 	}
 	
 	@RequestMapping(value = "/savecategory" , method = RequestMethod.POST)
-	public ModelAndView saveCategory(@ModelAttribute("category") CategoryReq categoryReq, HttpServletRequest request) {
+	public ModelAndView saveCategory(@ModelAttribute("cat") CategoryReq categoryReq, HttpServletRequest request) {
 		ModelAndView modelAndView = new ModelAndView();
 		HttpSession session = request.getSession();
 		String createdBy = "";

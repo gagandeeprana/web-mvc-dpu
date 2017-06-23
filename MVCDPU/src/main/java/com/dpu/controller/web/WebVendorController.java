@@ -2,9 +2,13 @@ package com.dpu.controller.web;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -26,6 +30,21 @@ public class WebVendorController {
 		List<VendorModel> lstVendors = vendorService.getAll();
 		modelAndView.addObject("LIST_VENDOR", lstVendors);
 		modelAndView.setViewName("vendor");
+		return modelAndView;
+	}
+	
+	@RequestMapping(value = "/savevendor" , method = RequestMethod.POST)
+	public ModelAndView saveVendor(@ModelAttribute("vendor") VendorModel vendorModel, HttpServletRequest request) {
+		ModelAndView modelAndView = new ModelAndView();
+		HttpSession session = request.getSession();
+		String createdBy = "";
+		if(session != null) {
+			createdBy = session.getAttribute("un").toString();
+		}
+//		divisionReq.setCreatedBy(createdBy);
+//		divisionReq.setCreatedOn(new Date());
+		vendorService.addVendorData(vendorModel);
+		modelAndView.setViewName("redirect:showvendor");
 		return modelAndView;
 	}
 	

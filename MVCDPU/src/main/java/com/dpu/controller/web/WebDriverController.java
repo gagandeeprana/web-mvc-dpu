@@ -2,14 +2,20 @@ package com.dpu.controller.web;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.dpu.model.DriverReq;
+import com.dpu.model.TruckResponse;
 import com.dpu.service.DriverService;
 
 @Controller
@@ -28,6 +34,32 @@ public class WebDriverController {
 		modelAndView.setViewName("driver");
 		return modelAndView;
 	}
+	
+	@RequestMapping(value = "/driver/getopenadd" , method = RequestMethod.GET)
+	@ResponseBody public DriverReq getOpenAdd() {
+		DriverReq driverReq = null;
+		try {
+			driverReq = driverService.getOpenAdd();
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		return driverReq;
+	}
+	
+	/*@RequestMapping(value = "/savetruck" , method = RequestMethod.POST)
+	public ModelAndView saveTruck(@ModelAttribute("truck") TruckResponse truckResponse, HttpServletRequest request) {
+		ModelAndView modelAndView = new ModelAndView();
+		HttpSession session = request.getSession();
+		String createdBy = "";
+		if(session != null) {
+			createdBy = session.getAttribute("un").toString();
+		}
+//		divisionReq.setCreatedBy(createdBy);
+//		divisionReq.setCreatedOn(new Date());
+		truckService.add(truckResponse);
+		modelAndView.setViewName("redirect:showtruck");
+		return modelAndView;
+	}*/
 	
 	/*@RequestMapping(value = "/saveCat" , method = RequestMethod.POST)
 	public ModelAndView saveCategory(@RequestParam("uploadFile") MultipartFile multipart, @RequestParam("title") String title, @RequestParam("status") int status, HttpServletRequest request) {
