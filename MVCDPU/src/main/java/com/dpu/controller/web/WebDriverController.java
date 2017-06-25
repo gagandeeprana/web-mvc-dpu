@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.dpu.model.DriverReq;
-import com.dpu.model.TruckResponse;
 import com.dpu.service.DriverService;
 
 @Controller
@@ -46,8 +45,8 @@ public class WebDriverController {
 		return driverReq;
 	}
 	
-	/*@RequestMapping(value = "/savetruck" , method = RequestMethod.POST)
-	public ModelAndView saveTruck(@ModelAttribute("truck") TruckResponse truckResponse, HttpServletRequest request) {
+	@RequestMapping(value = "/savedriver" , method = RequestMethod.POST)
+	public ModelAndView saveTruck(@ModelAttribute("driver") DriverReq driverReq, HttpServletRequest request) {
 		ModelAndView modelAndView = new ModelAndView();
 		HttpSession session = request.getSession();
 		String createdBy = "";
@@ -56,10 +55,10 @@ public class WebDriverController {
 		}
 //		divisionReq.setCreatedBy(createdBy);
 //		divisionReq.setCreatedOn(new Date());
-		truckService.add(truckResponse);
-		modelAndView.setViewName("redirect:showtruck");
+		driverService.addDriver(driverReq);
+		modelAndView.setViewName("redirect:showdriver");
 		return modelAndView;
-	}*/
+	}
 	
 	/*@RequestMapping(value = "/saveCat" , method = RequestMethod.POST)
 	public ModelAndView saveCategory(@RequestParam("uploadFile") MultipartFile multipart, @RequestParam("title") String title, @RequestParam("status") int status, HttpServletRequest request) {

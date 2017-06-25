@@ -115,8 +115,8 @@ textarea{
 	            
 	            var driverClass = document.getElementById("classId");
 	            for(var i = 0;i < data.driverClassList.length;i++) {
-	            	driverClass.options[driverClass.options.length] = new Option(data.driverClassList[i].driverClassName);
-	            	driverClass.options[i].value = data.driverClassList[i].driverClassId;
+	            	driverClass.options[driverClass.options.length] = new Option(data.driverClassList[i].typeName);
+	            	driverClass.options[i].value = data.driverClassList[i].typeId;
 	            }
 	        });
         }
@@ -131,7 +131,7 @@ textarea{
 			<div class="col-sm-8">
 					<div class="modal fade" id="myModal" role="dialog">
 					    <div class="modal-dialog">
-						<form action="saveQues" method="POST" name="ques" id="frm1">
+						<form action="savedriver" method="POST" name="driver" id="frm1">
 						<input type="hidden" id = "questionid" name= "quesid" value = "" />					
 						<input type="hidden" id = "addUpdateFlag" value = "" />					
 	
@@ -189,7 +189,7 @@ textarea{
 													<span class="input-group-addon">
 														 <i class="glyphicon glyphicon-inbox"></i>												
 													</span>
-													<input type="text" class="form-control" placeHolder="Enter Fax" id="fax" name="fax" value="" />
+													<input type="text" class="form-control" placeHolder="Enter Fax" id="fax" name="faxNo" value="" />
 													</div>
 													</div>												
 												</div>
@@ -283,7 +283,7 @@ textarea{
 													<span class="input-group-addon">
 														 <i class="glyphicon glyphicon-inbox"></i>												
 													</span>
-													<input type="text" class="form-control" placeHolder="Enter Zip" id="zip" name="zip" value="" />
+													<input type="text" class="form-control" placeHolder="Enter Zip" id="zip" name="postalCode" value="" />
 													</div>
 													</div>
 													<div class="col-sm-6">
@@ -291,7 +291,7 @@ textarea{
 													<span class="input-group-addon">
 														 <i class="glyphicon glyphicon-inbox"></i>												
 													</span>
-													<input type="text" class="form-control" placeHolder="Enter Province" id="province" name="province" value="" />
+													<input type="text" class="form-control" placeHolder="Enter Province" id="province" name="pvs" value="" />
 													</div>
 													</div>												
 												</div>
@@ -339,7 +339,7 @@ textarea{
 														<span class="input-group-addon">
 															 <i class="glyphicon glyphicon-list-alt"></i>												
 														</span>
-														<select class="form-control" name="classId" id="classId">
+														<select class="form-control" name="driverClassId" id="classId">
 														</select>
 													</div>
 													</div>													

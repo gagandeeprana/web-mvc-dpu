@@ -36,6 +36,73 @@ textarea{
   min-height:360px;  
   max-height:360px;
 }
+
+span.multiselect-native-select {
+	position: relative
+}
+span.multiselect-native-select select {
+	border: 0!important;
+	clip: rect(0 0 0 0)!important;
+	height: 1px!important;
+	margin: -1px -1px -1px -3px!important;
+	overflow: hidden!important;
+	padding: 0!important;
+	position: absolute!important;
+	width: 1px!important;
+	left: 50%;
+	top: 30px
+}
+.multiselect-container {
+	position: absolute;
+	list-style-type: none;
+	margin: 0;
+	padding: 0
+}
+.multiselect-container .input-group {
+	margin: 5px
+}
+.multiselect-container>li {
+	padding: 0
+}
+.multiselect-container>li>a.multiselect-all label {
+	font-weight: 700
+}
+.multiselect-container>li.multiselect-group label {
+	margin: 0;
+	padding: 3px 20px 3px 20px;
+	height: 100%;
+	font-weight: 700
+}
+.multiselect-container>li.multiselect-group-clickable label {
+	cursor: pointer
+}
+.multiselect-container>li>a {
+	padding: 0
+}
+.multiselect-container>li>a>label {
+	margin: 0;
+	height: 100%;
+	cursor: pointer;
+	font-weight: 400;
+	padding: 3px 0 3px 30px
+}
+.multiselect-container>li>a>label.radio, .multiselect-container>li>a>label.checkbox {
+	margin: 0
+}
+.multiselect-container>li>a>label>input[type=checkbox] {
+	margin-bottom: 5px
+}
+.btn-group>.btn-group:nth-child(2)>.multiselect.btn {
+	border-top-left-radius: 4px;
+	border-bottom-left-radius: 4px
+}
+.form-inline .multiselect-container label.checkbox, .form-inline .multiselect-container label.radio {
+	padding: 3px 20px 3px 40px
+}
+.form-inline .multiselect-container li a label.checkbox input[type=checkbox], .form-inline .multiselect-container li a label.radio input[type=radio] {
+	margin-left: -20px;
+	margin-right: 0
+}
 </style>
 <script type="text/javascript">
 	$(document).ready(function(){
@@ -52,7 +119,7 @@ textarea{
 </script>
 <script type="text/javascript">
 	function checkFlag(field) {
-		document.getElementById("addUpdateFlag").value = field;
+		/* document.getElementById("addUpdateFlag").value = field;
 		if(field == 'update') {
 			document.getElementById("frm1").action = "updateQuestion";
 			document.getElementById("btnSave").value = "Update";
@@ -70,46 +137,43 @@ textarea{
 			document.getElementById("frm1").method = "GET";
 			document.getElementById("frm1").action = "showques";
 			document.getElementById("frm1").submit();
-		}
+		} */
 	}
+</script>
+ <link href="http://cdn.rawgit.com/davidstutz/bootstrap-multiselect/master/dist/css/bootstrap-multiselect.css"
+    rel="stylesheet" type="text/css" />
+<script src="http://cdn.rawgit.com/davidstutz/bootstrap-multiselect/master/dist/js/bootstrap-multiselect.js"
+    type="text/javascript"></script>
+<script type="text/javascript">
+$(function() {
+    $('.multiselect-ui').multiselect({
+        includeSelectAllOption: true
+    });
+});
 </script>
 <script type="text/javascript">
         function onClickMethodQuestion(quesId){
-        	var cId = 0;
-        	if(quesId != 0) {
-				$.get("getQues/quesId",{"quesId" : quesId}, function(data) {
-		            cId = data.categoryBean.categoryId;
-	            	document.getElementById('question').value = data.question;
-	            	CKEDITOR.instances['answer'].setData(data.answer);
-	            	//$("#cke_1_contents").html(data.answer);
-		            document.getElementById("questionid").value = data.questionId;
-		            if(data.status == 1) {
-		               	document.getElementById('status').selectedIndex = 0;            		
-		            }
-		            else {
-		               	document.getElementById('status').selectedIndex = 1;            		            		
-		            }
-		            
-		            var cats = document.getElementById("categoryId");
-		            for(var i = 0;i < cats.length;i++) {
-		            	if(cats[i].value == cId) {
-		            		document.getElementById("categoryId").selectedIndex = i;
-		            		break;
-		            	}
-		            } 
-            	});
-        	}
+        	alert('1');
+        	document.getElementById("locationId").innerHTML = "";
+        	document.getElementById("dates-field2").innerHTML = "";
+        	$.get("terminal/getopenadd", function(data) {
+	           
+	            var shipperLocation = document.getElementById("locationId");
+	            for(var i = 0;i < data.shipperList.length;i++) {
+	            	shipperLocation.options[shipperLocation.options.length] = new Option(data.shipperList[i].locationName);
+	            	shipperLocation.options[i].value = data.shipperList[i].shipperId;
+	            } 
+	            
+	            var shipperService = document.getElementById("dates-field2");
+	            for(var i = 0;i < data.serviceList.length;i++) {
+	            	shipperService.options[shipperService.options.length] = new Option(data.serviceList[i].serviceName);
+	            	shipperService.options[i].value = data.serviceList[i].serviceId;
+	            }
+	        });
         }
 </script>
-<script src="//cdn.ckeditor.com/4.5.11/basic/ckeditor.js"></script>
 </head>
 <body>
-	<%
-		/*List<QuestionBean> lstQuestions = ((List<QuestionBean>) request.getAttribute("LIST_QUES"));
-		pageContext.setAttribute("LIST_QUES", lstQuestions);
-		List<CategoryBean> lstCategories = ((List<CategoryBean>) request.getAttribute("LIST_CAT"));
-		pageContext.setAttribute("LIST_CAT", lstCategories); */
-	%>
 	<jsp:include page="header.jsp"></jsp:include>
 	<div class="container">
 		<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="checkFlag('add'); onClickMethodQuestion('0');" >Add New</button>
@@ -150,9 +214,7 @@ textarea{
 													<span class="input-group-addon">
 														 <i class="glyphicon glyphicon-list-alt"></i>												
 													</span>
-													<select class="form-control" name="status" id="status">
-														<option value="1">Active</option>
-														<option value="0">Inactive</option>
+													<select class="form-control" name="shipperId" id="locationId">
 													</select>
 												</div>
 											</div>
@@ -165,9 +227,7 @@ textarea{
 													<span class="input-group-addon">
 														 <i class="glyphicon glyphicon-list-alt"></i>												
 													</span>
-													<select class="form-control" name="status" id="status">
-														<option value="1">Active</option>
-														<option value="0">Inactive</option>
+													<select id="dates-field2" class="multiselect-ui form-control" multiple="multiple" name="serviceIds">
 													</select>
 												</div>
 											</div>

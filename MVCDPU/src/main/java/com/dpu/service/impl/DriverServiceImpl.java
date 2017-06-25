@@ -386,7 +386,7 @@ public class DriverServiceImpl implements DriverService {
 			driver.setCategoryList(categoryList);
 	
 	 
-			List<DivisionReq> divisionList = AllList.getDivisionList(session,"Division", "divisionId", "divisionId");
+			List<DivisionReq> divisionList = AllList.getDivisionList(session,"Division", "divisionId", "divisionName");
 			driver.setDivisionList(divisionList);
 		
 		 

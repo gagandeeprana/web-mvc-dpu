@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.dpu.model.TerminalResponse;
@@ -27,6 +28,17 @@ public class WebTerminalController {
 		modelAndView.addObject("LIST_TERMINAL", lstTerminals);
 		modelAndView.setViewName("terminal");
 		return modelAndView;
+	}
+	
+	@RequestMapping(value = "/terminal/getopenadd" , method = RequestMethod.GET)
+	@ResponseBody public TerminalResponse getOpenAdd() {
+		TerminalResponse terminalResponse = null;
+		try {
+			terminalResponse = terminalService.getOpenAdd();
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		return terminalResponse;
 	}
 	
 	/*@RequestMapping(value = "/saveCat" , method = RequestMethod.POST)
