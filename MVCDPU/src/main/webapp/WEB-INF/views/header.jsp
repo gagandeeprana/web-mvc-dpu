@@ -70,6 +70,7 @@
 					<li><a href="showservice">Service</a></li>
 				</ul></li>
 			<li><a href="showuser">Users</a></li>
+			<li><a href="showshipper">Locations</a></li>
 			<!-- <li><a href="showlocation">Locations</a></li> -->
 		</ul>
 	</div>
