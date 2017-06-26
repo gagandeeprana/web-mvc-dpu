@@ -67,6 +67,7 @@
 					<li><a href="showdivision">Division</a></li>
 					<li><a href="showterminal">Terminal</a></li>
 					<li><a href="showcategory">Category</a></li>
+					<li><a href="showservice">Service</a></li>
 				</ul></li>
 			<li><a href="showuser">Users</a></li>
 			<!-- <li><a href="showlocation">Locations</a></li> -->

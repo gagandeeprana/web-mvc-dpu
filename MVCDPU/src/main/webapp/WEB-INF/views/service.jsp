@@ -75,20 +75,27 @@ textarea{
 </script>
 <script type="text/javascript">
         function onClickMethodQuestion(quesId){
-        	document.getElementById("locationId").innerHTML = "";
-        	document.getElementById("serviceIds").innerHTML = "";
-        	$.get("terminal/getopenadd", function(data) {
+        	document.getElementById("textFieldId").innerHTML = "";
+        	document.getElementById("associationId").innerHTML = "";
+        	document.getElementById("statusId").innerHTML = "";
+        	$.get("service/getopenadd", function(data) {
 	           
-	            var shipperLocation = document.getElementById("locationId");
-	            for(var i = 0;i < data.shipperList.length;i++) {
-	            	shipperLocation.options[shipperLocation.options.length] = new Option(data.shipperList[i].locationName);
-	            	shipperLocation.options[i].value = data.shipperList[i].shipperId;
+	            var textField = document.getElementById("textFieldId");
+	            for(var i = 0;i < data.textFieldList.length;i++) {
+	            	textField.options[textField.options.length] = new Option(data.textFieldList[i].typeName);
+	            	textField.options[i].value = data.textFieldList[i].typeId;
 	            } 
 	            
-	            var shipperService = document.getElementById("serviceIds");
-	            for(var i = 0;i < data.serviceList.length;i++) {
-	            	shipperService.options[shipperService.options.length] = new Option(data.serviceList[i].serviceName);
-	            	shipperService.options[i].value = data.serviceList[i].serviceId;
+	            var associationWith = document.getElementById("associationId");
+	            for(var i = 0;i < data.associatedWithList.length;i++) {
+	            	associationWith.options[associationWith.options.length] = new Option(data.associatedWithList[i].typeName);
+	            	associationWith.options[i].value = data.associatedWithList[i].typeId;
+	            }
+	            
+	            var status = document.getElementById("statusId");
+	            for(var i = 0;i < data.statusList.length;i++) {
+	            	status.options[status.options.length] = new Option(data.statusList[i].status);
+	            	status.options[i].value = data.statusList[i].id;
 	            }
 	        });
         }
@@ -103,7 +110,7 @@ textarea{
 			<div class="col-sm-8">
 					<div class="modal fade" id="myModal" role="dialog">
 					    <div class="modal-dialog">
-						<form action="saveterminal" method="POST" name="terminal" id="frm1">
+						<form action="saveservice" method="POST" name="service" id="frm1">
 						<input type="hidden" id = "questionid" name= "quesid" value = "" />					
 						<input type="hidden" id = "addUpdateFlag" value = "" />					
 	
@@ -111,7 +118,7 @@ textarea{
 					      <div class="modal-content">
 					        <div class="modal-header">
 					          <button type="button" class="close" data-dismiss="modal">&times;</button>
-					          <h4 class="modal-title"><p id ="modelTitle">Add Terminal</p></h4>
+					          <h4 class="modal-title"><p id ="modelTitle">Add Service</p></h4>
 					        </div>
 					        <div class="modal-body">
 								<div class = "row">
@@ -123,7 +130,7 @@ textarea{
 												<span class="input-group-addon">
 													 <i class="glyphicon glyphicon-inbox"></i>												
 												</span>
-												<input type="text" class="form-control" placeHolder="Enter TerminalName" id="terminalName" name="terminalName" value="" autofocus />
+												<input type="text" class="form-control" placeHolder="Enter ServiceName" id="serviceName" name="serviceName" value="" autofocus />
 											</div>
 											</div>
 										</div>
@@ -135,7 +142,7 @@ textarea{
 													<span class="input-group-addon">
 														 <i class="glyphicon glyphicon-list-alt"></i>												
 													</span>
-													<select class="form-control" name="shipperId" id="locationId">
+													<select class="form-control" name="textFieldId" id="textFieldId">
 													</select>
 												</div>
 											</div>
@@ -148,7 +155,21 @@ textarea{
 													<span class="input-group-addon">
 														 <i class="glyphicon glyphicon-list-alt"></i>												
 													</span>
-													<select id="serviceIds" class="form-control" multiple="multiple" name="serviceIds">
+													<select id="associationId" class="form-control" name="associationWithId">
+													</select>
+												</div>
+											</div>
+										</div>
+									</div>
+									
+									<div class="form-group">
+										<div class="row">
+											<div class="col-sm-12">
+												<div class="input-group">
+													<span class="input-group-addon">
+														 <i class="glyphicon glyphicon-list-alt"></i>												
+													</span>
+													<select id="statusId" class="form-control" name="statusId">
 													</select>
 												</div>
 											</div>
@@ -197,16 +218,19 @@ textarea{
 			<table class="table table-striped table-hover table-condensed">
 				<thead>
 					<tr>
-						<th>Terminal</th>
-						<th>Location</th>
-						<th>Links</th>
+						<th>Service</th>
+						<th>TextField</th>
+						<th>Association With</th>
+						<th>Status</th>
 					</tr>
 				</thead>
 				<tbody>
-					<c:forEach items="${LIST_TERMINAL}" var="obj">
+					<c:forEach items="${LIST_SERVICE}" var="obj">
 						<tr class="info">
-							<td>${obj.terminalName}</td>							
-							<td>${obj.shipperName}</td>
+							<td>${obj.serviceName}</td>							
+							<td>${obj.textField}</td>
+							<td>${obj.associationWith}</td>
+							<td>${obj.status}</td>
 							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj1.questionId}')">Update</a> / <a href="deleteQues/sta/${status}/quesId/${obj1.questionId}">Change Status</a> / <a href="<c:url value='/showquestionbyid/${obj1.questionId}'/>">View Detail</a></td>
 						</tr>
 					</c:forEach>

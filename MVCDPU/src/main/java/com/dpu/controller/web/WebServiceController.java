@@ -14,39 +14,39 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.dpu.model.TerminalResponse;
-import com.dpu.service.TerminalService;
+import com.dpu.model.DPUService;
+import com.dpu.service.ServiceService;
 
 @Controller
-public class WebTerminalController {
+public class WebServiceController {
 
 	@Autowired
-	TerminalService terminalService;
+	ServiceService serviceService;
 	
-	Logger logger = Logger.getLogger(WebTerminalController.class);
+	Logger logger = Logger.getLogger(WebServiceController.class);
 	
-	@RequestMapping(value = "/showterminal", method = RequestMethod.GET)
-	public ModelAndView showTerminalScreen() {
+	@RequestMapping(value = "/showservice", method = RequestMethod.GET)
+	public ModelAndView showServiceScreen() {
 		ModelAndView modelAndView = new ModelAndView();
-		List<TerminalResponse> lstTerminals = terminalService.getAllTerminals();
-		modelAndView.addObject("LIST_TERMINAL", lstTerminals);
-		modelAndView.setViewName("terminal");
+		List<DPUService> lstServices = serviceService.getAll();
+		modelAndView.addObject("LIST_SERVICE", lstServices);
+		modelAndView.setViewName("service");
 		return modelAndView;
 	}
 	
-	@RequestMapping(value = "/terminal/getopenadd" , method = RequestMethod.GET)
-	@ResponseBody public TerminalResponse getOpenAdd() {
-		TerminalResponse terminalResponse = null;
+	@RequestMapping(value = "/service/getopenadd" , method = RequestMethod.GET)
+	@ResponseBody public DPUService getOpenAdd() {
+		DPUService dPUService = null;
 		try {
-			terminalResponse = terminalService.getOpenAdd();
+			dPUService = serviceService.getOpenAdd();
 		} catch (Exception e) {
 			System.out.println(e);
 		}
-		return terminalResponse;
+		return dPUService;
 	}
 	
-	@RequestMapping(value = "/saveterminal" , method = RequestMethod.POST)
-	public ModelAndView saveTerminal(@ModelAttribute("terminal") TerminalResponse terminalResponse, HttpServletRequest request) {
+	@RequestMapping(value = "/saveservice" , method = RequestMethod.POST)
+	public ModelAndView saveTerminal(@ModelAttribute("service") DPUService dpuService, HttpServletRequest request) {
 		ModelAndView modelAndView = new ModelAndView();
 		HttpSession session = request.getSession();
 		String createdBy = "";
@@ -55,9 +55,8 @@ public class WebTerminalController {
 		}
 //		divisionReq.setCreatedBy(createdBy);
 //		divisionReq.setCreatedOn(new Date());
-		terminalResponse.setStatusId(1l);
-		terminalService.addTerminal(terminalResponse);
-		modelAndView.setViewName("redirect:showterminal");
+		serviceService.add(dpuService);
+		modelAndView.setViewName("redirect:showservice");
 		return modelAndView;
 	}
 	
