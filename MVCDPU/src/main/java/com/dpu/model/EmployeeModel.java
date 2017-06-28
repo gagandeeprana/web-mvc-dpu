@@ -1,60 +1,54 @@
-package com.dpu.entity;
+package com.dpu.model;
 
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 
-@Entity
-@Table(name = "employee")
-public class Employee {
+@JsonIgnoreProperties(ignoreUnknown = true) 
+@JsonSerialize(include = Inclusion.NON_NULL)
+public class EmployeeModel {
 
-	@Id
-	@Column(name = "employee_id")
-	@GeneratedValue
 	private Long employeeId;
 	
-	@Column(name = "first_name")
 	private String firstName;
 	
-	@Column(name = "last_name")
 	private String lastName;
 	
-	@Column(name = "job_title")
 	private String jobTitle;
 	
-	@Column(name = "username")
 	private String username;
 
-	@Column(name = "password")
 	private String password;
 	
-	@Column(name = "email")
 	private String email;
 	
-	@Column(name = "phone")
 	private String phone;
 	
-	@Column(name = "hiring_date")
 	private Date hiringDate;
 	
-	@Column(name = "termination_date")
 	private Date terminationDate;
-
-	@Column(name = "created_on")
-	private Date createdOn;
 	
-	@Column(name = "modified_on")
-	private Date modifiedOn;
-	
-	@Column(name = "created_by")
 	private Long createdBy;
 	
-	@Column(name = "modified_by")
 	private Long modifiedBy;
+	
+	public Long getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(Long createdBy) {
+		this.createdBy = createdBy;
+	}
+
+	public Long getModifiedBy() {
+		return modifiedBy;
+	}
+
+	public void setModifiedBy(Long modifiedBy) {
+		this.modifiedBy = modifiedBy;
+	}
 
 	public Long getEmployeeId() {
 		return employeeId;
@@ -134,38 +128,6 @@ public class Employee {
 
 	public void setTerminationDate(Date terminationDate) {
 		this.terminationDate = terminationDate;
-	}
-
-	public Date getCreatedOn() {
-		return createdOn;
-	}
-
-	public void setCreatedOn(Date createdOn) {
-		this.createdOn = createdOn;
-	}
-
-	public Date getModifiedOn() {
-		return modifiedOn;
-	}
-
-	public void setModifiedOn(Date modifiedOn) {
-		this.modifiedOn = modifiedOn;
-	}
-
-	public Long getCreatedBy() {
-		return createdBy;
-	}
-
-	public void setCreatedBy(Long createdBy) {
-		this.createdBy = createdBy;
-	}
-
-	public Long getModifiedBy() {
-		return modifiedBy;
-	}
-
-	public void setModifiedBy(Long modifiedBy) {
-		this.modifiedBy = modifiedBy;
 	}
 
 }

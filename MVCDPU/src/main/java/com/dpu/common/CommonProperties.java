@@ -131,5 +131,13 @@ public class CommonProperties {
 		public static final String custombroker_updated_message = prop.getProperty("custombroker_updated_message");
 		public static final String custombroker_unable_to_update_code = prop.getProperty("custombroker_unable_to_update_code");
 		public static final String custombroker_unable_to_update_message = prop.getProperty("custombroker_unable_to_update_message");
+		
+		// messages for employee module
+		public static final String employee_added_message = prop.getProperty("employee_added_message");
+		public static final String employee_unable_to_add_message = prop.getProperty("employee_unable_to_add_message");
+		public static final String employee_deleted_message = prop.getProperty("employee_deleted_message");
+		public static final String employee_unable_to_delete_message = prop.getProperty("employee_unable_to_delete_message");
+		public static final String employee_updated_message = prop.getProperty("employee_updated_message");
+		public static final String employee_unable_to_update_message = prop.getProperty("employee_unable_to_update_message");
 
 }
