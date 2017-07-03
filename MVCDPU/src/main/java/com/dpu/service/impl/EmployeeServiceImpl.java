@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -60,6 +61,10 @@ public class EmployeeServiceImpl implements EmployeeService {
 		return failed;
 	}
 
+	//TODO
+	/**
+	 * error code needs to be changed...
+	 */
 	@Override
 	public Object add(EmployeeModel employeeModel) {
 
@@ -86,15 +91,15 @@ public class EmployeeServiceImpl implements EmployeeService {
 					CommonProperties.employee_unable_to_add_message,
 					Long.parseLong(CommonProperties.Equipment_unable_to_add_code));
 		} finally {
-			logger.info("EquipmentServiceImpl: add():  finally block");
+			logger.info("EmployeeServiceImpl: add():  finally block");
 			if (session != null) {
 				session.close();
 			}
 		}
 
-		logger.info("EquipmentServiceImpl: add():  ENDS");
+		logger.info("EmployeeServiceImpl: add():  ENDS");
 
-		return createSuccessObject(CommonProperties.Equipment_added_message,
+		return createSuccessObject(CommonProperties.employee_added_message,
 				Long.parseLong(CommonProperties.Equipment_added_code));
 	}
 
@@ -168,6 +173,45 @@ public class EmployeeServiceImpl implements EmployeeService {
 			}
 		}
 		return employeeResponse;
+	}
+	
+	@Override
+	public Object getUserById(Long userId) {
+
+		logger.info("Inside EmployeeServiceImpl getUserById() starts, userId :"
+				+ userId);
+		Session session = null;
+		Object obj = null;
+		String message = "User data get Successfully";
+
+		try {
+			session = sessionFactory.openSession();
+			Employee employee = employeeDao.findById(userId);
+			EmployeeModel employeeModel = null;
+			
+			if (employee != null) {
+				employeeModel = new EmployeeModel();
+				BeanUtils.copyProperties(employee, employeeModel);
+				
+			} else {
+				message = "Error while getting record";
+				obj = createFailedObject(message);
+			}
+		} catch (Exception e) {
+			message = "Error while getting record";
+			obj = createFailedObject(message);
+		} finally {
+			if (session != null) {
+				session.close();
+			}
+		}
+		return obj;
+	}
+	
+	private Object createFailedObject(String errorMessage) {
+		Failed failed = new Failed();
+		failed.setMessage(errorMessage);
+		return failed;
 	}
 
 	/*@Override

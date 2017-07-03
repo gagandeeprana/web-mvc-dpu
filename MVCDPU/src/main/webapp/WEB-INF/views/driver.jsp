@@ -52,73 +52,152 @@ textarea{
 </script>
 <script type="text/javascript">
 	function checkFlag(field) {
-		/* document.getElementById("addUpdateFlag").value = field;
+		document.getElementById("addUpdateFlag").value = field;
 		if(field == 'update') {
-			document.getElementById("frm1").action = "updateQuestion";
+			document.getElementById("frm1").action = "updatedriver";
 			document.getElementById("btnSave").value = "Update";
-			$("#modelTitle").html("Edit Question");
+			$("#modelTitle").html("Edit Driver");
 		}
 		else if(field == 'add') {
 			//$("#cke_1_contents").html('');
-			CKEDITOR.instances['answer'].setData('');
-       		document.getElementById('question').value = "";
-       		document.getElementById('status').selectedIndex = 0;
-       		document.getElementById('categoryId').selectedIndex = 0;
+			$(":text").val("");
+       		//document.getElementById('categoryId').selectedIndex = 0;
 			document.getElementById("btnSave").value = "Save";
-			$("#modelTitle").html("Add New Question");
+			$("#modelTitle").html("Add Driver");
 		} else if (field == 'search') {
-			document.getElementById("frm1").method = "GET";
+			/* document.getElementById("frm1").method = "GET";
 			document.getElementById("frm1").action = "showques";
-			document.getElementById("frm1").submit();
-		} */
+			document.getElementById("frm1").submit(); */
+		}
 	}
 </script>
 <script type="text/javascript">
         function onClickMethodQuestion(quesId){
-        	document.getElementById("statusId").innerHTML = "";
-        	document.getElementById("divisionId").innerHTML = "";
-        	document.getElementById("terminalId").innerHTML = "";
-        	document.getElementById("categoryId").innerHTML = "";
-        	document.getElementById("roleId").innerHTML = "";
-        	document.getElementById("classId").innerHTML = "";        	
-        	$.get("driver/getopenadd", function(data) {
-	           
-	            var status = document.getElementById("statusId");
-	            for(var i = 0;i < data.statusList.length;i++) {
-	            	status.options[status.options.length] = new Option(data.statusList[i].status);
-	            	status.options[i].value = data.statusList[i].id;
-	            } 
-	            
-	            var division = document.getElementById("divisionId");
-	            for(var i = 0;i < data.divisionList.length;i++) {
-	            	division.options[division.options.length] = new Option(data.divisionList[i].divisionName);
-	            	division.options[i].value = data.divisionList[i].divisionId;
-	            }
-	            
-	            var terminal = document.getElementById("terminalId");
-	            for(var i = 0;i < data.terminalList.length;i++) {
-	            	terminal.options[terminal.options.length] = new Option(data.terminalList[i].terminalName);
-	            	terminal.options[i].value = data.terminalList[i].terminalId;
-	            }
-	            
-	            var category = document.getElementById("categoryId");
-	            for(var i = 0;i < data.categoryList.length;i++) {
-	            	category.options[category.options.length] = new Option(data.categoryList[i].name);
-	            	category.options[i].value = data.categoryList[i].categoryId;
-	            }
-	            
-	            var role = document.getElementById("roleId");
-	            for(var i = 0;i < data.roleList.length;i++) {
-	            	role.options[role.options.length] = new Option(data.roleList[i].typeName);
-	            	role.options[i].value = data.roleList[i].typeId;
-	            }
-	            
-	            var driverClass = document.getElementById("classId");
-	            for(var i = 0;i < data.driverClassList.length;i++) {
-	            	driverClass.options[driverClass.options.length] = new Option(data.driverClassList[i].typeName);
-	            	driverClass.options[i].value = data.driverClassList[i].typeId;
-	            }
-	        });
+        	if(quesId == 0) {
+	        	document.getElementById("statusId").innerHTML = "";
+	        	document.getElementById("divisionId").innerHTML = "";
+	        	document.getElementById("terminalId").innerHTML = "";
+	        	document.getElementById("categoryId").innerHTML = "";
+	        	document.getElementById("roleId").innerHTML = "";
+	        	document.getElementById("classId").innerHTML = "";        	
+	        	$.get("driver/getopenadd", function(data) {
+		           
+		            var status = document.getElementById("statusId");
+		            for(var i = 0;i < data.statusList.length;i++) {
+		            	status.options[status.options.length] = new Option(data.statusList[i].status);
+		            	status.options[i].value = data.statusList[i].id;
+		            } 
+		            
+		            var division = document.getElementById("divisionId");
+		            for(var i = 0;i < data.divisionList.length;i++) {
+		            	division.options[division.options.length] = new Option(data.divisionList[i].divisionName);
+		            	division.options[i].value = data.divisionList[i].divisionId;
+		            }
+		            
+		            var terminal = document.getElementById("terminalId");
+		            for(var i = 0;i < data.terminalList.length;i++) {
+		            	terminal.options[terminal.options.length] = new Option(data.terminalList[i].terminalName);
+		            	terminal.options[i].value = data.terminalList[i].terminalId;
+		            }
+		            
+		            var category = document.getElementById("categoryId");
+		            for(var i = 0;i < data.categoryList.length;i++) {
+		            	category.options[category.options.length] = new Option(data.categoryList[i].name);
+		            	category.options[i].value = data.categoryList[i].categoryId;
+		            }
+		            
+		            var role = document.getElementById("roleId");
+		            for(var i = 0;i < data.roleList.length;i++) {
+		            	role.options[role.options.length] = new Option(data.roleList[i].typeName);
+		            	role.options[i].value = data.roleList[i].typeId;
+		            }
+		            
+		            var driverClass = document.getElementById("classId");
+		            for(var i = 0;i < data.driverClassList.length;i++) {
+		            	driverClass.options[driverClass.options.length] = new Option(data.driverClassList[i].typeName);
+		            	driverClass.options[i].value = data.driverClassList[i].typeId;
+		            }
+		        });
+        	} else {
+        		$.get("getdriver/driverId",{"driverId" : quesId}, function(data) {
+		            cId = data.resultList.driverId;
+	            	$("#driverCode").val(data.resultList.driverCode);
+	            	$("#email").val(data.resultList.email);
+	            	$("#firstName").val(data.resultList.firstName);
+	            	$("#home").val(data.resultList.home);
+	            	$("#fax").val(data.resultList.faxNo);
+	            	$("#lastName").val(data.resultList.lastName);
+	            	$("#cellular").val(data.resultList.cellular);
+	            	$("#pager").val(data.resultList.pager);
+	            	$("#address").val(data.resultList.address);
+	            	$("#city").val(data.resultList.city);
+	            	$("#zip").val(data.resultList.zip);
+	            	$("#province").val(data.resultList.province);
+	            	$("#unit").val(data.resultList.unit);
+	            	$("#zip").val(data.resultList.postalCode);
+	            	$("#province").val(data.resultList.pvs);
+	            	
+		            var division = document.getElementById("divisionId");
+		            var divisionList = data.resultList.divisionList;
+		            for(var i = 0;i < divisionList.length;i++) {
+		            	division.options[division.options.length] = new Option(divisionList[i].divisionName);
+		            	division.options[i].value = divisionList[i].divisionId;
+		            	if(divisionList[i].divisionId == data.resultList.divisionId) {
+		            		$("#divisionId").selectedIndex = i;
+		            	}
+		            }
+		            
+		            var terminal = document.getElementById("terminalId");
+		            var terminalList = data.resultList.terminalList;
+		            for(var i = 0;i < terminalList.length;i++) {
+		            	terminal.options[terminal.options.length] = new Option(terminalList[i].terminalName);
+		            	terminal.options[i].value = terminalList[i].terminalId;
+		            	if(terminalList[i].terminalId == data.resultList.terminalId) {
+		            		$("#terminalId").selectedIndex = i;
+		            	}
+		            }
+		            
+		            var category = document.getElementById("categoryId");
+		            var categoryList = data.resultList.categoryList;
+		            for(var i = 0;i < categoryList.length;i++) {
+		            	category.options[category.options.length] = new Option(categoryList[i].name);
+		            	category.options[i].value = categoryList[i].categoryId;
+		            	if(categoryList[i].categoryId == data.resultList.categoryId) {
+		            		$("#categoryId").selectedIndex = i;
+		            	}
+		            }
+		            
+		            var role = document.getElementById("roleId");
+		            var roleList = data.resultList.roleList;
+		            for(var i = 0;i < roleList.length;i++) {
+		            	role.options[role.options.length] = new Option(roleList[i].typeName);
+		            	role.options[i].value = roleList[i].typeId;
+		            	if(roleList[i].typeId == data.resultList.roleId) {
+		            		$("#roleId").selectedIndex = i;
+		            	}
+		            }
+		            
+		            var status = document.getElementById("statusId");
+		            var statusList = data.resultList.categoryList;
+		            for(var i = 0;i < categoryList.length;i++) {
+		            	category.options[category.options.length] = new Option(categoryList[i].name);
+		            	category.options[i].value = categoryList[i].categoryId;
+		            	if(categoryList[i].categoryId == data.resultList.categoryId) {
+		            		$("#categoryId").selectedIndex = i;
+		            	}
+		            }
+		            
+		            var category = document.getElementById("categoryId");
+		            var categoryList = data.resultList.categoryList;
+		            for(var i = 0;i < categoryList.length;i++) {
+		            	category.options[category.options.length] = new Option(categoryList[i].name);
+		            	category.options[i].value = categoryList[i].categoryId;
+		            	if(categoryList[i].categoryId == data.resultList.categoryId) {
+		            		$("#categoryId").selectedIndex = i;
+		            	}
+		            }
+            	});
+        	}
         }
 </script>
 </head>
@@ -443,7 +522,7 @@ textarea{
 							<td>${obj.cellular}</td>
 							<td>${obj.pager}</td>
 							<td>${obj.email}</td>
-							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj1.questionId}')">Update</a> / <a href="deleteQues/sta/${status}/quesId/${obj1.questionId}">Change Status</a> / <a href="<c:url value='/showquestionbyid/${obj1.questionId}'/>">View Detail</a></td>
+							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.driverId}')">Update</a> / <a href="deleteQues/sta/${status}/quesId/${obj1.questionId}">Delete</a> / <a href="<c:url value='/showquestionbyid/${obj1.questionId}'/>">View Detail</a></td>
 						</tr>
 					</c:forEach>
 				</tbody>

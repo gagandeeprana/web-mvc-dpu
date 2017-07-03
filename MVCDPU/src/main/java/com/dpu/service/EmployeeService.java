@@ -10,4 +10,6 @@ public interface EmployeeService {
 
 	List<EmployeeModel> getAll();
 
+	Object getUserById(Long userId);
+
 }

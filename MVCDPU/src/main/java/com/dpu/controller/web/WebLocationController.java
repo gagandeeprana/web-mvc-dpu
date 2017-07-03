@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -58,6 +59,18 @@ public class WebLocationController {
 		shipperService.add(shipperResponse);
 		modelAndView.setViewName("redirect:showshipper");
 		return modelAndView;
+	}
+	
+	@RequestMapping(value = "/getshipper/shipperId" , method = RequestMethod.GET)
+	@ResponseBody  public ShipperResponse getShipper(@RequestParam("shipperId") Long shipperId) {
+		ShipperResponse shipperResponse = null;
+		try {
+			shipperResponse = (ShipperResponse) shipperService.get(shipperId);
+		} catch (Exception e) {
+			System.out.println(e);
+			logger.info("Exception in getCategory is: " + e);
+		}
+		return shipperResponse;
 	}
 	
 	/*@RequestMapping(value = "/saveCat" , method = RequestMethod.POST)

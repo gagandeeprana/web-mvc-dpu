@@ -118,7 +118,7 @@ textarea{
 			<div class="col-sm-8">
 					<div class="modal fade" id="myModal" role="dialog">
 					    <div class="modal-dialog">
-						<form action="saveQues" method="POST" name="ques" id="frm1">
+						<form action="savevendor" method="POST" name="vendor" id="frm1">
 						<input type="hidden" id = "questionid" name= "quesid" value = "" />					
 						<input type="hidden" id = "addUpdateFlag" value = "" />					
 	
@@ -138,7 +138,7 @@ textarea{
 												<span class="input-group-addon">
 													 <i class="glyphicon glyphicon-inbox"></i>												
 												</span>
-												<input type="text" class="form-control" placeHolder="Enter VendorName" id="vendorName" name="vendorName" value="" autofocus />
+												<input type="text" class="form-control" placeHolder="Enter VendorName" id="vendorName" name="name" value="" autofocus />
 											</div>
 											</div>
 											<div class="col-sm-6">
@@ -187,7 +187,7 @@ textarea{
 													<span class="input-group-addon">
 														 <i class="glyphicon glyphicon-inbox"></i>												
 													</span>
-													<input type="text" class="form-control" placeHolder="Enter Prefix" id="prefix" name="prefix" value="" />
+													<input type="text" class="form-control" placeHolder="Enter Prefix" id="prefix" name="vendorPrefix" value="" />
 												</div>
 											</div>
 										</div>
@@ -244,7 +244,7 @@ textarea{
 													<span class="input-group-addon">
 														 <i class="glyphicon glyphicon-inbox"></i>												
 													</span>
-													<input type="text" class="form-control" placeHolder="Enter Province" id="province" name="province" value="" />
+													<input type="text" class="form-control" placeHolder="Enter Province" id="province" name="provinceState" value="" />
 													</div>
 													</div>
 													<div class="col-sm-6">
@@ -395,7 +395,7 @@ textarea{
 							<td>${obj.phone}</td>
 							<td>${obj.fax}</td>
 							<td>${obj.afterHours}</td>
-							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj1.questionId}')">Update</a> / <a href="deleteQues/sta/${status}/quesId/${obj1.questionId}">Change Status</a> / <a href="<c:url value='/showquestionbyid/${obj1.questionId}'/>">View Detail</a></td>
+							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj1.questionId}')">Update</a> / <a href="deleteQues/sta/${status}/quesId/${obj1.questionId}">Delete</a> / <a href="<c:url value='/showquestionbyid/${obj1.questionId}'/>">View Detail</a></td>
 						</tr>
 					</c:forEach>
 				</tbody>

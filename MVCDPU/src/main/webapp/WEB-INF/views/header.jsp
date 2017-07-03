@@ -10,7 +10,7 @@
 .carousel-inner>.item>img, .carousel-inner>.item>a>img {
 	width: 100%;
 	margin: auto;
-	height: 150px;
+	height: 180px;
 }
 </style>
 </head>
@@ -18,33 +18,25 @@
 	<div id="myCarousel" class="carousel slide" data-ride="carousel">
 
 		<ol class="carousel-indicators">
-			<li data-target="#myCarousel" data-slide-to="0" class="active"></li>
-			<li data-target="#myCarousel" data-slide-to="1"></li>
-			<li data-target="#myCarousel" data-slide-to="2"></li>
+			<!-- <li data-target="#myCarousel" data-slide-to="0" class="active"></li> -->
+			<!-- <li data-target="#myCarousel" data-slide-to="1"></li>
+			<li data-target="#myCarousel" data-slide-to="2"></li> -->
 		</ol>
 
 		<div class="carousel-inner" role="listbox">
-			<div class="item active">
-				<img src="<c:url value="images/Image7.jpg" />" alt="Java4" />
-			</div>
-
-			<div class="item">
-				<img src="<c:url value="images/Image5.jpg" />" alt="Java2" />
-			</div>
-
-			<div class="item">
-				<img src="<c:url value="images/Image6.jpg"  />" alt="Java3" />
-			</div>
+			<%-- <div class="item active">
+				<img src="<c:url value="images/truckimage.png" />" alt="Java4" />
+			</div> --%>
 		</div>
 
-		<a class="left carousel-control" href="#myCarousel" role="button"
+		<!-- <a class="left carousel-control" href="#myCarousel" role="button"
 			data-slide="prev"> <span class="glyphicon glyphicon-chevron-left"
 			aria-hidden="true"></span> <span class="sr-only">Previous</span>
 		</a> <a class="right carousel-control" href="#myCarousel" role="button"
 			data-slide="next"> <span
 			class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
 			<span class="sr-only">Next</span>
-		</a>
+		</a> -->
 	</div>
 	<nav class="navbar navbar-light" style="background-color: #e3f2fd;">
 	<div class="container-fluid">

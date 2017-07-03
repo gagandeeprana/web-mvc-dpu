@@ -11,10 +11,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.dpu.model.DriverReq;
+import com.dpu.model.Success;
 import com.dpu.service.DriverService;
 
 @Controller
@@ -60,32 +62,19 @@ public class WebDriverController {
 		return modelAndView;
 	}
 	
-	/*@RequestMapping(value = "/saveCat" , method = RequestMethod.POST)
-	public ModelAndView saveCategory(@RequestParam("uploadFile") MultipartFile multipart, @RequestParam("title") String title, @RequestParam("status") int status, HttpServletRequest request) {
-		ModelAndView modelAndView = null;
+	@RequestMapping(value = "/getdriver/driverId" , method = RequestMethod.GET)
+	@ResponseBody  public Success getDriver(@RequestParam("driverId") Long driverId) {
+		Success driverReq = null;
 		try {
-			modelAndView = new ModelAndView();
-			CategoryBean categoryBean = new CategoryBean();
-			categoryBean.setTitle(title);
-			categoryBean.setStatus(status);
-			HttpSession session = request.getSession();
-			String createdBy = "";
-			if(session != null) {
-				createdBy = session.getAttribute("un").toString();
-			}
-			categoryBean.setCreatedBy(createdBy);
-			categoryBean.setCreatedOn(new Date());
-			categoryBean.setImageName(multipart.getOriginalFilename());
-			categoryService.addCategory(categoryBean);
-			uploadUtil.processRequest(multipart, title);
-			modelAndView.setViewName("redirect:/showcat");
+			driverReq = (Success) driverService.getDriverByDriverId(driverId);
 		} catch (Exception e) {
-			System.out.println("CategoryController: Exception is: " + e);
+			System.out.println(e);
+			logger.info("Exception in getCategory is: " + e);
 		}
-		return modelAndView;
+		return driverReq;
 	}
 	
-	@RequestMapping(value = "/updateCat" , method = RequestMethod.POST)
+	/*@RequestMapping(value = "/updateCat" , method = RequestMethod.POST)
 	public ModelAndView updateCategory(@ModelAttribute("cat") CategoryBean categoryBean, @RequestParam("categoryid") int categoryId) {
 		ModelAndView modelAndView = new ModelAndView();
 		categoryBean.setCategoryId(categoryId);
@@ -102,18 +91,6 @@ public class WebDriverController {
 		return modelAndView;
 	}
 	
-	@RequestMapping(value = "/getCat/catId" , method = RequestMethod.GET)
-	@ResponseBody  public CategoryBean getCategory(@RequestParam("catId") int categoryId) {
-		CategoryBean categoryBean = null;
-		try {
-			categoryBean = categoryService.getCategoryInfoById(categoryId);
-		} catch (Exception e) {
-			System.out.println(e);
-			logger.info("Exception in getCategory is: " + e);
-		}
-		return categoryBean;
-	}*/
-	
-	
+	*/
 	
 }

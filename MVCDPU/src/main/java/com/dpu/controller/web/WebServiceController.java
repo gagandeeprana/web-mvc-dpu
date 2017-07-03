@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -58,6 +59,18 @@ public class WebServiceController {
 		serviceService.add(dpuService);
 		modelAndView.setViewName("redirect:showservice");
 		return modelAndView;
+	}
+	
+	@RequestMapping(value = "/getservice/serviceId" , method = RequestMethod.GET)
+	@ResponseBody  public DPUService getShipper(@RequestParam("shipperId") Long shipperId) {
+		DPUService dpuService = null;
+		try {
+			dpuService = serviceService.get(shipperId);
+		} catch (Exception e) {
+			System.out.println(e);
+			logger.info("Exception in getCategory is: " + e);
+		}
+		return dpuService;
 	}
 	
 	/*@RequestMapping(value = "/saveCat" , method = RequestMethod.POST)

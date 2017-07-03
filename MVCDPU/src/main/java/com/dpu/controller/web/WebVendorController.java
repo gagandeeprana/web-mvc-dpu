@@ -11,6 +11,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.dpu.model.VendorModel;
@@ -46,6 +48,18 @@ public class WebVendorController {
 		vendorService.addVendorData(vendorModel);
 		modelAndView.setViewName("redirect:showvendor");
 		return modelAndView;
+	}
+	
+	@RequestMapping(value = "/getvendor/vendorId" , method = RequestMethod.GET)
+	@ResponseBody  public VendorModel getVendor(@RequestParam("vendorId") Long vendorId) {
+		VendorModel vendorModel = null;
+		try {
+			vendorModel = vendorService.get(vendorId);
+		} catch (Exception e) {
+			System.out.println(e);
+			logger.info("Exception in getCategory is: " + e);
+		}
+		return vendorModel;
 	}
 	
 	/*@RequestMapping(value = "/saveCat" , method = RequestMethod.POST)

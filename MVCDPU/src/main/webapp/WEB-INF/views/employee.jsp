@@ -119,12 +119,12 @@ textarea{
 </script>
 <script>
 $(document).ready(function(){
-$('.datepicker').datepicker({
-    format: "dd/mm/yyyy",
-    autoclose: true,
-}).on('changeDate', function (ev) {
-    $(this).datepicker('hide');
-});
+	$('.datepicker').datepicker({
+	    format: "dd/mm/yyyy",
+	    autoclose: true,
+	}).on('changeDate', function (ev) {
+	    $(this).datepicker('hide');
+	});
 });
   </script>
 </head>
@@ -137,7 +137,7 @@ $('.datepicker').datepicker({
 			<div class="col-sm-8">
 					<div class="modal fade" id="myModal" role="dialog">
 					    <div class="modal-dialog">
-						<form action="savetrailer" method="POST" name="trailer" id="frm1">
+						<form action="saveuser" method="POST" name="user" id="frm1">
 						<input type="hidden" id = "questionid" name= "quesid" value = "" />					
 						<input type="hidden" id = "addUpdateFlag" value = "" />					
 	
@@ -221,7 +221,7 @@ $('.datepicker').datepicker({
 												<span class="input-group-addon">
 													 <i class="glyphicon glyphicon-inbox"></i>												
 												</span>
-												<input type="password" class="form-control" placeHolder="Enter Email" id="email" name="email" value="" />
+												<input type="text" class="form-control" placeHolder="Enter Email" id="email" name="email" value="" />
 											</div>
 											</div>
 										</div>
@@ -234,7 +234,7 @@ $('.datepicker').datepicker({
 												<span class="input-group-addon">
 													 <i class="glyphicon glyphicon-inbox"></i>												
 												</span>
-												<input type="password" class="form-control" placeHolder="Enter Phone" id="phone" name="phone" value="" />
+												<input type="text" class="form-control" placeHolder="Enter Phone" id="phone" name="phone" value="" />
 											</div>
 											</div>
 										</div>
@@ -244,17 +244,27 @@ $('.datepicker').datepicker({
 										<div class="row">
 											<div class="col-sm-12">
 												<div class="input-group date" data-provide="datepicker">
-											    <input type="text" class="form-control datepicker">
 											    <div class="input-group-addon">
 											        <span class="glyphicon glyphicon-th"></span>
 											    </div>
+											    <input type="text" class="form-control datepicker" placeHolder = "Hiring Date" name="hiringDate">
 											</div>
 										</div>
 									</div>
-									
-									
 								</div>
-				        	</div>
+									
+									<div class="form-group">
+										<div class="row">
+											<div class="col-sm-12">
+												<div class="input-group date" data-provide="datepicker">
+											    <div class="input-group-addon">
+											        <span class="glyphicon glyphicon-th"></span>
+											    </div>
+											    <input type="text" class="form-control datepicker" placeHolder = "Termination Date" name = "terminationDate">
+											</div>
+										</div>
+									</div>
+					        	</div>
 					        </div>
 					        <div class="modal-footer">
 					          <input type="button" class="btn btn-primary" data-dismiss="modal" id= "btnSave" value="Save" />
@@ -318,7 +328,7 @@ $('.datepicker').datepicker({
 							<td>${obj.phone}</td>
 							<td>${obj.hiringDate}</td>
 							<td>${obj.terminationDate}</td>
-							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj1.questionId}')">Update</a> / <a href="deleteQues/sta/${status}/quesId/${obj1.questionId}">Change Status</a> / <a href="<c:url value='/showquestionbyid/${obj1.questionId}'/>">View Detail</a></td>
+							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj1.questionId}')">Update</a> / <a href="deleteQues/sta/${status}/quesId/${obj1.questionId}">Delete</a> / <a href="<c:url value='/showquestionbyid/${obj1.questionId}'/>">View Detail</a></td>
 						</tr>
 					</c:forEach>
 				</tbody>

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -59,6 +60,18 @@ public class WebTrailerController {
 		trailerService.add(trailerRequest);
 		modelAndView.setViewName("redirect:showtrailer");
 		return modelAndView;
+	}
+	
+	@RequestMapping(value = "/gettrailer/trailerId" , method = RequestMethod.GET)
+	@ResponseBody  public TrailerRequest getTrailer(@RequestParam("trailerId") Long trailerId) {
+		TrailerRequest trailerRequest = null;
+		try {
+			trailerRequest = trailerService.get(trailerId);
+		} catch (Exception e) {
+			System.out.println(e);
+			logger.info("Exception in getCategory is: " + e);
+		}
+		return trailerRequest;
 	}
 	
 	/*@RequestMapping(value = "/saveCat" , method = RequestMethod.POST)
