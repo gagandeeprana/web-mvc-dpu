@@ -51,57 +51,72 @@ textarea{
 	});
 </script>
 <script type="text/javascript">
-	function checkFlag(field) {
-		document.getElementById("addUpdateFlag").value = field;
-		if(field == 'update') {
-			document.getElementById("frm1").action = "updateQuestion";
-			document.getElementById("btnSave").value = "Update";
-			$("#modelTitle").html("Edit Question");
-		}
-		else if(field == 'add') {
-			//$("#cke_1_contents").html('');
-			CKEDITOR.instances['answer'].setData('');
-       		document.getElementById('question').value = "";
-       		document.getElementById('status').selectedIndex = 0;
-       		document.getElementById('categoryId').selectedIndex = 0;
-			document.getElementById("btnSave").value = "Save";
-			$("#modelTitle").html("Add New Question");
-		} else if (field == 'search') {
-			document.getElementById("frm1").method = "GET";
-			document.getElementById("frm1").action = "showques";
-			document.getElementById("frm1").submit();
-		}
+function checkFlag(field) {
+	document.getElementById("addUpdateFlag").value = field;
+	if(field == 'update') {
+		document.getElementById("frm1").action = "updatedriver";
+		document.getElementById("btnSave").value = "Update";
+		$("#modelTitle").html("Edit Driver");
 	}
+	else if(field == 'add') {
+		//$("#cke_1_contents").html('');
+		$(":text").val("");
+   		//document.getElementById('categoryId').selectedIndex = 0;
+		document.getElementById("btnSave").value = "Save";
+		$("#modelTitle").html("Add Driver");
+	} else if (field == 'search') {
+		/* document.getElementById("frm1").method = "GET";
+		document.getElementById("frm1").action = "showques";
+		document.getElementById("frm1").submit(); */
+	}
+}
 </script>
 <script type="text/javascript">
-        function onClickMethodQuestion(quesId){
-        	var cId = 0;
-        	if(quesId != 0) {
-				$.get("getQues/quesId",{"quesId" : quesId}, function(data) {
-		            cId = data.categoryBean.categoryId;
-	            	document.getElementById('question').value = data.question;
-	            	CKEDITOR.instances['answer'].setData(data.answer);
-	            	//$("#cke_1_contents").html(data.answer);
-		            document.getElementById("questionid").value = data.questionId;
-		            if(data.status == 1) {
-		               	document.getElementById('status').selectedIndex = 0;            		
-		            }
-		            else {
-		               	document.getElementById('status').selectedIndex = 1;            		            		
-		            }
-		            
-		            var cats = document.getElementById("categoryId");
-		            for(var i = 0;i < cats.length;i++) {
-		            	if(cats[i].value == cId) {
-		            		document.getElementById("categoryId").selectedIndex = i;
-		            		break;
-		            	}
-		            } 
-            	});
-        	}
-        }
+    function onClickMethodQuestion(quesId){
+    	clearAll();
+   		$.get("getvendor/vendorId",{"vendorId" : quesId}, function(data) {
+            cId = data.vendorId;
+           	$("#vendorName").val(data.name);
+           	$("#contact").val(data.contact);
+           	$("#address").val(data.address);
+           	$("#position").val(data.position);
+           	$("#ext").val(data.ext);
+           	$("#prefix").val(data.vendorPrefix);
+           	$("#unitNo").val(data.unitNo);
+           	$("#phone").val(data.phone);
+           	$("#city").val(data.city);
+           	$("#fax").val(data.fax);
+           	$("#province").val(data.provinceState);
+           	$("#zip").val(data.zip);
+           	$("#afterHours").val(data.afterHours);
+           	$("#email").val(data.email);
+           	$("#tollfree").val(data.tollfree);
+           	$("#website").val(data.website);
+           	$("#cellular").val(data.cellular);
+           	$("#pager").val(data.pager);
+       	});
+    }
+    function clearAll() {
+    	$("#vendorName").val("");
+    	$("#contact").val("");
+    	$("#address").val("");
+    	$("#position").val("");
+    	$("#ext").val("");
+    	$("#prefix").val("");
+    	$("#unitNo").val("");
+    	$("#phone").val("");
+    	$("#city").val("");
+    	$("#fax").val("");
+    	$("#province").val("");
+    	$("#zip").val("");
+    	$("#afterHours").val("");
+    	$("#email").val("");
+    	$("#tollfree").val("");
+    	$("#website").val("");
+    	$("#cellular").val("");
+    	$("#pager").val("");
+    }
 </script>
-<script src="//cdn.ckeditor.com/4.5.11/basic/ckeditor.js"></script>
 </head>
 <body>
 	<%
@@ -395,7 +410,7 @@ textarea{
 							<td>${obj.phone}</td>
 							<td>${obj.fax}</td>
 							<td>${obj.afterHours}</td>
-							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj1.questionId}')">Update</a> / <a href="deleteQues/sta/${status}/quesId/${obj1.questionId}">Delete</a> / <a href="<c:url value='/showquestionbyid/${obj1.questionId}'/>">View Detail</a></td>
+							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.vendorId}')">Update</a> / <a href="deleteQues/sta/${status}/quesId/${obj1.questionId}">Delete</a> / <a href="<c:url value='/showquestionbyid/${obj1.questionId}'/>">View Detail</a></td>
 						</tr>
 					</c:forEach>
 				</tbody>

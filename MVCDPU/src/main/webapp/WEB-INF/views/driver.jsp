@@ -73,13 +73,14 @@ textarea{
 </script>
 <script type="text/javascript">
         function onClickMethodQuestion(quesId){
+        	clearAll();
         	if(quesId == 0) {
-	        	document.getElementById("statusId").innerHTML = "";
+	        	/* document.getElementById("statusId").innerHTML = "";
 	        	document.getElementById("divisionId").innerHTML = "";
 	        	document.getElementById("terminalId").innerHTML = "";
 	        	document.getElementById("categoryId").innerHTML = "";
 	        	document.getElementById("roleId").innerHTML = "";
-	        	document.getElementById("classId").innerHTML = "";        	
+	        	document.getElementById("classId").innerHTML = "";  */       	
 	        	$.get("driver/getopenadd", function(data) {
 		           
 		            var status = document.getElementById("statusId");
@@ -143,7 +144,7 @@ textarea{
 		            	division.options[division.options.length] = new Option(divisionList[i].divisionName);
 		            	division.options[i].value = divisionList[i].divisionId;
 		            	if(divisionList[i].divisionId == data.resultList.divisionId) {
-		            		$("#divisionId").selectedIndex = i;
+		            		document.getElementById("divisionId").selectedIndex = i;
 		            	}
 		            }
 		            
@@ -153,7 +154,7 @@ textarea{
 		            	terminal.options[terminal.options.length] = new Option(terminalList[i].terminalName);
 		            	terminal.options[i].value = terminalList[i].terminalId;
 		            	if(terminalList[i].terminalId == data.resultList.terminalId) {
-		            		$("#terminalId").selectedIndex = i;
+		            		document.getElementById("terminalId").selectedIndex = i;
 		            	}
 		            }
 		            
@@ -163,7 +164,7 @@ textarea{
 		            	category.options[category.options.length] = new Option(categoryList[i].name);
 		            	category.options[i].value = categoryList[i].categoryId;
 		            	if(categoryList[i].categoryId == data.resultList.categoryId) {
-		            		$("#categoryId").selectedIndex = i;
+		            		document.getElementById("categoryId").selectedIndex = i;
 		            	}
 		            }
 		            
@@ -173,31 +174,54 @@ textarea{
 		            	role.options[role.options.length] = new Option(roleList[i].typeName);
 		            	role.options[i].value = roleList[i].typeId;
 		            	if(roleList[i].typeId == data.resultList.roleId) {
-		            		$("#roleId").selectedIndex = i;
+		            		document.getElementById("roleId").selectedIndex = i;
 		            	}
 		            }
 		            
 		            var status = document.getElementById("statusId");
-		            var statusList = data.resultList.categoryList;
-		            for(var i = 0;i < categoryList.length;i++) {
-		            	category.options[category.options.length] = new Option(categoryList[i].name);
-		            	category.options[i].value = categoryList[i].categoryId;
-		            	if(categoryList[i].categoryId == data.resultList.categoryId) {
-		            		$("#categoryId").selectedIndex = i;
+		            var statusList = data.resultList.statusList;
+		            for(var i = 0;i < statusList.length;i++) {
+		            	status.options[status.options.length] = new Option(statusList[i].status);
+		            	status.options[i].value = statusList[i].id;
+		            	if(statusList[i].id == data.resultList.statusId) {
+		            		document.getElementById("statusId").selectedIndex = i;
 		            	}
 		            }
 		            
-		            var category = document.getElementById("categoryId");
-		            var categoryList = data.resultList.categoryList;
-		            for(var i = 0;i < categoryList.length;i++) {
-		            	category.options[category.options.length] = new Option(categoryList[i].name);
-		            	category.options[i].value = categoryList[i].categoryId;
-		            	if(categoryList[i].categoryId == data.resultList.categoryId) {
-		            		$("#categoryId").selectedIndex = i;
+		            var driverClass = document.getElementById("classId");
+		            var driverClassList = data.resultList.driverClassList;
+		            for(var i = 0;i < driverClassList.length;i++) {
+		            	driverClass.options[driverClass.options.length] = new Option(driverClassList[i].typeName);
+		            	driverClass.options[i].value = driverClassList[i].typeId;
+		            	if(driverClassList[i].typeId == data.resultList.driverClassId) {
+		            		document.getElementById("classId").selectedIndex = i;
 		            	}
 		            }
             	});
         	}
+        }
+        function clearAll() {
+        	$("#driverCode").val("");
+        	$("#email").val("");
+        	$("#firstName").val("");
+        	$("#home").val("");
+        	$("#fax").val("");
+        	$("#lastName").val("");
+        	$("#cellular").val("");
+        	$("#pager").val("");
+        	$("#address").val("");
+        	$("#city").val("");
+        	$("#zip").val("");
+        	$("#province").val("");
+        	$("#unit").val("");
+        	$("#zip").val("");
+        	$("#province").val("");
+        	document.getElementById("statusId").innerHTML = "";
+        	document.getElementById("divisionId").innerHTML = "";
+        	document.getElementById("terminalId").innerHTML = "";
+        	document.getElementById("categoryId").innerHTML = "";
+        	document.getElementById("roleId").innerHTML = "";
+        	document.getElementById("classId").innerHTML = ""; 
         }
 </script>
 </head>
