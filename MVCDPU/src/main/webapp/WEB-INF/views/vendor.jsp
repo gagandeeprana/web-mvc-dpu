@@ -56,14 +56,14 @@ function checkFlag(field) {
 	if(field == 'update') {
 		document.getElementById("frm1").action = "updatedriver";
 		document.getElementById("btnSave").value = "Update";
-		$("#modelTitle").html("Edit Driver");
+		$("#modelTitle").html("Edit Vendor");
 	}
 	else if(field == 'add') {
 		//$("#cke_1_contents").html('');
 		$(":text").val("");
    		//document.getElementById('categoryId').selectedIndex = 0;
 		document.getElementById("btnSave").value = "Save";
-		$("#modelTitle").html("Add Driver");
+		$("#modelTitle").html("Add Vendor");
 	} else if (field == 'search') {
 		/* document.getElementById("frm1").method = "GET";
 		document.getElementById("frm1").action = "showques";

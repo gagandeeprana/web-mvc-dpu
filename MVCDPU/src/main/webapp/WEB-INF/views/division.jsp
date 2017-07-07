@@ -52,41 +52,75 @@ textarea{
 	});
 </script>
 <script type="text/javascript">
-	function checkFlag(field) {
-		/* document.getElementById("addUpdateFlag").value = field;
-		if(field == 'update') {
-			document.getElementById("frm1").action = "updateQuestion";
-			document.getElementById("btnSave").value = "Update";
-			$("#modelTitle").html("Edit Question");
-		}
-		else if(field == 'add') {
-			//$("#cke_1_contents").html('');
-			CKEDITOR.instances['answer'].setData('');
-       		document.getElementById('question').value = "";
-       		document.getElementById('status').selectedIndex = 0;
-       		document.getElementById('categoryId').selectedIndex = 0;
-			document.getElementById("btnSave").value = "Save";
-			$("#modelTitle").html("Add New Question");
-		} else if (field == 'search') {
-			document.getElementById("frm1").method = "GET";
-			document.getElementById("frm1").action = "showques";
-			document.getElementById("frm1").submit();
-		} */
+function checkFlag(field) {
+	document.getElementById("addUpdateFlag").value = field;
+	if(field == 'update') {
+		document.getElementById("frm1").action = "updatedivision";
+		document.getElementById("btnSave").value = "Update";
+		$("#modelTitle").html("Edit Division");
 	}
+	else if(field == 'add') {
+		//$("#cke_1_contents").html('');
+		$(":text").val("");
+   		//document.getElementById('categoryId').selectedIndex = 0;
+		document.getElementById("btnSave").value = "Save";
+		$("#modelTitle").html("Add Division");
+	} else if (field == 'search') {
+		/* document.getElementById("frm1").method = "GET";
+		document.getElementById("frm1").action = "showques";
+		document.getElementById("frm1").submit(); */
+	}
+}
 </script>
 <script type="text/javascript">
         function onClickMethodQuestion(quesId){
         	
-        	document.getElementById("status").innerHTML = "";
-        	$.get("getStatus", function(data) {
-	           
-	            var status = document.getElementById("status");
-	            for(var i = 0;i < data.length;i++) {
-	            	//alert(data[0].status);
-	            	status.options[status.options.length] = new Option(data[i].status);
-	            	status.options[i].value = data[i].id;
-	            } 
-	        });
+        	clearAll();
+        	if(quesId == 0) {
+        		document.getElementById("status").innerHTML = "";
+            	$.get("getStatus", function(data) {
+    	           
+    	            var status = document.getElementById("status");
+    	            for(var i = 0;i < data.length;i++) {
+    	            	//alert(data[0].status);
+    	            	status.options[status.options.length] = new Option(data[i].status);
+    	            	status.options[i].value = data[i].id;
+    	            } 
+    	        });
+        	} else {
+        		$.get("getdivision/divisionId",{"divisionId" : quesId}, function(data) {
+                    cId = data.divisionId;
+                    $("#divisionCode").val(data.divisionCode);
+                   	$("#divisionName").val(data.divisionName);
+                   	$("#federal").val(data.fedral);
+                   	$("#provincial").val(data.provincial);
+                   	$("#scac").val(data.scac);
+                   	$("#carrierCode").val(data.carrierCode);
+                   	$("#contractPrefix").val(data.contractPrefix);
+                   	$("#invoicePrefix").val(data.invoicePrefix);
+                   	
+                    var status = document.getElementById("status");
+                    var statusList = data.statusList;
+                    for(var i = 0;i < statusList.length;i++) {
+                    	status.options[status.options.length] = new Option(statusList[i].status);
+                    	status.options[i].value = statusList[i].id;
+                    	if(statusList[i].id == data.statusId) {
+                    		document.getElementById("status").selectedIndex = i;
+                    	}
+                    }
+               	});
+        	}
+        }
+        function clearAll() {
+        	$("#divisionCode").val("");
+           	$("#divisionName").val("");
+           	$("#federal").val("");
+           	$("#provincial").val("");
+           	$("#scac").val("");
+           	$("#carrierCode").val("");
+           	$("#contractPrefix").val("");
+           	$("#invoicePrefix").val("");
+           	document.getElementById("status").innerHTML = "";
         }
 </script>
 <script src="//cdn.ckeditor.com/4.5.11/basic/ckeditor.js"></script>
@@ -279,7 +313,7 @@ textarea{
 							<td>${obj.divisionName}</td>
 							<td>${obj.fedral}</td>
 							<td>${obj.provincial}</td>
-							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj1.questionId}')">Update</a> / <a href="deleteQues/sta/${status}/quesId/${obj1.questionId}">Delete</a> / <a href="<c:url value='/showquestionbyid/${obj1.questionId}'/>">View Detail</a></td>
+							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.divisionId}')">Update</a> / <a href="deleteQues/sta/${status}/quesId/${obj1.questionId}">Delete</a> / <a href="<c:url value='/showquestionbyid/${obj1.questionId}'/>">View Detail</a></td>
 						</tr>
 					</c:forEach>
 				</tbody>

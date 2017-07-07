@@ -51,46 +51,78 @@ textarea{
 	});
 </script>
 <script type="text/javascript">
-	function checkFlag(field) {
-		/* document.getElementById("addUpdateFlag").value = field;
-		if(field == 'update') {
-			document.getElementById("frm1").action = "updateQuestion";
-			document.getElementById("btnSave").value = "Update";
-			$("#modelTitle").html("Edit Question");
-		}
-		else if(field == 'add') {
-			//$("#cke_1_contents").html('');
-			CKEDITOR.instances['answer'].setData('');
-       		document.getElementById('question').value = "";
-       		document.getElementById('status').selectedIndex = 0;
-       		document.getElementById('categoryId').selectedIndex = 0;
-			document.getElementById("btnSave").value = "Save";
-			$("#modelTitle").html("Add New Question");
-		} else if (field == 'search') {
-			document.getElementById("frm1").method = "GET";
-			document.getElementById("frm1").action = "showques";
-			document.getElementById("frm1").submit();
-		} */
+function checkFlag(field) {
+	document.getElementById("addUpdateFlag").value = field;
+	if(field == 'update') {
+		document.getElementById("frm1").action = "updateterminal";
+		document.getElementById("btnSave").value = "Update";
+		$("#modelTitle").html("Edit Terminal");
 	}
+	else if(field == 'add') {
+		//$("#cke_1_contents").html('');
+		$(":text").val("");
+   		//document.getElementById('categoryId').selectedIndex = 0;
+		document.getElementById("btnSave").value = "Save";
+		$("#modelTitle").html("Add Terminal");
+	} else if (field == 'search') {
+		/* document.getElementById("frm1").method = "GET";
+		document.getElementById("frm1").action = "showques";
+		document.getElementById("frm1").submit(); */
+	}
+}
 </script>
 <script type="text/javascript">
         function onClickMethodQuestion(quesId){
+        	clearAll();
+        	if(quesId == 0) {
+        		document.getElementById("locationId").innerHTML = "";
+            	document.getElementById("serviceIds").innerHTML = "";
+            	$.get("terminal/getopenadd", function(data) {
+    	           
+    	            var shipperLocation = document.getElementById("locationId");
+    	            for(var i = 0;i < data.shipperList.length;i++) {
+    	            	shipperLocation.options[shipperLocation.options.length] = new Option(data.shipperList[i].locationName);
+    	            	shipperLocation.options[i].value = data.shipperList[i].shipperId;
+    	            } 
+    	            
+    	            var shipperService = document.getElementById("serviceIds");
+    	            for(var i = 0;i < data.serviceList.length;i++) {
+    	            	shipperService.options[shipperService.options.length] = new Option(data.serviceList[i].serviceName);
+    	            	shipperService.options[i].value = data.serviceList[i].serviceId;
+    	            }
+    	        });
+        	} else {
+        		$.get("getterminal/terminalId",{"terminalId" : quesId}, function(data) {
+                    cId = data.terminalId;
+                    $("#terminalName").val(data.terminalName);
+                    
+                    var shipperLocation = document.getElementById("locationId");
+                    var shipperList = data.shipperList;
+                    for(var i = 0;i < shipperList.length;i++) {
+                    	shipperLocation.options[shipperLocation.options.length] = new Option(shipperList[i].locationName);
+                    	shipperLocation.options[i].value = shipperList[i].shipperId;
+                    	if(shipperList[i].shipperId == data.shipperId) {
+                    		document.getElementById("locationId").selectedIndex = i;
+                    	}
+                    }
+                    
+                    var shipperService = document.getElementById("serviceIds");
+                    var serviceList = data.serviceList;
+                    for(var i = 0;i < serviceList.length;i++) {
+                    	shipperService.options[shipperService.options.length] = new Option(serviceList[i].serviceName);
+                    	shipperLocation.options[i].value = serviceList[i].serviceId;
+                    	if(serviceList[i].serviceId == data.serviceId) {
+                    		document.getElementById("serviceIds"+[i]).selectedIndex = i;
+                    	}
+                    }
+               	});
+        	}
+        }
+        
+        function clearAll() {
+            $("#terminalName").val("");
         	document.getElementById("locationId").innerHTML = "";
         	document.getElementById("serviceIds").innerHTML = "";
-        	$.get("terminal/getopenadd", function(data) {
-	           
-	            var shipperLocation = document.getElementById("locationId");
-	            for(var i = 0;i < data.shipperList.length;i++) {
-	            	shipperLocation.options[shipperLocation.options.length] = new Option(data.shipperList[i].locationName);
-	            	shipperLocation.options[i].value = data.shipperList[i].shipperId;
-	            } 
-	            
-	            var shipperService = document.getElementById("serviceIds");
-	            for(var i = 0;i < data.serviceList.length;i++) {
-	            	shipperService.options[shipperService.options.length] = new Option(data.serviceList[i].serviceName);
-	            	shipperService.options[i].value = data.serviceList[i].serviceId;
-	            }
-	        });
         }
 </script>
 </head>
@@ -207,7 +239,7 @@ textarea{
 						<tr class="info">
 							<td>${obj.terminalName}</td>							
 							<td>${obj.shipperName}</td>
-							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj1.questionId}')">Update</a> / <a href="deleteQues/sta/${status}/quesId/${obj1.questionId}">Delete</a> / <a href="<c:url value='/showquestionbyid/${obj1.questionId}'/>">View Detail</a></td>
+							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.terminalId}')">Update</a> / <a href="deleteQues/sta/${status}/quesId/${obj1.questionId}">Delete</a> / <a href="<c:url value='/showquestionbyid/${obj1.questionId}'/>">View Detail</a></td>
 						</tr>
 					</c:forEach>
 				</tbody>

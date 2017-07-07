@@ -52,66 +52,140 @@ textarea{
 </script>
 <script type="text/javascript">
 	function checkFlag(field) {
-		/* document.getElementById("addUpdateFlag").value = field;
+		document.getElementById("addUpdateFlag").value = field;
 		if(field == 'update') {
-			document.getElementById("frm1").action = "updateQuestion";
+			document.getElementById("frm1").action = "updatetruck";
 			document.getElementById("btnSave").value = "Update";
-			$("#modelTitle").html("Edit Question");
+			$("#modelTitle").html("Edit Truck");
 		}
 		else if(field == 'add') {
 			//$("#cke_1_contents").html('');
-			CKEDITOR.instances['answer'].setData('');
-       		document.getElementById('question').value = "";
-       		document.getElementById('status').selectedIndex = 0;
-       		document.getElementById('categoryId').selectedIndex = 0;
+			$(":text").val("");
+	   		//document.getElementById('categoryId').selectedIndex = 0;
 			document.getElementById("btnSave").value = "Save";
-			$("#modelTitle").html("Add New Question");
+			$("#modelTitle").html("Add Truck");
 		} else if (field == 'search') {
-			document.getElementById("frm1").method = "GET";
+			/* document.getElementById("frm1").method = "GET";
 			document.getElementById("frm1").action = "showques";
-			document.getElementById("frm1").submit();
-		} */
+			document.getElementById("frm1").submit(); */
+		}
 	}
 </script>
 <script type="text/javascript">
         function onClickMethodQuestion(quesId){
+        	/* document.getElementById("statusId").innerHTML = "";
+        	document.getElementById("divisionId").innerHTML = "";
+        	document.getElementById("terminalId").innerHTML = "";
+        	document.getElementById("categoryId").innerHTML = "";
+        	document.getElementById("truckTypeId").innerHTML = ""; */
+        	clearAll();
+        	if(quesId == 0) {
+        		$.get("truck/getopenadd", function(data) {
+     	           
+    	            var status = document.getElementById("statusId");
+    	            for(var i = 0;i < data.statusList.length;i++) {
+    	            	status.options[status.options.length] = new Option(data.statusList[i].status);
+    	            	status.options[i].value = data.statusList[i].id;
+    	            } 
+    	            
+    	            var division = document.getElementById("divisionId");
+    	            for(var i = 0;i < data.divisionList.length;i++) {
+    	            	division.options[division.options.length] = new Option(data.divisionList[i].divisionName);
+    	            	division.options[i].value = data.divisionList[i].divisionId;
+    	            }
+    	            
+    	            var terminal = document.getElementById("terminalId");
+    	            for(var i = 0;i < data.terminalList.length;i++) {
+    	            	terminal.options[terminal.options.length] = new Option(data.terminalList[i].terminalName);
+    	            	terminal.options[i].value = data.terminalList[i].terminalId;
+    	            }
+    	            
+    	            var category = document.getElementById("categoryId");
+    	            for(var i = 0;i < data.categoryList.length;i++) {
+    	            	category.options[category.options.length] = new Option(data.categoryList[i].name);
+    	            	category.options[i].value = data.categoryList[i].categoryId;
+    	            }
+    	            
+    	            var truckType = document.getElementById("truckTypeId");
+    	            for(var i = 0;i < data.truckTypeList.length;i++) {
+    	            	truckType.options[truckType.options.length] = new Option(data.truckTypeList[i].typeName);
+    	            	truckType.options[i].value = data.truckTypeList[i].typeId;
+    	            }
+    	        });
+        	} else {
+        		$.get("gettruck/truckId",{"truckId" : quesId}, function(data) {
+                    cId = data.truckId;
+                   	$("#unitNo").val(data.unitNo);
+                   	$("#usage").val(data.truchUsage);
+                   	$("#owner").val(data.owner);
+                   	$("#oOName").val(data.oOName);
+                   	$("#finance").val(data.finance);
+                   	
+                   	var division = document.getElementById("divisionId");
+                    var divisionList = data.divisionList;
+                    for(var i = 0;i < divisionList.length;i++) {
+                    	division.options[division.options.length] = new Option(divisionList[i].divisionName);
+                    	division.options[i].value = divisionList[i].divisionId;
+                    	if(divisionList[i].divisionId == data.divisionId) {
+                    		document.getElementById("divisionId").selectedIndex = i;
+                    	}
+                    }
+                    
+                    var terminal = document.getElementById("terminalId");
+                    var terminalList = data.terminalList;
+                    for(var i = 0;i < terminalList.length;i++) {
+                    	terminal.options[terminal.options.length] = new Option(terminalList[i].terminalName);
+                    	terminal.options[i].value = terminalList[i].terminalId;
+                    	if(terminalList[i].terminalId == data.terminalId) {
+                    		document.getElementById("terminalId").selectedIndex = i;
+                    	}
+                    }
+                    
+                    var truckType = document.getElementById("truckTypeId");
+                    var truckTypeList = data.truckTypeList;
+                    for(var i = 0;i < truckTypeList.length;i++) {
+                    	truckType.options[truckType.options.length] = new Option(truckTypeList[i].typeName);
+                    	truckType.options[i].value = truckTypeList[i].typeId;
+                    	if(truckTypeList[i].typeId == data.truckTypeId) {
+                    		document.getElementById("truckTypeId").selectedIndex = i;
+                    	}
+                    }
+                    
+                    
+                    var category = document.getElementById("categoryId");
+                    var categoryList = data.categoryList;
+                    for(var i = 0;i < categoryList.length;i++) {
+                    	category.options[category.options.length] = new Option(categoryList[i].name);
+                    	category.options[i].value = categoryList[i].categoryId;
+                    	if(categoryList[i].categoryId == data.categoryId) {
+                    		document.getElementById("categoryId").selectedIndex = i;
+                    	}
+                    }
+                    
+                    var status = document.getElementById("statusId");
+                    var statusList = data.statusList;
+                    for(var i = 0;i < statusList.length;i++) {
+                    	status.options[status.options.length] = new Option(statusList[i].status);
+                    	status.options[i].value = statusList[i].id;
+                    	if(statusList[i].id == data.statusId) {
+                    		document.getElementById("statusId").selectedIndex = i;
+                    	}
+                    }
+               	});
+        	}
+        }
+        
+        function clearAll() {
+        	$("#unitNo").val("");
+           	$("#usage").val("");
+           	$("#owner").val("");
+           	$("#oOName").val("");
+           	$("#finance").val("");
         	document.getElementById("statusId").innerHTML = "";
         	document.getElementById("divisionId").innerHTML = "";
         	document.getElementById("terminalId").innerHTML = "";
         	document.getElementById("categoryId").innerHTML = "";
         	document.getElementById("truckTypeId").innerHTML = "";
-        	$.get("truck/getopenadd", function(data) {
-	           
-	            var status = document.getElementById("statusId");
-	            for(var i = 0;i < data.statusList.length;i++) {
-	            	status.options[status.options.length] = new Option(data.statusList[i].status);
-	            	status.options[i].value = data.statusList[i].id;
-	            } 
-	            
-	            var division = document.getElementById("divisionId");
-	            for(var i = 0;i < data.divisionList.length;i++) {
-	            	division.options[division.options.length] = new Option(data.divisionList[i].divisionName);
-	            	division.options[i].value = data.divisionList[i].divisionId;
-	            }
-	            
-	            var terminal = document.getElementById("terminalId");
-	            for(var i = 0;i < data.terminalList.length;i++) {
-	            	terminal.options[terminal.options.length] = new Option(data.terminalList[i].terminalName);
-	            	terminal.options[i].value = data.terminalList[i].terminalId;
-	            }
-	            
-	            var category = document.getElementById("categoryId");
-	            for(var i = 0;i < data.categoryList.length;i++) {
-	            	category.options[category.options.length] = new Option(data.categoryList[i].name);
-	            	category.options[i].value = data.categoryList[i].categoryId;
-	            }
-	            
-	            var truckType = document.getElementById("truckTypeId");
-	            for(var i = 0;i < data.truckTypeList.length;i++) {
-	            	truckType.options[truckType.options.length] = new Option(data.truckTypeList[i].typeName);
-	            	truckType.options[i].value = data.truckTypeList[i].typeId;
-	            }
-	        });
         }
 </script>
 </head>
@@ -316,7 +390,7 @@ textarea{
 							<td>${obj.terminalName}</td>
 							<td>${obj.truckType}</td>
 							<td>${obj.finance}</td>
-							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj1.questionId}')">Update</a> / <a href="deleteQues/sta/${status}/quesId/${obj1.questionId}">Delete</a> / <a href="<c:url value='/showquestionbyid/${obj1.questionId}'/>">View Detail</a></td>
+							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.truckId}')">Update</a> / <a href="deleteQues/sta/${status}/quesId/${obj1.questionId}">Delete</a> / <a href="<c:url value='/showquestionbyid/${obj1.questionId}'/>">View Detail</a></td>
 						</tr>
 					</c:forEach>
 				</tbody>

@@ -51,67 +51,135 @@ textarea{
 	});
 </script>
 <script type="text/javascript">
-	function checkFlag(field) {
-		/* document.getElementById("addUpdateFlag").value = field;
-		if(field == 'update') {
-			document.getElementById("frm1").action = "updateQuestion";
-			document.getElementById("btnSave").value = "Update";
-			$("#modelTitle").html("Edit Question");
-		}
-		else if(field == 'add') {
-			//$("#cke_1_contents").html('');
-			CKEDITOR.instances['answer'].setData('');
-       		document.getElementById('question').value = "";
-       		document.getElementById('status').selectedIndex = 0;
-       		document.getElementById('categoryId').selectedIndex = 0;
-			document.getElementById("btnSave").value = "Save";
-			$("#modelTitle").html("Add New Question");
-		} else if (field == 'search') {
-			document.getElementById("frm1").method = "GET";
-			document.getElementById("frm1").action = "showques";
-			document.getElementById("frm1").submit();
-		} */
+function checkFlag(field) {
+	document.getElementById("addUpdateFlag").value = field;
+	if(field == 'update') {
+		document.getElementById("frm1").action = "updatetrailer";
+		document.getElementById("btnSave").value = "Update";
+		$("#modelTitle").html("Edit Trailer");
 	}
+	else if(field == 'add') {
+		//$("#cke_1_contents").html('');
+		$(":text").val("");
+   		//document.getElementById('categoryId').selectedIndex = 0;
+		document.getElementById("btnSave").value = "Save";
+		$("#modelTitle").html("Add Trailer");
+	} else if (field == 'search') {
+		/* document.getElementById("frm1").method = "GET";
+		document.getElementById("frm1").action = "showques";
+		document.getElementById("frm1").submit(); */
+	}
+}
 </script>
 <script type="text/javascript">
         function onClickMethodQuestion(quesId){
-        	document.getElementById("statusId").innerHTML = "";
+        	clearAll();
+        	if(quesId == 0) {
+        		$.get("trailer/getopenadd", function(data) {
+     	           
+    	            var status = document.getElementById("statusId");
+    	            for(var i = 0;i < data.statusList.length;i++) {
+    	            	status.options[status.options.length] = new Option(data.statusList[i].status);
+    	            	status.options[i].value = data.statusList[i].id;
+    	            } 
+    	            
+    	            var division = document.getElementById("divisionId");
+    	            for(var i = 0;i < data.divisionList.length;i++) {
+    	            	division.options[division.options.length] = new Option(data.divisionList[i].divisionName);
+    	            	division.options[i].value = data.divisionList[i].divisionId;
+    	            }
+    	            
+    	            var terminal = document.getElementById("terminalId");
+    	            for(var i = 0;i < data.terminalList.length;i++) {
+    	            	terminal.options[terminal.options.length] = new Option(data.terminalList[i].terminalName);
+    	            	terminal.options[i].value = data.terminalList[i].terminalId;
+    	            }
+    	            
+    	            var category = document.getElementById("categoryId");
+    	            for(var i = 0;i < data.categoryList.length;i++) {
+    	            	category.options[category.options.length] = new Option(data.categoryList[i].name);
+    	            	category.options[i].value = data.categoryList[i].categoryId;
+    	            }
+    	            
+    	            var trailerType = document.getElementById("trailerTypeId");
+    	            for(var i = 0;i < data.trailerTypeList.length;i++) {
+    	            	trailerType.options[trailerType.options.length] = new Option(data.trailerTypeList[i].typeName);
+    	            	trailerType.options[i].value = data.trailerTypeList[i].typeId;
+    	            }
+    	        });
+        	} else {
+        		$.get("gettrailer/trailerId",{"trailerId" : quesId}, function(data) {
+                    cId = data.trailerId;
+                   	$("#unitNo").val(data.unitNo);
+                   	$("#usage").val(data.usage);
+                   	$("#owner").val(data.owner);
+                   	$("#oOName").val(data.oOName);
+                   	$("#finance").val(data.finance);
+                   	
+                   	var division = document.getElementById("divisionId");
+                    var divisionList = data.divisionList;
+                    for(var i = 0;i < divisionList.length;i++) {
+                    	division.options[division.options.length] = new Option(divisionList[i].divisionName);
+                    	division.options[i].value = divisionList[i].divisionId;
+                    	if(divisionList[i].divisionId == data.divisionId) {
+                    		document.getElementById("divisionId").selectedIndex = i;
+                    	}
+                    }
+                    
+                    var terminal = document.getElementById("terminalId");
+                    var terminalList = data.terminalList;
+                    for(var i = 0;i < terminalList.length;i++) {
+                    	terminal.options[terminal.options.length] = new Option(terminalList[i].terminalName);
+                    	terminal.options[i].value = terminalList[i].terminalId;
+                    	if(terminalList[i].terminalId == data.terminalId) {
+                    		document.getElementById("terminalId").selectedIndex = i;
+                    	}
+                    }
+                    
+                    var trailerType = document.getElementById("trailerTypeId");
+                    var trailerTypeList = data.trailerTypeList;
+                    for(var i = 0;i < trailerTypeList.length;i++) {
+                    	trailerType.options[trailerType.options.length] = new Option(trailerTypeList[i].typeName);
+                    	trailerType.options[i].value = trailerTypeList[i].typeId;
+                    	if(trailerTypeList[i].typeId == data.trailerTypeId) {
+                    		document.getElementById("trailerTypeId").selectedIndex = i;
+                    	}
+                    }
+                    
+                    var category = document.getElementById("categoryId");
+                    var categoryList = data.categoryList;
+                    for(var i = 0;i < categoryList.length;i++) {
+                    	category.options[category.options.length] = new Option(categoryList[i].name);
+                    	category.options[i].value = categoryList[i].categoryId;
+                    	if(categoryList[i].categoryId == data.categoryId) {
+                    		document.getElementById("categoryId").selectedIndex = i;
+                    	}
+                    }
+                    
+                    var status = document.getElementById("statusId");
+                    var statusList = data.statusList;
+                    for(var i = 0;i < statusList.length;i++) {
+                    	status.options[status.options.length] = new Option(statusList[i].status);
+                    	status.options[i].value = statusList[i].id;
+                    	if(statusList[i].id == data.statusId) {
+                    		document.getElementById("statusId").selectedIndex = i;
+                    	}
+                    }
+               	});
+        	}
+        }
+        
+        function clearAll() {
+        	$("#unitNo").val("");
+           	$("#usage").val("");
+           	$("#owner").val("");
+           	$("#oOName").val("");
+           	$("#finance").val("");
+           	document.getElementById("statusId").innerHTML = "";
         	document.getElementById("divisionId").innerHTML = "";
         	document.getElementById("terminalId").innerHTML = "";
         	document.getElementById("categoryId").innerHTML = "";
         	document.getElementById("trailerTypeId").innerHTML = "";
-        	$.get("trailer/getopenadd", function(data) {
-	           
-	            var status = document.getElementById("statusId");
-	            for(var i = 0;i < data.statusList.length;i++) {
-	            	status.options[status.options.length] = new Option(data.statusList[i].status);
-	            	status.options[i].value = data.statusList[i].id;
-	            } 
-	            
-	            var division = document.getElementById("divisionId");
-	            for(var i = 0;i < data.divisionList.length;i++) {
-	            	division.options[division.options.length] = new Option(data.divisionList[i].divisionName);
-	            	division.options[i].value = data.divisionList[i].divisionId;
-	            }
-	            
-	            var terminal = document.getElementById("terminalId");
-	            for(var i = 0;i < data.terminalList.length;i++) {
-	            	terminal.options[terminal.options.length] = new Option(data.terminalList[i].terminalName);
-	            	terminal.options[i].value = data.terminalList[i].terminalId;
-	            }
-	            
-	            var category = document.getElementById("categoryId");
-	            for(var i = 0;i < data.categoryList.length;i++) {
-	            	category.options[category.options.length] = new Option(data.categoryList[i].name);
-	            	category.options[i].value = data.categoryList[i].categoryId;
-	            }
-	            
-	            var trailerType = document.getElementById("trailerTypeId");
-	            for(var i = 0;i < data.trailerTypeList.length;i++) {
-	            	trailerType.options[trailerType.options.length] = new Option(data.trailerTypeList[i].typeName);
-	            	trailerType.options[i].value = data.trailerTypeList[i].typeId;
-	            }
-	        });
         }
 </script>
 </head>
@@ -314,7 +382,7 @@ textarea{
 							<td>${obj.terminal}</td>
 							<td>${obj.trailerType}</td>
 							<td>${obj.finance}</td>
-							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj1.questionId}')">Update</a> / <a href="deleteQues/sta/${status}/quesId/${obj1.questionId}">Delete</a> / <a href="<c:url value='/showquestionbyid/${obj1.questionId}'/>">View Detail</a></td>
+							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.trailerId}')">Update</a> / <a href="deleteQues/sta/${status}/quesId/${obj1.questionId}">Delete</a> / <a href="<c:url value='/showquestionbyid/${obj1.questionId}'/>">View Detail</a></td>
 						</tr>
 					</c:forEach>
 				</tbody>
