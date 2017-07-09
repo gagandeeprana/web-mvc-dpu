@@ -78,6 +78,14 @@ public class WebDivisionController {
 		return divisionReq;
 	}
 	
+	@RequestMapping(value = "/updatedivision" , method = RequestMethod.POST)
+	public ModelAndView updateDivision(@ModelAttribute("division") DivisionReq divisionReq, @RequestParam("divisionid") Long divisionId) {
+		ModelAndView modelAndView = new ModelAndView();
+		divisionService.update(divisionId, divisionReq);
+		modelAndView.setViewName("redirect:showdivision");
+		return modelAndView;
+	}
+	
 	/*@RequestMapping(value = "/updateCat" , method = RequestMethod.POST)
 	public ModelAndView updateCategory(@ModelAttribute("cat") CategoryBean categoryBean, @RequestParam("categoryid") int categoryId) {
 		ModelAndView modelAndView = new ModelAndView();

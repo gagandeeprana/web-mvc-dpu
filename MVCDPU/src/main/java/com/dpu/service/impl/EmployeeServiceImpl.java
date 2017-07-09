@@ -184,14 +184,15 @@ public class EmployeeServiceImpl implements EmployeeService {
 		Object obj = null;
 		String message = "User data get Successfully";
 
+		EmployeeModel employeeModel = null;
 		try {
 			session = sessionFactory.openSession();
 			Employee employee = employeeDao.findById(userId);
-			EmployeeModel employeeModel = null;
 			
 			if (employee != null) {
 				employeeModel = new EmployeeModel();
 				BeanUtils.copyProperties(employee, employeeModel);
+				employeeModel.setEmployeeId(employee.getEmployeeId());
 				
 			} else {
 				message = "Error while getting record";
@@ -205,7 +206,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 				session.close();
 			}
 		}
-		return obj;
+		return employeeModel;
 	}
 	
 	private Object createFailedObject(String errorMessage) {

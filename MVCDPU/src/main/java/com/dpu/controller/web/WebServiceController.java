@@ -62,7 +62,7 @@ public class WebServiceController {
 	}
 	
 	@RequestMapping(value = "/getservice/serviceId" , method = RequestMethod.GET)
-	@ResponseBody  public DPUService getShipper(@RequestParam("shipperId") Long shipperId) {
+	@ResponseBody  public DPUService getService(@RequestParam("serviceId") Long shipperId) {
 		DPUService dpuService = null;
 		try {
 			dpuService = serviceService.get(shipperId);
@@ -71,6 +71,14 @@ public class WebServiceController {
 			logger.info("Exception in getCategory is: " + e);
 		}
 		return dpuService;
+	}
+	
+	@RequestMapping(value = "/updateservice" , method = RequestMethod.POST)
+	public ModelAndView updateService(@ModelAttribute("service") DPUService dpuService, @RequestParam("serviceid") Long serviceId) {
+		ModelAndView modelAndView = new ModelAndView();
+		serviceService.update(serviceId, dpuService);
+		modelAndView.setViewName("redirect:showservice");
+		return modelAndView;
 	}
 	
 	/*@RequestMapping(value = "/saveCat" , method = RequestMethod.POST)

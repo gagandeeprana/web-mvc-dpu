@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Trailer</title>
+<title>Users</title>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@page isELIgnored="false"%>
@@ -54,67 +54,58 @@ textarea{
 	});
 </script>
 <script type="text/javascript">
-	function checkFlag(field) {
-		/* document.getElementById("addUpdateFlag").value = field;
-		if(field == 'update') {
-			document.getElementById("frm1").action = "updateQuestion";
-			document.getElementById("btnSave").value = "Update";
-			$("#modelTitle").html("Edit Question");
-		}
-		else if(field == 'add') {
-			//$("#cke_1_contents").html('');
-			CKEDITOR.instances['answer'].setData('');
-       		document.getElementById('question').value = "";
-       		document.getElementById('status').selectedIndex = 0;
-       		document.getElementById('categoryId').selectedIndex = 0;
-			document.getElementById("btnSave").value = "Save";
-			$("#modelTitle").html("Add New Question");
-		} else if (field == 'search') {
-			document.getElementById("frm1").method = "GET";
-			document.getElementById("frm1").action = "showques";
-			document.getElementById("frm1").submit();
-		} */
+function checkFlag(field) {
+	document.getElementById("addUpdateFlag").value = field;
+	if(field == 'update') {
+		document.getElementById("frm1").action = "updateuser";
+		document.getElementById("btnSave").value = "Update";
+		$("#modelTitle").html("Edit User");
 	}
+	else if(field == 'add') {
+		//$("#cke_1_contents").html('');
+		$(":text").val("");
+   		//document.getElementById('categoryId').selectedIndex = 0;
+		document.getElementById("btnSave").value = "Save";
+		$("#modelTitle").html("Add User");
+	} else if (field == 'search') {
+		/* document.getElementById("frm1").method = "GET";
+		document.getElementById("frm1").action = "showques";
+		document.getElementById("frm1").submit(); */
+	}
+}
 </script>
 <script type="text/javascript">
         function onClickMethodQuestion(quesId){
-        	document.getElementById("statusId").innerHTML = "";
-        	document.getElementById("divisionId").innerHTML = "";
-        	document.getElementById("terminalId").innerHTML = "";
-        	document.getElementById("categoryId").innerHTML = "";
-        	document.getElementById("trailerTypeId").innerHTML = "";
-        	$.get("trailer/getopenadd", function(data) {
-	           
-	            var status = document.getElementById("statusId");
-	            for(var i = 0;i < data.statusList.length;i++) {
-	            	status.options[status.options.length] = new Option(data.statusList[i].status);
-	            	status.options[i].value = data.statusList[i].id;
-	            } 
-	            
-	            var division = document.getElementById("divisionId");
-	            for(var i = 0;i < data.divisionList.length;i++) {
-	            	division.options[division.options.length] = new Option(data.divisionList[i].divisionName);
-	            	division.options[i].value = data.divisionList[i].divisionId;
-	            }
-	            
-	            var terminal = document.getElementById("terminalId");
-	            for(var i = 0;i < data.terminalList.length;i++) {
-	            	terminal.options[terminal.options.length] = new Option(data.terminalList[i].terminalName);
-	            	terminal.options[i].value = data.terminalList[i].terminalId;
-	            }
-	            
-	            var category = document.getElementById("categoryId");
-	            for(var i = 0;i < data.categoryList.length;i++) {
-	            	category.options[category.options.length] = new Option(data.categoryList[i].name);
-	            	category.options[i].value = data.categoryList[i].categoryId;
-	            }
-	            
-	            var trailerType = document.getElementById("trailerTypeId");
-	            for(var i = 0;i < data.trailerTypeList.length;i++) {
-	            	trailerType.options[trailerType.options.length] = new Option(data.trailerTypeList[i].typeName);
-	            	trailerType.options[i].value = data.trailerTypeList[i].typeId;
-	            }
-	        });
+        	
+        	clearAll();
+        	if(quesId == 0) {
+				// nothing to do on openadd.. may to be added later on..
+        	} else {
+        		$.get("getuser/userId",{"userId" : quesId}, function(data) {
+                    cId = data.employeeId;
+                   	$("#firstName").val(data.firstName);
+                   	$("#lastName").val(data.lastName);
+                   	$("#jobTitle").val(data.jobTitle);
+                   	$("#username").val(data.username);
+                   	$("#password").val(data.password);
+                   	$("#email").val(data.email);
+                   	$("#phone").val(data.phone);
+                   	$("#hiringDate").val(data.hiringDate);
+                   	$("#terminationDate").val(data.terminationDate);
+               	});
+        	}
+        }
+        
+        function clearAll() {
+           	$("#firstName").val("");
+           	$("#lastName").val("");
+           	$("#jobTitle").val("");
+           	$("#username").val("");
+           	$("#password").val("");
+           	$("#email").val("");
+           	$("#phone").val("");
+           	$("#hiringDate").val("");
+           	$("#terminationDate").val("");
         }
 </script>
 <script>
@@ -247,7 +238,7 @@ $(document).ready(function(){
 											    <div class="input-group-addon">
 											        <span class="glyphicon glyphicon-th"></span>
 											    </div>
-											    <input type="text" class="form-control datepicker" placeHolder = "Hiring Date" name="hiringDate">
+											    <input type="text" class="form-control datepicker" placeHolder = " Hiring Date" name="hiringDate" id="hiringDate">
 											</div>
 										</div>
 									</div>
@@ -260,7 +251,7 @@ $(document).ready(function(){
 											    <div class="input-group-addon">
 											        <span class="glyphicon glyphicon-th"></span>
 											    </div>
-											    <input type="text" class="form-control datepicker" placeHolder = "Termination Date" name = "terminationDate">
+											    <input type="text" class="form-control datepicker" placeHolder = " Termination Date" name = "terminationDate" id ="terminationDate">
 											</div>
 										</div>
 									</div>
@@ -328,7 +319,7 @@ $(document).ready(function(){
 							<td>${obj.phone}</td>
 							<td>${obj.hiringDate}</td>
 							<td>${obj.terminationDate}</td>
-							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj1.questionId}')">Update</a> / <a href="deleteQues/sta/${status}/quesId/${obj1.questionId}">Delete</a> / <a href="<c:url value='/showquestionbyid/${obj1.questionId}'/>">View Detail</a></td>
+							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.employeeId}')">Update</a> / <a href="deleteQues/sta/${status}/quesId/${obj1.questionId}">Delete</a> / <a href="<c:url value='/showquestionbyid/${obj1.questionId}'/>">View Detail</a></td>
 						</tr>
 					</c:forEach>
 				</tbody>

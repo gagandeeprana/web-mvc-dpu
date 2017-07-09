@@ -51,53 +51,93 @@ textarea{
 	});
 </script>
 <script type="text/javascript">
-	function checkFlag(field) {
-		/* document.getElementById("addUpdateFlag").value = field;
-		if(field == 'update') {
-			document.getElementById("frm1").action = "updateQuestion";
-			document.getElementById("btnSave").value = "Update";
-			$("#modelTitle").html("Edit Question");
-		}
-		else if(field == 'add') {
-			//$("#cke_1_contents").html('');
-			CKEDITOR.instances['answer'].setData('');
-       		document.getElementById('question').value = "";
-       		document.getElementById('status').selectedIndex = 0;
-       		document.getElementById('categoryId').selectedIndex = 0;
-			document.getElementById("btnSave").value = "Save";
-			$("#modelTitle").html("Add New Question");
-		} else if (field == 'search') {
-			document.getElementById("frm1").method = "GET";
-			document.getElementById("frm1").action = "showques";
-			document.getElementById("frm1").submit();
-		} */
+function checkFlag(field) {
+	document.getElementById("addUpdateFlag").value = field;
+	if(field == 'update') {
+		document.getElementById("frm1").action = "updatecategory";
+		document.getElementById("btnSave").value = "Update";
+		$("#modelTitle").html("Edit Category");
 	}
+	else if(field == 'add') {
+		//$("#cke_1_contents").html('');
+		$(":text").val("");
+   		//document.getElementById('categoryId').selectedIndex = 0;
+		document.getElementById("btnSave").value = "Save";
+		$("#modelTitle").html("Add Category");
+	} else if (field == 'search') {
+		/* document.getElementById("frm1").method = "GET";
+		document.getElementById("frm1").action = "showques";
+		document.getElementById("frm1").submit(); */
+	}
+}
 </script>
 <script type="text/javascript">
         function onClickMethodQuestion(quesId){
-        	document.getElementById("status").innerHTML = "";
+        	
+        	clearAll();
+        	if(quesId == 0) {
+            	$.get("getopenadd", function(data) {
+    	            var status = document.getElementById("status");
+    	            for(var i = 0;i < data.statusList.length;i++) {
+    	            	status.options[status.options.length] = new Option(data.statusList[i].status);
+    	            	status.options[i].value = data.statusList[i].id;
+    	            } 
+    	            
+    	            var type = document.getElementById("type");
+    	            for(var i = 0;i < data.typeList.length;i++) {
+    	            	type.options[type.options.length] = new Option(data.typeList[i].typeName);
+    	            	type.options[i].value = data.typeList[i].typeId;
+    	            }
+    	            
+    	            var highlight = document.getElementById("highlight");
+    	            for(var i = 0;i < data.highlightList.length;i++) {
+    	            	highlight.options[highlight.options.length] = new Option(data.highlightList[i].typeName);
+    	            	highlight.options[i].value = data.highlightList[i].typeId;
+    	            }
+    	        });        		
+        	} else {
+        		$.get("getcategory/categoryId",{"categoryId" : quesId}, function(data) {
+                    cId = data.categoryId;
+                    $("#category").val(data.name);
+
+                    var categoryType = document.getElementById("type");
+                    var categoryList = data.typeList;
+                    for(var i = 0;i < categoryList.length;i++) {
+                    	categoryType.options[categoryType.options.length] = new Option(categoryList[i].typeName);
+                    	categoryType.options[i].value = categoryList[i].typeId;
+                    	if(categoryList[i].typeId == data.typeId) {
+                    		document.getElementById("type").selectedIndex = i;
+                    	}
+                    }
+                    
+                    var highlight = document.getElementById("highlight");
+                    var highlightList = data.highlightList;
+                    for(var i = 0;i < highlightList.length;i++) {
+                    	highlight.options[highlight.options.length] = new Option(highlightList[i].typeName);
+                    	highlight.options[i].value = highlightList[i].typeId;
+                    	if(highlightList[i].typeId == data.highlightId) {
+                    		document.getElementById("highlight").selectedIndex = i;
+                    	}
+                    }
+                    
+                    var status = document.getElementById("status");
+                    var statusList = data.statusList;
+                    for(var i = 0;i < statusList.length;i++) {
+                    	status.options[status.options.length] = new Option(statusList[i].status);
+                    	status.options[i].value = statusList[i].id;
+                    	if(statusList[i].id == data.statusId) {
+                    		document.getElementById("status").selectedIndex = i;
+                    	}
+                    }
+               	});
+        	}
+        }
+        
+        function clearAll() {
+           	$("#category").val("");
+           	document.getElementById("status").innerHTML = "";
         	document.getElementById("type").innerHTML = "";
         	document.getElementById("highlight").innerHTML = "";
-        	$.get("getopenadd", function(data) {
-	           
-	            var status = document.getElementById("status");
-	            for(var i = 0;i < data.statusList.length;i++) {
-	            	status.options[status.options.length] = new Option(data.statusList[i].status);
-	            	status.options[i].value = data.statusList[i].id;
-	            } 
-	            
-	            var type = document.getElementById("type");
-	            for(var i = 0;i < data.typeList.length;i++) {
-	            	type.options[type.options.length] = new Option(data.typeList[i].typeName);
-	            	type.options[i].value = data.typeList[i].typeId;
-	            }
-	            
-	            var highlight = document.getElementById("highlight");
-	            for(var i = 0;i < data.highlightList.length;i++) {
-	            	highlight.options[highlight.options.length] = new Option(data.highlightList[i].typeName);
-	            	highlight.options[i].value = data.highlightList[i].typeId;
-	            }
-	        });
         }
 </script>
 </head>
@@ -227,7 +267,7 @@ textarea{
 						<tr class="info">
 							<td>${obj.typeName}</td>							
 							<td>${obj.name}</td>
-							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj1.questionId}')">Update</a> / <a href="deleteQues/sta/${status}/quesId/${obj1.questionId}">Delete</a> / <a href="<c:url value='/showquestionbyid/${obj1.questionId}'/>">View Detail</a></td>
+							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.categoryId}')">Update</a> / <a href="deleteQues/sta/${status}/quesId/${obj1.questionId}">Delete</a> / <a href="<c:url value='/showquestionbyid/${obj1.questionId}'/>">View Detail</a></td>
 						</tr>
 					</c:forEach>
 				</tbody>

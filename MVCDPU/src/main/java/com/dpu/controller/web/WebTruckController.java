@@ -73,6 +73,14 @@ public class WebTruckController {
 		return truckRequest;
 	}
 	
+	@RequestMapping(value = "/updatetruck" , method = RequestMethod.POST)
+	public ModelAndView updateTruck(@ModelAttribute("truck") TruckResponse truckResponse, @RequestParam("truckid") Long truckId) {
+		ModelAndView modelAndView = new ModelAndView();
+		truckService.update(truckId, truckResponse);
+		modelAndView.setViewName("redirect:showtruck");
+		return modelAndView;
+	}
+	
 	/*@RequestMapping(value = "/saveCat" , method = RequestMethod.POST)
 	public ModelAndView saveCategory(@RequestParam("uploadFile") MultipartFile multipart, @RequestParam("title") String title, @RequestParam("status") int status, HttpServletRequest request) {
 		ModelAndView modelAndView = null;

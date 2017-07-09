@@ -74,23 +74,19 @@ public class WebDriverController {
 		return driverReq;
 	}
 	
-	/*@RequestMapping(value = "/updateCat" , method = RequestMethod.POST)
-	public ModelAndView updateCategory(@ModelAttribute("cat") CategoryBean categoryBean, @RequestParam("categoryid") int categoryId) {
+	@RequestMapping(value = "/updatedriver" , method = RequestMethod.POST)
+	public ModelAndView updateDriver(@ModelAttribute("driver") DriverReq driverReq, @RequestParam("driverid") Long driverId) {
 		ModelAndView modelAndView = new ModelAndView();
-		categoryBean.setCategoryId(categoryId);
-		categoryService.updateCategory(categoryBean);
-		modelAndView.setViewName("redirect:showcat");
+		driverService.updateDriver(driverId, driverReq);
+		modelAndView.setViewName("redirect:showdriver");
 		return modelAndView;
 	}
 	
-	@RequestMapping(value = "/deleteCat/sta/{sta}/catId/{catId}" , method = RequestMethod.GET)
+	/*@RequestMapping(value = "/deleteCat/sta/{sta}/catId/{catId}" , method = RequestMethod.GET)
 	public ModelAndView deleteCategory(@PathVariable("catId") int categoryId,@PathVariable("sta") int status) {
 		ModelAndView modelAndView = new ModelAndView();
 		categoryService.softDeleteCategory(status, categoryId);
 		modelAndView.setViewName("redirect:/showcat");
 		return modelAndView;
-	}
-	
-	*/
-	
+	}*/
 }

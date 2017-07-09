@@ -74,6 +74,14 @@ public class WebTerminalController {
 		return terminalResponse;
 	}
 	
+	@RequestMapping(value = "/updateterminal" , method = RequestMethod.POST)
+	public ModelAndView updateTerminal(@ModelAttribute("terminal") TerminalResponse terminalResponse, @RequestParam("terminalid") Long terminalId) {
+		ModelAndView modelAndView = new ModelAndView();
+		terminalService.updateTerminal(terminalId, terminalResponse);
+		modelAndView.setViewName("redirect:showterminal");
+		return modelAndView;
+	}
+	
 	/*@RequestMapping(value = "/saveCat" , method = RequestMethod.POST)
 	public ModelAndView saveCategory(@RequestParam("uploadFile") MultipartFile multipart, @RequestParam("title") String title, @RequestParam("status") int status, HttpServletRequest request) {
 		ModelAndView modelAndView = null;

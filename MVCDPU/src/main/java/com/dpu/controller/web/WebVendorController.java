@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.dpu.model.DivisionReq;
 import com.dpu.model.VendorModel;
 import com.dpu.service.VendorService;
 
@@ -60,6 +61,14 @@ public class WebVendorController {
 			logger.info("Exception in getCategory is: " + e);
 		}
 		return vendorModel;
+	}
+	
+	@RequestMapping(value = "/updatevendor" , method = RequestMethod.POST)
+	public ModelAndView updateVendor(@ModelAttribute("vendor") VendorModel vendorModel, @RequestParam("vendorid") Long vendorId) {
+		ModelAndView modelAndView = new ModelAndView();
+		vendorService.update(divisionId, divisionReq);
+		modelAndView.setViewName("redirect:showdivision");
+		return modelAndView;
 	}
 	
 	/*@RequestMapping(value = "/saveCat" , method = RequestMethod.POST)

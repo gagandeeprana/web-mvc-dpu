@@ -52,39 +52,98 @@ textarea{
 </script>
 <script type="text/javascript">
 	function checkFlag(field) {
-		/* document.getElementById("addUpdateFlag").value = field;
+		document.getElementById("addUpdateFlag").value = field;
 		if(field == 'update') {
-			document.getElementById("frm1").action = "updateQuestion";
+			document.getElementById("frm1").action = "updateshipper";
 			document.getElementById("btnSave").value = "Update";
-			$("#modelTitle").html("Edit Question");
+			$("#modelTitle").html("Edit Location");
 		}
 		else if(field == 'add') {
 			//$("#cke_1_contents").html('');
-			CKEDITOR.instances['answer'].setData('');
-       		document.getElementById('question').value = "";
-       		document.getElementById('status').selectedIndex = 0;
-       		document.getElementById('categoryId').selectedIndex = 0;
+			$(":text").val("");
+	   		//document.getElementById('categoryId').selectedIndex = 0;
 			document.getElementById("btnSave").value = "Save";
-			$("#modelTitle").html("Add New Question");
+			$("#modelTitle").html("Add Location");
 		} else if (field == 'search') {
-			document.getElementById("frm1").method = "GET";
+			/* document.getElementById("frm1").method = "GET";
 			document.getElementById("frm1").action = "showques";
-			document.getElementById("frm1").submit();
-		} */
+			document.getElementById("frm1").submit(); */
+		}
 	}
 </script>
 <script type="text/javascript">
-        function onClickMethodQuestion(quesId){
-        	document.getElementById("statusId").innerHTML = "";
-        	$.get("shipper/getopenadd", function(data) {
-	           
-	            var status = document.getElementById("statusId");
-	            for(var i = 0;i < data.statusList.length;i++) {
-	            	status.options[status.options.length] = new Option(data.statusList[i].status);
-	            	status.options[i].value = data.statusList[i].id;
-	            } 
-	        });
-        }
+    function onClickMethodQuestion(quesId){
+    	
+    	clearAll();
+    	if(quesId == 0) {
+	     	$.get("shipper/getopenadd", function(data) {
+	          var status = document.getElementById("statusId");
+	          for(var i = 0;i < data.statusList.length;i++) {
+	          	status.options[status.options.length] = new Option(data.statusList[i].status);
+	          	status.options[i].value = data.statusList[i].id;
+	          } 
+	      });
+    	} else {
+    		$.get("getshipper/shipperId",{"shipperId" : quesId}, function(data) {
+                cId = data.shipperId;
+            	$("#location").val(data.locationName);
+            	$("#contact").val(data.contact);
+            	$("#address").val(data.address);
+            	$("#position").val(data.position);
+            	$("#unitNo").val(data.unit);
+            	$("#phone").val(data.phone);
+            	$("#ext").val(data.ext);
+            	$("#city").val(data.city);
+            	$("#fax").val(data.fax);
+            	$("#prefix").val(data.prefix);
+            	$("#province").val(data.provinceState);
+            	$("#tollfree").val(data.tollFree);
+            	$("#plant").val(data.plant);
+            	$("#cellnumber").val(data.cellNumber);
+            	$("#zone").val(data.zone);
+            	$("#email").val(data.email);
+            	$("#leadTime").val(data.leadTime);
+            	$("#timeZone").val(data.timeZone);
+            	$("#importer").val(data.importer);
+            	$("#internalNotes").val(data.internalNotes);
+            	$("#standardNotes").val(data.standardNotes);
+                
+                var status = document.getElementById("statusId");
+                var statusList = data.statusList;
+                for(var i = 0;i < statusList.length;i++) {
+                	status.options[status.options.length] = new Option(statusList[i].status);
+                	status.options[i].value = statusList[i].id;
+                	if(statusList[i].id == data.statusId) {
+                		document.getElementById("statusId").selectedIndex = i;
+                	}
+                }
+           	});
+    	}
+    }
+    function clearAll() {
+    	$("#location").val("");
+    	$("#contact").val("");
+    	$("#address").val("");
+    	$("#position").val("");
+    	$("#unitNo").val("");
+    	$("#phone").val("");
+    	$("#ext").val("");
+    	$("#city").val("");
+    	$("#fax").val("");
+    	$("#prefix").val("");
+    	$("#province").val("");
+    	$("#tollfree").val("");
+    	$("#plant").val("");
+    	$("#cellnumber").val("");
+    	$("#zone").val("");
+    	$("#email").val("");
+    	$("#leadTime").val("");
+    	$("#timeZone").val("");
+    	$("#importer").val("");
+    	$("#internalNotes").val("");
+    	$("#standardNotes").val("");
+       	document.getElementById("statusId").innerHTML = "";
+    }
 </script>
 </head>
 <body>
@@ -366,7 +425,7 @@ textarea{
 													<span class="input-group-addon">
 														 <i class="glyphicon glyphicon-inbox"></i>												
 													</span>
-													<textarea class="form-control" rows="1" cols="1" placeholder="Internal Notes" name="internalNotes"></textarea>
+													<textarea class="form-control" rows="1" cols="1" placeholder="Internal Notes" name="internalNotes" id = "internalNotes"></textarea>
 												</div>
 											</div>	
 											<div class="col-sm-6">
@@ -374,7 +433,7 @@ textarea{
 													<span class="input-group-addon">
 														 <i class="glyphicon glyphicon-inbox"></i>												
 													</span>
-													<textarea class="form-control" rows="1" cols="1" placeholder="Standard Notes" name="standardNotes" ></textarea>
+													<textarea class="form-control" rows="1" cols="1" placeholder="Standard Notes" name="standardNotes" id="standardNotes"></textarea>
 												</div>
 											</div>	
 										</div>
@@ -458,7 +517,7 @@ textarea{
 							<td>${obj.phone}</td>
 							<td>${obj.email}</td>
 							<td>${obj.importer}</td>
-							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj1.questionId}')">Update</a> / <a href="deleteQues/sta/${status}/quesId/${obj1.questionId}">Delete</a> / <a href="<c:url value='/showquestionbyid/${obj1.questionId}'/>">View Detail</a></td>
+							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.shipperId}')">Update</a> / <a href="deleteQues/sta/${status}/quesId/${obj1.questionId}">Delete</a> / <a href="<c:url value='/showquestionbyid/${obj1.questionId}'/>">View Detail</a></td>
 						</tr>
 					</c:forEach>
 				</tbody>

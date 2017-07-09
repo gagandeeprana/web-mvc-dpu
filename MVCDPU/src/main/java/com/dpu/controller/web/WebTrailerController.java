@@ -74,6 +74,14 @@ public class WebTrailerController {
 		return trailerRequest;
 	}
 	
+	@RequestMapping(value = "/updatetrailer" , method = RequestMethod.POST)
+	public ModelAndView updateTrailer(@ModelAttribute("trailer") TrailerRequest trailerRequest, @RequestParam("trailerid") Long trailerId) {
+		ModelAndView modelAndView = new ModelAndView();
+		trailerService.update(trailerId, trailerRequest);
+		modelAndView.setViewName("redirect:showtrailer");
+		return modelAndView;
+	}
+	
 	/*@RequestMapping(value = "/saveCat" , method = RequestMethod.POST)
 	public ModelAndView saveCategory(@RequestParam("uploadFile") MultipartFile multipart, @RequestParam("title") String title, @RequestParam("status") int status, HttpServletRequest request) {
 		ModelAndView modelAndView = null;

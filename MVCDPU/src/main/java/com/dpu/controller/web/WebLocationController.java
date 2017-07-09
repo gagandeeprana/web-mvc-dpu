@@ -73,6 +73,14 @@ public class WebLocationController {
 		return shipperResponse;
 	}
 	
+	@RequestMapping(value = "/updateshipper" , method = RequestMethod.POST)
+	public ModelAndView updateShipper(@ModelAttribute("shipper") ShipperResponse shipperResponse, @RequestParam("shipperid") Long shipperId) {
+		ModelAndView modelAndView = new ModelAndView();
+		shipperService.update(shipperId, shipperResponse);
+		modelAndView.setViewName("redirect:showshipper");
+		return modelAndView;
+	}
+	
 	/*@RequestMapping(value = "/saveCat" , method = RequestMethod.POST)
 	public ModelAndView saveCategory(@RequestParam("uploadFile") MultipartFile multipart, @RequestParam("title") String title, @RequestParam("status") int status, HttpServletRequest request) {
 		ModelAndView modelAndView = null;

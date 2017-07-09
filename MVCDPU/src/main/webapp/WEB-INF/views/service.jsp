@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Terminal</title>
+<title>Service</title>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@page isELIgnored="false"%>
@@ -51,53 +51,93 @@ textarea{
 	});
 </script>
 <script type="text/javascript">
-	function checkFlag(field) {
-		/* document.getElementById("addUpdateFlag").value = field;
-		if(field == 'update') {
-			document.getElementById("frm1").action = "updateQuestion";
-			document.getElementById("btnSave").value = "Update";
-			$("#modelTitle").html("Edit Question");
-		}
-		else if(field == 'add') {
-			//$("#cke_1_contents").html('');
-			CKEDITOR.instances['answer'].setData('');
-       		document.getElementById('question').value = "";
-       		document.getElementById('status').selectedIndex = 0;
-       		document.getElementById('categoryId').selectedIndex = 0;
-			document.getElementById("btnSave").value = "Save";
-			$("#modelTitle").html("Add New Question");
-		} else if (field == 'search') {
-			document.getElementById("frm1").method = "GET";
-			document.getElementById("frm1").action = "showques";
-			document.getElementById("frm1").submit();
-		} */
+function checkFlag(field) {
+	document.getElementById("addUpdateFlag").value = field;
+	if(field == 'update') {
+		document.getElementById("frm1").action = "updateservice";
+		document.getElementById("btnSave").value = "Update";
+		$("#modelTitle").html("Edit Service");
 	}
+	else if(field == 'add') {
+		//$("#cke_1_contents").html('');
+		$(":text").val("");
+   		//document.getElementById('categoryId').selectedIndex = 0;
+		document.getElementById("btnSave").value = "Save";
+		$("#modelTitle").html("Add Service");
+	} else if (field == 'search') {
+		/* document.getElementById("frm1").method = "GET";
+		document.getElementById("frm1").action = "showques";
+		document.getElementById("frm1").submit(); */
+	}
+}
 </script>
 <script type="text/javascript">
         function onClickMethodQuestion(quesId){
+        	
+        	clearAll();
+        	if(quesId == 0) {
+        		$.get("service/getopenadd", function(data) {
+     	           
+    	            var textField = document.getElementById("textFieldId");
+    	            for(var i = 0;i < data.textFieldList.length;i++) {
+    	            	textField.options[textField.options.length] = new Option(data.textFieldList[i].typeName);
+    	            	textField.options[i].value = data.textFieldList[i].typeId;
+    	            } 
+    	            
+    	            var associationWith = document.getElementById("associationId");
+    	            for(var i = 0;i < data.associatedWithList.length;i++) {
+    	            	associationWith.options[associationWith.options.length] = new Option(data.associatedWithList[i].typeName);
+    	            	associationWith.options[i].value = data.associatedWithList[i].typeId;
+    	            }
+    	            
+    	            var status = document.getElementById("statusId");
+    	            for(var i = 0;i < data.statusList.length;i++) {
+    	            	status.options[status.options.length] = new Option(data.statusList[i].status);
+    	            	status.options[i].value = data.statusList[i].id;
+    	            }
+    	        });        		
+        	} else {
+        		$.get("getservice/serviceId",{"serviceId" : quesId}, function(data) {
+                    cId = data.serviceId;
+                    $("#serviceName").val(data.serviceName);
+
+                    var textField = document.getElementById("textFieldId");
+                    var textFieldList = data.textFieldList;
+                    for(var i = 0;i < textFieldList.length;i++) {
+                    	textField.options[textField.options.length] = new Option(textFieldList[i].typeName);
+                    	textField.options[i].value = textFieldList[i].typeId;
+                    	if(textFieldList[i].typeId == data.textFieldId) {
+                    		document.getElementById("textFieldId").selectedIndex = i;
+                    	}
+                    }
+                    
+                    var association = document.getElementById("associationId");
+                    var associationList = data.associatedWithList;
+                    for(var i = 0;i < associationList.length;i++) {
+                    	association.options[association.options.length] = new Option(associationList[i].typeName);
+                    	association.options[i].value = associationList[i].typeId;
+                    	if(associationList[i].typeId == data.associationWithId) {
+                    		document.getElementById("associationId").selectedIndex = i;
+                    	}
+                    }
+                    
+                    var status = document.getElementById("statusId");
+                    var statusList = data.statusList;
+                    for(var i = 0;i < statusList.length;i++) {
+                    	status.options[status.options.length] = new Option(statusList[i].status);
+                    	status.options[i].value = statusList[i].id;
+                    	if(statusList[i].id == data.statusId) {
+                    		document.getElementById("statusId").selectedIndex = i;
+                    	}
+                    }
+               	});
+        	}
+        }
+        function clearAll() {
+           	$("#serviceName").val("");
         	document.getElementById("textFieldId").innerHTML = "";
         	document.getElementById("associationId").innerHTML = "";
         	document.getElementById("statusId").innerHTML = "";
-        	$.get("service/getopenadd", function(data) {
-	           
-	            var textField = document.getElementById("textFieldId");
-	            for(var i = 0;i < data.textFieldList.length;i++) {
-	            	textField.options[textField.options.length] = new Option(data.textFieldList[i].typeName);
-	            	textField.options[i].value = data.textFieldList[i].typeId;
-	            } 
-	            
-	            var associationWith = document.getElementById("associationId");
-	            for(var i = 0;i < data.associatedWithList.length;i++) {
-	            	associationWith.options[associationWith.options.length] = new Option(data.associatedWithList[i].typeName);
-	            	associationWith.options[i].value = data.associatedWithList[i].typeId;
-	            }
-	            
-	            var status = document.getElementById("statusId");
-	            for(var i = 0;i < data.statusList.length;i++) {
-	            	status.options[status.options.length] = new Option(data.statusList[i].status);
-	            	status.options[i].value = data.statusList[i].id;
-	            }
-	        });
         }
 </script>
 </head>
@@ -231,7 +271,7 @@ textarea{
 							<td>${obj.textField}</td>
 							<td>${obj.associationWith}</td>
 							<td>${obj.status}</td>
-							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj1.questionId}')">Update</a> / <a href="deleteQues/sta/${status}/quesId/${obj1.questionId}">Delete</a> / <a href="<c:url value='/showquestionbyid/${obj1.questionId}'/>">View Detail</a></td>
+							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.serviceId}')">Update</a> / <a href="deleteQues/sta/${status}/quesId/${obj1.questionId}">Delete</a> / <a href="<c:url value='/showquestionbyid/${obj1.questionId}'/>">View Detail</a></td>
 						</tr>
 					</c:forEach>
 				</tbody>

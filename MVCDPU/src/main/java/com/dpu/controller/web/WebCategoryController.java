@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.dpu.entity.Category;
 import com.dpu.model.CategoryReq;
 import com.dpu.service.CategoryService;
 
@@ -63,15 +62,23 @@ public class WebCategoryController {
 	}
 	
 	@RequestMapping(value = "/getcategory/categoryId" , method = RequestMethod.GET)
-	@ResponseBody  public Category getCategory(@RequestParam("categoryId") Long categoryId) {
-		Category category = null;
+	@ResponseBody  public CategoryReq getCategory(@RequestParam("categoryId") Long categoryId) {
+		CategoryReq categoryReq = null;
 		try {
-			category = categoryService.getCategory(categoryId);
+			categoryReq = categoryService.get(categoryId);
 		} catch (Exception e) {
 			System.out.println(e);
 			logger.info("Exception in getCategory is: " + e);
 		}
-		return category;
+		return categoryReq;
+	}
+	
+	@RequestMapping(value = "/updatecategory" , method = RequestMethod.POST)
+	public ModelAndView updateCategory(@ModelAttribute("cat") CategoryReq categoryReq, @RequestParam("categoryid") Long categoryId) {
+		ModelAndView modelAndView = new ModelAndView();
+		categoryService.update(categoryId, categoryReq);
+		modelAndView.setViewName("redirect:showcategory");
+		return modelAndView;
 	}
 	
 	/*@RequestMapping(value = "/saveCat" , method = RequestMethod.POST)

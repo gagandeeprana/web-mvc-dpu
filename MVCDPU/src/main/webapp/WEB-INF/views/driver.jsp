@@ -60,7 +60,7 @@ textarea{
 		}
 		else if(field == 'add') {
 			//$("#cke_1_contents").html('');
-			$(":text").val("");
+			//$(":text").val("");
        		//document.getElementById('categoryId').selectedIndex = 0;
 			document.getElementById("btnSave").value = "Save";
 			$("#modelTitle").html("Add Driver");
@@ -75,12 +75,6 @@ textarea{
         function onClickMethodQuestion(quesId){
         	clearAll();
         	if(quesId == 0) {
-	        	/* document.getElementById("statusId").innerHTML = "";
-	        	document.getElementById("divisionId").innerHTML = "";
-	        	document.getElementById("terminalId").innerHTML = "";
-	        	document.getElementById("categoryId").innerHTML = "";
-	        	document.getElementById("roleId").innerHTML = "";
-	        	document.getElementById("classId").innerHTML = "";  */       	
 	        	$.get("driver/getopenadd", function(data) {
 		           
 		            var status = document.getElementById("statusId");
@@ -121,8 +115,8 @@ textarea{
 		        });
         	} else {
         		$.get("getdriver/driverId",{"driverId" : quesId}, function(data) {
-		            cId = data.resultList.driverId;
-	            	$("#driverCode").val(data.resultList.driverCode);
+		            document.getElementById("driverid").value = data.resultList.driverId;
+		            $("#driverCode").val(data.resultList.driverCode);
 	            	$("#email").val(data.resultList.email);
 	            	$("#firstName").val(data.resultList.firstName);
 	            	$("#home").val(data.resultList.home);
@@ -235,7 +229,7 @@ textarea{
 					<div class="modal fade" id="myModal" role="dialog">
 					    <div class="modal-dialog">
 						<form action="savedriver" method="POST" name="driver" id="frm1">
-						<input type="hidden" id = "questionid" name= "quesid" value = "" />					
+						<input type="hidden" id = "driverid" name= "driverid" value = "" />					
 						<input type="hidden" id = "addUpdateFlag" value = "" />					
 	
 					      <!-- Modal content-->
