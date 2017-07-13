@@ -17,6 +17,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.dpu.entity.Status;
 import com.dpu.model.DivisionReq;
+import com.dpu.model.Failed;
+import com.dpu.model.Success;
 import com.dpu.service.DivisionService;
 import com.dpu.service.StatusService;
 
@@ -85,36 +87,22 @@ public class WebDivisionController {
 		modelAndView.setViewName("redirect:showdivision");
 		return modelAndView;
 	}
-	
-	/*@RequestMapping(value = "/updateCat" , method = RequestMethod.POST)
-	public ModelAndView updateCategory(@ModelAttribute("cat") CategoryBean categoryBean, @RequestParam("categoryid") int categoryId) {
+
+	@RequestMapping(value = "/deletedivision/{divisionid}" , method = RequestMethod.GET)
+	public ModelAndView deleteDivision(@RequestParam("divisionid") Long divisionId) {
 		ModelAndView modelAndView = new ModelAndView();
-		categoryBean.setCategoryId(categoryId);
-		categoryService.updateCategory(categoryBean);
-		modelAndView.setViewName("redirect:showcat");
-		return modelAndView;
-	}
-	
-	@RequestMapping(value = "/deleteCat/sta/{sta}/catId/{catId}" , method = RequestMethod.GET)
-	public ModelAndView deleteCategory(@PathVariable("catId") int categoryId,@PathVariable("sta") int status) {
-		ModelAndView modelAndView = new ModelAndView();
-		categoryService.softDeleteCategory(status, categoryId);
-		modelAndView.setViewName("redirect:/showcat");
-		return modelAndView;
-	}
-	
-	@RequestMapping(value = "/getCat/catId" , method = RequestMethod.GET)
-	@ResponseBody  public CategoryBean getCategory(@RequestParam("catId") int categoryId) {
-		CategoryBean categoryBean = null;
-		try {
-			categoryBean = categoryService.getCategoryInfoById(categoryId);
-		} catch (Exception e) {
-			System.out.println(e);
-			logger.info("Exception in getCategory is: " + e);
+		Object response = divisionService.delete(divisionId);
+		String msg = null;
+		if(response instanceof Failed) {
+			msg = ((Failed) response).getMessage();
+		} else {
+			msg = ((Success) response).getMessage();
+			modelAndView.addObject("LIST_DIVISION", ((Success) response).getResultList());
 		}
-		return categoryBean;
-	}*/
-	
-	
-	
+		if(msg != null && msg.length() > 0) {
+			modelAndView.addObject("msg", msg);
+		}
+		modelAndView.setViewName("division");
+		return modelAndView;
+	}
 }

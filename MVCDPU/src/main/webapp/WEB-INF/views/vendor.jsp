@@ -410,7 +410,7 @@ function checkFlag(field) {
 							<td>${obj.phone}</td>
 							<td>${obj.fax}</td>
 							<td>${obj.afterHours}</td>
-							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.vendorId}')">Update</a> / <a href="deleteQues/sta/${status}/quesId/${obj1.questionId}">Delete</a> / <a href="<c:url value='/showquestionbyid/${obj1.questionId}'/>">View Detail</a></td>
+							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.vendorId}')">Update</a> / <a href="deletevendor/${obj.vendorId}">Delete</a></td>
 						</tr>
 					</c:forEach>
 				</tbody>

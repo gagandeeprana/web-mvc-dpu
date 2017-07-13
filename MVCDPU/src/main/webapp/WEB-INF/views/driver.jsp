@@ -540,7 +540,7 @@ textarea{
 							<td>${obj.cellular}</td>
 							<td>${obj.pager}</td>
 							<td>${obj.email}</td>
-							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.driverId}')">Update</a> / <a href="deleteQues/sta/${status}/quesId/${obj1.questionId}">Delete</a> / <a href="<c:url value='/showquestionbyid/${obj1.questionId}'/>">View Detail</a></td>
+							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.driverId}')">Update</a> / <a href="deletedriver/${obj.driverId}">Delete</a></td>
 						</tr>
 					</c:forEach>
 				</tbody>

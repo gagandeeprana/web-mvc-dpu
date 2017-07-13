@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -82,11 +83,11 @@ public class WebDriverController {
 		return modelAndView;
 	}
 	
-	/*@RequestMapping(value = "/deleteCat/sta/{sta}/catId/{catId}" , method = RequestMethod.GET)
-	public ModelAndView deleteCategory(@PathVariable("catId") int categoryId,@PathVariable("sta") int status) {
+	@RequestMapping(value = "/deletedriver/{driverid}" , method = RequestMethod.GET)
+	public ModelAndView deleteDriver(@PathVariable("driverid") Long driverId) {
 		ModelAndView modelAndView = new ModelAndView();
-		categoryService.softDeleteCategory(status, categoryId);
-		modelAndView.setViewName("redirect:/showcat");
+		driverService.deleteDriver(driverId);
+		modelAndView.setViewName("redirect:/showdriver");
 		return modelAndView;
-	}*/
+	}
 }

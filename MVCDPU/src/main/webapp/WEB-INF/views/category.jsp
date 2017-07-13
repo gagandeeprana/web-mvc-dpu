@@ -267,7 +267,7 @@ function checkFlag(field) {
 						<tr class="info">
 							<td>${obj.typeName}</td>							
 							<td>${obj.name}</td>
-							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.categoryId}')">Update</a> / <a href="deleteQues/sta/${status}/quesId/${obj1.questionId}">Delete</a> / <a href="<c:url value='/showquestionbyid/${obj1.questionId}'/>">View Detail</a></td>
+							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.categoryId}')">Update</a> / <a href="deletecategory/${obj.categoryId}">Delete</a></td>
 						</tr>
 					</c:forEach>
 				</tbody>

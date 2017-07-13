@@ -111,6 +111,7 @@ function checkFlag(field) {
                	});
         	}
         }
+        
         function clearAll() {
         	$("#divisionCode").val("");
            	$("#divisionName").val("");
@@ -122,6 +123,14 @@ function checkFlag(field) {
            	$("#invoicePrefix").val("");
            	document.getElementById("status").innerHTML = "";
         }
+        
+        function deleteItem(delId) {
+        	$.get("deletedivision/divisionid",{"divisionid" : delId}, function(data) {
+        		alert(data);
+        		alert($(data).find('#msg').val());
+        	});
+        }
+        
 </script>
 <script src="//cdn.ckeditor.com/4.5.11/basic/ckeditor.js"></script>
 </head>
@@ -138,7 +147,19 @@ function checkFlag(field) {
 				      <!-- Modal content-->
 				      	<form action="savedivision" method="POST" name="division" id="frm1" enctype = "multipart/form-data">
 						<input type="hidden" id = "addUpdateFlag" value = "" />
-						<input type="hidden" id = "divisionid" name = "divisionid" value = "" />					      
+						<input type="hidden" id = "divisionid" name = "divisionid" value = "" />
+						<% 
+							if(request.getParameter("msg") != null) {
+								
+						%>
+							<input type="hidden" id = "msg" name = "msg" value = "<%=request.getParameter("msg")%>" />								
+						<%
+							} else {
+						%>	
+							<input type="hidden" id = "msg" name = "msg" value ="" />																
+						<%
+							}
+						%>      
 				      <div class="modal-content">
 				        <div class="modal-header">
 				          <button type="button" class="close" data-dismiss="modal">&times;</button>
@@ -313,7 +334,7 @@ function checkFlag(field) {
 							<td>${obj.divisionName}</td>
 							<td>${obj.fedral}</td>
 							<td>${obj.provincial}</td>
-							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.divisionId}')">Update</a> / <a href="deleteQues/sta/${status}/quesId/${obj1.questionId}">Delete</a> / <a href="<c:url value='/showquestionbyid/${obj1.questionId}'/>">View Detail</a></td>
+							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.divisionId}')">Update</a> / <a href="#" onclick="deleteItem('${obj.divisionId}')">Delete</a></td>
 						</tr>
 					</c:forEach>
 				</tbody>

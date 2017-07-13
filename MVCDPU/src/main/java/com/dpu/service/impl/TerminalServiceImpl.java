@@ -265,6 +265,7 @@ public class TerminalServiceImpl implements TerminalService {
 		logger.info("TerminalServiceImpl updateTerminal() starts, terminalId :"+id);
 		
 		try {
+			terminalResponse.setStatusId(1l);
 			Terminal terminal= setTerminalValues(terminalResponse);
 			terminal.setTerminalId(id);
 			terminalDao.update(terminal);

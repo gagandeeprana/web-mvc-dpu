@@ -517,7 +517,7 @@ textarea{
 							<td>${obj.phone}</td>
 							<td>${obj.email}</td>
 							<td>${obj.importer}</td>
-							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.shipperId}')">Update</a> / <a href="deleteQues/sta/${status}/quesId/${obj1.questionId}">Delete</a> / <a href="<c:url value='/showquestionbyid/${obj1.questionId}'/>">View Detail</a></td>
+							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.shipperId}')">Update</a> / <a href="deleteshipper/${obj.shipperId}">Delete</a></td>
 						</tr>
 					</c:forEach>
 				</tbody>

@@ -385,7 +385,7 @@ textarea{
 							<td>${obj.terminalName}</td>
 							<td>${obj.truckType}</td>
 							<td>${obj.finance}</td>
-							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.truckId}')">Update</a> / <a href="deleteQues/sta/${status}/quesId/${obj1.questionId}">Delete</a> / <a href="<c:url value='/showquestionbyid/${obj1.questionId}'/>">View Detail</a></td>
+							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.truckId}')">Update</a> / <a href="deletetruck/${obj.truckId}">Delete</a></td>
 						</tr>
 					</c:forEach>
 				</tbody>

@@ -364,7 +364,7 @@ function checkFlag(field) {
 						<th>Usage</th>
 						<th>Division</th>
 						<th>Terminal</th>
-						<th>Truck Type</th>
+						<th>Trailer Type</th>
 						<th>Finance</th>
 						<th>Links</th>
 					</tr>
@@ -382,7 +382,7 @@ function checkFlag(field) {
 							<td>${obj.terminal}</td>
 							<td>${obj.trailerType}</td>
 							<td>${obj.finance}</td>
-							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.trailerId}')">Update</a> / <a href="deleteQues/sta/${status}/quesId/${obj1.questionId}">Delete</a> / <a href="<c:url value='/showquestionbyid/${obj1.questionId}'/>">View Detail</a></td>
+							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.trailerId}')">Update</a> / <a href="deletetrailer/${obj.trailerId}">Delete</a></td>
 						</tr>
 					</c:forEach>
 				</tbody>
