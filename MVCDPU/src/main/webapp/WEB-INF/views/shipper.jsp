@@ -85,7 +85,7 @@ textarea{
 	      });
     	} else {
     		$.get("getshipper/shipperId",{"shipperId" : quesId}, function(data) {
-                cId = data.shipperId;
+    			document.getElementById("shipperid").value = data.shipperId;
             	$("#location").val(data.locationName);
             	$("#contact").val(data.contact);
             	$("#address").val(data.address);
@@ -156,7 +156,7 @@ textarea{
 					<div class="modal fade" id="myModal" role="dialog">
 					    <div class="modal-dialog">
 						<form action="saveshipper" method="POST" name="shipper" id="frm1">
-						<input type="hidden" id = "questionid" name= "quesid" value = "" />					
+						<input type="hidden" id = "shipperid" name= "shipperid" value = "" />					
 						<input type="hidden" id = "addUpdateFlag" value = "" />					
 	
 					      <!-- Modal content-->

@@ -160,33 +160,37 @@ public class VendorServiceImpl implements VendorService {
 				setVendorValues(vendor, vendorModel);
 				vendorDao.updateData(vendor, session);
 
-				List<VendorBillingLocationModel> vendorBillingLocations = vendorModel.getBillingLocations();
-				if (vendorBillingLocations != null && !vendorBillingLocations.isEmpty()) {
-					for (VendorBillingLocationModel vendorBillingLocationModel : vendorBillingLocations) {
-						VendorBillingLocation billingLocation = null;
-						if (vendorBillingLocationModel.getVendorBillingLocationId() != null) {
-							billingLocation = (VendorBillingLocation) session.get(VendorBillingLocation.class,
-									vendorBillingLocationModel.getVendorBillingLocationId());
+				if(vendorModel.getBillingLocations() != null && vendorModel.getBillingLocations().size() > 0) {
+					List<VendorBillingLocationModel> vendorBillingLocations = vendorModel.getBillingLocations();
+					if (vendorBillingLocations != null && !vendorBillingLocations.isEmpty()) {
+						for (VendorBillingLocationModel vendorBillingLocationModel : vendorBillingLocations) {
+							VendorBillingLocation billingLocation = null;
+							if (vendorBillingLocationModel.getVendorBillingLocationId() != null) {
+								billingLocation = (VendorBillingLocation) session.get(VendorBillingLocation.class,
+										vendorBillingLocationModel.getVendorBillingLocationId());
+							}
+							
+							VendorBillingLocation vendorBillingLocation = setBillingData(vendorBillingLocationModel, vendor,
+									billingLocation);
+							vendorDao.updateVendorBillingLocation(vendorBillingLocation, session);
 						}
-
-						VendorBillingLocation vendorBillingLocation = setBillingData(vendorBillingLocationModel, vendor,
-								billingLocation);
-						vendorDao.updateVendorBillingLocation(vendorBillingLocation, session);
 					}
 				}
 
-				List<VendorAdditionalContactsModel> additionalContactsList = vendorModel.getAdditionalContacts();
-
-				if (additionalContactsList != null && !additionalContactsList.isEmpty()) {
-					for (VendorAdditionalContactsModel additionalContacts : additionalContactsList) {
-						VendorContacts vendorContacts = null;
-						if (additionalContacts.getVendorAdditionalContactId() != null) {
-							vendorContacts = (VendorContacts) session.get(VendorContacts.class,
-									additionalContacts.getVendorAdditionalContactId());
+				if(vendorModel.getAdditionalContacts() != null && vendorModel.getAdditionalContacts().size() > 0) {
+					List<VendorAdditionalContactsModel> additionalContactsList = vendorModel.getAdditionalContacts();
+	
+					if (additionalContactsList != null && !additionalContactsList.isEmpty()) {
+						for (VendorAdditionalContactsModel additionalContacts : additionalContactsList) {
+							VendorContacts vendorContacts = null;
+							if (additionalContacts.getVendorAdditionalContactId() != null) {
+								vendorContacts = (VendorContacts) session.get(VendorContacts.class,
+										additionalContacts.getVendorAdditionalContactId());
+							}
+							VendorContacts comAdditionalContacts = setAdditionalContactData(additionalContacts, vendor,
+									vendorContacts);
+							vendorDao.updateDataAdditionalContact(comAdditionalContacts, session);
 						}
-						VendorContacts comAdditionalContacts = setAdditionalContactData(additionalContacts, vendor,
-								vendorContacts);
-						vendorDao.updateDataAdditionalContact(comAdditionalContacts, session);
 					}
 				}
 			} else {

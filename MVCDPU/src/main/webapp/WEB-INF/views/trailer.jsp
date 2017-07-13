@@ -109,7 +109,7 @@ function checkFlag(field) {
     	        });
         	} else {
         		$.get("gettrailer/trailerId",{"trailerId" : quesId}, function(data) {
-                    cId = data.trailerId;
+        			document.getElementById("trailerid").value = data.trailerId;
                    	$("#unitNo").val(data.unitNo);
                    	$("#usage").val(data.usage);
                    	$("#owner").val(data.owner);
@@ -193,7 +193,7 @@ function checkFlag(field) {
 					<div class="modal fade" id="myModal" role="dialog">
 					    <div class="modal-dialog">
 						<form action="savetrailer" method="POST" name="trailer" id="frm1">
-						<input type="hidden" id = "questionid" name= "quesid" value = "" />					
+						<input type="hidden" id = "trailerid" name= "trailerid" value = "" />					
 						<input type="hidden" id = "addUpdateFlag" value = "" />					
 	
 					      <!-- Modal content-->

@@ -98,7 +98,7 @@ function checkFlag(field) {
     	        });        		
         	} else {
         		$.get("getservice/serviceId",{"serviceId" : quesId}, function(data) {
-                    cId = data.serviceId;
+        			document.getElementById("serviceid").value = data.serviceId;
                     $("#serviceName").val(data.serviceName);
 
                     var textField = document.getElementById("textFieldId");
@@ -151,7 +151,7 @@ function checkFlag(field) {
 					<div class="modal fade" id="myModal" role="dialog">
 					    <div class="modal-dialog">
 						<form action="saveservice" method="POST" name="service" id="frm1">
-						<input type="hidden" id = "questionid" name= "quesid" value = "" />					
+						<input type="hidden" id = "serviceid" name= "serviceid" value = "" />					
 						<input type="hidden" id = "addUpdateFlag" value = "" />					
 	
 					      <!-- Modal content-->

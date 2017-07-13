@@ -73,11 +73,6 @@ textarea{
 </script>
 <script type="text/javascript">
         function onClickMethodQuestion(quesId){
-        	/* document.getElementById("statusId").innerHTML = "";
-        	document.getElementById("divisionId").innerHTML = "";
-        	document.getElementById("terminalId").innerHTML = "";
-        	document.getElementById("categoryId").innerHTML = "";
-        	document.getElementById("truckTypeId").innerHTML = ""; */
         	clearAll();
         	if(quesId == 0) {
         		$.get("truck/getopenadd", function(data) {
@@ -114,7 +109,7 @@ textarea{
     	        });
         	} else {
         		$.get("gettruck/truckId",{"truckId" : quesId}, function(data) {
-                    cId = data.truckId;
+    	            document.getElementById("truckid").value = data.truckId;
                    	$("#unitNo").val(data.unitNo);
                    	$("#usage").val(data.truchUsage);
                    	$("#owner").val(data.owner);
@@ -199,7 +194,7 @@ textarea{
 					<div class="modal fade" id="myModal" role="dialog">
 					    <div class="modal-dialog">
 						<form action="savetruck" method="POST" name="truck" id="frm1">
-						<input type="hidden" id = "questionid" name= "quesid" value = "" />					
+						<input type="hidden" id = "truckid" name= "truckid" value = "" />					
 						<input type="hidden" id = "addUpdateFlag" value = "" />					
 	
 					      <!-- Modal content-->

@@ -54,7 +54,7 @@ textarea{
 function checkFlag(field) {
 	document.getElementById("addUpdateFlag").value = field;
 	if(field == 'update') {
-		document.getElementById("frm1").action = "updatedriver";
+		document.getElementById("frm1").action = "updatevendor";
 		document.getElementById("btnSave").value = "Update";
 		$("#modelTitle").html("Edit Vendor");
 	}
@@ -75,7 +75,7 @@ function checkFlag(field) {
     function onClickMethodQuestion(quesId){
     	clearAll();
    		$.get("getvendor/vendorId",{"vendorId" : quesId}, function(data) {
-            cId = data.vendorId;
+            document.getElementById("vendorid").value = data.vendorId;
            	$("#vendorName").val(data.name);
            	$("#contact").val(data.contact);
            	$("#address").val(data.address);
@@ -134,7 +134,7 @@ function checkFlag(field) {
 					<div class="modal fade" id="myModal" role="dialog">
 					    <div class="modal-dialog">
 						<form action="savevendor" method="POST" name="vendor" id="frm1">
-						<input type="hidden" id = "questionid" name= "quesid" value = "" />					
+						<input type="hidden" id = "vendorid" name= "vendorid" value = "" />					
 						<input type="hidden" id = "addUpdateFlag" value = "" />					
 	
 					      <!-- Modal content-->

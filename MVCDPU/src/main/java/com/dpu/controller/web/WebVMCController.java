@@ -15,28 +15,28 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.dpu.model.VendorModel;
-import com.dpu.service.VendorService;
+import com.dpu.model.VehicleMaintainanceCategoryModel;
+import com.dpu.service.VehicleMaintainanceCategoryService;
 
 @Controller
-public class WebVendorController {
+public class WebVMCController {
 
 	@Autowired
-	VendorService vendorService;
+	VehicleMaintainanceCategoryService vehicleMaintainanceCategoryService;
 	
-	Logger logger = Logger.getLogger(WebVendorController.class);
+	Logger logger = Logger.getLogger(WebVMCController.class);
 	
-	@RequestMapping(value = "/showvendor", method = RequestMethod.GET)
-	public ModelAndView showVendorScreen() {
+	@RequestMapping(value = "/showvmc", method = RequestMethod.GET)
+	public ModelAndView showVMC() {
 		ModelAndView modelAndView = new ModelAndView();
-		List<VendorModel> lstVendors = vendorService.getAll();
-		modelAndView.addObject("LIST_VENDOR", lstVendors);
-		modelAndView.setViewName("vendor");
+		List<VehicleMaintainanceCategoryModel> lstVMCs = vehicleMaintainanceCategoryService.getAll();
+		modelAndView.addObject("LIST_VMC", lstVMCs);
+		modelAndView.setViewName("vmc");
 		return modelAndView;
 	}
 	
-	@RequestMapping(value = "/savevendor" , method = RequestMethod.POST)
-	public ModelAndView saveVendor(@ModelAttribute("vendor") VendorModel vendorModel, HttpServletRequest request) {
+	@RequestMapping(value = "/savevmc" , method = RequestMethod.POST)
+	public ModelAndView saveVMC(@ModelAttribute("vmc") VehicleMaintainanceCategoryModel vehicleMaintainanceCategoryModel, HttpServletRequest request) {
 		ModelAndView modelAndView = new ModelAndView();
 		HttpSession session = request.getSession();
 		String createdBy = "";
@@ -45,28 +45,28 @@ public class WebVendorController {
 		}
 //		divisionReq.setCreatedBy(createdBy);
 //		divisionReq.setCreatedOn(new Date());
-		vendorService.addVendorData(vendorModel);
-		modelAndView.setViewName("redirect:showvendor");
+		vehicleMaintainanceCategoryService.addVMC(vehicleMaintainanceCategoryModel);
+		modelAndView.setViewName("redirect:showvmc");
 		return modelAndView;
 	}
 	
-	@RequestMapping(value = "/getvendor/vendorId" , method = RequestMethod.GET)
-	@ResponseBody  public VendorModel getVendor(@RequestParam("vendorId") Long vendorId) {
-		VendorModel vendorModel = null;
+	@RequestMapping(value = "/getvmc/vmcId" , method = RequestMethod.GET)
+	@ResponseBody  public VehicleMaintainanceCategoryModel getVMC(@RequestParam("vmcId") Long vmcId) {
+		VehicleMaintainanceCategoryModel vehicleMaintainanceCategoryModel = null;
 		try {
-			vendorModel = vendorService.get(vendorId);
+			vehicleMaintainanceCategoryModel = vehicleMaintainanceCategoryService.get(vmcId);
 		} catch (Exception e) {
 			System.out.println(e);
 			logger.info("Exception in getCategory is: " + e);
 		}
-		return vendorModel;
+		return vehicleMaintainanceCategoryModel;
 	}
 	
-	@RequestMapping(value = "/updatevendor" , method = RequestMethod.POST)
-	public ModelAndView updateVendor(@ModelAttribute("vendor") VendorModel vendorModel, @RequestParam("vendorid") Long vendorId) {
+	@RequestMapping(value = "/updatevmc" , method = RequestMethod.POST)
+	public ModelAndView updateVendor(@ModelAttribute("vmc") VehicleMaintainanceCategoryModel vehicleMaintainanceCategoryModel, @RequestParam("vmcid") Long vmcId) {
 		ModelAndView modelAndView = new ModelAndView();
-		vendorService.update(vendorId, vendorModel);
-		modelAndView.setViewName("redirect:showvendor");
+		vehicleMaintainanceCategoryService.update(vmcId, vehicleMaintainanceCategoryModel);
+		modelAndView.setViewName("redirect:showvmc");
 		return modelAndView;
 	}
 	

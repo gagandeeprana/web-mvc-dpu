@@ -97,7 +97,7 @@ function checkFlag(field) {
     	        });        		
         	} else {
         		$.get("getcategory/categoryId",{"categoryId" : quesId}, function(data) {
-                    cId = data.categoryId;
+        			document.getElementById("categoryid").value = data.categoryId;
                     $("#category").val(data.name);
 
                     var categoryType = document.getElementById("type");
@@ -150,9 +150,9 @@ function checkFlag(field) {
 			<div class="col-sm-8">
 					<div class="modal fade" id="myModal" role="dialog">
 					    <div class="modal-dialog">
-						<form action="savecategory" method="POST" name="cat" id="frm1" enctype = "multipart/form-data">
-<!-- 						<input type="hidden" id = "questionid" name= "quesid" value = "" />					
- -->						<input type="hidden" id = "addUpdateFlag" value = "" />					
+						<form action="savecategory" method="POST" name="cat" id="frm1">
+ 						<input type="hidden" id = "categoryid" name= "categoryid" value = "" />					
+						<input type="hidden" id = "addUpdateFlag" value = "" />					
 	
 					      <!-- Modal content-->
 					      <div class="modal-content">

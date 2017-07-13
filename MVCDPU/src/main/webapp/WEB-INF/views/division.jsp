@@ -89,7 +89,7 @@ function checkFlag(field) {
     	        });
         	} else {
         		$.get("getdivision/divisionId",{"divisionId" : quesId}, function(data) {
-                    cId = data.divisionId;
+        			document.getElementById("divisionid").value = data.divisionId;
                     $("#divisionCode").val(data.divisionCode);
                    	$("#divisionName").val(data.divisionName);
                    	$("#federal").val(data.fedral);
@@ -138,7 +138,7 @@ function checkFlag(field) {
 				      <!-- Modal content-->
 				      	<form action="savedivision" method="POST" name="division" id="frm1" enctype = "multipart/form-data">
 						<input type="hidden" id = "addUpdateFlag" value = "" />
-						<input type="hidden" id = "categoryid" name = "categoryid" value = "" />					      
+						<input type="hidden" id = "divisionid" name = "divisionid" value = "" />					      
 				      <div class="modal-content">
 				        <div class="modal-header">
 				          <button type="button" class="close" data-dismiss="modal">&times;</button>

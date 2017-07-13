@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Terminal</title>
+<title>Category</title>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@page isELIgnored="false"%>
@@ -44,7 +44,7 @@ textarea{
 		});
 		$('#btnSearch').click(function(){
 			$("#frmSearch").change(function() {
-			  $("#frmSearch").attr("action", "showques");
+			  $("#frmSearch").attr("action", "showvmc");
 			});
 			$('#frmSearch').submit();
 		});
@@ -54,16 +54,16 @@ textarea{
 function checkFlag(field) {
 	document.getElementById("addUpdateFlag").value = field;
 	if(field == 'update') {
-		document.getElementById("frm1").action = "updateterminal";
+		document.getElementById("frm1").action = "updatevmc";
 		document.getElementById("btnSave").value = "Update";
-		$("#modelTitle").html("Edit Terminal");
+		$("#modelTitle").html("Edit VMC");
 	}
 	else if(field == 'add') {
 		//$("#cke_1_contents").html('');
 		$(":text").val("");
    		//document.getElementById('categoryId').selectedIndex = 0;
 		document.getElementById("btnSave").value = "Save";
-		$("#modelTitle").html("Add Terminal");
+		$("#modelTitle").html("Add VMC");
 	} else if (field == 'search') {
 		/* document.getElementById("frm1").method = "GET";
 		document.getElementById("frm1").action = "showques";
@@ -73,64 +73,20 @@ function checkFlag(field) {
 </script>
 <script type="text/javascript">
         function onClickMethodQuestion(quesId){
+        	
         	clearAll();
-        	if(quesId == 0) {
-        		document.getElementById("locationId").innerHTML = "";
-            	document.getElementById("serviceIds").innerHTML = "";
-            	$.get("terminal/getopenadd", function(data) {
-    	           
-    	            var shipperLocation = document.getElementById("locationId");
-    	            for(var i = 0;i < data.shipperList.length;i++) {
-    	            	shipperLocation.options[shipperLocation.options.length] = new Option(data.shipperList[i].locationName);
-    	            	shipperLocation.options[i].value = data.shipperList[i].shipperId;
-    	            } 
-    	            
-    	            var shipperService = document.getElementById("serviceIds");
-    	            for(var i = 0;i < data.serviceList.length;i++) {
-    	            	shipperService.options[shipperService.options.length] = new Option(data.serviceList[i].serviceName);
-    	            	shipperService.options[i].value = data.serviceList[i].serviceId;
-    	            }
-    	        });
-        	} else {
-        		$.get("getterminal/terminalId",{"terminalId" : quesId}, function(data) {
-        			document.getElementById("terminalid").value = data.terminalId;
-                    $("#terminalName").val(data.terminalName);
-                    
-                    var shipperLocation = document.getElementById("locationId");
-                    var shipperList = data.shipperList;
-                    for(var i = 0;i < shipperList.length;i++) {
-                    	shipperLocation.options[shipperLocation.options.length] = new Option(shipperList[i].locationName);
-                    	shipperLocation.options[i].value = shipperList[i].shipperId;
-                    	if(shipperList[i].shipperId == data.shipperId) {
-                    		document.getElementById("locationId").selectedIndex = i;
-                    	}
-                    }
-                    
-                    var shipperService = document.getElementById("serviceIds");
-                    var serviceList = data.serviceList;
-                    for(var i = 0;i < serviceList.length;i++) {
-                    	shipperService.options[shipperService.options.length] = new Option(serviceList[i].serviceName);
-                    	shipperService.options[i].value = serviceList[i].serviceId;
-                    }
-                    
-                    for(var i = 0;i < serviceList.length;i++) {
-						
-                    	var sId = serviceList[i].serviceId;
-                    	for(var j=0;j<data.serviceIds.length;j++) {
-	                    	if(sId == data.serviceIds[j]) {
-	                    		alert("selected: " + sId + " v " + shipperService.options[j].value)
-	                    		$("#serviceIds > [value=" + sId + "]").attr("selected", "true");
-	                    	}
-                    	}
-                    }
+        	if(quesId != 0) {
+        		$.get("getvmc/vmcId",{"vmcId" : quesId}, function(data) {
+        			document.getElementById("vmcid").value = data.id;
+                    $("#name").val(data.name);
+                    $("#description").val(data.description);
                	});
         	}
         }
         
         function clearAll() {
-            $("#terminalName").val("");
-        	document.getElementById("locationId").innerHTML = "";
-        	document.getElementById("serviceIds").innerHTML = "";
+           	$("#name").val("");
+           	$("#description").val("");
         }
 </script>
 </head>
@@ -143,40 +99,27 @@ function checkFlag(field) {
 			<div class="col-sm-8">
 					<div class="modal fade" id="myModal" role="dialog">
 					    <div class="modal-dialog">
-						<form action="saveterminal" method="POST" name="terminal" id="frm1">
-						<input type="hidden" id = "terminalid" name= "terminalid" value = "" />					
+						<form action="savevmc" method="POST" name="cat" id="frm1">
+ 						<input type="hidden" id = "vmcid" name= "vmcid" value = "" />					
 						<input type="hidden" id = "addUpdateFlag" value = "" />					
 	
 					      <!-- Modal content-->
 					      <div class="modal-content">
 					        <div class="modal-header">
 					          <button type="button" class="close" data-dismiss="modal">&times;</button>
-					          <h4 class="modal-title"><p id ="modelTitle">Add Terminal</p></h4>
+					          <h4 class="modal-title"><p id ="modelTitle">Add VMC</p></h4>
 					        </div>
 					        <div class="modal-body">
-								<div class = "row">
+					        	<div class = "row">
 								<div class="col-sm-12">
 									<div class="form-group">
 										<div class="row">
 											<div class="col-sm-12">
 												<div class="input-group">
-												<span class="input-group-addon">
-													 <i class="glyphicon glyphicon-inbox"></i>												
-												</span>
-												<input type="text" class="form-control" placeHolder="Enter TerminalName" id="terminalName" name="terminalName" value="" autofocus />
-											</div>
-											</div>
-										</div>
-									</div>
-									<div class="form-group">
-										<div class="row">
-											<div class="col-sm-12">
-												<div class="input-group">
 													<span class="input-group-addon">
-														 <i class="glyphicon glyphicon-list-alt"></i>												
+														<i class="glyphicon glyphicon-inbox"></i>												
 													</span>
-													<select class="form-control" name="shipperId" id="locationId">
-													</select>
+													<input type="text" class="form-control" placeHolder="Enter VMC Name" id="name" name="name" value="" autofocus />
 												</div>
 											</div>
 										</div>
@@ -185,31 +128,30 @@ function checkFlag(field) {
 										<div class="row">
 											<div class="col-sm-12">
 												<div class="input-group">
-													<span class="input-group-addon">
-														 <i class="glyphicon glyphicon-list-alt"></i>												
+												<span class="input-group-addon">
+														 <i class="glyphicon glyphicon-inbox"></i>												
 													</span>
-													<select id="serviceIds" class="form-control" multiple="multiple" name="serviceIds">
-													</select>
+													<textarea class="form-control" rows="1" cols="1" placeholder="Enter Description" name="description" id = "description"></textarea>
 												</div>
 											</div>
 										</div>
 									</div>
 								</div>
+								</div>
 				        	</div>
-					        </div>
-					        <div class="modal-footer">
+				        	 <div class="modal-footer">
 					          <input type="button" class="btn btn-primary" data-dismiss="modal" id= "btnSave" value="Save" />
 							  <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
 					        </div>
-					      </div>
+					        </div>
 					      </form>
+					      </div>
 					    </div>
 					  </div>
-				</div>
 				<div class="col-sm-4">
 				</div>
+				</div>
 		</div>
-		</div>	
 		<form action="showques" method="GET" name="ques" id="frmSearch">
 		<%-- <div class="row">
 			<div class="col-sm-4">
@@ -237,17 +179,17 @@ function checkFlag(field) {
 			<table class="table table-striped table-hover table-condensed">
 				<thead>
 					<tr>
-						<th>Terminal</th>
-						<th>Location</th>
+						<th>Name</th>
+						<th>Description</th>
 						<th>Links</th>
 					</tr>
 				</thead>
 				<tbody>
-					<c:forEach items="${LIST_TERMINAL}" var="obj">
+					<c:forEach items="${LIST_VMC}" var="obj">
 						<tr class="info">
-							<td>${obj.terminalName}</td>							
-							<td>${obj.shipperName}</td>
-							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.terminalId}')">Update</a> / <a href="deleteQues/sta/${status}/quesId/${obj1.questionId}">Delete</a> / <a href="<c:url value='/showquestionbyid/${obj1.questionId}'/>">View Detail</a></td>
+							<td>${obj.name}</td>							
+							<td>${obj.description}</td>
+							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.id}')">Update</a> / <a href="deleteQues/sta/${status}/quesId/${obj1.questionId}">Delete</a> / <a href="<c:url value='/showquestionbyid/${obj1.questionId}'/>">View Detail</a></td>
 						</tr>
 					</c:forEach>
 				</tbody>
