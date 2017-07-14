@@ -1,11 +1,15 @@
 package com.dpu.controller.web;
 
+import java.io.IOException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -34,10 +38,13 @@ public class WebDivisionController {
 	Logger logger = Logger.getLogger(WebDivisionController.class);
 	
 	@RequestMapping(value = "/showdivision", method = RequestMethod.GET)
-	public ModelAndView showDivisionScreen() {
+	public ModelAndView showDivisionScreen(@RequestParam(value = "msg", required = false) String msg) {
 		ModelAndView modelAndView = new ModelAndView();
 		List<DivisionReq> lstDivisions = divisionService.getAll("");
 		modelAndView.addObject("LIST_DIVISION", lstDivisions);
+		if(msg != null && msg.length() > 0) {
+			modelAndView.addObject("msg", msg);
+		}
 		modelAndView.setViewName("division");
 		return modelAndView;
 	}
@@ -88,21 +95,43 @@ public class WebDivisionController {
 		return modelAndView;
 	}
 
-	@RequestMapping(value = "/deletedivision/{divisionid}" , method = RequestMethod.GET)
-	public ModelAndView deleteDivision(@RequestParam("divisionid") Long divisionId) {
+	@SuppressWarnings("unchecked")
+	@ResponseBody
+	@RequestMapping(value = "/deletedivision" , method = RequestMethod.GET)
+	public ModelAndView deleteDivision(HttpServletRequest request) {
 		ModelAndView modelAndView = new ModelAndView();
+		Long divisionId = Long.parseLong(String.valueOf(request.getParameter("divisionid")));
+
 		Object response = divisionService.delete(divisionId);
 		String msg = null;
 		if(response instanceof Failed) {
 			msg = ((Failed) response).getMessage();
 		} else {
-			msg = ((Success) response).getMessage();
-			modelAndView.addObject("LIST_DIVISION", ((Success) response).getResultList());
+			try {
+				msg = ((Success) response).getMessage();
+				Success success = (Success) response;
+				List<DivisionReq> divisionList = (List<DivisionReq>) success.getResultList();
+				modelAndView.addObject("LIST_DIVISION", divisionList);
+			} catch (Exception e) {
+				System.out.println(e);
+			}
 		}
-		if(msg != null && msg.length() > 0) {
-			modelAndView.addObject("msg", msg);
-		}
+		//modelAndView.setViewName("redirect:/showdivision?msg=" + msg);
 		modelAndView.setViewName("division");
 		return modelAndView;
 	}
+	
+	/*@SuppressWarnings("unchecked")
+	@ResponseBody
+	@RequestMapping(value = "/deletedivision1" , method = RequestMethod.GET)
+	public String deletedivision1(HttpServletRequest request) {
+		ModelAndView modelAndView = new ModelAndView();
+		String dataval = request.getParameter("delId");
+		
+		modelAndView.addObject("msg", "sdfsdf");
+		//modelAndView.setViewName("division");
+		return "sdfsdfsdsd";
+	}*/
+	
+	
 }

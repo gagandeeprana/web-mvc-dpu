@@ -125,10 +125,21 @@ function checkFlag(field) {
         }
         
         function deleteItem(delId) {
-        	$.get("deletedivision/divisionid",{"divisionid" : delId}, function(data) {
+        	
+        	$.ajax({
+        		method: "GET",
+        		  url: "deletedivision",
+        		  data: {"divisionid":delId}
+        		}).done(function(response) {
+        			alert("success"+response);
+        		});
+        	
+        	
+        	/* $.get("deletedivision/divisionid",{"divisionid" : delId}, function(data) {
+	        	console.log(data);
         		alert(data);
-        		alert($(data).find('#msg').val());
-        	});
+        		alert($(data).find('#used').val());
+        	}); */
         }
         
 </script>
@@ -152,11 +163,11 @@ function checkFlag(field) {
 							if(request.getParameter("msg") != null) {
 								
 						%>
-							<input type="hidden" id = "msg" name = "msg" value = "<%=request.getParameter("msg")%>" />								
+							<input type="hidden" id = "used" name = "used" value = "<%=request.getParameter("msg")%>" />								
 						<%
 							} else {
 						%>	
-							<input type="hidden" id = "msg" name = "msg" value ="" />																
+							<input type="hidden" id = "used" name = "used" value ="" />																
 						<%
 							}
 						%>      
