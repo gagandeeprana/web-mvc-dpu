@@ -12,4 +12,12 @@ public interface EmployeeService {
 
 	Object getUserById(Long userId);
 
+	Object delete(Long userId);
+
+	List<EmployeeModel> getUserByUserName(String userName);
+
+	Object update(Long userId, EmployeeModel employeeModel);
+
+	Object getUserByLoginCredentials(EmployeeModel employeeModel);
+
 }

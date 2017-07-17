@@ -99,7 +99,6 @@ public class WebDivisionController {
 	@RequestMapping(value = "/deletedivision/{divisionid}" , method = RequestMethod.GET)
 	public ModelAndView deleteDivision(@PathVariable("divisionid") Long divisionId) {
 		ModelAndView modelAndView = new ModelAndView();
-//		Long divisionId = Long.parseLong(String.valueOf(request.getParameter("divisionid")));
 		Object response = divisionService.delete(divisionId);
 		String msg = null;
 		if(response instanceof Failed) {
@@ -109,7 +108,7 @@ public class WebDivisionController {
 			Success success = (Success) response;
 			msg = success.getMessage();
 		}
-		modelAndView.setViewName("redirect:/showdivision");
+		modelAndView.setViewName("redirect:/showdivision?msg=" + msg);
 		return modelAndView;
 		/**
 		 * old working style

@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -17,6 +18,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.dpu.model.EmployeeModel;
 import com.dpu.service.EmployeeService;
+import com.dpu.util.DateUtil;
 
 @Controller
 public class WebEmployeeController {
@@ -45,6 +47,10 @@ public class WebEmployeeController {
 		}
 //		divisionReq.setCreatedBy(createdBy);
 //		divisionReq.setCreatedOn(new Date());
+		String hiring = DateUtil.rearrangeDate(employeeModel.getHiringdate());
+		String termination = DateUtil.rearrangeDate(employeeModel.getTerminationdate());
+		employeeModel.setHiringdate(hiring);
+		employeeModel.setTerminationdate(termination);
 		employeeService.add(employeeModel);
 		modelAndView.setViewName("redirect:showuser");
 		return modelAndView;
@@ -60,5 +66,25 @@ public class WebEmployeeController {
 			logger.info("Exception in getCategory is: " + e);
 		}
 		return employeeModel;
+	}
+	
+	@RequestMapping(value = "/updateuser" , method = RequestMethod.POST)
+	public ModelAndView updateUser(@ModelAttribute("user") EmployeeModel employeeModel, @RequestParam("employeeid") Long employeeId) {
+		ModelAndView modelAndView = new ModelAndView();
+		String hiring = DateUtil.rearrangeDate(employeeModel.getHiringdate());
+		String termination = DateUtil.rearrangeDate(employeeModel.getTerminationdate());
+		employeeModel.setHiringdate(hiring);
+		employeeModel.setTerminationdate(termination);
+		employeeService.update(employeeId, employeeModel);
+		modelAndView.setViewName("redirect:showuser");
+		return modelAndView;
+	}
+	
+	@RequestMapping(value = "/deleteuser/{userid}" , method = RequestMethod.GET)
+	public ModelAndView deleteUser(@PathVariable("userid") Long employeeId) {
+		ModelAndView modelAndView = new ModelAndView();
+		employeeService.delete(employeeId);
+		modelAndView.setViewName("redirect:/showuser");
+		return modelAndView;
 	}
 }

@@ -262,33 +262,29 @@ public class VehicleMaintainanceCategoryServiceImpl implements VehicleMaintainan
 		return vmcLists;
 	}
 
-/*	@Override
-	public List<HandlingModel> getSpecificData() {
-
+	@Override
+	public List<VehicleMaintainanceCategoryModel> getSpecificData() {
+		
 		Session session = sessionFactory.openSession();
-		List<HandlingModel> handlings = new ArrayList<HandlingModel>();
+		List<VehicleMaintainanceCategoryModel> vmcs = new ArrayList<VehicleMaintainanceCategoryModel>();
 		
 		try {
-			List<Object[]> handlingData = handlingDao.getSpecificData(session,
-					"Handling", "id", "name");
+			List<Object[]> vmcData = vehicleMaintainanceCategoryDao.getSpecificData(session, "VehicleMaintainanceCategory", "id", "name");
 
-			
-			if (handlingData != null && !handlingData.isEmpty()) {
-				for (Object[] row : handlingData) {
-					HandlingModel handlingObj = new HandlingModel();
-					handlingObj.setId((Long) row[0]);
-					handlingObj.setName(String.valueOf(row[1]));
-					handlings.add(handlingObj);
+			if (vmcData != null && !vmcData.isEmpty()) {
+				for (Object[] row : vmcData) {
+					VehicleMaintainanceCategoryModel vmcObj = new VehicleMaintainanceCategoryModel();
+					vmcObj.setId((Long) row[0]);
+					vmcObj.setName(String.valueOf(row[1]));
+					vmcs.add(vmcObj);
 				}
 			}
-		} catch (Exception e) {
-
-		} finally {
+		}  finally {
 			if (session != null) {
 				session.close();
 			}
 		}
-		return handlings;
-	}*/
+		return vmcs;
+	}
 
 }

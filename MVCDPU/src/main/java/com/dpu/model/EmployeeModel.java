@@ -26,9 +26,9 @@ public class EmployeeModel {
 	
 	private String phone;
 	
-	private Date hiringDate;
+	private String hiringdate;
 	
-	private Date terminationDate;
+	private String terminationdate;
 	
 	private Long createdBy;
 	
@@ -114,20 +114,21 @@ public class EmployeeModel {
 		this.phone = phone;
 	}
 
-	public Date getHiringDate() {
-		return hiringDate;
+	public String getHiringdate() {
+		return hiringdate;
 	}
 
-	public void setHiringDate(Date hiringDate) {
-		this.hiringDate = hiringDate;
+	public void setHiringdate(String hiringdate) {
+		this.hiringdate = hiringdate;
 	}
 
-	public Date getTerminationDate() {
-		return terminationDate;
+	public String getTerminationdate() {
+		return terminationdate;
 	}
 
-	public void setTerminationDate(Date terminationDate) {
-		this.terminationDate = terminationDate;
+	public void setTerminationdate(String terminationdate) {
+		this.terminationdate = terminationdate;
 	}
+
 
 }

@@ -13,11 +13,10 @@
 	href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-  	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	<!-- <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script> -->
  	<link rel = "stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.0/css/bootstrap-datepicker.css"/>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.0/js/bootstrap-datepicker.js"></script>
-  	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <style type="text/css">
 .modal-dialog {
   width: 98%;
@@ -82,16 +81,21 @@ function checkFlag(field) {
 				// nothing to do on openadd.. may to be added later on..
         	} else {
         		$.get("getuser/userId",{"userId" : quesId}, function(data) {
-                    cId = data.employeeId;
+        			document.getElementById("employeeid").value = data.employeeId;
                    	$("#firstName").val(data.firstName);
                    	$("#lastName").val(data.lastName);
                    	$("#jobTitle").val(data.jobTitle);
                    	$("#username").val(data.username);
-                   	$("#password").val(data.password);
+                   	$("#password").val("*********");
+                   	$("#password").prop("readonly", true);                 	
                    	$("#email").val(data.email);
                    	$("#phone").val(data.phone);
-                   	$("#hiringDate").val(data.hiringDate);
-                   	$("#terminationDate").val(data.terminationDate);
+                   	var hrDt = data.hiringdate;
+                   	var hrArr = hrDt.split("-");
+                   	$("#hiringDate").val(hrArr[1]+"/"+hrArr[2]+"/"+hrArr[0]);
+                   	var trDt = data.terminationdate;
+                   	var trArr = trDt.split("-");
+                   	$("#terminationDate").val(trArr[1]+"/"+trArr[2]+"/"+trArr[0]);
                	});
         	}
         }
@@ -111,11 +115,8 @@ function checkFlag(field) {
 <script>
 $(document).ready(function(){
 	$('.datepicker').datepicker({
-	    format: "dd/mm/yyyy",
-	    autoclose: true,
-	}).on('changeDate', function (ev) {
-	    $(this).datepicker('hide');
-	});
+		dateFormat: "yy-mm-dd"
+	})
 });
   </script>
 </head>
@@ -129,7 +130,7 @@ $(document).ready(function(){
 					<div class="modal fade" id="myModal" role="dialog">
 					    <div class="modal-dialog">
 						<form action="saveuser" method="POST" name="user" id="frm1">
-						<input type="hidden" id = "questionid" name= "quesid" value = "" />					
+						<input type="hidden" id = "employeeid" name= "employeeid" value = "" />					
 						<input type="hidden" id = "addUpdateFlag" value = "" />					
 	
 					      <!-- Modal content-->
@@ -238,7 +239,7 @@ $(document).ready(function(){
 											    <div class="input-group-addon">
 											        <span class="glyphicon glyphicon-th"></span>
 											    </div>
-											    <input type="text" class="form-control datepicker" placeHolder = " Hiring Date" name="hiringDate" id="hiringDate">
+											    <input type="text" class="form-control datepicker" placeHolder = " Hiring Date" name="hiringdate" id="hiringDate">
 											</div>
 										</div>
 									</div>
@@ -251,7 +252,7 @@ $(document).ready(function(){
 											    <div class="input-group-addon">
 											        <span class="glyphicon glyphicon-th"></span>
 											    </div>
-											    <input type="text" class="form-control datepicker" placeHolder = " Termination Date" name = "terminationDate" id ="terminationDate">
+											    <input type="text" class="form-control datepicker" placeHolder = " Termination Date" name = "terminationdate" id ="terminationDate">
 											</div>
 										</div>
 									</div>
@@ -317,9 +318,9 @@ $(document).ready(function(){
 							<td>${obj.username}</td>
 							<td>${obj.email}</td>
 							<td>${obj.phone}</td>
-							<td>${obj.hiringDate}</td>
-							<td>${obj.terminationDate}</td>
-							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.employeeId}')">Update</a> / <a href="deleteQues/sta/${status}/quesId/${obj1.questionId}">Delete</a> / <a href="<c:url value='/showquestionbyid/${obj1.questionId}'/>">View Detail</a></td>
+							<td>${obj.hiringdate}</td>
+							<td>${obj.terminationdate}</td>
+							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.employeeId}')">Update</a> / <a href="deleteuser/${obj.employeeId}">Delete</a></td>
 						</tr>
 					</c:forEach>
 				</tbody>
