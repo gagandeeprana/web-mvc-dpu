@@ -1,18 +1,16 @@
 package com.dpu.controller.web;
 
-import java.io.IOException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -95,31 +93,75 @@ public class WebDivisionController {
 		return modelAndView;
 	}
 
-	@SuppressWarnings("unchecked")
+	ObjectMapper mapper = new ObjectMapper();
+
 	@ResponseBody
-	@RequestMapping(value = "/deletedivision" , method = RequestMethod.GET)
-	public ModelAndView deleteDivision(HttpServletRequest request) {
+	@RequestMapping(value = "/deletedivision/{divisionid}" , method = RequestMethod.GET)
+	public ModelAndView deleteDivision(@PathVariable("divisionid") Long divisionId) {
 		ModelAndView modelAndView = new ModelAndView();
+//		Long divisionId = Long.parseLong(String.valueOf(request.getParameter("divisionid")));
+		Object response = divisionService.delete(divisionId);
+		String msg = null;
+		if(response instanceof Failed) {
+			Failed failed = (Failed) response;
+			msg = failed.getMessage();
+		} else {
+			Success success = (Success) response;
+			msg = success.getMessage();
+		}
+		modelAndView.setViewName("redirect:/showdivision");
+		return modelAndView;
+		/**
+		 * old working style
+		 */
+/*		ModelAndView modelAndView = new ModelAndView();
 		Long divisionId = Long.parseLong(String.valueOf(request.getParameter("divisionid")));
 
 		Object response = divisionService.delete(divisionId);
 		String msg = null;
 		if(response instanceof Failed) {
-			msg = ((Failed) response).getMessage();
+			Failed failed = (Failed) response;
+			msg = failed.getMessage();
+//			modelAndView.addObject("msg", msg);
+			modelAndView.setViewName("redirect:/redirectdivision");
+			return modelAndView;
 		} else {
 			try {
-				msg = ((Success) response).getMessage();
 				Success success = (Success) response;
+				msg = success.getMessage();
 				List<DivisionReq> divisionList = (List<DivisionReq>) success.getResultList();
-				modelAndView.addObject("LIST_DIVISION", divisionList);
+				String res = mapper.writeValueAsString(divisionList);
+//				modelAndView.addObject("msg", msg); 
+				modelAndView.addObject("msg", res);
+				modelAndView.setViewName("redirect:/redirectdivision");
+				return modelAndView;
 			} catch (Exception e) {
 				System.out.println(e);
 			}
 		}
-		//modelAndView.setViewName("redirect:/showdivision?msg=" + msg);
-		modelAndView.setViewName("division");
-		return modelAndView;
+		return null;*/
 	}
+	
+	/*@RequestMapping(value = "redirectdivision", method = RequestMethod.GET)
+	public Object redirectDivision(String stringList) {
+		List<DivisionReq> divisionList = new ArrayList<DivisionReq>();
+		try {
+			if(stringList != null && stringList.length() > 0) {
+				DivisionReq c[] = mapper.readValue(stringList, DivisionReq[].class);
+				for (DivisionReq ccl : c) {
+					divisionList.add(ccl);
+				}
+			}
+			ModelAndView modelAndView = new ModelAndView();
+			modelAndView.addObject("LIST_DIVISION", divisionList);
+//			modelAndView.addObject("msg", msg);
+			modelAndView.setViewName("division");
+			return modelAndView;
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		return null;
+	}*/
 	
 	/*@SuppressWarnings("unchecked")
 	@ResponseBody

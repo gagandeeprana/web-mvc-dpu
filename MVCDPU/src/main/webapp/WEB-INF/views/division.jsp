@@ -1,3 +1,5 @@
+<%@page import="com.dpu.model.DivisionReq"%>
+<%@page import="java.util.List"%>
 <%@page import="org.springframework.beans.factory.annotation.Autowired"%>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	pageEncoding="ISO-8859-1"%>
@@ -40,6 +42,10 @@ textarea{
 </style>
 <script type="text/javascript">
 	$(document).ready(function(){
+		var msg = document.getElementById("used").value;
+		if(msg.length > 0) {
+			alert($("#used").val());
+		}
 		$('#btnSave').click(function(){
 			$('#frm1').submit();
 		});
@@ -125,23 +131,23 @@ function checkFlag(field) {
         }
         
         function deleteItem(delId) {
-        	
-        	$.ajax({
-        		method: "GET",
-        		  url: "deletedivision",
-        		  data: {"divisionid":delId}
-        		}).done(function(response) {
-        			alert("success"+response);
-        		});
-        	
-        	
-        	/* $.get("deletedivision/divisionid",{"divisionid" : delId}, function(data) {
-	        	console.log(data);
-        		alert(data);
-        		alert($(data).find('#used').val());
-        	}); */
-        }
-        
+
+  	/* $.ajax({
+			method : "GET",
+			url : "deletedivision",
+			data : {
+				"divisionid" : delId
+			}
+		}).done(function(data) {
+			alert($(data).find('#used').val());
+		}); */
+
+		 $.get("deletedivision/divisionid",{"divisionid" : delId}, function(data) {
+			//console.log(data);
+			//alert(data);
+			alert($(data).find('#used').val());
+		});
+	}
 </script>
 <script src="//cdn.ckeditor.com/4.5.11/basic/ckeditor.js"></script>
 </head>
@@ -326,6 +332,10 @@ function checkFlag(field) {
 		</div> --%>
 		</form>
 	</div>
+	<%
+	//	List<DivisionReq> list = (List<DivisionReq>)request.getParameter("DIVISION_LIST");
+		
+	%>
 	<div class="container">
 		<div class="table-responsive">
 			<table class="table table-striped table-hover table-condensed">
@@ -345,7 +355,7 @@ function checkFlag(field) {
 							<td>${obj.divisionName}</td>
 							<td>${obj.fedral}</td>
 							<td>${obj.provincial}</td>
-							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.divisionId}')">Update</a> / <a href="#" onclick="deleteItem('${obj.divisionId}')">Delete</a></td>
+							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.divisionId}')">Update</a> / <a href="deletedivision/${obj.divisionId}">Delete</a></td>
 						</tr>
 					</c:forEach>
 				</tbody>
