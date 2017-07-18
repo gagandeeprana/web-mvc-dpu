@@ -1,7 +1,6 @@
 package com.dpu.controller.web;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,13 +49,10 @@ public class LoginController {
 	}
 	
 	@RequestMapping(value = {"/logout"})
-	public ModelAndView logout(HttpServletRequest request, HttpServletResponse response) {
+	public ModelAndView logout(HttpServletRequest request) {
 		ModelAndView modelAndView = new ModelAndView();
 		if(request != null) {
 			request.getSession().invalidate();
-			response.setHeader("Cache-Control","no-cache"); 
-			response.setHeader("Pragma","no-cache"); 
-			response.setDateHeader ("Expires", 0);
 		}
 		modelAndView.setViewName("index");
 		return modelAndView;
