@@ -117,6 +117,142 @@ function checkFlag(field) {
     	$("#pager").val("");
     }
 </script>
+<script type="text/javascript">
+function check() {
+	var vendorName = $("#vendorName").val();
+	var contact = $("#contact").val();
+	var address = $("#address").val();
+	var position = $("#position").val();
+	var ext = $("#ext").val();
+	var prefix = $("#prefix").val();
+	var unitNo = $("#unitNo").val();
+	var phone = $("#phone").val();
+	var city = $("#city").val();
+	var fax = $("#fax").val();
+	var province = $("#province").val();
+	var zip = $("#zip").val();
+	var afterHours = $("#afterHours").val();
+	var email = $("#email").val();
+	var tollFree = $("#tollfree").val();
+	var website = $("#website").val();
+	var cellular = $("#cellular").val();
+	var pager = $("#pager").val();
+	var msg = $("#msg");
+	var msgvalue = $("#msgvalue");
+	msg.hide();
+	msgvalue.val("");
+	if(vendorName == "") {
+		msg.show();
+		msgvalue.text("VendorName cannot be left blank.");
+		$("#vendorName").focus();
+		return false;
+	}
+	if(contact == "") {
+		msg.show();
+		msgvalue.text("Contact cannot be left blank.");
+		$("#contact").focus();
+		return false;
+	}
+	if(address == "") {
+		msg.show();
+		msgvalue.text("Address cannot be left blank.");
+		$("#address").focus();
+		return false;
+	}
+	if(position == "") {
+		msg.show();
+		msgvalue.text("Position cannot be left blank.");
+		$("#position").focus();
+		return false;
+	}
+	if(ext == "") {
+		msg.show();
+		msgvalue.text("Ext cannot be left blank.");
+		$("#ext").focus();
+		return false;
+	}
+	if(prefix == "") {
+		msg.show();
+		msgvalue.text("Prefix cannot be left blank.");
+		$("#prefix").focus();
+		return false;
+	}
+	if(unitNo == "") {
+		msg.show();
+		msgvalue.text("UnitNo cannot be left blank.");
+		$("#unitNo").focus();
+		return false;
+	}
+	if(phone == "") {
+		msg.show();
+		msgvalue.text("Phone cannot be left blank.");
+		$("#phone").focus();
+		return false;
+	}
+	if(city == "") {
+		msg.show();
+		msgvalue.text("City cannot be left blank.");
+		$("#city").focus();
+		return false;
+	}
+	if(fax == "") {
+		msg.show();
+		msgvalue.text("Fax cannot be left blank.");
+		$("#fax").focus();
+		return false;
+	}
+	if(province == "") {
+		msg.show();
+		msgvalue.text("Province cannot be left blank.");
+		$("#province").focus();
+		return false;
+	}
+	if(zip == "") {
+		msg.show();
+		msgvalue.text("Zip cannot be left blank.");
+		$("#zip").focus();
+		return false;
+	}
+	if(afterHours == "") {
+		msg.show();
+		msgvalue.text("AfterHours cannot be left blank.");
+		$("#afterHours").focus();
+		return false;
+	}
+	if(email == "") {
+		msg.show();
+		msgvalue.text("Email cannot be left blank.");
+		$("#email").focus();
+		return false;
+	}
+	if(tollFree == "") {
+		msg.show();
+		msgvalue.text("TollFree cannot be left blank.");
+		$("#tollfree").focus();
+		return false;
+	}
+	if(website == "") {
+		msg.show();
+		msgvalue.text("Website cannot be left blank.");
+		$("#website").focus();
+		return false;
+	}
+	if(cellular == "") {
+		msg.show();
+		msgvalue.text("Cellular cannot be left blank.");
+		$("#cellular").focus();
+		return false;
+	}
+	if(pager == "") {
+		msg.show();
+		msgvalue.text("Pager cannot be left blank.");
+		$("#pager").focus();
+		return false;
+	}
+	$('#modal').modal('toggle');
+	return true;
+}
+</script>
 </head>
 <body>
 	<%
@@ -133,7 +269,7 @@ function checkFlag(field) {
 			<div class="col-sm-8">
 					<div class="modal fade" id="myModal" role="dialog">
 					    <div class="modal-dialog">
-						<form action="savevendor" method="POST" name="vendor" id="frm1">
+						<form action="savevendor" method="POST" name="vendor" id="frm1" onsubmit="return check()">
 						<input type="hidden" id = "vendorid" name= "vendorid" value = "" />					
 						<input type="hidden" id = "addUpdateFlag" value = "" />					
 	
@@ -142,6 +278,10 @@ function checkFlag(field) {
 					        <div class="modal-header">
 					          <button type="button" class="close" data-dismiss="modal">&times;</button>
 					          <h4 class="modal-title"><p id ="modelTitle">Add Vendor</p></h4>
+					          <div class="alert alert-danger fade in" id="msg" style="display: none;">
+									<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+									<strong id = "msgvalue"></strong>
+							  </div>
 					        </div>
 					        <div class="modal-body">
 								<div class = "row">
@@ -349,7 +489,7 @@ function checkFlag(field) {
 				        	</div>
 				        	</div>
 				        	<div class="modal-footer">
-					          <input type="button" class="btn btn-primary" data-dismiss="modal" id= "btnSave" value="Save" />
+					          <input type="button" class="btn btn-primary" id= "btnSave" value="Save" />
 							  <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
 					        </div>
 					        </div>

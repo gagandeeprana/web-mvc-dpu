@@ -119,6 +119,81 @@ $(document).ready(function(){
 	})
 });
   </script>
+  
+  <script type="text/javascript">
+function check() {
+	var firstName = $("#firstName").val();
+	var lastName = $("#lastName").val();
+	var jobTitle = $("#jobTitle").val();
+	var username = $("#username").val();
+	var password = $("#password").val();
+	var email = $("#email").val();
+	var phone = $("#phone").val();
+	var hiringDate = $("#hiringDate").val();
+	var terminationDate = $("#terminationDate").val();
+	
+	var msg = $("#msg");
+	var msgvalue = $("#msgvalue");
+	msg.hide();
+	msgvalue.val("");
+	if(firstName == "") {
+		msg.show();
+		msgvalue.text("FirstName cannot be left blank.");
+		$("#firstName").focus();
+		return false;
+	}
+	if(lastName == "") {
+		msg.show();
+		msgvalue.text("LastName cannot be left blank.");
+		$("#lastName").focus();
+		return false;
+	}
+	if(jobTitle == "") {
+		msg.show();
+		msgvalue.text("JobTitle cannot be left blank.");
+		$("#jobTitle").focus();
+		return false;
+	}
+	if(username == "") {
+		msg.show();
+		msgvalue.text("Username cannot be left blank.");
+		$("#username").focus();
+		return false;
+	}
+	if(password == "") {
+		msg.show();
+		msgvalue.text("Password cannot be left blank.");
+		$("#password").focus();
+		return false;
+	}
+	if(email == "") {
+		msg.show();
+		msgvalue.text("Email cannot be left blank.");
+		$("#email").focus();
+		return false;
+	}
+	if(phone == "") {
+		msg.show();
+		msgvalue.text("Phone cannot be left blank.");
+		$("#phone").focus();
+		return false;
+	}
+	if(hiringDate == "") {
+		msg.show();
+		msgvalue.text("HiringDate cannot be left blank.");
+		$("#hiringDate").focus();
+		return false;
+	}
+	if(terminationDate == "") {
+		msg.show();
+		msgvalue.text("TerminationDate cannot be left blank.");
+		$("#terminationDate").focus();
+		return false;
+	}
+	$('#modal').modal('toggle');
+	return true;
+}
+</script>
 </head>
 <body>
 	<jsp:include page="header.jsp"></jsp:include>
@@ -129,7 +204,7 @@ $(document).ready(function(){
 			<div class="col-sm-8">
 					<div class="modal fade" id="myModal" role="dialog">
 					    <div class="modal-dialog">
-						<form action="saveuser" method="POST" name="user" id="frm1">
+						<form action="saveuser" method="POST" name="user" id="frm1" onsubmit="return check()">
 						<input type="hidden" id = "employeeid" name= "employeeid" value = "" />					
 						<input type="hidden" id = "addUpdateFlag" value = "" />					
 	
@@ -138,6 +213,10 @@ $(document).ready(function(){
 					        <div class="modal-header">
 					          <button type="button" class="close" data-dismiss="modal">&times;</button>
 					          <h4 class="modal-title"><p id ="modelTitle">Add User</p></h4>
+					           <div class="alert alert-danger fade in" id="msg" style="display: none;">
+									<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+									<strong id = "msgvalue"></strong>
+							  </div>
 					        </div>
 					        <div class="modal-body">
 								<div class = "row">
@@ -259,7 +338,7 @@ $(document).ready(function(){
 					        	</div>
 					        </div>
 					        <div class="modal-footer">
-					          <input type="button" class="btn btn-primary" data-dismiss="modal" id= "btnSave" value="Save" />
+					          <input type="button" class="btn btn-primary" id= "btnSave" value="Save" />
 							  <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
 					        </div>
 					      </div>

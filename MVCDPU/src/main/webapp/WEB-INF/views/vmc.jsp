@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Category</title>
+<title>VMC</title>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@page isELIgnored="false"%>
@@ -89,6 +89,31 @@ function checkFlag(field) {
            	$("#description").val("");
         }
 </script>
+
+ <script type="text/javascript">
+function check() {
+	var vmcName = $("#name").val();
+	var description = $("#description").val();
+	var msg = $("#msg");
+	var msgvalue = $("#msgvalue");
+	msg.hide();
+	msgvalue.val("");
+	if(vmcName == "") {
+		msg.show();
+		msgvalue.text("VMCName cannot be left blank.");
+		$("#name").focus();
+		return false;
+	}
+	if(description == "") {
+		msg.show();
+		msgvalue.text("Description cannot be left blank.");
+		$("#description").focus();
+		return false;
+	}
+	$('#modal').modal('toggle');
+	return true;
+}
+</script>
 </head>
 <body>
 	<jsp:include page="header.jsp"></jsp:include>
@@ -99,7 +124,7 @@ function checkFlag(field) {
 			<div class="col-sm-8">
 					<div class="modal fade" id="myModal" role="dialog">
 					    <div class="modal-dialog">
-						<form action="savevmc" method="POST" name="cat" id="frm1">
+						<form action="savevmc" method="POST" name="cat" id="frm1" onsubmit="return check()">
  						<input type="hidden" id = "vmcid" name= "vmcid" value = "" />					
 						<input type="hidden" id = "addUpdateFlag" value = "" />					
 	
@@ -108,6 +133,10 @@ function checkFlag(field) {
 					        <div class="modal-header">
 					          <button type="button" class="close" data-dismiss="modal">&times;</button>
 					          <h4 class="modal-title"><p id ="modelTitle">Add VMC</p></h4>
+					           <div class="alert alert-danger fade in" id="msg" style="display: none;">
+									<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+									<strong id = "msgvalue"></strong>
+							  </div>
 					        </div>
 					        <div class="modal-body">
 					        	<div class = "row">
@@ -140,7 +169,7 @@ function checkFlag(field) {
 								</div>
 				        	</div>
 				        	 <div class="modal-footer">
-					          <input type="button" class="btn btn-primary" data-dismiss="modal" id= "btnSave" value="Save" />
+					          <input type="button" class="btn btn-primary" id= "btnSave" value="Save" />
 							  <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
 					        </div>
 					        </div>

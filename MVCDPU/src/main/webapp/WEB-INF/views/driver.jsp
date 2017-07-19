@@ -218,6 +218,107 @@ textarea{
         	document.getElementById("classId").innerHTML = ""; 
         }
 </script>
+<script type="text/javascript">
+function check() {
+	var driverCode = $("#driverCode").val();
+	var email = $("#email").val();
+	var firstName =	$("#firstName").val();
+	var home = $("#home").val();
+	var fax = $("#fax").val();
+	var lastName = $("#lastName").val();
+	var cellular = $("#cellular").val();
+	var pager =	$("#pager").val();
+	var address = $("#address").val();
+	var city = $("#city").val();
+	var zip = $("#zip").val();
+	var unit = $("#unit").val();
+	var province = $("#province").val();
+	var msg = $("#msg");
+	var msgvalue = $("#msgvalue");
+	msg.hide();
+	msgvalue.val("");
+	if(driverCode == "") {
+		msg.show();
+		msgvalue.text("DriverCode cannot be left blank.");
+		$("#driverCode").focus();
+		return false;
+	}
+	if(email == "") {
+		msg.show();
+		msgvalue.text("Email cannot be left blank.");
+		$("#email").focus();
+		return false;
+	}
+	if(firstName == "") {
+		msg.show();
+		msgvalue.text("FirstName cannot be left blank.");
+		$("#firstName").focus();
+		return false;
+	}
+	if(home == "") {
+		msg.show();
+		msgvalue.text("Home cannot be left blank.");
+		$("#home").focus();
+		return false;
+	}
+	if(fax == "") {
+		msg.show();
+		msgvalue.text("Fax cannot be left blank.");
+		$("#fax").focus();
+		return false;
+	}
+	if(lastName == "") {
+		msg.show();
+		msgvalue.text("LastName cannot be left blank.");
+		$("#lastName").focus();
+		return false;
+	}
+	if(cellular == "") {
+		msg.show();
+		msgvalue.text("Cellular cannot be left blank.");
+		$("#cellular").focus();
+		return false;
+	}
+	if(pager == "") {
+		msg.show();
+		msgvalue.text("Pager cannot be left blank.");
+		$("#pager").focus();
+		return false;
+	}
+	if(address == "") {
+		msg.show();
+		msgvalue.text("Address cannot be left blank.");
+		$("#address").focus();
+		return false;
+	}
+	if(city == "") {
+		msg.show();
+		msgvalue.text("City cannot be left blank.");
+		$("#city").focus();
+		return false;
+	}
+	if(zip == "") {
+		msg.show();
+		msgvalue.text("Zip cannot be left blank.");
+		$("#zip").focus();
+		return false;
+	}
+	if(unit == "") {
+		msg.show();
+		msgvalue.text("Unit cannot be left blank.");
+		$("#unit").focus();
+		return false;
+	}
+	if(province == "") {
+		msg.show();
+		msgvalue.text("Province cannot be left blank.");
+		$("#province").focus();
+		return false;
+	}
+	$('#modal').modal('toggle');
+	return true;
+}
+</script>
 </head>
 <body>
 	<jsp:include page="header.jsp"></jsp:include>
@@ -228,7 +329,7 @@ textarea{
 			<div class="col-sm-8">
 					<div class="modal fade" id="myModal" role="dialog">
 					    <div class="modal-dialog">
-						<form action="savedriver" method="POST" name="driver" id="frm1">
+						<form action="savedriver" method="POST" name="driver" id="frm1" onsubmit="return check()">
 						<input type="hidden" id = "driverid" name= "driverid" value = "" />					
 						<input type="hidden" id = "addUpdateFlag" value = "" />					
 	
@@ -237,6 +338,10 @@ textarea{
 					        <div class="modal-header">
 					          <button type="button" class="close" data-dismiss="modal">&times;</button>
 					          <h4 class="modal-title"><p id ="modelTitle">Add Driver</p></h4>
+					          <div class="alert alert-danger fade in" id="msg" style="display: none;">
+									<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+									<strong id = "msgvalue"></strong>
+							  </div>
 					        </div>
 					        <div class="modal-body">
 								<div class = "row">
@@ -456,7 +561,7 @@ textarea{
 				        	</div>
 					        </div>
 					         <div class="modal-footer">
-					          <input type="button" class="btn btn-primary" data-dismiss="modal" id= "btnSave" value="Save" />
+					          <input type="button" class="btn btn-primary" id= "btnSave" value="Save" />
 							  <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
 					        </div>
 					      </div>
