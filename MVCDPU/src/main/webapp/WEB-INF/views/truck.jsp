@@ -73,6 +73,7 @@ textarea{
 </script>
 <script type="text/javascript">
         function onClickMethodQuestion(quesId){
+        	emptyMessageDiv();
         	clearAll();
         	if(quesId == 0) {
         		$.get("truck/getopenadd", function(data) {
@@ -228,12 +229,19 @@ function check() {
 	$('#modal').modal('toggle');
 	return true;
 }
+function emptyMessageDiv(){
+	var msg = $("#msg");
+	var msgvalue = $("#msgvalue");
+	msg.hide();
+	msgvalue.val("");	
+}
+
 </script>
 </head>
 <body>
 	<jsp:include page="header.jsp"></jsp:include>
 	<div class="container">
-		<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="checkFlag('add'); onClickMethodQuestion('0');" >Add New</button>
+		<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="checkFlag('add'); onClickMethodQuestion('0'); emptyMessageDiv();" >Add New</button>
 		<div class="form-group">
 		<div class="row">
 			<div class="col-sm-8">

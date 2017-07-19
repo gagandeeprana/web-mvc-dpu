@@ -79,8 +79,94 @@ function checkFlag(field) {
 }
 </script>
 <script type="text/javascript">
+            function check()
+            {
+            	
+                var divisionCode = $("#divisionCode").val();
+                var divisionName = $("#divisionName").val();
+                var federal = $("#federal").val();
+                var provincial = $("#provincial").val();
+                var scac = $("#scac").val();
+                var carrierCode = $("#carrierCode").val();
+                var contractPrefix = $("#contractPrefix").val();
+                var invoicePrefix = $("#invoicePrefix").val();
+                
+                var msgvalue = $("#msgvalue");
+                var msg = $("#msg");
+                msg.hide();
+            	msgvalue.text("");
+                if(divisionCode=="")
+                {
+                	msg.show();
+                	msgvalue.text("DivisionCode cannot be left blank");
+                    document.getElementById("divisionCode").focus();
+                    return false;
+                }
+                if(divisionName=="")
+                {
+                	msg.show();
+                	msgvalue.text("DivisionName cannot be left blank");
+                    document.getElementById("divisionName").focus();
+                    return false;
+                }
+                if(federal=="")
+                {
+                	msg.show();
+                	msgvalue.text("Federal cannot be left blank");
+                    document.getElementById("federal").focus();
+                    return false;
+                }
+                if(provincial=="")
+                {
+                	msg.show();
+                	msgvalue.text("Provincial cannot be left blank");
+                    document.getElementById("provincial").focus();
+                    return false;
+                }
+                if(scac=="")
+                {
+                	msg.show();
+                	msgvalue.text("Scac cannot be left blank");
+                    document.getElementById("scac").focus();
+                    return false;
+                }
+                if(carrierCode=="")
+                {
+                	msg.show();
+                	msgvalue.text("CarrierCode cannot be left blank");
+                    document.getElementById("carrierCode").focus();
+                    return false;
+                }
+                if(contractPrefix=="")
+                {
+                	msg.show();
+                	msgvalue.text("ContractPrefix cannot be left blank");
+                    document.getElementById("contractPrefix").focus();
+                    return false;
+                }
+                if(invoicePrefix=="")
+                {
+                	msg.show();
+                	msgvalue.text("InvoicePrefix cannot be left blank");
+                    document.getElementById("invoicePrefix").focus();
+                    return false;
+                }
+                
+                $('#modal').modal('toggle');
+                return true;
+            }
+            function emptyMessageDiv(){
+            	var msg = $("#msg");
+            	var msgvalue = $("#msgvalue");
+            	msg.hide();
+            	msgvalue.val("");	
+            }
+
+        </script>
+
+<script type="text/javascript">
         function onClickMethodQuestion(quesId){
-        	
+        	emptyMessageDiv();
         	clearAll();
         	if(quesId == 0) {
         		document.getElementById("status").innerHTML = "";
@@ -154,7 +240,7 @@ function checkFlag(field) {
 <body>
 	<jsp:include page="header.jsp"></jsp:include>
 	<div class="container">
-		<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="checkFlag('add'); onClickMethodQuestion('0');" >Add New</button>
+		<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="checkFlag('add'); onClickMethodQuestion('0'); emptyMessageDiv();" >Add New</button>
 		<div class="form-group">
 			<div class="row">
 				<div class="col-sm-12">
@@ -162,7 +248,7 @@ function checkFlag(field) {
 				    <div class="modal-dialog">
 
 				      <!-- Modal content-->
-				      	<form action="savedivision" method="POST" name="division" id="frm1" enctype = "multipart/form-data">
+				      	<form action="savedivision" method="POST" name="division" id="frm1" onsubmit="return check()">
 						<input type="hidden" id = "addUpdateFlag" value = "" />
 						<input type="hidden" id = "divisionid" name = "divisionid" value = "" />
 						<% 
@@ -181,7 +267,10 @@ function checkFlag(field) {
 				        <div class="modal-header">
 				          <button type="button" class="close" data-dismiss="modal">&times;</button>
 				          <h4 class="modal-title"><p id ="modelTitle">Add Division</p></h4>
-										
+								<div class="alert alert-danger fade in" id="msg" style="display: none;">
+							<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+							<strong id="msgvalue"></strong>
+						</div>		
 				        </div>
 				        <div class="modal-body">
 				        	
@@ -300,7 +389,7 @@ function checkFlag(field) {
 				        	</div>
 				        </div>
 				        <div class="modal-footer">
-				          <input type="button" class="btn btn-primary" data-dismiss="modal" id= "btnSave" value="Save" />
+				          <input type="button" class="btn btn-primary" id= "btnSave" value="Save" />
 						  <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
 				        </div>
 				      </div>

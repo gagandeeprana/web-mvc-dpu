@@ -13,6 +13,8 @@
 	height: 180px;
 }
 </style>
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 </head>
 <body>
 	<div id="myCarousel" class="carousel slide" data-ride="carousel">
@@ -38,6 +40,18 @@
 			<span class="sr-only">Next</span>
 		</a> -->
 	</div>
+	<script>
+		$(document).ready(function() {
+			var url = window.location.href;
+			var showIndex= url.indexOf("show");
+			if(showIndex != -1) {
+				$("#pageName").show();
+				var pageName = url.substring(showIndex + 4, url.length);
+				$("#pageName").text("Here: " + pageName.toUpperCase());
+			}
+		});
+	</script>
+	<div id = "pageName" style="font-weight: bold; display: none;"></div>
 	<nav class="navbar navbar-light" style="background-color: #e3f2fd;">
 	<div class="container-fluid">
 		<!-- <div class="navbar-header">

@@ -32,7 +32,8 @@ public class LoginController {
 				Success success = (Success) response;
 				HttpSession session = request.getSession();
 				session.setAttribute("un", username);
-				modelAndView.setViewName("homepage");
+				modelAndView.setViewName("redirect:showuser");
+//				modelAndView.setViewName("homepage");
 			} else {
 				modelAndView.addObject("error", "Invalid Username/Password");
 				modelAndView.setViewName("redirect:login");

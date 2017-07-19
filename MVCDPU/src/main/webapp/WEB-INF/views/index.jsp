@@ -9,9 +9,35 @@
 	src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script
 	src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script type="text/javascript">
+            function check()
+            {
+                var username = $("#username").val();
+                var pass = $("#password").val();
+                var msgvalue = $("#msgvalue");
+                var msg = $("#msg");
+                msg.hide();
+            	msgvalue.text("");
+                if(username=="")
+                {
+                	msg.show();
+                	msgvalue.text("Username cannot be left blank");
+                    document.getElementById("username").focus();
+                    return false;
+                }
+                if(pass=="")
+                {
+                	msg.show();
+                	msgvalue.text("Password cannot be left blank");
+                    document.getElementById("password").focus();
+                    return false;
+                }
+                return true;
+            }
+        </script>
 </head>
 <body>
-	<form action="authUser" method="POST">
+	<form action="authUser" method="POST" onsubmit="return check()">
 		<div class="container">
 			<div class="row">
 				<div class="col-sm-12" align = "center">
@@ -28,11 +54,15 @@
 								<strong>${param.error}</strong>
 							</div>
 						</c:if>
-						<div class="form-group">
-							<label>Username</label> <input type="text" class="form-control" name = "username" placeholder="abc@gmail.com" />
+						<div class="alert alert-danger fade in" id="msg" style="display: none;">
+							<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+							<strong id="msgvalue"></strong>
 						</div>
 						<div class="form-group">
-							<label>Password</label> <input type="password" class="form-control" name = "password" placeholder="**********" />
+							<label>Username</label> <input type="text" id="username" class="form-control" name = "username" placeholder="abc@gmail.com" />
+						</div>
+						<div class="form-group">
+							<label>Password</label> <input type="password" id = "password" class="form-control" name = "password" placeholder="**********" />
 						</div>
 						<div align = "right">
 							<input type="submit" value="Login" class="btn btn-primary" />

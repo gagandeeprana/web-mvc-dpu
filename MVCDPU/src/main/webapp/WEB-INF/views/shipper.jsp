@@ -73,7 +73,7 @@ textarea{
 </script>
 <script type="text/javascript">
     function onClickMethodQuestion(quesId){
-    	
+    	emptyMessageDiv();
     	clearAll();
     	if(quesId == 0) {
 	     	$.get("shipper/getopenadd", function(data) {
@@ -145,17 +145,189 @@ textarea{
        	document.getElementById("statusId").innerHTML = "";
     }
 </script>
+
+<script type="text/javascript">
+function check() {
+	var shipperLocation = $("#location").val();
+	var contact = $("#contact").val();
+	var address = $("#address").val();
+	var position = $("#position").val();
+	var unitNo = $("#unitNo").val();
+	var phone = $("#phone").val();
+	var ext = $("#ext").val();
+	var city = $("#city").val();
+	var fax = $("#fax").val();
+	var prefix = $("#prefix").val();
+	var province = $("#province").val();
+	var tollFree = $("#tollfree").val();
+	var plant = $("#plant").val();
+	var cellNumber = $("#cellnumber").val();
+	var zone = $("#zone").val();
+	var email = $("#email").val();
+	var leadTime = $("#leadTime").val();
+	var timeZone = $("#timeZone").val();
+	var importer = $("#importer").val();
+ 	var internalNotes = $("#internalNotes").val();
+ 	var standardNotes = $("#standardNotes").val();
+	var msg = $("#msg");
+	var msgvalue = $("#msgvalue");
+	msg.hide();
+	msgvalue.val("");
+	if(shipperLocation == "") {
+		msg.show();
+		msgvalue.text("Location cannot be left blank.");
+		$("#location").focus();
+		return false;
+	}
+	if(contact == "") {
+		msg.show();
+		msgvalue.text("Contact cannot be left blank.");
+		$("#contact").focus();
+		return false;
+	}
+	if(address == "") {
+		msg.show();
+		msgvalue.text("Address cannot be left blank.");
+		$("#address").focus();
+		return false;
+	}
+	if(position == "") {
+		msg.show();
+		msgvalue.text("Position cannot be left blank.");
+		$("#position").focus();
+		return false;
+	}
+	if(unitNo == "") {
+		msg.show();
+		msgvalue.text("UnitNo cannot be left blank.");
+		$("#unitNo").focus();
+		return false;
+	}
+	if(phone == "") {
+		msg.show();
+		msgvalue.text("Phone cannot be left blank.");
+		$("#phone").focus();
+		return false;
+	}
+	if(ext == "") {
+		msg.show();
+		msgvalue.text("Ext cannot be left blank.");
+		$("#ext").focus();
+		return false;
+	}
+	if(city == "") {
+		msg.show();
+		msgvalue.text("City cannot be left blank.");
+		$("#city").focus();
+		return false;
+	}
+	if(fax == "") {
+		msg.show();
+		msgvalue.text("Fax cannot be left blank.");
+		$("#fax").focus();
+		return false;
+	}
+	if(prefix == "") {
+		msg.show();
+		msgvalue.text("Prefix cannot be left blank.");
+		$("#prefix").focus();
+		return false;
+	}
+	if(province == "") {
+		msg.show();
+		msgvalue.text("Province cannot be left blank.");
+		$("#province").focus();
+		return false;
+	}
+	if(tollFree == "") {
+		msg.show();
+		msgvalue.text("TollFree cannot be left blank.");
+		$("#tollfree").focus();
+		return false;
+	}
+	if(plant == "") {
+		msg.show();
+		msgvalue.text("Plant cannot be left blank.");
+		$("#plant").focus();
+		return false;
+	}
+	if(cellNumber == "") {
+		msg.show();
+		msgvalue.text("CellNumber cannot be left blank.");
+		$("#cellnumber").focus();
+		return false;
+	}
+	if(tollFree == "") {
+		msg.show();
+		msgvalue.text("TollFree cannot be left blank.");
+		$("#tollfree").focus();
+		return false;
+	}
+	if(zone == "") {
+		msg.show();
+		msgvalue.text("Zone cannot be left blank.");
+		$("#zone").focus();
+		return false;
+	}
+	if(email == "") {
+		msg.show();
+		msgvalue.text("Email cannot be left blank.");
+		$("#email").focus();
+		return false;
+	}
+	if(leadTime == "") {
+		msg.show();
+		msgvalue.text("LeadTime cannot be left blank.");
+		$("#leadTime").focus();
+		return false;
+	}
+	if(timeZone == "") {
+		msg.show();
+		msgvalue.text("TimeZone cannot be left blank.");
+		$("#timeZone").focus();
+		return false;
+	}
+	if(importer == "") {
+		msg.show();
+		msgvalue.text("Importer cannot be left blank.");
+		$("#importer").focus();
+		return false;
+	}
+	if(internalNotes == "") {
+		msg.show();
+		msgvalue.text("InternalNotes cannot be left blank.");
+		$("#internalNotes").focus();
+		return false;
+	}
+	if(standardNotes == "") {
+		msg.show();
+		msgvalue.text("StandardNotes cannot be left blank.");
+		$("#standardNotes").focus();
+		return false;
+	}
+	$('#modal').modal('toggle');
+	return true;
+}
+
+function emptyMessageDiv(){
+	var msg = $("#msg");
+	var msgvalue = $("#msgvalue");
+	msg.hide();
+	msgvalue.val("");	
+}
+</script>
+
 </head>
 <body>
 	<jsp:include page="header.jsp"></jsp:include>
 	<div class="container">
-		<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="checkFlag('add'); onClickMethodQuestion('0');" >Add New</button>
+		<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="checkFlag('add'); onClickMethodQuestion('0'); emptyMessageDiv(); emptyMessageDiv();" >Add New</button>
 		<div class="form-group">
 		<div class="row">
 			<div class="col-sm-8">
 					<div class="modal fade" id="myModal" role="dialog">
 					    <div class="modal-dialog">
-						<form action="saveshipper" method="POST" name="shipper" id="frm1">
+						<form action="saveshipper" method="POST" name="shipper" id="frm1" onsubmit="return check()">
 						<input type="hidden" id = "shipperid" name= "shipperid" value = "" />					
 						<input type="hidden" id = "addUpdateFlag" value = "" />					
 	
@@ -164,6 +336,10 @@ textarea{
 					        <div class="modal-header">
 					          <button type="button" class="close" data-dismiss="modal">&times;</button>
 					          <h4 class="modal-title"><p id ="modelTitle">Add Location</p></h4>
+					           <div class="alert alert-danger fade in" id="msg" style="display: none;">
+									<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+									<strong id = "msgvalue"></strong>
+							  </div>
 					        </div>
 					        <div class="modal-body">
 								<div class = "row">
@@ -448,7 +624,7 @@ textarea{
 								  <input type="button" class="btn btn-default" data-dismiss="modal"  value="Notes" />
 								  <button type="button" class="btn btn-default" data-dismiss="modal">Reports</button>
 								  <input type="button" class="btn btn-default" data-dismiss="modal" value="AC" />
-						          <input type="button" class="btn btn-primary" data-dismiss="modal" id= "btnSave" value="Save" />
+						          <input type="button" class="btn btn-primary" id= "btnSave" value="Save" />
 								  <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
 					        </div>
 					      </div>
@@ -517,7 +693,7 @@ textarea{
 							<td>${obj.phone}</td>
 							<td>${obj.email}</td>
 							<td>${obj.importer}</td>
-							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.shipperId}')">Update</a> / <a href="deleteshipper/${obj.shipperId}">Delete</a></td>
+							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update'); onClickMethodQuestion('${obj.shipperId}');">Update</a> / <a href="deleteshipper/${obj.shipperId}">Delete</a></td>
 						</tr>
 					</c:forEach>
 				</tbody>

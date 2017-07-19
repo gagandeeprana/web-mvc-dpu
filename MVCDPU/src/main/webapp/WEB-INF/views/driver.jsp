@@ -73,6 +73,7 @@ textarea{
 </script>
 <script type="text/javascript">
         function onClickMethodQuestion(quesId){
+        	emptyMessageDiv();
         	clearAll();
         	if(quesId == 0) {
 	        	$.get("driver/getopenadd", function(data) {
@@ -217,6 +218,13 @@ textarea{
         	document.getElementById("roleId").innerHTML = "";
         	document.getElementById("classId").innerHTML = ""; 
         }
+        function emptyMessageDiv(){
+        	var msg = $("#msg");
+        	var msgvalue = $("#msgvalue");
+        	msg.hide();
+        	msgvalue.val("");	
+        }
+
 </script>
 <script type="text/javascript">
 function check() {
@@ -323,7 +331,7 @@ function check() {
 <body>
 	<jsp:include page="header.jsp"></jsp:include>
 	<div class="container">
-		<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="checkFlag('add'); onClickMethodQuestion('0');" >Add New</button>
+		<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="checkFlag('add'); onClickMethodQuestion('0'); emptyMessageDiv();" >Add New</button>
 		<div class="form-group">
 		<div class="row">
 			<div class="col-sm-8">
