@@ -20,9 +20,13 @@ public class IssueModel implements Serializable{
 	private Long vmcId;
 	private List<VehicleMaintainanceCategoryModel> vmcList;
 	
+	private String categoryName;
+	private Long categoryId;
+	private List<CategoryReq> categoryList;
+	
 	private String unitTypeName;
 	private Long unitTypeId;
-	private List<CategoryReq> unitTypeList;
+	private List<TypeResponse> unitTypeList;
 	
 	private String unitNo;
 	//private Long unitId;
@@ -142,14 +146,6 @@ public class IssueModel implements Serializable{
 		this.statusList = statusList;
 	}
 
-	public List<CategoryReq> getUnitTypeList() {
-		return unitTypeList;
-	}
-
-	public void setUnitTypeList(List<CategoryReq> unitTypeList) {
-		this.unitTypeList = unitTypeList;
-	}
-
 	public List<String> getUnitNos() {
 		return unitNos;
 	}
@@ -164,6 +160,38 @@ public class IssueModel implements Serializable{
 
 	public void setUnitNo(String unitNo) {
 		this.unitNo = unitNo;
+	}
+
+	public String getCategoryName() {
+		return categoryName;
+	}
+
+	public void setCategoryName(String categoryName) {
+		this.categoryName = categoryName;
+	}
+
+	public Long getCategoryId() {
+		return categoryId;
+	}
+
+	public void setCategoryId(Long categoryId) {
+		this.categoryId = categoryId;
+	}
+
+	public List<CategoryReq> getCategoryList() {
+		return categoryList;
+	}
+
+	public void setCategoryList(List<CategoryReq> categoryList) {
+		this.categoryList = categoryList;
+	}
+
+	public List<TypeResponse> getUnitTypeList() {
+		return unitTypeList;
+	}
+
+	public void setUnitTypeList(List<TypeResponse> unitTypeList) {
+		this.unitTypeList = unitTypeList;
 	}
 	
 }

@@ -78,6 +78,7 @@
 			<li><a href="showuser">Users</a></li>
 			<li><a href="showshipper">Locations</a></li>
 			<li><a href="showvmc">VMC</a></li>
+			<li><a href="showissue">Issue</a></li>
 			<li><a href="logout">Logout</a></li>
 			<!-- <li><a href="showlocation">Locations</a></li> -->
 		</ul>

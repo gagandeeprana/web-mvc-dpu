@@ -36,5 +36,7 @@ public interface VendorService {
 	Object deleteAdditionalContact(Long vendorId, Long additionalContactId);
 
 	Object deleteBillingLocation(Long vendorId, Long billingLocationId);
+
+	List<VendorModel> getSpecificData();
 	
 }

@@ -23,6 +23,7 @@ import com.dpu.entity.VendorContacts;
 import com.dpu.model.CompanyResponse;
 import com.dpu.model.Failed;
 import com.dpu.model.Success;
+import com.dpu.model.VehicleMaintainanceCategoryModel;
 import com.dpu.model.VendorAdditionalContactsModel;
 import com.dpu.model.VendorBillingLocationModel;
 import com.dpu.model.VendorModel;
@@ -661,5 +662,30 @@ public class VendorServiceImpl implements VendorService {
 		}
 
 		return createSuccessObjectWithOutList(vendor_billing_location_delete_message);
+	}
+
+	@Override
+	public List<VendorModel> getSpecificData() {
+
+		Session session = sessionFactory.openSession();
+		List<VendorModel> result = new ArrayList<VendorModel>();
+		
+		try {
+			List<Object[]> vendorData = vendorDao.getSpecificData(session, "Vendor", "vendorId", "name");
+
+			if (vendorData != null && !vendorData.isEmpty()) {
+				for (Object[] row : vendorData) {
+					VendorModel vendorModel = new VendorModel();
+					vendorModel.setVendorId((Long) row[0]);
+					vendorModel.setName(String.valueOf(row[1]));
+					result.add(vendorModel);
+				}
+			}
+		}  finally {
+			if (session != null) {
+				session.close();
+			}
+		}
+		return result;
 	}
 }

@@ -2,11 +2,12 @@ package com.dpu.service;
 
 import java.util.List;
 
-import com.dpu.model.HandlingModel;
+import org.hibernate.Session;
+
 import com.dpu.model.IssueModel;
 
 public interface IssueService {
-	Object update(Long id, HandlingModel handlingModel);
+	Object update(Long id, IssueModel issueModel);
 
 	Object delete(Long id);
 
@@ -14,18 +15,18 @@ public interface IssueService {
 
 	IssueModel getOpenAdd();
 
-	HandlingModel get(Long id);
+	IssueModel get(Long id);
 	
 	List<IssueModel> getSpecificData();
 
-	/*Object addHandling(HandlingModel handlingModel);*/
-
-	/*List<HandlingModel> getHandlingByHandlingName(String handlingName);*/
-
-	IssueModel getUnitNo(Long categoryId);
+	IssueModel getUnitNo(Long categoryId, Long unitTypeId);
 
 	Object addIssue(IssueModel issueModel);
 
 	List<IssueModel> getIssueByIssueName(String issueName);
+
+	List<IssueModel> getActiveAndIncompleteIssues();
+
+	List<IssueModel> getIssueforCategoryAndUnitType(Long categoryId, Long unitTypeId, Session session);
 
 }

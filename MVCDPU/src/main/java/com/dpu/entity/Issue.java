@@ -35,8 +35,12 @@ public class Issue implements Serializable {
 	private VehicleMaintainanceCategory vmc;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "category_id")
+	private Category category;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "unit_type_id")
-	private Category unitType;
+	private Type unitType;
 
 	@Column(name = "unit_no")
 	private String unitNo;
@@ -73,14 +77,6 @@ public class Issue implements Serializable {
 		this.vmc = vmc;
 	}
 
-	public Category getUnitType() {
-		return unitType;
-	}
-
-	public void setUnitType(Category unitType) {
-		this.unitType = unitType;
-	}
-
 	public Driver getReportedBy() {
 		return reportedBy;
 	}
@@ -103,6 +99,22 @@ public class Issue implements Serializable {
 
 	public void setUnitNo(String unitNo) {
 		this.unitNo = unitNo;
+	}
+
+	public Category getCategory() {
+		return category;
+	}
+
+	public void setCategory(Category category) {
+		this.category = category;
+	}
+
+	public Type getUnitType() {
+		return unitType;
+	}
+
+	public void setUnitType(Type unitType) {
+		this.unitType = unitType;
 	}
 	
 	
