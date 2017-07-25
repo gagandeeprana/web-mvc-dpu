@@ -79,6 +79,7 @@
 			<li><a href="showshipper">Locations</a></li>
 			<li><a href="showvmc">VMC</a></li>
 			<li><a href="showissue">Issue</a></li>
+			<li><a href="showpo">PO</a></li>
 			<li><a href="logout">Logout</a></li>
 			<!-- <li><a href="showlocation">Locations</a></li> -->
 		</ul>
