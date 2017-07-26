@@ -81,24 +81,13 @@ function checkFlag(field) {
  	           
 				$("#issuesTable").html();
 	            if(issuesResponse.length > 0) {
-	            	/* var arr=issuesResponse;
-					var tBody="";
-	            	for(t in arr){
-	            		
-	            		for(k in gs )
-	            		{
-	            			
-	            			console.log("key="+k+"|Val="+gs[k]);
-	            			
-	            		}	
-	            		
-	            	} */
 	            	var tableValue = "";
 					$("#mainDiv").show();
+					$("#issuesTable").html("");
 	            	for(var i=0;i<issuesResponse.length;i++) {
 	            		var obj = issuesResponse[i];
 	            		tableValue = tableValue + ("<tr class='info'>");
-	            		tableValue = tableValue + ("<td></td>");
+	            		tableValue = tableValue + ("<td><div class='form-group'><input type='checkbox' class='form-control' value='"+(obj.id)+"' /></div></td>");
 	            		tableValue = tableValue + ("<td>"+(obj.title)+"</td>");
 	            		tableValue = tableValue + ("<td>"+(obj.vmcName)+"</td>");
 	            		tableValue = tableValue + ("<td>"+(obj.categoryName)+"</td>");
@@ -106,12 +95,23 @@ function checkFlag(field) {
 	            		tableValue = tableValue + ("<td>"+(obj.unitNo)+"</td>");
 	            		tableValue = tableValue + ("<td>"+(obj.reportedByName)+"</td>");
 	            		tableValue = tableValue + ("<td>"+(obj.statusName)+"</td>");
-	            		tableValue = tableValue + "<td><a href = '#' data-toggle='modal' data-target='#myModal' onclick='checkFlag('update');onClickMethodQuestion('"+${obj.id}+"')>Update</a> / <a href='deleteissue/${obj.id}">Delete</a></td>"
+	            		//tableValue = tableValue + "<td><a href = '#' data-toggle='modal' data-target='#myModal' onclick='checkFlag('update');onClickMethodQuestion('"+${obj.id}+"')>Update</a> / <a href='deleteissue/${obj.id}">Delete</a></td>"
 	            		tableValue = tableValue + ("</tr>");
 	            	}
 	            	$("#issuesTable").html(tableValue);
+	            } else {
+	            	$("#mainDiv").hide();
+					$("#issuesTable").html("");
 	            }
 			});
+		}
+		
+		function showInvoiceNo() {
+			if($('#statusId :selected').val() == "110") {
+				$("#invoceNoDiv").show();
+			} else {
+				$("#invoceNoDiv").hide();				
+			}
 		}
 
         function onClickMethodQuestion(quesId){
@@ -125,7 +125,7 @@ function checkFlag(field) {
     	            	vendor.options[vendor.options.length] = new Option(data.vendorList[i].name);
     	            	vendor.options[i].value = data.vendorList[i].vendorId;
     	            }
-    	            
+
     	            var category = document.getElementById("categoryId");
     	            for(var i = 0;i < data.categoryList.length;i++) {
     	            	category.options[category.options.length] = new Option(data.categoryList[i].name);
@@ -257,7 +257,7 @@ function emptyMessageDiv(){
 			<div class="col-sm-8">
 					<div class="modal fade" id="myModal" role="dialog">
 					    <div class="modal-dialog">
-						<form action="saveissue" method="POST" name="issue" id="frm1" onsubmit="return check()">
+						<form action="savepo" method="POST" name="po" id="frm1" onsubmit="return check()">
 						<input type="hidden" id = "issueid" name= "issueid" value = "" />					
 						<input type="hidden" id = "addUpdateFlag" value = "" />					
 	
@@ -343,27 +343,27 @@ function emptyMessageDiv(){
 											</div>
 										</div>
 									</div>
-									<div class="form-group">
+									<div class="form-group" id="statusDiv">
 										<div class="row">
 											<div class="col-sm-12">
 												<div class="input-group">
 													<span class="input-group-addon">
 														 <i class="glyphicon glyphicon-list-alt"></i>												
 													</span>
-													<select id="statusId" class="form-control" name="statusId">
+													<select id="statusId" class="form-control" name="statusId" onchange="showInvoiceNo()">
 													</select>
 												</div>
 											</div>
 										</div>
 									</div>
-									<div class="form-group">
+									<div class="form-group" style="display: none;" id = "invoceNoDiv">
 										<div class="row">
 											<div class="col-sm-12">
 												<div class="input-group">
 													<span class="input-group-addon">
 													 <i class="glyphicon glyphicon-inbox"></i>												
 												</span>
-												<input type="text" class="form-control" placeHolder="Enter InvoiceNo" id="invoiceNo" name="invoiceNo" value="" autofocus />
+												<input type="text" class="form-control" placeHolder="Enter InvoiceNo" id="invoiceNo" name="invoiceNo" value="" />
 												</div>
 											</div>
 										</div>

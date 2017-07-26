@@ -2,9 +2,13 @@ package com.dpu.controller.web;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -54,8 +58,8 @@ public class WebPOController {
 		return issueModelList;
 	}
 	
-	/*@RequestMapping(value = "/saveissue" , method = RequestMethod.POST)
-	public ModelAndView saveIssue(@ModelAttribute("issue") IssueModel issueModel, HttpServletRequest request) {
+	@RequestMapping(value = "/savepo" , method = RequestMethod.POST)
+	public ModelAndView savePO(@ModelAttribute("po") PurchaseOrderModel purchaseOrderModel, HttpServletRequest request) {
 		ModelAndView modelAndView = new ModelAndView();
 		HttpSession session = request.getSession();
 		String createdBy = "";
@@ -64,12 +68,12 @@ public class WebPOController {
 		}
 //		divisionReq.setCreatedBy(createdBy);
 //		divisionReq.setCreatedOn(new Date());
-		issueService.addIssue(issueModel);
-		modelAndView.setViewName("redirect:showissue");
+		purchaseOrderService.addPO(purchaseOrderModel);
+		modelAndView.setViewName("redirect:showpo");
 		return modelAndView;
 	}
 	
-	@RequestMapping(value = "/getissue/issueId" , method = RequestMethod.GET)
+	/*@RequestMapping(value = "/getissue/issueId" , method = RequestMethod.GET)
 	@ResponseBody  public IssueModel getIssue(@RequestParam("issueId") Long issueId) {
 		IssueModel issueModel = null;
 		try {
