@@ -13,8 +13,10 @@
 	href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
 <script
 	src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.1/bootstrap3-typeahead.min.js"></script>
 <style type="text/css">
 .modal-dialog {
   width: 98%;
@@ -73,7 +75,9 @@ function checkFlag(field) {
 	}
 }
 </script>
+
 <script type="text/javascript">
+
 		function getUnitNo() {
 			var unitTypeId = $('#unitType :selected').val();
 			var categoryId = $('#issueCategory :selected').val();
@@ -93,12 +97,25 @@ function checkFlag(field) {
         	clearAll();
         	if(quesId == 0) {
             	$.get("issue/getopenadd", function(data) {
-    	           
+            		
     	            var vmc = document.getElementById("vmcId");
-    	            for(var i = 0;i < data.vmcList.length;i++) {
+    	            /* for(var i = 0;i < data.vmcList.length;i++) {
     	            	vmc.options[vmc.options.length] = new Option(data.vmcList[i].name);
     	            	vmc.options[i].value = data.vmcList[i].id;
-    	            }
+    	            } */
+    	            
+    	            /* $('#vmcId').typeahead({
+    	                source : data.vmcList
+    	               }); */
+    	            /* $('#vmcId').typeahead({
+    	        	    source:  function (query, process) {
+    	                return data.vmcList;
+    	        	    }
+    	        	}); */
+    	               
+    	               $('#vmcId').typeahead({
+    	           	    source:  data.vmcList
+    	           	});
     	            
     	            var unitType = document.getElementById("unitType");
     	            for(var i = 0;i < data.unitTypeList.length;i++) {
@@ -275,8 +292,7 @@ function emptyMessageDiv(){
 													<span class="input-group-addon">
 														 <i class="glyphicon glyphicon-list-alt"></i>												
 													</span>
-													<select class="form-control" name="vmcId" id="vmcId">
-													</select>
+													<input type="text" class="form-control" placeHolder="Enter VMC" id="vmcId" name="vmcId" value="" data-provide="typeahead" autocomplete="off" />
 												</div>
 											</div>
 										</div>

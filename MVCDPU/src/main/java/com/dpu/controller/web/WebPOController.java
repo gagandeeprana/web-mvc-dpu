@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -73,31 +74,33 @@ public class WebPOController {
 		return modelAndView;
 	}
 	
-	/*@RequestMapping(value = "/getissue/issueId" , method = RequestMethod.GET)
-	@ResponseBody  public IssueModel getIssue(@RequestParam("issueId") Long issueId) {
-		IssueModel issueModel = null;
+	@RequestMapping(value = "/getpo/poId" , method = RequestMethod.GET)
+	@ResponseBody  public PurchaseOrderModel getPO(@RequestParam("poId") Long poId) {
+		PurchaseOrderModel purchaseOrderModel = null;
 		try {
-			issueModel = issueService.get(issueId);
+			purchaseOrderModel = purchaseOrderService.get(poId);
+			List<IssueModel> issueModelList = purchaseOrderService.getCategoryAndUnitTypeIssues(purchaseOrderModel.getCategoryId(), purchaseOrderModel.getUnitTypeId());
+			purchaseOrderModel.getIssueList().addAll(issueModelList);
 		} catch (Exception e) {
 			System.out.println(e);
 			logger.info("Exception in getCategory is: " + e);
 		}
-		return issueModel;
+		return purchaseOrderModel;
 	}
 	
-	@RequestMapping(value = "/updateissue" , method = RequestMethod.POST)
-	public ModelAndView updateIssue(@ModelAttribute("issue") IssueModel issueModel, @RequestParam("issueid") Long issueId) {
+	@RequestMapping(value = "/updatepo" , method = RequestMethod.POST)
+	public ModelAndView updatePO(@ModelAttribute("po") PurchaseOrderModel purchaseOrderModel, @RequestParam("poid") Long poId) {
 		ModelAndView modelAndView = new ModelAndView();
-		issueService.update(issueId, issueModel);
-		modelAndView.setViewName("redirect:showissue");
+		purchaseOrderService.update(poId, purchaseOrderModel);
+		modelAndView.setViewName("redirect:showpo");
 		return modelAndView;
 	}
 	
-	@RequestMapping(value = "/deleteissue/{issueid}" , method = RequestMethod.GET)
-	public ModelAndView deleteTerminal(@PathVariable("issueid") Long issueId) {
+	@RequestMapping(value = "/deletepo/{poid}" , method = RequestMethod.GET)
+	public ModelAndView deletePO(@PathVariable("poid") Long poId) {
 		ModelAndView modelAndView = new ModelAndView();
-		issueService.delete(issueId);
-		modelAndView.setViewName("redirect:/showissue");
+		purchaseOrderService.delete(poId);
+		modelAndView.setViewName("redirect:/showpo");
 		return modelAndView;
-	}*/
+	}
 }

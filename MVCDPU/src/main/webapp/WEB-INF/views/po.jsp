@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Issue</title>
+<title>PO</title>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@page isELIgnored="false"%>
@@ -57,7 +57,7 @@ function checkFlag(field) {
 		document.getElementById("frm1").action = "updatepo";
 		document.getElementById("btnNew").value = "Update";
 		//$("#btnExit").hide();
-		$("#modelTitle").html("Edit Issue");
+		$("#modelTitle").html("Edit PO");
 	}
 	else if(field == 'add') {
 		//$("#cke_1_contents").html('');
@@ -87,7 +87,7 @@ function checkFlag(field) {
 	            	for(var i=0;i<issuesResponse.length;i++) {
 	            		var obj = issuesResponse[i];
 	            		tableValue = tableValue + ("<tr class='info'>");
-	            		tableValue = tableValue + ("<td><div class='form-group'><input type='checkbox' class='form-control' value='"+(obj.id)+"' /></div></td>");
+	            		tableValue = tableValue + ("<td><div class='form-group'><input type='checkbox' class='form-control' value='"+(obj.id)+"' id='issueIds' name='issueIds' /></div></td>");
 	            		tableValue = tableValue + ("<td>"+(obj.title)+"</td>");
 	            		tableValue = tableValue + ("<td>"+(obj.vmcName)+"</td>");
 	            		tableValue = tableValue + ("<td>"+(obj.categoryName)+"</td>");
@@ -145,19 +145,18 @@ function checkFlag(field) {
     	            }
     	        });
         	} else {
-        		 $.get("getissue/issueId",{"issueId" : quesId}, function(data) {
-        			document.getElementById("issueid").value = data.id;
-                    $("#title").val(data.title);
+        		 $.get("getpo/poId",{"poId" : quesId}, function(data) {
+        			document.getElementById("poid").value = data.id;
                     
-                    var vmc = document.getElementById("vmcId");
-                    var vmcList = data.vmcList;
-                    for(var i = 0;i < vmcList.length;i++) {
-                    	vmc.options[vmc.options.length] = new Option(vmcList[i].name);
-                    	vmc.options[i].value = vmcList[i].id;
-                    	if(vmcList[i].id == data.vmcId) {
-                    		document.getElementById("vmcId").selectedIndex = i;
+        			var vendor = document.getElementById("vendorId");
+                    var vendorList = data.vendorList;
+    	            for(var i = 0;i < data.vendorList.length;i++) {
+    	            	vendor.options[vendor.options.length] = new Option(data.vendorList[i].name);
+    	            	vendor.options[i].value = data.vendorList[i].vendorId;
+                    	if(vendorList[i].vendorId == data.vendorId) {
+                    		document.getElementById("vendorId").selectedIndex = i;
                     	}
-                    }
+    	            }
                     
                     var unitType = document.getElementById("unitTypeId");
                     var unitTypeList = data.unitTypeList;
@@ -165,57 +164,73 @@ function checkFlag(field) {
                     	unitType.options[unitType.options.length] = new Option(unitTypeList[i].typeName);
                     	unitType.options[i].value = unitTypeList[i].typeId;
                     	if(unitTypeList[i].typeId == data.unitTypeId) {
-                    		document.getElementById("unitType").selectedIndex = i;
+                    		document.getElementById("unitTypeId").selectedIndex = i;
                     	}
                     }
                     
-                    var category = document.getElementById("issueCategory");
+                    var category = document.getElementById("categoryId");
                     var categoryList = data.categoryList;
                     for(var i = 0;i < categoryList.length;i++) {
                     	category.options[category.options.length] = new Option(categoryList[i].name);
                     	category.options[i].value = categoryList[i].categoryId;
                     	if(categoryList[i].categoryId == data.categoryId) {
-                    		document.getElementById("issueCategory").selectedIndex = i;
+                    		document.getElementById("categoryId").selectedIndex = i;
                     	}
                     }
                     
-                    var unitNo = document.getElementById("unitNo");
-                    var unitNos = data.unitNos;
-                    for(var i = 0;i < unitNos.length;i++) {
-                    	unitNo.options[unitNo.options.length] = new Option(unitNos[i]);
-                    	unitNo.options[i].value = unitNos[i];
-                    	if(unitNos[i] == data.unitNo) {
-                    		document.getElementById("unitNo").selectedIndex = i;
-                    	}
-                    }
-                    
-                    var reportedBy = document.getElementById("reportedBy");
-                    var reportedByList = data.reportedByList;
-                    for(var i = 0;i < reportedByList.length;i++) {
-                    	reportedBy.options[reportedBy.options.length] = new Option(reportedByList[i].fullName);
-                    	reportedBy.options[i].value = reportedByList[i].driverId;
-                    	if(reportedByList[i].driverId == data.reportedById) {
-                    		document.getElementById("reportedBy").selectedIndex = i;
-                    	}
-                    }
-                    
-                    var status = document.getElementById("status");
+                    var status = document.getElementById("statusId");
                     var statusList = data.statusList;
     	            for(var i = 0;i < data.statusList.length;i++) {
     	            	status.options[status.options.length] = new Option(data.statusList[i].typeName);
     	            	status.options[i].value = data.statusList[i].typeId;
     	            	if(statusList[i].typeId == data.statusId) {
-                    		document.getElementById("status").selectedIndex = i;
+                    		document.getElementById("statusId").selectedIndex = i;
                     	}
     	            }
+    	            
+    	            var status = document.getElementById("statusId");
+                    var issueList = data.issueList;
+	            	var tableValue = "";
+					$("#issuesTable").html("");
+					if(data.issueList.length > 0) {
+						$("#mainDiv").show();
+	    	            for(var i = 0;i < data.issueList.length;i++) {
+	    	            	var obj = data.issueList[i];
+		            		tableValue = tableValue + ("<tr class='info'>");
+		            		if(obj.statusName == "Assigned") {
+			            		tableValue = tableValue + ("<td><div class='form-group'><input type='checkbox' class='form-control' value='"+(obj.id)+"' id='issueIds' name='issueIds' checked /></div></td>");
+		            		} else {
+			            		tableValue = tableValue + ("<td><div class='form-group'><input type='checkbox' class='form-control' value='"+(obj.id)+"' id='issueIds' name='issueIds' /></div></td>");		            			
+		            		}
+		            		tableValue = tableValue + ("<td>"+(obj.title)+"</td>");
+		            		tableValue = tableValue + ("<td>"+(obj.vmcName)+"</td>");
+		            		tableValue = tableValue + ("<td>"+(obj.categoryName)+"</td>");
+		            		tableValue = tableValue + ("<td>"+(obj.unitTypeName)+"</td>");
+		            		tableValue = tableValue + ("<td>"+(obj.unitNo)+"</td>");
+		            		tableValue = tableValue + ("<td>"+(obj.reportedByName)+"</td>");
+		            		tableValue = tableValue + ("<td>"+(obj.statusName)+"</td>");
+		            		//tableValue = tableValue + "<td><a href = '#' data-toggle='modal' data-target='#myModal' onclick='checkFlag('update');onClickMethodQuestion('"+${obj.id}+"')>Update</a> / <a href='deleteissue/${obj.id}">Delete</a></td>"
+		            		tableValue = tableValue + ("</tr>");
+	    	            }
+					}					
+	            	$("#issuesTable").html(tableValue);
+
+                    var invoiceNo = document.getElementById("invoiceNo");
+                    if(invoiceNo != null) {
+                    	$("#invoceNoDiv").show();
+                    	$("#invoiceNo").val(data.invoiceNo);
+                    }
+
+                    $("#message").val(data.message);
+
                	}); 
         	}
         }
         
         function clearAll() {
         	document.getElementById("vendorId").innerHTML = "";
-        	document.getElementById("categoryId").innerHTML = "";
         	document.getElementById("unitTypeId").innerHTML = "";
+        	document.getElementById("categoryId").innerHTML = "";
         	document.getElementById("statusId").innerHTML = "";
             $("#invoiceNo").val("");
             $("#message").val("");
@@ -258,7 +273,7 @@ function emptyMessageDiv(){
 					<div class="modal fade" id="myModal" role="dialog">
 					    <div class="modal-dialog">
 						<form action="savepo" method="POST" name="po" id="frm1" onsubmit="return check()">
-						<input type="hidden" id = "issueid" name= "issueid" value = "" />					
+						<input type="hidden" id = "poid" name= "poid" value = "" />					
 						<input type="hidden" id = "addUpdateFlag" value = "" />					
 	
 					      <!-- Modal content-->
@@ -442,7 +457,7 @@ function emptyMessageDiv(){
 							<td>${obj.statusName}</td>
 							<td>${obj.unitTypeName}</td>
 							<td>${obj.vendorName}</td>
-							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.id}')">Update</a> / <a href="deleteissue/${obj.id}">Delete</a></td>
+							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.id}')">Update</a> / <a href="deletepo/${obj.id}">Delete</a></td>
 						</tr>
 					</c:forEach>
 				</tbody>
