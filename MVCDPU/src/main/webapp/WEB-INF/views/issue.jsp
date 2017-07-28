@@ -10,13 +10,15 @@
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@page isELIgnored="false"%>
 <link rel="stylesheet"
-	href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	href=" //maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+ <script src=" //code.jquery.com/jquery-1.12.4.js"></script>
+<script src=" //code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script
-	src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-
-<script
-	src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-	<script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.1/bootstrap3-typeahead.min.js"></script>
+	src=" //maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+ 	<!--  <script type="text/javascript" src="/WEB-INF/bootstrap-typeahead.js">
+ 	</script>-->
+  
 <style type="text/css">
 .modal-dialog {
   width: 98%;
@@ -38,6 +40,10 @@ textarea{
   min-height:360px;  
   max-height:360px;
 }
+.ui-autocomplete{
+z-index: 99999!important;
+}
+
 </style>
 <script type="text/javascript">
 	$(document).ready(function(){
@@ -99,24 +105,41 @@ function checkFlag(field) {
             	$.get("issue/getopenadd", function(data) {
             		
     	            var vmc = document.getElementById("vmcId");
-    	            /* for(var i = 0;i < data.vmcList.length;i++) {
-    	            	vmc.options[vmc.options.length] = new Option(data.vmcList[i].name);
-    	            	vmc.options[i].value = data.vmcList[i].id;
-    	            } */
+    	           	var countries = "['Andorra','United Arab Emirates','Afghanistan']"
+
+    	                // applied typeahead to the text input box
+    	               /* $('#vmcId').typeahead({
+
+    	                  // data source
+    	                  source: countries,
+
+    	                  // max item numbers list in the dropdown
+    	                  limit: 10
+    	                });
+    	            */
     	            
-    	            /* $('#vmcId').typeahead({
-    	                source : data.vmcList
-    	               }); */
-    	            /* $('#vmcId').typeahead({
-    	        	    source:  function (query, process) {
-    	                return data.vmcList;
-    	        	    }
-    	        	}); */
-    	               
-    	               $('#vmcId').typeahead({
-    	           	    source:  data.vmcList
-    	           	});
-    	            
+    	           	 var arrList = []
+    	           	for(var i=0;i<data.vmcList.length;i++){
+    	           		arrList.push({label:data.vmcList[i]['name'],value:data.vmcList[i]['id']})
+    	           	}
+    	           	
+    	        	$("#vmcId").autocomplete({
+   	        	      source: arrList,
+   	        	   minLength: 0,	 
+		   	        	
+   	        	      select: function (event, ui) {
+   	        	    	   $( "#vmcId" ).val( ui.item.label );
+   	        	           $("#vmcIdhidden").val(ui.item.value); 
+   	        	    		return false;
+   	        	           
+   	        	        }
+   	        	    }).autocomplete("instance")._renderItem = function(ul, item) {
+   	        	      return $( "<li>" )
+   	        	        .append("<div>" + item.label + "</div>")
+   	        	        .appendTo(ul);
+   	        	    }; 
+            	
+            	
     	            var unitType = document.getElementById("unitType");
     	            for(var i = 0;i < data.unitTypeList.length;i++) {
     	            	unitType.options[unitType.options.length] = new Option(data.unitTypeList[i].typeName);
@@ -276,7 +299,7 @@ function emptyMessageDiv(){
 									<div class="form-group">
 										<div class="row">
 											<div class="col-sm-12">
-												<div class="input-group">
+												<div class="input-group ui-widget"  >
 												<span class="input-group-addon">
 													 <i class="glyphicon glyphicon-inbox"></i>												
 												</span>
@@ -292,7 +315,8 @@ function emptyMessageDiv(){
 													<span class="input-group-addon">
 														 <i class="glyphicon glyphicon-list-alt"></i>												
 													</span>
-													<input type="text" class="form-control" placeHolder="Enter VMC" id="vmcId" name="vmcId" value="" data-provide="typeahead" autocomplete="off" />
+													<input type="text" placeHolder="Enter VMC" id="vmcId" name="vmcId"  />
+													<input type="hidden" id="vmcIdhidden" />
 												</div>
 											</div>
 										</div>

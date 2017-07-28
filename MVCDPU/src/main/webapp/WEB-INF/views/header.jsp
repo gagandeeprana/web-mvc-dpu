@@ -13,8 +13,8 @@
 	height: 180px;
 }
 </style>
-<script
-	src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<!-- <script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script> -->
 </head>
 <body>
 	<div id="myCarousel" class="carousel slide" data-ride="carousel">
