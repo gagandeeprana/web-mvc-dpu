@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.dpu.dao.impl;
 
 import java.util.List;
@@ -25,9 +22,8 @@ public class EmployeeDaoImpl extends GenericDaoImpl<Employee> implements Employe
 
 		session.save(employee);
 	}
-	
-	
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Employee> getUserByUserName(Session session, String userName) {
 		StringBuilder sb = new StringBuilder(" select h from Employee h  where h.username like :username ");
@@ -36,8 +32,6 @@ public class EmployeeDaoImpl extends GenericDaoImpl<Employee> implements Employe
 		return query.list();
 	}
 
-
-
 	@Override
 	public Employee getUserByUserName(Session session, EmployeeModel employeeModel) {
 		StringBuilder sb = new StringBuilder("  from Employee where username like :username ");
@@ -45,8 +39,6 @@ public class EmployeeDaoImpl extends GenericDaoImpl<Employee> implements Employe
 		query.setParameter("username",employeeModel.getUsername());
 		return (Employee) query.uniqueResult();
 	}
-
-
 
 	@Override
 	public void update(Employee employee, Session session) {

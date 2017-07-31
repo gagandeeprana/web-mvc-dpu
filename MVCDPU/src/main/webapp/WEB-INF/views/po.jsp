@@ -63,7 +63,7 @@ function checkFlag(field) {
 		//$("#cke_1_contents").html('');
 		$(":text").val("");
    		//document.getElementById('categoryId').selectedIndex = 0;
-		document.getElementById("btnNew").value = "Save&New";
+		document.getElementById("btnNew").value = "Save";
 		//$("#btnExit").show();
 		$("#modelTitle").html("Add PO");
 	} else if (field == 'search') {
@@ -74,34 +74,37 @@ function checkFlag(field) {
 }
 </script>
 <script type="text/javascript">
+		var editInitialValue = "";
 		function getUnitNo() {
 			var unitTypeId = $('#unitTypeId :selected').val();
 			var categoryId = $('#categoryId :selected').val();
 			$.get("po/getissues/category/"+categoryId+"/unittype/"+unitTypeId, function(issuesResponse) {
  	           
-				$("#issuesTable").html();
+				//$("#issuesTable").html();
 	            if(issuesResponse.length > 0) {
 	            	var tableValue = "";
-					$("#mainDiv").show();
-					$("#issuesTable").html("");
+					//$("#mainDiv").show();
+					//$("#issuesTable").html("");
 	            	for(var i=0;i<issuesResponse.length;i++) {
 	            		var obj = issuesResponse[i];
-	            		tableValue = tableValue + ("<tr class='info'>");
-	            		tableValue = tableValue + ("<td><div class='form-group'><input type='checkbox' class='form-control' value='"+(obj.id)+"' id='issueIds' name='issueIds' /></div></td>");
-	            		tableValue = tableValue + ("<td>"+(obj.title)+"</td>");
-	            		tableValue = tableValue + ("<td>"+(obj.vmcName)+"</td>");
-	            		tableValue = tableValue + ("<td>"+(obj.categoryName)+"</td>");
-	            		tableValue = tableValue + ("<td>"+(obj.unitTypeName)+"</td>");
-	            		tableValue = tableValue + ("<td>"+(obj.unitNo)+"</td>");
-	            		tableValue = tableValue + ("<td>"+(obj.reportedByName)+"</td>");
-	            		tableValue = tableValue + ("<td>"+(obj.statusName)+"</td>");
-	            		//tableValue = tableValue + "<td><a href = '#' data-toggle='modal' data-target='#myModal' onclick='checkFlag('update');onClickMethodQuestion('"+${obj.id}+"')>Update</a> / <a href='deleteissue/${obj.id}">Delete</a></td>"
-	            		tableValue = tableValue + ("</tr>");
+	            		if(!editIssueIds.includes(obj.id)) {
+		            		tableValue = tableValue + ("<tr class='info'>");
+		            		tableValue = tableValue + ("<td><div class='form-group'><input type='checkbox' class='form-control issueIds' value='"+(obj.id)+"' id='issueIds' name='issueIds' /></div></td>");
+		            		tableValue = tableValue + ("<td>"+(obj.title)+"</td>");
+		            		tableValue = tableValue + ("<td>"+(obj.vmcName)+"</td>");
+		            		tableValue = tableValue + ("<td>"+(obj.categoryName)+"</td>");
+		            		tableValue = tableValue + ("<td>"+(obj.unitTypeName)+"</td>");
+		            		tableValue = tableValue + ("<td>"+(obj.unitNo)+"</td>");
+		            		tableValue = tableValue + ("<td>"+(obj.reportedByName)+"</td>");
+		            		tableValue = tableValue + ("<td>"+(obj.statusName)+"</td>");
+		            		//tableValue = tableValue + "<td><a href = '#' data-toggle='modal' data-target='#myModal' onclick='checkFlag('update');onClickMethodQuestion('"+${obj.id}+"')>Update</a> / <a href='deleteissue/${obj.id}">Delete</a></td>"
+		            		tableValue = tableValue + ("</tr>");
+	            		}
 	            	}
-	            	$("#issuesTable").html(tableValue);
+	            	$("#issuesTable").html($("#issuesTable").html() + tableValue);
 	            } else {
-	            	$("#mainDiv").hide();
-					$("#issuesTable").html("");
+	            	//$("#mainDiv").hide();
+					$("#issuesTable").html(editInitialValue);
 	            }
 			});
 		}
@@ -114,10 +117,15 @@ function checkFlag(field) {
 			}
 		}
 
+		var editIssueIds = new Array();
         function onClickMethodQuestion(quesId){
         	emptyMessageDiv();
         	clearAll();
         	if(quesId == 0) {
+        		$("#mainDiv").hide();
+       			$("#issueIds").html("");
+       			$("#invoceNoDiv").hide();
+            	$("#invoiceNo").val("");
             	$.get("po/getopenadd", function(data) {
     	           
     	            var vendor = document.getElementById("vendorId");
@@ -145,7 +153,11 @@ function checkFlag(field) {
     	            }
     	        });
         	} else {
-        		 $.get("getpo/poId",{"poId" : quesId}, function(data) {
+        		$("#mainDiv").hide();
+       			$("#issueIds").html("");
+       			$("#invoceNoDiv").hide();
+            	$("#invoiceNo").val("");
+        		$.get("getpo/poId",{"poId" : quesId}, function(data) {
         			document.getElementById("poid").value = data.id;
                     
         			var vendor = document.getElementById("vendorId");
@@ -196,11 +208,12 @@ function checkFlag(field) {
 						$("#mainDiv").show();
 	    	            for(var i = 0;i < data.issueList.length;i++) {
 	    	            	var obj = data.issueList[i];
+	    	            	editIssueIds.push(obj.id);
 		            		tableValue = tableValue + ("<tr class='info'>");
 		            		if(obj.statusName == "Assigned") {
-			            		tableValue = tableValue + ("<td><div class='form-group'><input type='checkbox' class='form-control' value='"+(obj.id)+"' id='issueIds' name='issueIds' checked /></div></td>");
+			            		tableValue = tableValue + ("<td><div class='form-group'><input type='checkbox' class='form-control issueIds' value='"+(obj.id)+"' id='issueIds' name='issueIds' checked /></div></td>");
 		            		} else {
-			            		tableValue = tableValue + ("<td><div class='form-group'><input type='checkbox' class='form-control' value='"+(obj.id)+"' id='issueIds' name='issueIds' /></div></td>");		            			
+			            		tableValue = tableValue + ("<td><div class='form-group'><input type='checkbox' class='form-control issueIds' value='"+(obj.id)+"' id='issueIds' name='issueIds' /></div></td>");		            			
 		            		}
 		            		tableValue = tableValue + ("<td>"+(obj.title)+"</td>");
 		            		tableValue = tableValue + ("<td>"+(obj.vmcName)+"</td>");
@@ -212,13 +225,15 @@ function checkFlag(field) {
 		            		//tableValue = tableValue + "<td><a href = '#' data-toggle='modal' data-target='#myModal' onclick='checkFlag('update');onClickMethodQuestion('"+${obj.id}+"')>Update</a> / <a href='deleteissue/${obj.id}">Delete</a></td>"
 		            		tableValue = tableValue + ("</tr>");
 	    	            }
-					}					
+					}
+					editInitialValue = tableValue;
 	            	$("#issuesTable").html(tableValue);
 
-                    var invoiceNo = document.getElementById("invoiceNo");
-                    if(invoiceNo != null) {
+                    if(data.invoiceNo != null) {
                     	$("#invoceNoDiv").show();
                     	$("#invoiceNo").val(data.invoiceNo);
+                    } else {
+                    	$("#invoceNoDiv").hide();
                     }
 
                     $("#message").val(data.message);
@@ -239,16 +254,40 @@ function checkFlag(field) {
 
 <script type="text/javascript">
 function check() {
-	var title = $("#title").val();
+	var title = $("#issueIds");
 	var msg = $("#msg");
 	var msgvalue = $("#msgvalue");
 	msg.hide();
 	msgvalue.val("");
-	if(title == "") {
+	if(title.length == 0) {
 		msg.show();
-		msgvalue.text("Title cannot be left blank.");
-		$("#title").focus();
+		$("#categoryId").focus();
+		msgvalue.text("Assign Some Issues to PO");
 		return false;
+	} else if(title.length != 0){
+		var issues = $(".issueIds");
+		var flag = false;
+		for(var i=0;i<issues.length;i++){
+			if(issues[i].checked) {
+				flag = true;
+			}
+		}
+		if(!flag) {
+			msg.show();
+			msgvalue.text("Choose any issue");
+			return false;
+		}
+	}
+	
+	var invoiceNo = $("#invoiceNo");
+	var invoceNoDiv = $("#invoceNoDiv");
+	if(invoceNoDiv.is(':visible') && invoiceNo.length != 0) {
+		if(invoiceNo.val() == "") {
+			msg.show();
+			invoiceNo.focus();
+			msgvalue.text("Invoice no is mandatory");
+			return false;			
+		}
 	}
 	/* $('#modal').modal('toggle'); */
 	return true;
@@ -348,8 +387,6 @@ function emptyMessageDiv(){
 																	</tr>
 																</thead>
 																<tbody id = "issuesTable">
-																	<tr class="info">
-																	</tr>
 																</tbody>
 															</table>
 														</div>
@@ -399,7 +436,7 @@ function emptyMessageDiv(){
 				        	</div>
 					        </div>
 					        <div class="modal-footer">
-					          <input type="button" class="btn btn-primary" id= "btnNew" value="Save&New" />
+					          <input type="button" class="btn btn-primary" id= "btnNew" value="Save" />
 					    	  <!-- <input type="button" class="btn btn-primary" id= "btnExit" value="Save&Exit" /> -->
 					    	  <input type="reset" class="btn btn-primary" id= "btnReset" value="Reset" />
 							  <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>

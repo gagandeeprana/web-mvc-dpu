@@ -6,7 +6,6 @@ import com.dpu.model.IssueModel;
 import com.dpu.model.PurchaseOrderModel;
 
 public interface PurchaseOrderService {
-	/*Object update(Long id, IssueModel issueModel);*/
 
 	Object delete(Long id);
 
@@ -16,18 +15,14 @@ public interface PurchaseOrderService {
 
 	PurchaseOrderModel get(Long id);
 	
-	List<IssueModel> getSpecificData();
-
-	IssueModel getUnitNo(Long categoryId);
-
-	Object addIssue(IssueModel issueModel);
-
-	List<IssueModel> getIssueByIssueName(String issueName);
-
 	Object addPO(PurchaseOrderModel poModel);
 
 	List<IssueModel> getCategoryAndUnitTypeIssues(Long categoryId, Long unitTypeId);
 
 	Object update(Long poId, PurchaseOrderModel poModel);
+
+	List<PurchaseOrderModel> getPoByPoNo(Long poNo);
+
+	Object updateStatus(Long poId, Long statusId);
 
 }

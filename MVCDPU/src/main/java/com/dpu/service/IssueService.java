@@ -29,4 +29,6 @@ public interface IssueService {
 
 	List<IssueModel> getIssueforCategoryAndUnitType(Long categoryId, Long unitTypeId, Session session);
 
+	Object updateStatus(Long issueId, Long statusId);
+
 }

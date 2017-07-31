@@ -93,4 +93,12 @@ public class IssueDaoImpl extends GenericDaoImpl<Issue> implements IssueDao{
 		return query.list();
 	}
 
+	@Override
+	public void updateStatus(Issue issue, Type status, Session session) {
+		
+		issue.setStatus(status);
+		session.update(issue);
+		
+	}
+
 }

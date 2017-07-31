@@ -12,16 +12,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import com.dpu.dao.HandlingDao;
-import com.dpu.dao.IssueDao;
 import com.dpu.dao.PurchaseOrderDao;
 import com.dpu.entity.Category;
-import com.dpu.entity.Driver;
 import com.dpu.entity.Issue;
 import com.dpu.entity.PurchaseOrder;
 import com.dpu.entity.PurchaseOrderIssue;
 import com.dpu.entity.Type;
-import com.dpu.entity.VehicleMaintainanceCategory;
 import com.dpu.entity.Vendor;
 import com.dpu.model.CategoryReq;
 import com.dpu.model.Failed;
@@ -31,37 +27,19 @@ import com.dpu.model.Success;
 import com.dpu.model.TypeResponse;
 import com.dpu.model.VendorModel;
 import com.dpu.service.CategoryService;
-import com.dpu.service.DriverService;
 import com.dpu.service.IssueService;
 import com.dpu.service.PurchaseOrderService;
-import com.dpu.service.StatusService;
 import com.dpu.service.TypeService;
-import com.dpu.service.VehicleMaintainanceCategoryService;
 import com.dpu.service.VendorService;
 
 @Component
 public class PurchaseOrderServiceImpl implements PurchaseOrderService  {
 
 	Logger logger = Logger.getLogger(PurchaseOrderServiceImpl.class);
-
-	@Autowired
-	HandlingDao handlingDao;
-	
-	@Autowired
-	IssueDao issueDao;
-
-	@Autowired
-	StatusService statusService;
 	
 	@Autowired
 	IssueService issueService;
 
-	@Autowired
-	VehicleMaintainanceCategoryService vehicleMaintainanceCategoryService;
-	
-	@Autowired
-	DriverService driverService;
-	
 	@Autowired
 	CategoryService categoryService;
 	
@@ -97,6 +75,12 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService  {
 
 	@Value("${po_already_used_message}")
 	private String po_already_used_message;
+	
+	@Value("${po_status_update}")
+	private String po_status_update;
+
+	@Value("${po_status_unable_to_update}")
+	private String po_status_unable_to_update;
 
 	@Override
 	public List<PurchaseOrderModel> getAll() {
@@ -158,14 +142,13 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService  {
 
 		Failed failed = new Failed();
 		failed.setMessage(msg);
-		// failed.setResultList(getAll());
 		return failed;
 	}
 
 	@Override
 	public Object update(Long id, PurchaseOrderModel poModel) {
 
-		logger.info("IssueServiceImpl update() starts.");
+		logger.info("PurchaseOrderServiceImpl update() starts.");
 		Session session = null;
 		Transaction tx = null;
 		
@@ -175,8 +158,10 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService  {
 			PurchaseOrder po = (PurchaseOrder) session.get(PurchaseOrder.class, id);
 			List<PurchaseOrderIssue> poIssues = new ArrayList<PurchaseOrderIssue>();
 			if (po != null) {
+				Type assignStatus = typeService.get(106l);
+				Type openStatus = typeService.get(103l);
 				setPoValues(poModel, po, poIssues, session, "update");
-				poDao.update(po, poIssues, session);
+				poDao.update(po, poIssues, assignStatus, openStatus, session);
 				tx.commit();
 			} else {
 				return createFailedObject(po_unable_to_update_message);
@@ -186,7 +171,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService  {
 			if (tx != null) {
 				tx.rollback();
 			}
-			logger.info("Exception inside IssueServiceImpl update() :"+ e.getMessage());
+			logger.info("Exception inside PurchaseOrderServiceImpl update() :"+ e.getMessage());
 			return createFailedObject(po_unable_to_update_message);
 		} finally {
 			if(session != null) {
@@ -194,7 +179,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService  {
 			}
 		}
 
-		logger.info("IssueServiceImpl update() ends.");
+		logger.info("PurchaseOrderServiceImpl update() ends.");
 		return createSuccessObject(po_updated_message);
 	}
 
@@ -226,7 +211,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService  {
 			}
 
 		} catch (Exception e) {
-			logger.info("Exception inside IssueServiceImpl delete() : " + e.getMessage());
+			logger.info("Exception inside PurchaseOrderServiceImpl delete() : " + e.getMessage());
 			if (tx != null) {
 				tx.rollback();
 			}
@@ -240,14 +225,14 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService  {
 			}
 		}
 
-		logger.info("IssueServiceImpl delete() ends.");
+		logger.info("PurchaseOrderServiceImpl delete() ends.");
 		return createSuccessObject(po_deleted_message);
 	}
 
 	@Override
 	public PurchaseOrderModel get(Long id) {
 
-		logger.info("IssueServiceImpl get() starts.");
+		logger.info("PurchaseOrderServiceImpl get() starts.");
 		Session session = null;
 		PurchaseOrderModel poModel = new PurchaseOrderModel();
 
@@ -299,7 +284,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService  {
 			}
 		}
 
-		logger.info("IssueServiceImpl get() ends.");
+		logger.info("PurchaseOrderServiceImpl get() ends.");
 		return poModel;
 	}
 
@@ -331,15 +316,15 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService  {
 	}
 
 	@Override
-	public List<IssueModel> getIssueByIssueName(String issueName) {
+	public List<PurchaseOrderModel> getPoByPoNo(Long issueName) {
 
-		logger.info("IssueServiceImpl getIssueByIssueName() starts ");
+		logger.info("PurchaseOrderServiceImpl getPoByPoNo() starts ");
 		Session session = null;
-		List<IssueModel> issueList = new ArrayList<IssueModel>();
+		List<PurchaseOrderModel> issueList = new ArrayList<PurchaseOrderModel>();
 
 		try {
 			session = sessionFactory.openSession();
-			List<Issue> issues = issueDao.getIssueByIssueName(session, issueName);
+			//List<Issue> issues = issueDao.getIssueByIssueName(session, issueName);
 			//issueList = setIssueData(issues, issueList);
 		} finally {
 			if (session != null) {
@@ -347,122 +332,10 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService  {
 			}
 		}
 
-		logger.info("IssueServiceImpl getHandlingByHandlingName() ends ");
+		logger.info("PurchaseOrderServiceImpl getPoByPoNo() ends ");
 		return issueList;
 	}
 	
-	@Override
-	public List<IssueModel> getSpecificData() {
-
-		Session session = sessionFactory.openSession();
-		List<IssueModel> issueList = new ArrayList<IssueModel>();
-		
-		try {
-			List<Object[]> issueData = handlingDao.getSpecificData(session, "Issue", "id", "issueName");
-			
-			if (issueData != null && !issueData.isEmpty()) {
-				for (Object[] row : issueData) {
-					IssueModel issueObj = new IssueModel();
-					issueObj.setId((Long) row[0]);
-					issueObj.setTitle(String.valueOf(row[1]));
-					issueList.add(issueObj);
-				}
-			}
-		} finally {
-			if (session != null) {
-				session.close();
-			}
-		}
-		return issueList;
-	}
-
-	@Override
-	public IssueModel getUnitNo(Long categoryId) {
-		
-		Session session = null;
-		IssueModel issueModel = new IssueModel();
-		try {
-			session = sessionFactory.openSession();
-			List<String> getUnitNos = getUnitNosForCategory(categoryId, session);
-			issueModel.setUnitNos(getUnitNos);
-		} finally {
-			if(session != null){
-				session.close();
-			}
-		}
-		
-		return issueModel;
-	}
-
-	private List<String> getUnitNosForCategory(Long categoryId, Session session) {
-		List<String> unitNo = new ArrayList<String>();
-		/*List<Object> unitNos = issueDao.getUnitNos(categoryId, session);
-		if(unitNos != null){
-			unitNo = iterateUnitNos(unitNos);
-		}*/
-		
-		return unitNo;
-	}
-
-	private List<String> iterateUnitNos(List<Object> unitNos) {
-		
-		List<String> unitNoList = new ArrayList<String>();
-		for (Object obj : unitNos) {
-			String unitNo = String.valueOf(obj);
-			unitNoList.add(unitNo);
-		}
-		
-		return unitNoList;
-	}
-
-	@Override
-	public Object addIssue(IssueModel issueModel) {
-		
-		logger.info("IssueServiceImpl addIssue() starts ");
-		Issue issue = null;
-		Session session = null;
-		Transaction tx = null;
-		
-		try {
-			session = sessionFactory.openSession();
-			tx = session.beginTransaction();
-			issue = new Issue();
-			issue = setIssueValues(issueModel, session, issue);
-			issueDao.saveIssue(issue, session);
-			tx.commit();
-		} catch (Exception e) {
-			if(tx != null){
-				tx.rollback();
-			}
-			logger.info("Exception inside IssueServiceImpl addIssue() :" + e.getMessage());
-			return createFailedObject(po_unable_to_add_message);
-
-		} finally {
-			if(session != null){
-				session.close();
-			}
-		}
-
-		logger.info("IssueServiceImpl addIssue() ends ");
-		return createSuccessObject(po_added_message);
-	}
-
-	private Issue setIssueValues(IssueModel issueModel, Session session, Issue issue) {
-
-		Driver reportedBy = (Driver) session.get(Driver.class, issueModel.getReportedById());
-		VehicleMaintainanceCategory vmc = (VehicleMaintainanceCategory) session.get(VehicleMaintainanceCategory.class, issueModel.getVmcId());
-		Category unitType = (Category) session.get(Category.class, issueModel.getUnitTypeId());
-		Type status = (Type) session.get(Type.class, issueModel.getStatusId());
-		
-		issue.setReportedBy(reportedBy);
-		issue.setVmc(vmc);
-		//issue.setUnitType(unitType);
-		issue.setStatus(status);
-		issue.setIssueName(issueModel.getTitle());
-		issue.setUnitNo(issueModel.getUnitNo());
-		return issue;
-	}
-
 	@Override
 	public Object addPO(PurchaseOrderModel poModel) {
 
@@ -476,7 +349,8 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService  {
 			PurchaseOrder po = new PurchaseOrder();
 			List<PurchaseOrderIssue> poIssues = new ArrayList<PurchaseOrderIssue>();
 			setPoValues(poModel, po, poIssues, session, "add");
-			poDao.addPurchaseOrder(po, poIssues, session);
+			Type assignStatus = typeService.get(106l);
+			poDao.addPurchaseOrder(po, poIssues, assignStatus, session);
 			tx.commit();
 		} catch (Exception e) {
 			if(tx != null){
@@ -545,7 +419,40 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService  {
 		}
 		
 		return issues;
+	}
+
+	@Override
+	public Object updateStatus(Long poId, Long statusId) {
+		logger.info("PurchaseOrderServiceImpl updateStatus() starts.");
+		Session session = null;
+		Transaction tx = null;
 		
+		try {
+			session = sessionFactory.openSession();
+			tx = session.beginTransaction();
+			PurchaseOrder po = (PurchaseOrder) session.get(PurchaseOrder.class, poId);
+			if (po != null) {
+				Type status = typeService.get(statusId);
+				poDao.updateStatus(po, status, session);
+				tx.commit();
+			} else {
+				return createFailedObject(po_status_unable_to_update);
+			}
+
+		} catch (Exception e) {
+			if (tx != null) {
+				tx.rollback();
+			}
+			logger.info("Exception inside PurchaseOrderServiceImpl updateStatus() :"+ e.getMessage());
+			return createFailedObject(po_status_unable_to_update);
+		} finally {
+			if(session != null) {
+				session.close();
+			}
+		}
+
+		logger.info("PurchaseOrderServiceImpl updateStatus() ends.");
+		return createSuccessObject(po_status_update);
 	}
 
 	

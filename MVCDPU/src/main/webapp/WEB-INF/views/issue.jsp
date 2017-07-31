@@ -105,20 +105,11 @@ function checkFlag(field) {
             	$.get("issue/getopenadd", function(data) {
             		
     	            var vmc = document.getElementById("vmcId");
-    	           	var countries = "['Andorra','United Arab Emirates','Afghanistan']"
-
-    	                // applied typeahead to the text input box
-    	               /* $('#vmcId').typeahead({
-
-    	                  // data source
-    	                  source: countries,
-
-    	                  // max item numbers list in the dropdown
-    	                  limit: 10
-    	                });
-    	            */
-    	            
-    	           	 var arrList = []
+    	            for(var i = 0;i < data.vmcList.length;i++) {
+    	            	vmc.options[vmc.options.length] = new Option(data.vmcList[i].name);
+    	            	vmc.options[i].value = data.vmcList[i].id;
+    	            }
+    	           	 /* var arrList = []
     	           	for(var i=0;i<data.vmcList.length;i++){
     	           		arrList.push({label:data.vmcList[i]['name'],value:data.vmcList[i]['id']})
     	           	}
@@ -137,7 +128,7 @@ function checkFlag(field) {
    	        	      return $( "<li>" )
    	        	        .append("<div>" + item.label + "</div>")
    	        	        .appendTo(ul);
-   	        	    }; 
+   	        	    }; */ 
             	
             	
     	            var unitType = document.getElementById("unitType");
@@ -312,11 +303,16 @@ function emptyMessageDiv(){
 										<div class="row">
 											<div class="col-sm-12">
 												<div class="input-group">
+													<!-- <span class="input-group-addon">
+														 <i class="glyphicon glyphicon-list-alt"></i>												
+													</span>
+													<input type="text" placeHolder="Enter VMC" id="vmcId" name="vmcId" class="form-control"/>
+													<input type="hidden" id="vmcIdhidden" /> -->
 													<span class="input-group-addon">
 														 <i class="glyphicon glyphicon-list-alt"></i>												
 													</span>
-													<input type="text" placeHolder="Enter VMC" id="vmcId" name="vmcId"  />
-													<input type="hidden" id="vmcIdhidden" />
+													<select class="form-control" name="vmcId" id="vmcId">
+													</select>
 												</div>
 											</div>
 										</div>

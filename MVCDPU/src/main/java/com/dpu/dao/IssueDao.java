@@ -5,6 +5,7 @@ import java.util.List;
 import org.hibernate.Session;
 
 import com.dpu.entity.Issue;
+import com.dpu.entity.Type;
 
 public interface IssueDao extends GenericDao<Issue> {
 
@@ -23,4 +24,6 @@ public interface IssueDao extends GenericDao<Issue> {
 	List<Issue> findAllActiveAndIncompleteIssues(Session session);
 
 	List<Issue> issueforCategoryAndUnitType(Long categoryId, Long unitTypeId, Session session);
+
+	void updateStatus(Issue issue, Type status, Session session);
 }

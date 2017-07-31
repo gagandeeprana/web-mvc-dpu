@@ -9,19 +9,16 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.exception.ConstraintViolationException;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.dpu.dao.EmployeeDao;
-import com.dpu.dao.EquipmentDao;
 import com.dpu.entity.Employee;
 import com.dpu.model.EmployeeModel;
 import com.dpu.model.Failed;
 import com.dpu.model.Success;
 import com.dpu.service.EmployeeService;
-import com.dpu.service.TypeService;
 import com.dpu.util.DateUtil;
 
 @Component
@@ -31,15 +28,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 	@Autowired
 	EmployeeDao employeeDao;
-	
-	@Autowired
-	EquipmentDao equipmentDao;
 
 	@Autowired
 	SessionFactory sessionFactory;
-
-	@Autowired
-	TypeService typeService;
 	
 	@Value("${user_added_message}")
 	private String user_added_message;
@@ -79,7 +70,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 		Failed failed = new Failed();
 		failed.setCode(code);
 		failed.setMessage(msg);
-		failed.setResultList(getAll());
+		//failed.setResultList(getAll());
 		return failed;
 	}
 
@@ -196,7 +187,7 @@ private void setEmployeeValues(EmployeeModel employeeModel, Employee employee) {
 
 	@Override
 	public Object delete(Long userId) {
-		logger.info("VehicleMaintainanceCategoryServiceImpl delete() starts.");
+		logger.info("EmployeeServiceImpl delete() starts.");
 		Session session = null;
 		Transaction tx = null;
 
@@ -212,7 +203,7 @@ private void setEmployeeValues(EmployeeModel employeeModel, Employee employee) {
 			}
 
 		} catch (Exception e) {
-			logger.info("Exception inside VehicleMaintainanceCategoryServiceImpl delete() : " + e.getMessage());
+			logger.info("Exception inside EmployeeServiceImpl delete() : " + e.getMessage());
 			if (tx != null) {
 				tx.rollback();
 			}
@@ -226,7 +217,7 @@ private void setEmployeeValues(EmployeeModel employeeModel, Employee employee) {
 			}
 		}
 
-		logger.info("VehicleMaintainanceCategoryServiceImpl delete() ends.");
+		logger.info("EmployeeServiceImpl delete() ends.");
 		return createSuccessObject(user_deleted_message);
 	}
 
@@ -241,7 +232,7 @@ private void setEmployeeValues(EmployeeModel employeeModel, Employee employee) {
 	@Override
 	public List<EmployeeModel> getUserByUserName(String userName) {
 		
-		logger.info("VehicleMaintainanceCategoryServiceImpl getVmcByVmcName() starts ");
+		logger.info("EmployeeServiceImpl getUserByUserName() starts ");
 		Session session = null;
 		List<EmployeeModel> employeeResponse = new ArrayList<EmployeeModel>();
 
@@ -260,14 +251,14 @@ private void setEmployeeValues(EmployeeModel employeeModel, Employee employee) {
 			}
 		}
 
-		logger.info("VehicleMaintainanceCategoryServiceImpl getVmcByVmcName() ends ");
+		logger.info("EmployeeServiceImpl getUserByUserName() ends ");
 		return employeeResponse;
 	}
 
 	@Override
 	public Object update(Long id, EmployeeModel employeeModel) {
 
-		logger.info("VehicleMaintainanceCategoryServiceImpl update() starts.");
+		logger.info("EmployeeServiceImpl update() starts.");
 		Session session =null;
 		Transaction tx = null;
 		
@@ -289,7 +280,7 @@ private void setEmployeeValues(EmployeeModel employeeModel, Employee employee) {
 			if(tx != null){
 				tx.rollback();
 			}
-			logger.info("Exception inside VehicleMaintainanceCategoryServiceImpl update() :"+ e.getMessage());
+			logger.info("Exception inside EmployeeServiceImpl update() :"+ e.getMessage());
 			return createFailedObject(user_unable_to_update_message);
 		} finally{
 			if(session != null){
@@ -297,13 +288,13 @@ private void setEmployeeValues(EmployeeModel employeeModel, Employee employee) {
 			}
 		}
 
-		logger.info("VehicleMaintainanceCategoryServiceImpl update() ends.");
+		logger.info("EmployeeServiceImpl update() ends.");
 		return createSuccessObject(user_updated_message);
 	}
 	@Override
 	public Object getUserByLoginCredentials(EmployeeModel employeeModel) {
 
-		logger.info("VehicleMaintainanceCategoryServiceImpl update() starts.");
+		logger.info("EmployeeServiceImpl update() starts.");
 		Session session = null;
 		boolean isvalid = false;
 		Employee employee = null;
@@ -318,7 +309,7 @@ private void setEmployeeValues(EmployeeModel employeeModel, Employee employee) {
 			}
 
 		} catch (Exception e) {
-			logger.info("Exception inside VehicleMaintainanceCategoryServiceImpl update() :"+ e.getMessage());
+			logger.info("Exception inside EmployeeServiceImpl update() :"+ e.getMessage());
 			return createFailedObject("");
 		} finally{
 			if(session != null){
@@ -326,7 +317,7 @@ private void setEmployeeValues(EmployeeModel employeeModel, Employee employee) {
 			}
 		}
 
-		logger.info("VehicleMaintainanceCategoryServiceImpl update() ends.");
+		logger.info("EmployeeServiceImpl update() ends.");
 		return isvalid?createLoginObject(employee):createFailedObject(unable_login_message);
 	}
 
