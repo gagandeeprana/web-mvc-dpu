@@ -1,5 +1,6 @@
 package com.dpu.model;
 
+import java.util.Date;
 import java.util.List;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;

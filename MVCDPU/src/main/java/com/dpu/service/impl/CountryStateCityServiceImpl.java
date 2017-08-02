@@ -6,23 +6,12 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
-import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.dpu.dao.CountryStateCityDao;
-import com.dpu.dao.HandlingDao;
-import com.dpu.entity.Handling;
-import com.dpu.entity.Status;
 import com.dpu.model.CountryStateCityModel;
-import com.dpu.model.Failed;
-import com.dpu.model.HandlingModel;
-import com.dpu.model.Success;
 import com.dpu.service.CountryStateCityService;
-import com.dpu.service.HandlingService;
-import com.dpu.service.StatusService;
 
 @Component
 public class CountryStateCityServiceImpl implements CountryStateCityService {
@@ -33,36 +22,12 @@ public class CountryStateCityServiceImpl implements CountryStateCityService {
 	CountryStateCityDao countryStateCityDao;
 
 	@Autowired
-	StatusService statusService;
-
-	@Autowired
 	SessionFactory sessionFactory;
 
-	@Value("${handling_added_message}")
-	private String handling_added_message;
-
-	@Value("${handling_unable_to_add_message}")
-	private String handling_unable_to_add_message;
-
-	@Value("${handling_deleted_message}")
-	private String handling_deleted_message;
-
-	@Value("${handling_unable_to_delete_message}")
-	private String handling_unable_to_delete_message;
-
-	@Value("${handling_updated_message}")
-	private String handling_updated_message;
-
-	@Value("${handling_unable_to_update_message}")
-	private String handling_unable_to_update_message;
-
-	@Value("${handling_already_used_message}")
-	private String handling_already_used_message;
-
 	@Override
-	public List<CountryStateCityModel> getAll() {
+	public List<CountryStateCityModel> getAllCountries() {
 
-		logger.info("HandlingServiceImpl getAll() starts ");
+		logger.info("CountryStateCityServiceImpl getAllCountries() starts ");
 		Session session = null;
 		List<CountryStateCityModel> countryStateCityList = new ArrayList<CountryStateCityModel>();
 
@@ -73,7 +38,7 @@ public class CountryStateCityServiceImpl implements CountryStateCityService {
 			if (countryData != null && !countryData.isEmpty()) {
 				for (Object[] row : countryData) {
 					CountryStateCityModel countryStateCityModel = new CountryStateCityModel();
-					countryStateCityModel.setCountryId((Long) row[0]);
+					countryStateCityModel.setCountryId(Long.parseLong(String.valueOf(row[0])));
 					countryStateCityModel.setCountryName(String.valueOf(row[1]));
 					countryStateCityModel.setCountryCode(String.valueOf(row[2]));
 					countryStateCityList.add(countryStateCityModel);
@@ -85,34 +50,68 @@ public class CountryStateCityServiceImpl implements CountryStateCityService {
 			}
 		}
 
-		logger.info("HandlingServiceImpl getAll() ends ");
+		logger.info("CountryStateCityServiceImpl getAllCountries() ends ");
+		return countryStateCityList;
+	}
+	
+	@Override
+	public List<CountryStateCityModel> getStatesByCountryId(Long countryId) {
+
+		logger.info("CountryStateCityServiceImpl getStatesByCountryId() starts ");
+		Session session = null;
+		List<CountryStateCityModel> countryStateCityList = new ArrayList<CountryStateCityModel>();
+
+		try {
+			session = sessionFactory.openSession();
+			List<Object[]> countryData = countryStateCityDao.findStatesByCountryId(countryId, session);
+
+			if (countryData != null && !countryData.isEmpty()) {
+				for (Object[] row : countryData) {
+					CountryStateCityModel countryStateCityModel = new CountryStateCityModel();
+					countryStateCityModel.setStateId(Long.parseLong(String.valueOf(row[0])));
+					countryStateCityModel.setStateName(String.valueOf(row[1]));
+					countryStateCityModel.setStateCode(String.valueOf(row[2]));
+					countryStateCityList.add(countryStateCityModel);
+				}
+			}
+		} finally {
+			if (session != null) {
+				session.close();
+			}
+		}
+
+		logger.info("CountryStateCityServiceImpl getStatesByCountryId() ends ");
 		return countryStateCityList;
 	}
 
-	private Object createSuccessObject(String msg) {
+	@Override
+	public List<CountryStateCityModel> getCitiesByStateId(Long stateId) {
 
-		Success success = new Success();
-		success.setMessage(msg);
-		success.setResultList(getAll());
-		return success;
+		logger.info("CountryStateCityServiceImpl getCitiesByStateId() starts ");
+		Session session = null;
+		List<CountryStateCityModel> countryStateCityList = new ArrayList<CountryStateCityModel>();
+
+		try {
+			session = sessionFactory.openSession();
+			List<Object[]> cityData = countryStateCityDao.findCitiesByStateId(stateId, session);
+
+			if (cityData != null && !cityData.isEmpty()) {
+				for (Object[] row : cityData) {
+					CountryStateCityModel countryStateCityModel = new CountryStateCityModel();
+					countryStateCityModel.setCityId(Long.parseLong(String.valueOf(row[0])));
+					countryStateCityModel.setCityName(String.valueOf(row[1]));
+					countryStateCityModel.setCityCode(String.valueOf(row[2]));
+					countryStateCityList.add(countryStateCityModel);
+				}
+			}
+		} finally {
+			if (session != null) {
+				session.close();
+			}
+		}
+
+		logger.info("CountryStateCityServiceImpl getCitiesByStateId() ends ");
+		return countryStateCityList;
 	}
-
-	private Object createFailedObject(String msg) {
-
-		Failed failed = new Failed();
-		failed.setMessage(msg);
-		// failed.setResultList(getAll());
-		return failed;
-	}
-
-	private Handling setHandlingValues(HandlingModel handlingModel) {
-
-		Handling handling = new Handling();
-		handling.setName(handlingModel.getName());
-		Status status = statusService.get(handlingModel.getStatusId());
-		handling.setStatus(status);
-		return handling;
-	}
-
 
 }

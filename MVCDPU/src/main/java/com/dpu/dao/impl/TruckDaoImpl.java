@@ -19,11 +19,6 @@ import com.dpu.entity.Type;
 import com.dpu.model.TruckResponse;
 import com.dpu.service.StatusService;
 
-/**
- * @author sumit
- *
- */
-
 @Repository
 @Transactional
 public class TruckDaoImpl extends GenericDaoImpl<Truck> implements TruckDao {
@@ -35,36 +30,26 @@ public class TruckDaoImpl extends GenericDaoImpl<Truck> implements TruckDao {
 	public Truck add(Session session, TruckResponse truckResponse) {
 		logger.info("TruckDaoImpl: add(): STARTS");
 		Truck truck = null;
-		try {
 
-			truck = setTruckValues(truckResponse);
+		truck = setTruckValues(truckResponse);
+		Status status = (Status) session.get(Status.class, truckResponse.getStatusId());
+		truck.setStatus(status);
 
-			Status status = (Status) session.get(Status.class,
-					truckResponse.getStatusId());
-			truck.setStatus(status);
+		Division division = (Division) session.get(Division.class, truckResponse.getDivisionId());
+		truck.setDivision(division);
 
-			Division division = (Division) session.get(Division.class,
-					truckResponse.getDivisionId());
-			truck.setDivision(division);
+		Category category = (Category) session.get(Category.class, truckResponse.getCategoryId());
+		truck.setCategory(category);
 
-			Category category = (Category) session.get(Category.class,
-					truckResponse.getCategoryId());
-			truck.setCategory(category);
+		Terminal terminal = (Terminal) session.get(Terminal.class, truckResponse.getTerminalId());
+		truck.setTerminal(terminal);
 
-			Terminal terminal = (Terminal) session.get(Terminal.class,
-					truckResponse.getTerminalId());
-			truck.setTerminal(terminal);
+		Type type = (Type) session.get(Type.class, truckResponse.getTruckTypeId());
+		truck.setType(type);
 
-			Type type = (Type) session.get(Type.class,
-					truckResponse.getTruckTypeId());
-			truck.setType(type);
+		Long truckId = (Long) session.save(truck);
 
-			Long truckId = (Long) session.save(truck);
-
-			truck.setTruckId(truckId);
-		} catch (Exception e) {
-			logger.fatal("TruckDaoImpl: add(): Exception: " + e.getMessage());
-		}
+		truck.setTruckId(truckId);
 
 		logger.info("TruckDaoImpl: add(): ENDS");
 
@@ -92,6 +77,7 @@ public class TruckDaoImpl extends GenericDaoImpl<Truck> implements TruckDao {
 		return truck;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Truck findById(Session session,Long id) {
 
@@ -99,5 +85,11 @@ public class TruckDaoImpl extends GenericDaoImpl<Truck> implements TruckDao {
 		 List<Truck> truck = query.list();
 		 return truck.get(0);
 		  
+	}
+
+	@Override
+	public void update(Truck truck, Session session) {
+		session.update(truck);
+		
 	}
 }

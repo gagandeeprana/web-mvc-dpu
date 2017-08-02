@@ -7,17 +7,25 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.dpu.common.AllList;
+import com.dpu.constants.Iconstants;
 import com.dpu.dao.CategoryDao;
 import com.dpu.dao.DivisionDao;
 import com.dpu.dao.TerminalDao;
 import com.dpu.dao.TrailerDao;
+import com.dpu.entity.Category;
+import com.dpu.entity.Division;
 import com.dpu.entity.Status;
+import com.dpu.entity.Terminal;
 import com.dpu.entity.Trailer;
+import com.dpu.entity.Type;
 import com.dpu.model.CategoryReq;
 import com.dpu.model.DivisionReq;
 import com.dpu.model.Failed;
@@ -67,30 +75,78 @@ public class TrailerServiceImpl implements TrailerService{
 	@Autowired
 	SessionFactory sessionFactory;
 	
+	@Value("${trailer_added_message}")
+	private String trailer_added_message;
+	
+	@Value("${trailer_unable_to_add_message}")
+	private String trailer_unable_to_add_message;
+	
+	@Value("${trailer_deleted_message}")
+	private String trailer_deleted_message;
+	
+	@Value("${trailer_unable_to_delete_message}")
+	private String trailer_unable_to_delete_message;
+	
+	@Value("${trailer_updated_message}")
+	private String trailer_updated_message;
+	
+	@Value("${trailer_unable_to_update_message}")
+	private String trailer_unable_to_update_message;
+	
+	@Value("${trailer_unit_no_already_exists}")
+	private String trailer_unit_no_already_exists;
+	
 	@Override
 	public Object add(TrailerRequest trailerRequest) {
 		
 		logger.info("Inside TrailerServiceImpl add() starts");
-		Object obj = null;
-		String message = "Trailer added successfully";
+		Session session = null;
+		Transaction tx = null;
 		
 		try{
+			session = sessionFactory.openSession();
+			tx = session.beginTransaction();
+			
 			Trailer trailer = new Trailer();
 			BeanUtils.copyProperties(trailerRequest, trailer);
-			trailer.setCategory(categoryDao.findById(trailerRequest.getCategoryId()));
-			trailer.setDivision(divisionDao.findById(trailerRequest.getDivisionId()));
-			trailer.setTerminal(terminalDao.findById(trailerRequest.getTerminalId()));
-			trailer.setType(typeService.get(trailerRequest.getTrailerTypeId()));
-			trailer.setStatus(statusService.get(trailerRequest.getStatusId()));
-			trailerdao.save(trailer);
-			obj = createSuccessObject(message);
-		} catch (Exception e) {
-			logger.error("Exception inside TrailerServiceImpl add() :"+e.getMessage());
-			message = "Error while inserting trailer";
-			obj = createFailedObject(message);
-		} 
+			
+			Status status = (Status) session.get(Status.class, trailerRequest.getStatusId());
+			trailer.setStatus(status);
 
-		return obj;
+			Division division = (Division) session.get(Division.class, trailerRequest.getDivisionId());
+			trailer.setDivision(division);
+
+			Category category = (Category) session.get(Category.class, trailerRequest.getCategoryId());
+			trailer.setCategory(category);
+
+			Terminal terminal = (Terminal) session.get(Terminal.class, trailerRequest.getTerminalId());
+			trailer.setTerminal(terminal);
+
+			Type type = (Type) session.get(Type.class, trailerRequest.getTrailerTypeId());
+			trailer.setType(type);
+
+			trailerdao.save(trailer, session);
+			tx.commit();
+		} catch (Exception e) {
+			if(tx != null){
+				tx.rollback();
+			}
+			if(e instanceof ConstraintViolationException){
+				ConstraintViolationException c = (ConstraintViolationException) e;
+				String constraintName = c.getConstraintName();
+				if(Iconstants.UNIQUE_TRAILER_UNIT_NO.equals(constraintName)) {
+					return createFailedObject(trailer_unit_no_already_exists);
+				}
+			}
+			logger.error("Exception inside TrailerServiceImpl add() :"+e.getMessage());
+			return createFailedObject(trailer_unable_to_add_message);
+		} finally {
+			if(session != null) {
+				session.close();
+			}
+		}
+
+		return createSuccessObject(trailer_added_message);
 	}
 
 	private Object createSuccessObject(String message) {
@@ -110,57 +166,89 @@ public class TrailerServiceImpl implements TrailerService{
 	public Object update(Long trailerId, TrailerRequest trailerRequest) {
 		
 		logger.info("Inside TrailerServiceImpl update() Starts, trailerId :"+ trailerId);
-		Object obj = null;
-		String message = "Trailer updated successfully";
+		Session session =null;
+		Transaction tx = null;
+		
 		try{
-			Trailer trailer = trailerdao.findById(trailerId);
+			
+			session = sessionFactory.openSession();
+			
+			Trailer trailer = (Trailer) session.get(Trailer.class, trailerId);
 			
 			if(trailer != null){
+				tx = session.beginTransaction();
 				String[] ignoreProp = new String[1];
 				ignoreProp[0] = "trailerId";
 				BeanUtils.copyProperties(trailerRequest, trailer, ignoreProp);
-				trailer.setCategory(categoryDao.findById(trailerRequest.getCategoryId()));
-				trailer.setDivision(divisionDao.findById(trailerRequest.getDivisionId()));
-				trailer.setTerminal(terminalDao.findById(trailerRequest.getTerminalId()));
-				trailer.setType(typeService.get(trailerRequest.getTrailerTypeId()));
-				trailer.setStatus(statusService.get(trailerRequest.getStatusId()));
-				trailerdao.update(trailer);
-				obj = createSuccessObject(message);
+				Status status = (Status) session.get(Status.class, trailerRequest.getStatusId());
+				trailer.setStatus(status);
+
+				Division division = (Division) session.get(Division.class, trailerRequest.getDivisionId());
+				trailer.setDivision(division);
+
+				Category category = (Category) session.get(Category.class, trailerRequest.getCategoryId());
+				trailer.setCategory(category);
+
+				Terminal terminal = (Terminal) session.get(Terminal.class, trailerRequest.getTerminalId());
+				trailer.setTerminal(terminal);
+
+				Type type = (Type) session.get(Type.class, trailerRequest.getTrailerTypeId());
+				trailer.setType(type);
+				
+				trailerdao.update(trailer, session);
+				tx.commit();
 			} else{
-				message = "Error while updating trailer";
-				obj = createFailedObject(message);
+				return createFailedObject(trailer_unable_to_update_message);
 			}
 			 
 		} catch (Exception e) {
 			logger.error("Exception inside TrailerServiceImpl update() :"+ e.getMessage());
-			message = "Error while updating record";
-			obj = createFailedObject(message);
+			if(tx != null){
+				tx.rollback();
+			}
+			if(e instanceof ConstraintViolationException){
+				ConstraintViolationException c = (ConstraintViolationException) e;
+				String constraintName = c.getConstraintName();
+				if(Iconstants.UNIQUE_TRAILER_UNIT_NO.equals(constraintName)) {
+					return createFailedObject(trailer_unit_no_already_exists);
+				}
+			}
+			return createFailedObject(trailer_unable_to_update_message);
+		} finally {
+			if(session != null){
+				session.close();
+			}
 		}
 		
 		logger.info("Inside TrailerServiceImpl update() Ends, trailerId :"+ trailerId);
-		return obj;
+		return createSuccessObject(trailer_updated_message);
 	}
 
 	@Override
 	public Object delete(Long trailerId) {
 		
 		logger.info("Inside TrailerServiceImpl delete() starts, trailerId :"+ trailerId);
+		Session session = null;
+		Transaction tx = null;
 		Object obj = null;
-		String message = "Trailer deleted successfully";
 		try {
-			Trailer trailer = trailerdao.findById(trailerId);
+			session = sessionFactory.openSession();
+			tx = session.beginTransaction();
+			Trailer trailer = (Trailer) session.get(Trailer.class, trailerId);
 			if(trailer != null){
-				trailerdao.delete(trailer);
-				obj = createSuccessObject(message);
+				trailerdao.delete(trailer, session);
+				tx.commit();
+				obj = createSuccessObject(trailer_deleted_message);
 			} else{
-				message = "Error while deleting trailer";
-				obj = createFailedObject(message);
+				obj = createFailedObject(trailer_unable_to_delete_message);
 			}
 			
 		}catch (Exception e) {
+			if (tx != null) {
+				tx.rollback();
+			}
 			logger.error("Exceptiom inside TrailerServiceImpl delete() :"+ e.getMessage());
-			message = "Error while Deleting Record";
-			obj = createFailedObject(message);
+			obj = createFailedObject(trailer_unable_to_delete_message);
 		}
 		
 		logger.info("Inside TrailerServiceImpl delete() ends, trailerId :"+ trailerId);

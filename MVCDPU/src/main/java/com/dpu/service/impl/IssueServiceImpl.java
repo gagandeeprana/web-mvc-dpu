@@ -19,7 +19,7 @@ import com.dpu.entity.Issue;
 import com.dpu.entity.Type;
 import com.dpu.entity.VehicleMaintainanceCategory;
 import com.dpu.model.CategoryReq;
-import com.dpu.model.DriverReq;
+import com.dpu.model.DriverModel;
 import com.dpu.model.Failed;
 import com.dpu.model.IssueModel;
 import com.dpu.model.Success;
@@ -235,7 +235,7 @@ public class IssueServiceImpl implements IssueService  {
 				List<VehicleMaintainanceCategoryModel> vmcList = vehicleMaintainanceCategoryService.getSpecificData();
 				issueModel.setVmcList(vmcList);
 				
-				List<DriverReq> driverList = driverService.getSpecificData();
+				List<DriverModel> driverList = driverService.getSpecificData();
 				issueModel.setReportedByList(driverList);
 				
 				List<TypeResponse> statusList = typeService.getAll(23l);
@@ -270,7 +270,7 @@ public class IssueServiceImpl implements IssueService  {
 		List<VehicleMaintainanceCategoryModel> vmcList = vehicleMaintainanceCategoryService.getSpecificData();
 		issueModel.setVmcList(vmcList);
 		
-		List<DriverReq> driverList = driverService.getSpecificData();
+		List<DriverModel> driverList = driverService.getSpecificData();
 		issueModel.setReportedByList(driverList);
 		
 		List<TypeResponse> statusList = typeService.getAll(23l);

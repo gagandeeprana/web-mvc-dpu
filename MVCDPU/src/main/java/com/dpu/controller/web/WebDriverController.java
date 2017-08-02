@@ -7,6 +7,8 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,7 +18,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.dpu.model.DriverReq;
+import com.dpu.model.DriverModel;
+import com.dpu.model.Failed;
 import com.dpu.model.Success;
 import com.dpu.service.DriverService;
 
@@ -31,25 +34,25 @@ public class WebDriverController {
 	@RequestMapping(value = "/showdriver", method = RequestMethod.GET)
 	public ModelAndView showDriverScreen() {
 		ModelAndView modelAndView = new ModelAndView();
-		List<DriverReq> lstDrivers = driverService.getAllDriver();
+		List<DriverModel> lstDrivers = driverService.getAllDriver();
 		modelAndView.addObject("LIST_DRIVER", lstDrivers);
 		modelAndView.setViewName("driver");
 		return modelAndView;
 	}
 	
 	@RequestMapping(value = "/driver/getopenadd" , method = RequestMethod.GET)
-	@ResponseBody public DriverReq getOpenAdd() {
-		DriverReq driverReq = null;
+	@ResponseBody public DriverModel getOpenAdd() {
+		DriverModel DriverModel = null;
 		try {
-			driverReq = driverService.getOpenAdd();
+			DriverModel = driverService.getOpenAdd();
 		} catch (Exception e) {
 			System.out.println(e);
 		}
-		return driverReq;
+		return DriverModel;
 	}
 	
 	@RequestMapping(value = "/savedriver" , method = RequestMethod.POST)
-	public ModelAndView saveTruck(@ModelAttribute("driver") DriverReq driverReq, HttpServletRequest request) {
+	public ModelAndView saveTruck(@ModelAttribute("driver") DriverModel DriverModel, HttpServletRequest request) {
 		ModelAndView modelAndView = new ModelAndView();
 		HttpSession session = request.getSession();
 		String createdBy = "";
@@ -58,36 +61,41 @@ public class WebDriverController {
 		}
 //		divisionReq.setCreatedBy(createdBy);
 //		divisionReq.setCreatedOn(new Date());
-		driverService.addDriver(driverReq);
+		driverService.addDriver(DriverModel);
 		modelAndView.setViewName("redirect:showdriver");
 		return modelAndView;
 	}
 	
 	@RequestMapping(value = "/getdriver/driverId" , method = RequestMethod.GET)
 	@ResponseBody  public Success getDriver(@RequestParam("driverId") Long driverId) {
-		Success driverReq = null;
+		Success DriverModel = null;
 		try {
-			driverReq = (Success) driverService.getDriverByDriverId(driverId);
+			DriverModel = (Success) driverService.getDriverByDriverId(driverId);
 		} catch (Exception e) {
 			System.out.println(e);
 			logger.info("Exception in getCategory is: " + e);
 		}
-		return driverReq;
+		return DriverModel;
 	}
 	
 	@RequestMapping(value = "/updatedriver" , method = RequestMethod.POST)
-	public ModelAndView updateDriver(@ModelAttribute("driver") DriverReq driverReq, @RequestParam("driverid") Long driverId) {
+	public ModelAndView updateDriver(@ModelAttribute("driver") DriverModel DriverModel, @RequestParam("driverid") Long driverId) {
 		ModelAndView modelAndView = new ModelAndView();
-		driverService.updateDriver(driverId, driverReq);
+		driverService.updateDriver(driverId, DriverModel);
 		modelAndView.setViewName("redirect:showdriver");
 		return modelAndView;
 	}
 	
 	@RequestMapping(value = "/deletedriver/{driverid}" , method = RequestMethod.GET)
-	public ModelAndView deleteDriver(@PathVariable("driverid") Long driverId) {
+	@ResponseBody public Object deleteDriver(@PathVariable("driverid") Long driverId) {
 		ModelAndView modelAndView = new ModelAndView();
-		driverService.deleteDriver(driverId);
-		modelAndView.setViewName("redirect:/showdriver");
-		return modelAndView;
+		Object response = driverService.deleteDriver(driverId);
+		if(response instanceof Failed) {
+			return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
+		} else {
+			return new ResponseEntity<Object>(response, HttpStatus.OK);
+		}
+//		modelAndView.setViewName("redirect:/showdriver");
+//		return modelAndView;
 	}
 }

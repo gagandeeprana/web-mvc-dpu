@@ -18,7 +18,7 @@ public class TruckResponse implements Serializable {
 	private String truchUsage;
 	private String owner;
 	private String oOName;
-	private String truckType;
+
 	private String finance;
 	private Integer unitNo;
 	private Date createdOn;
@@ -43,7 +43,7 @@ public class TruckResponse implements Serializable {
 	private List<Status> statusList;
 
 	private Long truckTypeId;
-	private String typeName;
+	private String truckType;
 	private List<TypeResponse> truckTypeList;
 	
 	public List<TypeResponse> getTruckTypeList() {
@@ -53,14 +53,14 @@ public class TruckResponse implements Serializable {
 	public void setTruckTypeList(List<TypeResponse> truckTypeList) {
 		this.truckTypeList = truckTypeList;
 	}
-
+/*
 	public String getTypeName() {
 		return typeName;
 	}
 
 	public void setTypeName(String typeName) {
 		this.typeName = typeName;
-	}
+	}*/
 
 	public List<DivisionReq> getDivisionList() {
 		return divisionList;

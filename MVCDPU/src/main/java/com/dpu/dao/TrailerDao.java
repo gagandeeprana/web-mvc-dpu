@@ -13,5 +13,11 @@ public interface TrailerDao extends GenericDao<Trailer> {
 
 	Trailer findById(Long trailerId, Session session);
 
+	void save(Trailer trailer, Session session);
+
+	void update(Trailer trailer, Session session);
+
+	void delete(Trailer trailer, Session session);
+
 	
 }

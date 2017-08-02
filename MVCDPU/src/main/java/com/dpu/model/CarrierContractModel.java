@@ -51,7 +51,7 @@ public class CarrierContractModel {
 
 	private String driverName;
 	private Long driverId;
-	private List<DriverReq> driverList;
+	private List<DriverModel> driverList;
 
 	private String currencyName;
 	private Long currencyId;
@@ -333,13 +333,13 @@ public class CarrierContractModel {
 	}
 
 	
-	public List<DriverReq> getDriverList() {
+	public List<DriverModel> getDriverList() {
 	
 		return driverList;
 	}
 
 	
-	public void setDriverList(List<DriverReq> driverList) {
+	public void setDriverList(List<DriverModel> driverList) {
 	
 		this.driverList = driverList;
 	}

@@ -6,11 +6,6 @@ import org.hibernate.Session;
 
 import com.dpu.entity.Driver;
 
-/**
- * @author sumit
- *
- */
-
 public interface DriverDao extends GenericDao<Driver> {
 
 	List<Driver> searchDriverByDriverCodeOrName(String driverCodeOrName);
@@ -20,5 +15,9 @@ public interface DriverDao extends GenericDao<Driver> {
 	Driver findById(Long driverId, Session session);
 
 	List<Object[]> getDriverIdAndName();
+
+	void save(Driver driver, Session session);
+
+	void update(Driver driver, Session session);
 
 }

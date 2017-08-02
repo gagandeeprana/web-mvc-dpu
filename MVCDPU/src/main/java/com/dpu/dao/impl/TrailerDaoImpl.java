@@ -30,4 +30,20 @@ public class TrailerDaoImpl extends GenericDaoImpl<Trailer> implements TrailerDa
 		return (Trailer) query.uniqueResult();
 	}
 
+	@Override
+	public void save(Trailer trailer, Session session) {
+		session.save(trailer);
+	}
+
+	@Override
+	public void update(Trailer trailer, Session session) {
+		session.update(trailer);
+		
+	}
+
+	@Override
+	public void delete(Trailer trailer, Session session) {
+		session.delete(trailer);
+	}
+
 }

@@ -15,6 +15,12 @@
 	src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script
 	src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.css" >
+	<script  src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js" ></script>
+	
+	
+	<jsp:include page="Include.jsp"></jsp:include>
 <style type="text/css">
 .modal-dialog {
   width: 98%;
@@ -38,6 +44,27 @@ textarea{
 }
 </style>
 <script type="text/javascript">
+
+	function deleteDriver(driverId){
+		 
+		  $.ajax({url: BASE_URL + "deletedriver/" + driverId,
+			      type:"GET",
+			      success: function(result){
+		    	  try{	
+					toastr.success(result.message, 'Success!')
+				  }catch(e){
+					toastr.success('Something went wrong', 'Success!')
+				  }
+		  },error:function(result){
+			  //alert(failed.message);
+			  try{	
+				  	toastr.error('Unable to delete', 'Error!')
+				  }catch(e){
+					  toastr.error('Something went wrong', 'Error!')
+				  }
+		  }});
+		  return true;
+	}
 	$(document).ready(function(){
 		$('#btnSave').click(function(){
 			$('#frm1').submit();
@@ -647,13 +674,13 @@ function check() {
 							<td>${obj.address}</td>
 							<td>${obj.unit}</td>
 							<td>${obj.city}</td>
-							<td>${obj.pvs}</td>
+							<td>${obj.stateName}</td>
 							
 							<td>${obj.faxNo}</td>
 							<td>${obj.cellular}</td>
 							<td>${obj.pager}</td>
 							<td>${obj.email}</td>
-							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.driverId}')">Update</a> / <a href="deletedriver/${obj.driverId}">Delete</a></td>
+							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.driverId}')">Update</a> / <a href="#" onclick="deleteDriver('${obj.driverId}')">Delete</a></td>
 						</tr>
 					</c:forEach>
 				</tbody>

@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.dpu.dao.impl;
 
 import java.util.List;
@@ -10,12 +7,11 @@ import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 
 import com.dpu.dao.CountryStateCityDao;
-import com.dpu.dao.HandlingDao;
-import com.dpu.entity.Handling;
 
 @Repository
 public class CountryStateCityDaoImpl implements CountryStateCityDao{
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Object[]> findAllCountries(Session session) {
 
@@ -24,30 +20,25 @@ public class CountryStateCityDaoImpl implements CountryStateCityDao{
 		return query.list();
 	}
 
-	/*@SuppressWarnings("unchecked")
+	@SuppressWarnings("unchecked")
 	@Override
-	public List<Handling> findAll(Session session) {
-		
-		StringBuilder sb = new StringBuilder(" select h from Handling h join fetch h.status ");
-		Query query = session.createQuery(sb.toString());
-		return query.list();
-	}
+	public List<Object[]> findStatesByCountryId(Long countryId, Session session) {
 
-	@Override
-	public Handling findById(Long id, Session session) {
-		StringBuilder sb = new StringBuilder(" select h from Handling h join fetch h.status where h.id =:handlingId ");
-		Query query = session.createQuery(sb.toString());
-		query.setParameter("handlingId", id);
-		return (Handling) query.uniqueResult();
+		String countryQuery = "SELECT state_id, state_name, state_code FROM state WHERE country_id = :countryId ";
+		Query query = session.createSQLQuery(countryQuery);
+		query.setParameter("countryId", countryId);
+		return query.list();
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Handling> getHandlingByHandlingName(Session session, String handlingName) {
-		StringBuilder sb = new StringBuilder(" select h from Handling h join fetch h.status where h.name like :handlingName ");
-		Query query = session.createQuery(sb.toString());
-		query.setParameter("handlingName", "%"+handlingName+"%");
+	public List<Object[]> findCitiesByStateId(Long stateId, Session session) {
+
+		String countryQuery = "SELECT city_id, city_name, city_code FROM city WHERE state_id = :stateId ";
+		Query query = session.createSQLQuery(countryQuery);
+		query.setParameter("stateId", stateId);
 		return query.list();
-	}*/
+	}
+
 
 }

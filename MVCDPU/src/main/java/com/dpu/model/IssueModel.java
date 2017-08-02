@@ -34,7 +34,7 @@ public class IssueModel implements Serializable{
 	
 	private String reportedByName;
 	private Long reportedById;
-	private List<DriverReq> reportedByList;
+	private List<DriverModel> reportedByList;
 	
 	private String statusName;
 	private Long statusId;
@@ -114,11 +114,11 @@ public class IssueModel implements Serializable{
 		this.reportedById = reportedById;
 	}
 
-	public List<DriverReq> getReportedByList() {
+	public List<DriverModel> getReportedByList() {
 		return reportedByList;
 	}
 
-	public void setReportedByList(List<DriverReq> reportedByList) {
+	public void setReportedByList(List<DriverModel> reportedByList) {
 		this.reportedByList = reportedByList;
 	}
 

@@ -3,7 +3,7 @@ package com.dpu.service;
 import java.util.List;
 
 import com.dpu.entity.Driver;
-import com.dpu.model.DriverReq;
+import com.dpu.model.DriverModel;
 
 /**
  * @author sumit
@@ -12,21 +12,21 @@ import com.dpu.model.DriverReq;
 
 public interface DriverService {
 
-	Object updateDriver(Long driverId, DriverReq driverReq);
+	Object updateDriver(Long driverId, DriverModel driverReq);
 	
-	List<DriverReq> getAllDriver();
+	List<DriverModel> getAllDriver();
 	
 	Object deleteDriver(Long driverId);
 
 	Object getDriverByDriverId(Long driverId);
 
-	DriverReq getOpenAdd();
+	DriverModel getOpenAdd();
 
-	Object addDriver(DriverReq driverReq);
+	Object addDriver(DriverModel driverReq);
 
-	List<DriverReq> getDriverByDriverCodeOrName(String driverCodeOrName);
+	List<DriverModel> getDriverByDriverCodeOrName(String driverCodeOrName);
 	
-	List<DriverReq> getSpecificData();
+	List<DriverModel> getSpecificData();
 	
 }
 

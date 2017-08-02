@@ -31,7 +31,7 @@ import com.dpu.model.CarrierModel;
 import com.dpu.model.CategoryReq;
 import com.dpu.model.DispatcherModel;
 import com.dpu.model.DivisionReq;
-import com.dpu.model.DriverReq;
+import com.dpu.model.DriverModel;
 import com.dpu.model.EquipmentReq;
 import com.dpu.model.Failed;
 import com.dpu.model.Success;
@@ -280,7 +280,7 @@ public class CarrierContractServiceImpl implements CarrierContractService {
 			List<DivisionReq> divisionList = AllList.getDivisionList(session, "Division", "divisionId", "divisionName");
 			response.setDivisionList(divisionList);
 
-			List<DriverReq> driverList = AllList.getDriverList(session, "Driver", "driverId", "firstName");
+			List<DriverModel> driverList = AllList.getDriverList(session, "Driver", "driverId", "firstName");
 			response.setDriverList(driverList);
 
 			List<EquipmentReq> equipmentList = AllList.getEquipmentList(session, "Equipment", "equipmentId", "equipmentName");
@@ -390,7 +390,7 @@ public class CarrierContractServiceImpl implements CarrierContractService {
 			 
 			carrierContractModel.setArrangedWithList(arrangedWithList);
  
-			List<DriverReq> driverList = AllList.getDriverList(session, "Driver", "driverId", "firstName");
+			List<DriverModel> driverList = AllList.getDriverList(session, "Driver", "driverId", "firstName");
 			carrierContractModel.setDriverList(driverList);
 
 			List<TypeResponse> currencyList = AllList.getTypeResponse(session, 9l);

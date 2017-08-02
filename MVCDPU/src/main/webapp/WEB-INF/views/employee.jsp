@@ -40,10 +40,53 @@ textarea{
 }
 </style>
 <script type="text/javascript">
+
+function CreateIssue(){
+	 
+	 if(! check()){
+		 return false;
+	 }
+	 
+	 var firstName = $("#firstName").val();
+	 var lastName = $("#lastName").val();
+	 var jobTitle = $("#jobTitle").val();
+	 var username = $("#username").val();
+	 var password = $("#password").val();
+	 var email = $("#email").val();
+	 var phone = $("#phone").val();
+	 var hiringDate = $("#hiringDate").val();
+	 var terminationDate = $("#terminationDate").val();
+	 
+	  $.ajax({url: "http://localhost:8083/MVCDPU/saveuser",
+		      type:"POST",
+		      data:{firstName:firstName,
+		    	lastName:lastName,
+		    	jobTitle:jobTitle,
+		    	username:username,
+		    	password:password,
+		    	email:email,
+		    	phone:phone,
+		    	hiringdate:hiringDate,
+		    	terminationdate:terminationDate
+		      },
+		      success: function(result){
+	        console.log(result);
+	        console.log('IN ');
+	  },error:function(_r){
+		  console.log(_r)
+		  console.log("ERROR")
+		  
+	  }});
+	  return true;
+}
 	$(document).ready(function(){
+		/*
 		$('#btnSave').click(function(){
 			$('#frm1').submit();
+			alert("1111");
 		});
+				
+		*/
 		$('#btnSearch').click(function(){
 			$("#frmSearch").change(function() {
 			  $("#frmSearch").attr("action", "showques");
@@ -87,6 +130,7 @@ function checkFlag(field) {
                    	$("#jobTitle").val(data.jobTitle);
                    	$("#username").val(data.username);
                    	$("#password").val("*********");
+                   	$("#username").prop("readonly", true);       
                    	$("#password").prop("readonly", true);                 	
                    	$("#email").val(data.email);
                    	$("#phone").val(data.phone);
@@ -211,7 +255,7 @@ function emptyMessageDiv(){
 			<div class="col-sm-8">
 					<div class="modal fade" id="myModal" role="dialog">
 					    <div class="modal-dialog">
-						<form action="saveuser" method="POST" name="user" id="frm1" onsubmit="return check()">
+						<form  >
 						<input type="hidden" id = "employeeid" name= "employeeid" value = "" />					
 						<input type="hidden" id = "addUpdateFlag" value = "" />					
 	
@@ -345,7 +389,7 @@ function emptyMessageDiv(){
 					        	</div>
 					        </div>
 					        <div class="modal-footer">
-					          <input type="button" class="btn btn-primary" id= "btnSave" value="Save" />
+					          <input type="button" class="btn btn-primary" id= "btnSave" value="Save" onclick="CreateIssue()" />
 							  <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
 					        </div>
 					      </div>

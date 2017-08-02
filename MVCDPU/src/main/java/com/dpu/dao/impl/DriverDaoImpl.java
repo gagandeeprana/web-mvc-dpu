@@ -28,8 +28,9 @@ public class DriverDaoImpl extends GenericDaoImpl<Driver> implements DriverDao {
 		try{
 			session = sessionFactory.openSession();
 			StringBuilder sb = new StringBuilder("");
-			sb.append(" select d from Driver d join fetch d.division join fetch d.terminal join fetch d.category join fetch d.role ")
-			.append(" join fetch d.status join fetch d.driverClass driverclass where d.driverCode like :driverCodeOrName or d.firstName like :driverCodeOrName or d.lastName like :driverCodeOrName ");
+			sb.append(" select d from Driver d left join fetch d.division left join fetch d.terminal left join fetch d.category left join fetch d.role ")
+			.append(" left join fetch d.status left join fetch d.driverClass left join fetch d.country left join fetch d.state ")
+			.append(" where d.driverCode like :driverCodeOrName or d.firstName like :driverCodeOrName or d.lastName like :driverCodeOrName ");
 			
 			Query query = session.createQuery(sb.toString());
 			query.setParameter("driverCodeOrName", "%"+driverCodeOrName+"%");
@@ -49,16 +50,17 @@ public class DriverDaoImpl extends GenericDaoImpl<Driver> implements DriverDao {
 	@Override
 	public List<Driver> findAll(Session session) {
 		
-		StringBuilder sb = new StringBuilder(" select d from Driver d join fetch d.division join fetch d.terminal join fetch d.category join fetch d.role " )
-		.append(" join fetch d.status join fetch d.driverClass driverclass ");
+		StringBuilder sb = new StringBuilder(" select d from Driver d left join fetch d.division left join fetch d.terminal left join fetch d.category " )
+		.append(" left join fetch d.role left join fetch d.status left join fetch d.driverClass left join fetch d.country left join fetch d.state ");
 		Query query = session.createQuery(sb.toString());
 		return query.list();
 	}
 
 	@Override
 	public Driver findById(Long driverId, Session session) {
-		StringBuilder sb = new StringBuilder(" select d from Driver d join fetch d.division join fetch d.terminal join fetch d.category join fetch d.role " )
-		.append(" join fetch d.status join fetch d.driverClass driverclass where d.driverId =:driverId ");
+		StringBuilder sb = new StringBuilder(" select d from Driver d left join fetch d.division left join fetch d.terminal left join fetch d.category " )
+		.append(" left join fetch d.role left join fetch d.status left join fetch d.driverClass left join fetch d.country left join fetch d.state ")
+		.append(" where d.driverId =:driverId ");
 		Query query = session.createQuery(sb.toString());
 		query.setParameter("driverId", driverId);
 		return (Driver) query.uniqueResult();
@@ -83,6 +85,18 @@ public class DriverDaoImpl extends GenericDaoImpl<Driver> implements DriverDao {
 		}
 
 		return data;
+	}
+
+	@Override
+	public void save(Driver driver, Session session) {
+		session.save(driver);
+		
+	}
+
+	@Override
+	public void update(Driver driver, Session session) {
+		session.update(driver);
+		
 	}
 
 }

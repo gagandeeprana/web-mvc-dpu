@@ -51,8 +51,9 @@ public class WebEmployeeController {
 		String termination = DateUtil.rearrangeDate(employeeModel.getTerminationdate());
 		employeeModel.setHiringdate(hiring);
 		employeeModel.setTerminationdate(termination);
-		employeeService.add(employeeModel);
-		modelAndView.setViewName("redirect:showuser");
+		//Object response = employeeService.add(employeeModel);
+		modelAndView.addObject("result", employeeService.add(employeeModel));
+		//modelAndView.setViewName("employee");
 		return modelAndView;
 	}
 	

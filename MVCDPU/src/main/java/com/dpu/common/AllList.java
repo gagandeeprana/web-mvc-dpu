@@ -14,7 +14,7 @@ import com.dpu.model.CategoryReq;
 import com.dpu.model.CompanyResponse;
 import com.dpu.model.DispatcherModel;
 import com.dpu.model.DivisionReq;
-import com.dpu.model.DriverReq;
+import com.dpu.model.DriverModel;
 import com.dpu.model.EquipmentReq;
 import com.dpu.model.SaleReq;
 import com.dpu.model.TerminalResponse;
@@ -313,10 +313,10 @@ public class AllList {
 	 * @return driverList
 	 */
 	@SuppressWarnings({ "unchecked" })
-	public static List<DriverReq> getDriverList(Session session,
+	public static List<DriverModel> getDriverList(Session session,
 			String tableName, String firstColumn, String secondColumn) {
 
-		List<DriverReq> driverList = new ArrayList<DriverReq>();
+		List<DriverModel> driverList = new ArrayList<DriverModel>();
 
 		try {
 			Query query = session.createQuery(" select " + firstColumn + " , "
@@ -327,7 +327,7 @@ public class AllList {
 
 				while (operationIt.hasNext()) {
 					Object o[] = (Object[]) operationIt.next();
-					DriverReq type = new DriverReq();
+					DriverModel type = new DriverModel();
 					type.setDriverId(Long.parseLong(String.valueOf(o[0])));
 					type.setFirstName(String.valueOf(o[1]));
 					driverList.add(type);

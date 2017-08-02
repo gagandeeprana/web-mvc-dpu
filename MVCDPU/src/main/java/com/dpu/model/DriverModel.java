@@ -10,7 +10,7 @@ import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 import com.dpu.entity.Status;
 
 @JsonSerialize(include = Inclusion.NON_NULL)
-public class DriverReq implements Serializable{
+public class DriverModel implements Serializable{
 
 	 
 	private static final long serialVersionUID = 1L;
@@ -26,11 +26,9 @@ public class DriverReq implements Serializable{
 	private String address;
 
 	private String unit;
-	 
+	
 	private String city;
  
-	private String pvs;
-	 
 	private String postalCode;
 
 	private String email;
@@ -42,6 +40,12 @@ public class DriverReq implements Serializable{
 	private String cellular;
 	 
 	private String pager;
+	
+	private String fullName;
+	
+	private String createdBy;
+	 
+	private Date createdOn;
 	 
 	private String divisionName;
 	private Long divisionId;
@@ -66,8 +70,15 @@ public class DriverReq implements Serializable{
 	private String driverClassName;
 	private Long driverClassId;
 	private List<TypeResponse> driverClassList;
- 
-	private String fullName;
+	
+	private String stateName;
+	private Long stateId;
+	private List<CountryStateCityModel> stateList;
+	
+	private String countryName;
+	private Long countryId;
+	private List<CountryStateCityModel> countryList;
+	
 	public List<DivisionReq> getDivisionList() {
 		return divisionList;
 	}
@@ -116,10 +127,6 @@ public class DriverReq implements Serializable{
 		this.driverClassList = driverClassList;
 	}
 
-	private String createdBy;
-	 
-	private Date createdOn;
-	
 	public Long getDriverId() {
 		return driverId;
 	}
@@ -174,14 +181,6 @@ public class DriverReq implements Serializable{
 
 	public void setCity(String city) {
 		this.city = city;
-	}
-
-	public String getPvs() {
-		return pvs;
-	}
-
-	public void setPvs(String pvs) {
-		this.pvs = pvs;
 	}
 
 	public String getPostalCode() {
@@ -350,6 +349,54 @@ public class DriverReq implements Serializable{
 
 	public void setFullName(String fullName) {
 		this.fullName = fullName;
+	}
+
+	public String getStateName() {
+		return stateName;
+	}
+
+	public void setStateName(String stateName) {
+		this.stateName = stateName;
+	}
+
+	public Long getStateId() {
+		return stateId;
+	}
+
+	public void setStateId(Long stateId) {
+		this.stateId = stateId;
+	}
+
+	public List<CountryStateCityModel> getStateList() {
+		return stateList;
+	}
+
+	public void setStateList(List<CountryStateCityModel> stateList) {
+		this.stateList = stateList;
+	}
+
+	public String getCountryName() {
+		return countryName;
+	}
+
+	public void setCountryName(String countryName) {
+		this.countryName = countryName;
+	}
+
+	public Long getCountryId() {
+		return countryId;
+	}
+
+	public void setCountryId(Long countryId) {
+		this.countryId = countryId;
+	}
+
+	public List<CountryStateCityModel> getCountryList() {
+		return countryList;
+	}
+
+	public void setCountryList(List<CountryStateCityModel> countryList) {
+		this.countryList = countryList;
 	}
 	
 	

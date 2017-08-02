@@ -1,11 +1,5 @@
 package com.dpu.entity;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 import java.io.Serializable;
 import java.util.Date;
 
@@ -53,9 +47,6 @@ public class Driver implements Serializable {
 	@Column(name = "city")
 	private String city;
 
-	@Column(name = "province")
-	private String pvs;
-
 	@Column(name = "postal_code")
 	private String postalCode;
 
@@ -73,9 +64,13 @@ public class Driver implements Serializable {
 
 	@Column(name = "pager")
 	private String pager;
-
-	 
 	
+	@Column(name = "created_by")
+	private String createdBy;
+
+	@Column(name = "created_on")
+	private Date createdOn;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "division_id")
 	private Division division;
@@ -100,13 +95,14 @@ public class Driver implements Serializable {
 	@JoinColumn(name = "driver_class_id")
 	private Type driverClass;
 
-	@Column(name = "created_by")
-	private String createdBy;
-
-	@Column(name = "created_on")
-//	@Temporal(TemporalType.TIMESTAMP)
-	private Date createdOn;
-
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "country_id")
+	private Country country;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "state_id")
+	private State state;
+	
 	public String getDriverCode() {
 		return driverCode;
 	}
@@ -153,14 +149,6 @@ public class Driver implements Serializable {
 
 	public void setCity(String city) {
 		this.city = city;
-	}
-
-	public String getPvs() {
-		return pvs;
-	}
-
-	public void setPvs(String pvs) {
-		this.pvs = pvs;
 	}
 
 	public String getPostalCode() {
@@ -281,6 +269,22 @@ public class Driver implements Serializable {
 
 	public void setDriverClass(Type driverClass) {
 		this.driverClass = driverClass;
+	}
+
+	public Country getCountry() {
+		return country;
+	}
+
+	public void setCountry(Country country) {
+		this.country = country;
+	}
+
+	public State getState() {
+		return state;
+	}
+
+	public void setState(State state) {
+		this.state = state;
 	}
 
 	

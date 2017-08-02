@@ -11,19 +11,27 @@ import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.dpu.common.AllList;
 import com.dpu.common.CommonProperties;
+import com.dpu.constants.Iconstants;
 import com.dpu.dao.CategoryDao;
 import com.dpu.dao.DivisionDao;
 import com.dpu.dao.TerminalDao;
 import com.dpu.dao.TruckDao;
 import com.dpu.dao.TypeDao;
+import com.dpu.entity.Category;
+import com.dpu.entity.Division;
+import com.dpu.entity.Handling;
 import com.dpu.entity.Status;
+import com.dpu.entity.Terminal;
 import com.dpu.entity.Truck;
+import com.dpu.entity.Type;
 import com.dpu.model.CategoryReq;
 import com.dpu.model.DivisionReq;
 import com.dpu.model.Failed;
@@ -73,6 +81,12 @@ public class TruckServiceImpl implements TruckService {
 	@Autowired
 	TypeDao typeDao;
 
+	@Value("${Truck_unit_No_already_exist}")
+	private String Truck_unit_No_already_exist;
+	
+	@Value("${truck_dependent_message}")
+	private String truck_dependent_message;
+	
 	Logger logger = Logger.getLogger(TruckServiceImpl.class);
 
 	private Object createSuccessObject(String msg, long code) {
@@ -87,66 +101,110 @@ public class TruckServiceImpl implements TruckService {
 		Failed failed = new Failed();
 		failed.setCode(code);
 		failed.setMessage(msg);
-		failed.setResultList(getAllTrucks(""));
+		//failed.setResultList(getAllTrucks(""));
 		return failed;
 	}
 
 	@Override
 	public Object update(Long id, TruckResponse truckResponse) {
-		logger.info("[TruckServiceImpl] [update] : Enter ");
+	
+		logger.info("TruckServiceImpl update() starts, truckId :"+id);
 		Truck truck = null;
+		Session session = null;
+		Transaction tx = null;
+		
 		try {
-			truck = truckDao.findById(id);
-			// if (truck != null) {
-			truck.setUnitNo(truckResponse.getUnitNo());
-			truck.setOwner(truckResponse.getOwner());
-			truck.setoOName(truckResponse.getoOName());
-			truck.setCategory(categoryService.getCategory(truckResponse
-					.getCategoryId()));
-			truck.setDivision(divisionDao.findById(truckResponse
-					.getDivisionId()));
-			truck.setTerminal(terminalDao.findById(truckResponse
-					.getTerminalId()));
-			truck.setStatus(statusService.get(truckResponse.getStatusId()));
-			truck.setUsage(truckResponse.getTruchUsage());
-
-			truck.setType(typeService.get(truckResponse.getTruckTypeId()));
-
-			truck.setType(typeDao.findById(truckResponse.getTruckTypeId()));
-
-			truck.setFinance(truckResponse.getFinance());
-
-			truckDao.update(truck);
-			// }
+			session = sessionFactory.openSession();
+			
+			truck = (Truck) session.get(Truck.class, id);	
+			
+			if (truck != null) {
+				tx = session.beginTransaction();
+				truck.setUnitNo(truckResponse.getUnitNo());
+				truck.setOwner(truckResponse.getOwner());
+				truck.setoOName(truckResponse.getoOName());
+				truck.setUsage(truckResponse.getTruchUsage());
+				truck.setFinance(truckResponse.getFinance());
+				
+				Category category = (Category) session.get(Category.class, truckResponse.getCategoryId());
+				truck.setCategory(category);
+				
+				Division division = (Division) session.get(Division.class, truckResponse.getDivisionId());
+				truck.setDivision(division);
+				
+				Terminal terminal = (Terminal) session.get(Terminal.class, truckResponse.getTerminalId());
+				truck.setTerminal(terminal);
+				
+				Status status = (Status) session.get(Status.class, truckResponse.getStatusId());
+				truck.setStatus(status);
+				
+				Type type = (Type) session.get(Type.class, truckResponse.getTruckTypeId());
+				truck.setType(type);
+				
+				truckDao.update(truck, session);
+				tx.commit();
+			} else{
+				return createFailedObject(CommonProperties.Truck_unable_to_update_message, Long.parseLong(CommonProperties.Truck_unable_to_update_code));
+			}
+			
 		} catch (Exception e) {
-			logger.info("Exception inside TruckServiceImpl update() :"
-					+ e.getMessage());
-			return createFailedObject(
-					CommonProperties.Truck_unable_to_update_message,
-					Long.parseLong(CommonProperties.Truck_unable_to_update_code));
+			logger.info("Exception inside TruckServiceImpl update() :" + e.getMessage());
+			if(tx != null){
+				tx.rollback();
+			}
+			if(e instanceof ConstraintViolationException){
+				ConstraintViolationException c = (ConstraintViolationException) e;
+				String constraintName = c.getConstraintName();
+				if(Iconstants.UNIQUE_TRUCK_UNIT_NO.equals(constraintName)) {
+					return createFailedObject(Truck_unit_No_already_exist,0);
+				}
+			}
+			return createFailedObject(CommonProperties.Truck_unable_to_update_message,Long.parseLong(CommonProperties.Truck_unable_to_update_code));
+		} finally{
+			if(session != null){
+				session.close();
+			}
 		}
 
-		logger.info("[TruckServiceImpl] [get] : Exit ");
-		return createSuccessObject(CommonProperties.Truck_updated_message,
-				Long.parseLong(CommonProperties.Equipment_updated_code));
+		logger.info("TruckServiceImpl update() ends, truckId :"+id);
+		return createSuccessObject(CommonProperties.Truck_updated_message,Long.parseLong(CommonProperties.Equipment_updated_code));
 	}
 
 	@Override
 	public Object delete(Long id) {
-		logger.info("[TruckServiceImpl] [delete] : Enter ");
-		Truck truck = null;
+
+		logger.info("TruckServiceImpl delete() starts.");
+		Session session = null;
+		Transaction tx = null;
+
 		try {
-			truck = truckDao.findById(id);
-			truckDao.delete(truck);
+			session = sessionFactory.openSession();
+			tx = session.beginTransaction();
+			Truck truck = (Truck) session.get(Truck.class, id);
+			if (truck != null) {
+				session.delete(truck);
+				tx.commit();
+			} else {
+				return createFailedObject(CommonProperties.Truck_unable_to_delete_message,0);
+			}
+
 		} catch (Exception e) {
-			logger.error("[TruckServiceImpl] [delete] : ", e);
-			return createFailedObject(
-					CommonProperties.Truck_unable_to_delete_message,
-					Long.parseLong(CommonProperties.Truck_unable_to_delete_code));
+			logger.info("Exception inside TruckServiceImpl delete() : " + e.getMessage());
+			if (tx != null) {
+				tx.rollback();
+			}
+			if (e instanceof ConstraintViolationException) {
+				return createFailedObject(truck_dependent_message,0);
+			}
+			return createFailedObject(CommonProperties.Truck_unable_to_delete_message,0);
+		} finally {
+			if (session != null) {
+				session.close();
+			}
 		}
-		logger.info("[TruckServiceImpl] [get] : Exit ");
-		return createSuccessObject(CommonProperties.Truck_deleted_message,
-				Long.parseLong(CommonProperties.Truck_deleted_code));
+
+		logger.info("TruckServiceImpl delete() ends.");
+		return createSuccessObject(CommonProperties.Truck_deleted_message, 0);
 	}
 
 	@Override
@@ -157,10 +215,9 @@ public class TruckServiceImpl implements TruckService {
 		TruckResponse truckResponse = new TruckResponse();
 		
 		try{
-			//Truck truck = truckDao.findById(id);
 			Truck truck = truckDao.findById(session, id);
 			if (truck != null) {
-				BeanUtils.copyProperties(truck, truckResponse);
+				truckResponse.setTruckId(truck.getTruckId());
 				truckResponse.setUnitNo(truck.getUnitNo());
 				truckResponse.setOwner(truck.getOwner());
 				truckResponse.setoOName(truck.getoOName());
@@ -171,10 +228,9 @@ public class TruckServiceImpl implements TruckService {
 				truckResponse.setTerminalId(truck.getTerminal().getTerminalId());
 				truckResponse.setStatusId(truck.getStatus().getId());
 				truckResponse.setTruckTypeId(truck.getType().getTypeId());
-				truckResponse.setTypeName(truck.getType().getTypeName());
+				//truckResponse.setTypeName(truck.getType().getTypeName());
 				truckResponse.setTruckType(truck.getType().getTypeName());
 				truckResponse.setFinance(truck.getFinance());
-
 				List<Status> lstStatus = AllList.getStatusList(session);
 				truckResponse.setStatusList(lstStatus);
 
@@ -232,7 +288,7 @@ public class TruckServiceImpl implements TruckService {
 							.getDivisionName());
 					truckResponse.setTerminalName(truck.getTerminal()
 							.getTerminalName());
-					truckResponse.setTypeName(truck.getType().getTypeName());
+					//truckResponse.setTypeName(truck.getType().getTypeName());
 
 					truckResponse.setDivisionName(truck.getDivision()
 							.getDivisionName());
@@ -268,6 +324,13 @@ public class TruckServiceImpl implements TruckService {
 			logger.error("TruckServiceImpl: add(): Exception: ", e);
 			if (tx != null) {
 				tx.rollback();
+			}
+			if(e instanceof ConstraintViolationException){
+				ConstraintViolationException c = (ConstraintViolationException) e;
+				String constraintName = c.getConstraintName();
+				if(Iconstants.UNIQUE_TRUCK_UNIT_NO.equals(constraintName)) {
+					return createFailedObject(Truck_unit_No_already_exist,0);
+				}
 			}
 			return createFailedObject(
 					CommonProperties.Truck_unable_to_add_message,
@@ -311,7 +374,7 @@ public class TruckServiceImpl implements TruckService {
 		
 			truckResponse.setCategoryList(operationList);
 
-			List<Object[]> divisionListObj =  divisionDao.getSpecificData(session,"Division", "divisionId", "divisionId");
+			List<Object[]> divisionListObj =  divisionDao.getSpecificData(session,"Division", "divisionId", "divisionName");
 		
 			List<DivisionReq> divisionList = new ArrayList<DivisionReq>();
 			Iterator<Object[]> divisionIt = divisionListObj.iterator();

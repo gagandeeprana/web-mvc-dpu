@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import com.dpu.constants.Iconstants;
 import com.dpu.dao.EmployeeDao;
 import com.dpu.entity.Employee;
 import com.dpu.model.EmployeeModel;
@@ -58,6 +59,12 @@ public class EmployeeServiceImpl implements EmployeeService {
 	
 	@Value("${unable_login_message}")
 	private String unable_login_message;
+	
+	@Value("${username_already_exist}")
+	private String username_already_exist;
+	
+	@Value("${email_already_exist}")
+	private String email_already_exist;
 
 	private Object createSuccessObject(String msg, long code) {
 		Success success = new Success();
@@ -97,6 +104,18 @@ public class EmployeeServiceImpl implements EmployeeService {
 			if (tx != null) {
 				tx.rollback();
 			}
+			if(e instanceof ConstraintViolationException){
+				ConstraintViolationException c = (ConstraintViolationException) e;
+				String constraintName = c.getConstraintName();
+				if(Iconstants.UNIQUE_USER_NAME.equals(constraintName)) {
+					return createFailedObject(username_already_exist,0);
+				}
+				if(Iconstants.UNIQUE_EMAIL.equals(constraintName)) {
+					return createFailedObject(email_already_exist,0);
+				}
+			}
+			
+			
 			return createFailedObject(user_unable_to_add_message,0);
 		} finally {
 			logger.info("EmployeeServiceImpl: add():  finally block");
@@ -281,6 +300,16 @@ private void setEmployeeValues(EmployeeModel employeeModel, Employee employee) {
 				tx.rollback();
 			}
 			logger.info("Exception inside EmployeeServiceImpl update() :"+ e.getMessage());
+			if(e instanceof ConstraintViolationException){
+				ConstraintViolationException c = (ConstraintViolationException) e;
+				String constraintName = c.getConstraintName();
+				if(Iconstants.UNIQUE_USER_NAME.equals(constraintName)) {
+					return createFailedObject(username_already_exist,0);
+				}
+				if(Iconstants.UNIQUE_EMAIL.equals(constraintName)) {
+					return createFailedObject(email_already_exist,0);
+				}
+			}
 			return createFailedObject(user_unable_to_update_message);
 		} finally{
 			if(session != null){
