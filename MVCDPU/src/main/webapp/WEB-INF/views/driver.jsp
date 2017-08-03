@@ -58,23 +58,23 @@ textarea{
 								var obj = list[i];
 								tableValue = tableValue + ("<tr class='info'>");
 								var driverCode = "";
-			            		if(obj.driverCode != 'undefined') {
+			            		if(obj.driverCode != null) {
 			            			driverCode = obj.driverCode;
 			            		}
 			            		var firstName = "";
-			            		if(obj.firstName != 'undefined') {
+			            		if(obj.firstName != null) {
 			            			firstName = obj.firstName;
 			            		}
 			            		var lastName = "";
-			            		if(obj.lastName != 'undefined') {
+			            		if(obj.lastName != null) {
 			            			lastName = obj.lastName;
 			            		}
 			            		var address = "";
-			            		if(obj.address != 'undefined') {
+			            		if(obj.address != null) {
 			            			address = obj.address;
 			            		}
 			            		var unit = "";
-			            		if(obj.unit != 'undefined') {
+			            		if(obj.unit != null) {
 			            			unit = obj.unit;
 			            		}
 			            		var city = "";
@@ -82,7 +82,7 @@ textarea{
 			            			city = obj.city;
 			            		}
 			            		var stateName = "";
-			            		if(obj.stateName != 'undefined') {
+			            		if(obj.stateName != null) {
 			            			stateName = obj.stateName;
 			            		}
 			            		var faxNo = "";
