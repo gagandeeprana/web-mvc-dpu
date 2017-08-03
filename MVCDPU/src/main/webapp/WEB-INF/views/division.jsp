@@ -281,7 +281,7 @@ function checkFlag(field) {
 											<div class="col-sm-6">
 												<div class="input-group">
 												<span class="input-group-addon">
-													 <i class="glyphicon glyphicon-inbox"></i>												
+													 <b>DivisionCode</b>												
 												</span>
 												<input type="text" class="form-control" placeHolder="Enter DivisionCode" id="divisionCode" name="divisionCode" value="" autofocus />
 											</div>
@@ -289,7 +289,7 @@ function checkFlag(field) {
 											<div class="col-sm-6">
 												<div class="input-group">
 													<span class="input-group-addon">
-														 <i class="glyphicon glyphicon-inbox"></i>												
+														 <b>DivisionName</b>												
 													</span>
 													<input type="text" class="form-control" placeHolder="Enter DivisionName" id="divisionName" name="divisionName" value="" autofocus />
 												</div>
@@ -301,7 +301,7 @@ function checkFlag(field) {
 											<div class="col-sm-6">
 												<div class="input-group">
 													<span class="input-group-addon">
-														 <i class="glyphicon glyphicon-list-alt"></i>												
+														 <b>Status</b>												
 													</span>
 													<select class="form-control" name="statusId" id="status">
 													</select>
@@ -310,7 +310,7 @@ function checkFlag(field) {
 											<div class="col-sm-6">
 												<div class="input-group">
 													<span class="input-group-addon">
-														 <i class="glyphicon glyphicon-inbox"></i>												
+														 <b>Federal</b>												
 													</span>
 													<input type="text" class="form-control" placeHolder="Enter Federal" id="federal" name="fedral" value="" />
 												</div>
@@ -338,7 +338,7 @@ function checkFlag(field) {
 											<div class="col-sm-6">
 												<div class="input-group">
 													<span class="input-group-addon">
-														 <i class="glyphicon glyphicon-inbox"></i>												
+														 <b>Provincial</b>												
 													</span>
 													<input type="text" class="form-control" placeHolder="Enter Provincial" id="provincial" name="provincial" value="" />
 												</div>
@@ -346,7 +346,7 @@ function checkFlag(field) {
 											<div class="col-sm-6">
 												<div class="input-group">
 													<span class="input-group-addon">
-														 <i class="glyphicon glyphicon-inbox"></i>												
+														 <b>SCAC</b>												
 													</span>
 													<input type="text" class="form-control" placeHolder="Enter SCAC" id="scac" name="scac" value="" />
 												</div>
@@ -358,7 +358,7 @@ function checkFlag(field) {
 											<div class="col-sm-6">
 												<div class="input-group">
 													<span class="input-group-addon">
-														 <i class="glyphicon glyphicon-inbox"></i>												
+														 <b>CarrierCode</b>												
 													</span>
 													<input type="text" class="form-control" placeHolder="Enter CarrierCode" id="carrierCode" name="carrierCode" value="" />
 												</div>
@@ -366,7 +366,7 @@ function checkFlag(field) {
 											<div class="col-sm-6">
 												<div class="input-group">
 													<span class="input-group-addon">
-														 <i class="glyphicon glyphicon-inbox"></i>												
+														 <b>ContractPrefix</b>												
 													</span>
 													<input type="text" class="form-control" placeHolder="Enter ContractPrefix" id="contractPrefix" name="contractPrefix" value="" />
 												</div>
@@ -378,7 +378,7 @@ function checkFlag(field) {
 											<div class="col-sm-12">
 												<div class="input-group">
 													<span class="input-group-addon">
-														 <i class="glyphicon glyphicon-inbox"></i>												
+														 <b>InvoicePrefix</b>												
 													</span>
 													<input type="text" class="form-control" placeHolder="Enter InvoicePrefix" id="invoicePrefix" name="invoicePrefix" value="" />
 												</div>

@@ -39,11 +39,12 @@ textarea{
   max-height:360px;
 }
 </style>
+<jsp:include page="Include.jsp"></jsp:include>
 <script type="text/javascript">
 
-function CreateIssue(){
+function createUser(){
 	 
-	 if(! check()){
+	 if(!check()){
 		 return false;
 	 }
 	 
@@ -57,7 +58,7 @@ function CreateIssue(){
 	 var hiringDate = $("#hiringDate").val();
 	 var terminationDate = $("#terminationDate").val();
 	 
-	  $.ajax({url: "http://localhost:8083/MVCDPU/saveuser",
+	  $.ajax({url: BASE_URL+ "saveuser",
 		      type:"POST",
 		      data:{firstName:firstName,
 		    	lastName:lastName,
@@ -70,12 +71,18 @@ function CreateIssue(){
 		    	terminationdate:terminationDate
 		      },
 		      success: function(result){
-	        console.log(result);
-	        console.log('IN ');
-	  },error:function(_r){
-		  console.log(_r)
-		  console.log("ERROR")
-		  
+	        try{
+		        toastr.success(result.message, 'Success!')
+			} catch(e){
+				toastr.error('Something went wrong', 'Error!')
+			}
+	  },error:function(result){
+		  try{
+			  	var obj = JSON.parse(result.responseText);
+			  	toastr.error(obj.message, 'Error!')
+			  }catch(e){
+				  toastr.error('Something went wrong', 'Error!')
+			  }
 	  }});
 	  return true;
 }
@@ -277,7 +284,7 @@ function emptyMessageDiv(){
 											<div class="col-sm-12">
 												<div class="input-group">
 												<span class="input-group-addon">
-													 <i class="glyphicon glyphicon-inbox"></i>												
+													 <b>FirstName</b>												
 												</span>
 												<input type="text" class="form-control" placeHolder="Enter FirstName" id="firstName" name="firstName" value="" autofocus />
 											</div>
@@ -290,7 +297,7 @@ function emptyMessageDiv(){
 											<div class="col-sm-12">
 												<div class="input-group">
 												<span class="input-group-addon">
-													 <i class="glyphicon glyphicon-inbox"></i>												
+													 <b>LastName</b>												
 												</span>
 												<input type="text" class="form-control" placeHolder="Enter LastName" id="lastName" name="lastName" value="" />
 											</div>
@@ -302,7 +309,7 @@ function emptyMessageDiv(){
 											<div class="col-sm-12">
 												<div class="input-group">
 												<span class="input-group-addon">
-													 <i class="glyphicon glyphicon-inbox"></i>												
+													 <b>JobTitle</b>												
 												</span>
 												<input type="text" class="form-control" placeHolder="Enter JobTitle" id="jobTitle" name="jobTitle" value="" />
 											</div>
@@ -315,7 +322,7 @@ function emptyMessageDiv(){
 											<div class="col-sm-12">
 												<div class="input-group">
 												<span class="input-group-addon">
-													 <i class="glyphicon glyphicon-inbox"></i>												
+													 <b>Username</b>												
 												</span>
 												<input type="text" class="form-control" placeHolder="Enter Username" id="username" name="username" value="" />
 											</div>
@@ -328,7 +335,7 @@ function emptyMessageDiv(){
 											<div class="col-sm-12">
 												<div class="input-group">
 												<span class="input-group-addon">
-													 <i class="glyphicon glyphicon-inbox"></i>												
+													 <b>Password</b>												
 												</span>
 												<input type="password" class="form-control" placeHolder="Enter Password" id="password" name="password" value="" />
 											</div>
@@ -341,7 +348,7 @@ function emptyMessageDiv(){
 											<div class="col-sm-12">
 												<div class="input-group">
 												<span class="input-group-addon">
-													 <i class="glyphicon glyphicon-inbox"></i>												
+													 <b>Email</b>												
 												</span>
 												<input type="text" class="form-control" placeHolder="Enter Email" id="email" name="email" value="" />
 											</div>
@@ -354,7 +361,7 @@ function emptyMessageDiv(){
 											<div class="col-sm-12">
 												<div class="input-group">
 												<span class="input-group-addon">
-													 <i class="glyphicon glyphicon-inbox"></i>												
+													 <b>Phone</b>												
 												</span>
 												<input type="text" class="form-control" placeHolder="Enter Phone" id="phone" name="phone" value="" />
 											</div>
@@ -367,7 +374,7 @@ function emptyMessageDiv(){
 											<div class="col-sm-12">
 												<div class="input-group date" data-provide="datepicker">
 											    <div class="input-group-addon">
-											        <span class="glyphicon glyphicon-th"></span>
+											        <b>HiringDate</b>
 											    </div>
 											    <input type="text" class="form-control datepicker" placeHolder = " Hiring Date" name="hiringdate" id="hiringDate">
 											</div>
@@ -380,7 +387,7 @@ function emptyMessageDiv(){
 											<div class="col-sm-12">
 												<div class="input-group date" data-provide="datepicker">
 											    <div class="input-group-addon">
-											        <span class="glyphicon glyphicon-th"></span>
+											        <b>TerminationDate</b>
 											    </div>
 											    <input type="text" class="form-control datepicker" placeHolder = " Termination Date" name = "terminationdate" id ="terminationDate">
 											</div>
@@ -389,7 +396,7 @@ function emptyMessageDiv(){
 					        	</div>
 					        </div>
 					        <div class="modal-footer">
-					          <input type="button" class="btn btn-primary" id= "btnSave" value="Save" onclick="CreateIssue()" />
+					          <input type="button" class="btn btn-primary" id= "btnSave" value="Save" onclick="createUser()" />
 							  <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
 					        </div>
 					      </div>

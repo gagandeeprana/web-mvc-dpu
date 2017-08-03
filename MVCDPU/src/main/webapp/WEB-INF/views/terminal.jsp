@@ -188,7 +188,7 @@ function emptyMessageDiv(){
 											<div class="col-sm-12">
 												<div class="input-group">
 												<span class="input-group-addon">
-													 <i class="glyphicon glyphicon-inbox"></i>												
+													 <b>TerminalName</b>												
 												</span>
 												<input type="text" class="form-control" placeHolder="Enter TerminalName" id="terminalName" name="terminalName" value="" autofocus />
 											</div>
@@ -200,7 +200,7 @@ function emptyMessageDiv(){
 											<div class="col-sm-12">
 												<div class="input-group">
 													<span class="input-group-addon">
-														 <i class="glyphicon glyphicon-list-alt"></i>												
+														 <b>Location</b>												
 													</span>
 													<select class="form-control" name="shipperId" id="locationId">
 													</select>
@@ -213,7 +213,7 @@ function emptyMessageDiv(){
 											<div class="col-sm-12">
 												<div class="input-group">
 													<span class="input-group-addon">
-														 <i class="glyphicon glyphicon-list-alt"></i>												
+														 <b>Services</b>												
 													</span>
 													<select id="serviceIds" class="form-control" multiple="multiple" name="serviceIds">
 													</select>

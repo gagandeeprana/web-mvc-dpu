@@ -299,7 +299,7 @@ function emptyMessageDiv(){
 											<div class="col-sm-6">
 												<div class="input-group">
 												<span class="input-group-addon">
-													 <i class="glyphicon glyphicon-inbox"></i>												
+													 <b>VendorName</b>												
 												</span>
 												<input type="text" class="form-control" placeHolder="Enter VendorName" id="vendorName" name="name" value="" autofocus />
 											</div>
@@ -307,7 +307,7 @@ function emptyMessageDiv(){
 											<div class="col-sm-6">
 												<div class="input-group">
 													<span class="input-group-addon">
-														 <i class="glyphicon glyphicon-inbox"></i>												
+														 <b>Contact</b>												
 													</span>
 													<input type="text" class="form-control" placeHolder="Enter Contact" id="contact" name="contact" value="" />
 												</div>
@@ -319,7 +319,7 @@ function emptyMessageDiv(){
 											<div class="col-sm-6">
 												<div class="input-group">
 													<span class="input-group-addon">
-														 <i class="glyphicon glyphicon-inbox"></i>												
+														 <b>Address</b>												
 													</span>
 													<input type="text" class="form-control" placeHolder="Enter Address" id="address" name="address" value="" />
 												</div>
@@ -327,7 +327,7 @@ function emptyMessageDiv(){
 											<div class="col-sm-6">
 												<div class="input-group">
 													<span class="input-group-addon">
-														 <i class="glyphicon glyphicon-inbox"></i>												
+														 <b>Position</b>												
 													</span>
 													<input type="text" class="form-control" placeHolder="Enter Position" id="position" name="position" value="" />
 												</div>
@@ -340,7 +340,7 @@ function emptyMessageDiv(){
 											<div class="col-sm-6">
 												<div class="input-group">
 													<span class="input-group-addon">
-														 <i class="glyphicon glyphicon-inbox"></i>												
+														 <b>Ext</b>												
 													</span>
 													<input type="text" class="form-control" placeHolder="Enter Ext" id="ext" name="ext" value="" />
 												</div>
@@ -348,7 +348,7 @@ function emptyMessageDiv(){
 											<div class="col-sm-6">
 												<div class="input-group">
 													<span class="input-group-addon">
-														 <i class="glyphicon glyphicon-inbox"></i>												
+														 <b>Prefix</b>												
 													</span>
 													<input type="text" class="form-control" placeHolder="Enter Prefix" id="prefix" name="vendorPrefix" value="" />
 												</div>
@@ -361,7 +361,7 @@ function emptyMessageDiv(){
 											<div class="col-sm-6">
 												<div class="input-group">
 													<span class="input-group-addon">
-														 <i class="glyphicon glyphicon-inbox"></i>												
+														 <b>Unit No</b>												
 													</span>
 													<input type="text" class="form-control" placeHolder="Enter UnitNo" id="unitNo" name="unitNo" value="" />
 												</div>
@@ -369,7 +369,7 @@ function emptyMessageDiv(){
 											<div class="col-sm-6">
 												<div class="input-group">
 													<span class="input-group-addon">
-														 <i class="glyphicon glyphicon-inbox"></i>												
+														 <b>Phone</b>												
 													</span>
 													<input type="text" class="form-control" placeHolder="Enter Phone" id="phone" name="phone" value="" />
 												</div>
@@ -382,7 +382,7 @@ function emptyMessageDiv(){
 											<div class="col-sm-6">
 												<div class="input-group">
 													<span class="input-group-addon">
-														 <i class="glyphicon glyphicon-inbox"></i>												
+														 <b>City</b>												
 													</span>
 													<input type="text" class="form-control" placeHolder="Enter City" id="city" name="city" value="" />
 												</div>
@@ -390,7 +390,7 @@ function emptyMessageDiv(){
 											<div class="col-sm-6">
 												<div class="input-group">
 													<span class="input-group-addon">
-														 <i class="glyphicon glyphicon-inbox"></i>												
+														 <b>Fax</b>												
 													</span>
 													<input type="text" class="form-control" placeHolder="Enter Fax" id="fax" name="fax" value="" />
 												</div>
@@ -405,7 +405,7 @@ function emptyMessageDiv(){
 													<div class="col-sm-6">
 														<div class="input-group">
 													<span class="input-group-addon">
-														 <i class="glyphicon glyphicon-inbox"></i>												
+														 <b>Province</b>												
 													</span>
 													<input type="text" class="form-control" placeHolder="Enter Province" id="province" name="provinceState" value="" />
 													</div>
@@ -413,7 +413,7 @@ function emptyMessageDiv(){
 													<div class="col-sm-6">
 													<div class="input-group">
 													<span class="input-group-addon">
-														 <i class="glyphicon glyphicon-inbox"></i>												
+														 <b>Zip</b>												
 													</span>
 													<input type="text" class="form-control" placeHolder="Enter Zip" id="zip" name="zip" value="" />
 													</div>
@@ -423,7 +423,7 @@ function emptyMessageDiv(){
 											<div class="col-sm-6">
 												<div class="input-group">
 													<span class="input-group-addon">
-														 <i class="glyphicon glyphicon-inbox"></i>												
+														 <b>AfterHours</b>												
 													</span>
 													<input type="text" class="form-control" placeHolder="Enter AfterHours" id="afterHours" name="afterHours" value="" />
 												</div>
@@ -436,7 +436,7 @@ function emptyMessageDiv(){
 											<div class="col-sm-6">
 												<div class="input-group">
 													<span class="input-group-addon">
-														 <i class="glyphicon glyphicon-inbox"></i>												
+														 <b>Email</b>												
 													</span>
 													<input type="text" class="form-control" placeHolder="Enter Email" id="email" name="email" value="" />
 												</div>
@@ -444,7 +444,7 @@ function emptyMessageDiv(){
 											<div class="col-sm-6">
 												<div class="input-group">
 													<span class="input-group-addon">
-														 <i class="glyphicon glyphicon-inbox"></i>												
+														 <b>TollFree</b>												
 													</span>
 													<input type="text" class="form-control" placeHolder="Enter TollFree" id="tollfree" name="tollfree" value="" />
 												</div>
@@ -457,7 +457,7 @@ function emptyMessageDiv(){
 											<div class="col-sm-6">
 												<div class="input-group">
 													<span class="input-group-addon">
-														 <i class="glyphicon glyphicon-inbox"></i>												
+														 <b>Website</b>												
 													</span>
 													<input type="text" class="form-control" placeHolder="Enter Website" id="website" name="website" value="" />
 												</div>
@@ -465,7 +465,7 @@ function emptyMessageDiv(){
 											<div class="col-sm-6">
 												<div class="input-group">
 													<span class="input-group-addon">
-														 <i class="glyphicon glyphicon-inbox"></i>												
+														 <b>Cellular</b>												
 													</span>
 													<input type="text" class="form-control" placeHolder="Enter Cellular" id="cellular" name="cellular" value="" />
 												</div>
@@ -478,18 +478,10 @@ function emptyMessageDiv(){
 											<div class="col-sm-6">
 												<div class="input-group">
 													<span class="input-group-addon">
-														 <i class="glyphicon glyphicon-inbox"></i>												
+														<b>Pager</b>												
 													</span>
 													<input type="text" class="form-control" placeHolder="Enter Pager" id="pager" name="pager" value="" />
 												</div>
-											</div>
-											<div class="col-sm-6">
-												<div class="form-group text-left">
-													<input type="checkbox" tabindex="3" class="" name="remember" id="remember">Order
-													<input type="checkbox" tabindex="3" class="" name="remember" id="remember">PickUp ETA
-													<input type="checkbox" tabindex="3" class="" name="remember" id="remember">PickUp
-													<input type="checkbox" tabindex="3" class="" name="remember" id="remember">Deliver ETA
-												</div>												
 											</div>
 										</div>
 									</div>

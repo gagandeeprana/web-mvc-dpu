@@ -88,14 +88,11 @@ public class WebDriverController {
 	
 	@RequestMapping(value = "/deletedriver/{driverid}" , method = RequestMethod.GET)
 	@ResponseBody public Object deleteDriver(@PathVariable("driverid") Long driverId) {
-		ModelAndView modelAndView = new ModelAndView();
 		Object response = driverService.deleteDriver(driverId);
 		if(response instanceof Failed) {
 			return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
 		} else {
 			return new ResponseEntity<Object>(response, HttpStatus.OK);
 		}
-//		modelAndView.setViewName("redirect:/showdriver");
-//		return modelAndView;
 	}
 }

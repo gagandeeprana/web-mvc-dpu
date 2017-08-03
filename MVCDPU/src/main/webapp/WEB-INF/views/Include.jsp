@@ -8,7 +8,7 @@
 </head>
 <body>
 <script type="text/javascript">
-	var BASE_URL = "http://localhost:8083/MVCDPU/"
+	var BASE_URL = "http://localhost:8080/MVCDPU/"
 </script>
 </body>
 </html>

@@ -268,7 +268,7 @@ function emptyMessageDiv(){
 											<div class="col-sm-6">
 												<div class="input-group">
 												<span class="input-group-addon">
-													 <i class="glyphicon glyphicon-inbox"></i>												
+													 <b>UnitNo</b>												
 												</span>
 												<input type="text" class="form-control" placeHolder="Enter UnitNo" id="unitNo" name="unitNo" value="" autofocus />
 											</div>
@@ -276,7 +276,7 @@ function emptyMessageDiv(){
 											<div class="col-sm-6">
 												<div class="input-group">
 													<span class="input-group-addon">
-														 <i class="glyphicon glyphicon-inbox"></i>												
+														 <b>Usage</b>												
 													</span>
 													<input type="text" class="form-control" placeHolder="Enter Usage" id="usage" name="usage" value="" />
 												</div>
@@ -288,7 +288,7 @@ function emptyMessageDiv(){
 											<div class="col-sm-6">
 												<div class="input-group">
 													<span class="input-group-addon">
-														 <i class="glyphicon glyphicon-inbox"></i>												
+														 <b>Owner</b>												
 													</span>
 													<input type="text" class="form-control" placeHolder="Enter Owner" id="owner" name="owner" value="" />
 												</div>
@@ -296,7 +296,7 @@ function emptyMessageDiv(){
 											<div class="col-sm-6">
 												<div class="input-group">
 													<span class="input-group-addon">
-														<i class="glyphicon glyphicon-list-alt"></i>												
+														<b>Division</b>											
 													</span>
 													<select class="form-control" name="divisionId" id="divisionId">
 													</select>
@@ -310,7 +310,7 @@ function emptyMessageDiv(){
 											<div class="col-sm-6">
 												<div class="input-group">
 													<span class="input-group-addon">
-														 <i class="glyphicon glyphicon-inbox"></i>												
+														 <b>OOName</b>												
 													</span>
 													<input type="text" class="form-control" placeHolder="Enter oOName" id="oOName" name="oOName" value="" />
 												</div>
@@ -318,7 +318,7 @@ function emptyMessageDiv(){
 											<div class="col-sm-6">
 												<div class="input-group">
 													<span class="input-group-addon">
-														<i class="glyphicon glyphicon-list-alt"></i>												
+														<b>Terminal</b>												
 													</span>
 													<select class="form-control" name="terminalId" id="terminalId">
 													</select>
@@ -332,7 +332,7 @@ function emptyMessageDiv(){
 											<div class="col-sm-6">
 												<div class="input-group">
 													<span class="input-group-addon">
-														<i class="glyphicon glyphicon-list-alt"></i>												
+														<b>Category</b>												
 													</span>
 													<select class="form-control" name="categoryId" id="categoryId">
 													</select>
@@ -341,7 +341,7 @@ function emptyMessageDiv(){
 											<div class="col-sm-6">
 												<div class="input-group">
 													<span class="input-group-addon">
-														<i class="glyphicon glyphicon-list-alt"></i>												
+														<b>TrailerType</b>												
 													</span>
 													<select class="form-control" name="trailerTypeId" id="trailerTypeId">
 													</select>
@@ -355,7 +355,7 @@ function emptyMessageDiv(){
 											<div class="col-sm-6">
 												<div class="input-group">
 													<span class="input-group-addon">
-														<i class="glyphicon glyphicon-list-alt"></i>												
+														<b>Status</b>												
 													</span>
 													<select class="form-control" name="statusId" id="statusId">
 													</select>
@@ -364,7 +364,7 @@ function emptyMessageDiv(){
 											<div class="col-sm-6">
 												<div class="input-group">
 													<span class="input-group-addon">
-														 <i class="glyphicon glyphicon-inbox"></i>												
+														 <b>Finance</b>												
 													</span>
 													<input type="text" class="form-control" placeHolder="Enter Finance" id="finance" name="finance" value="" />
 												</div>

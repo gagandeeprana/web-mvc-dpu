@@ -200,7 +200,7 @@ function checkFlag(field) {
 											<div class="col-sm-12">
 												<div class="input-group">
 													<span class="input-group-addon">
-														 <i class="glyphicon glyphicon-list-alt"></i>												
+														 <b>Type</b>												
 													</span>
 													<select class="form-control" name="typeId" id="type">
 													</select>
@@ -213,7 +213,7 @@ function checkFlag(field) {
 											<div class="col-sm-12">
 												<div class="input-group">
 												<span class="input-group-addon">
-													 <i class="glyphicon glyphicon-inbox"></i>												
+													 <b>CategoryName</b>												
 												</span>
 												<input type="text" class="form-control" placeHolder="Enter CategoryName" id="category" name="name" value="" autofocus />
 											</div>
@@ -225,7 +225,7 @@ function checkFlag(field) {
 											<div class="col-sm-12">
 												<div class="input-group">
 													<span class="input-group-addon">
-														 <i class="glyphicon glyphicon-list-alt"></i>												
+														 <b>Status</b>												
 													</span>
 													<select class="form-control" name="statusId" id="status">
 													</select>
@@ -238,7 +238,7 @@ function checkFlag(field) {
 											<div class="col-sm-12">
 												<div class="input-group">
 													<span class="input-group-addon">
-														 <i class="glyphicon glyphicon-list-alt"></i>												
+														 <b>Highlight</b>												
 													</span>
 													<select class="form-control" name="highlightId" id="highlight">
 													</select>

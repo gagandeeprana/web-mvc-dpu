@@ -7,6 +7,8 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.dpu.model.EmployeeModel;
+import com.dpu.model.Failed;
 import com.dpu.service.EmployeeService;
 import com.dpu.util.DateUtil;
 
@@ -38,8 +41,7 @@ public class WebEmployeeController {
 	}
 	
 	@RequestMapping(value = "/saveuser" , method = RequestMethod.POST)
-	public ModelAndView saveUser(@ModelAttribute("user") EmployeeModel employeeModel, HttpServletRequest request) {
-		ModelAndView modelAndView = new ModelAndView();
+	@ResponseBody public Object saveUser(@ModelAttribute("user") EmployeeModel employeeModel, HttpServletRequest request) {
 		HttpSession session = request.getSession();
 		String createdBy = "";
 		if(session != null) {
@@ -52,9 +54,12 @@ public class WebEmployeeController {
 		employeeModel.setHiringdate(hiring);
 		employeeModel.setTerminationdate(termination);
 		//Object response = employeeService.add(employeeModel);
-		modelAndView.addObject("result", employeeService.add(employeeModel));
-		//modelAndView.setViewName("employee");
-		return modelAndView;
+		Object response = employeeService.add(employeeModel);
+		if(response instanceof Failed) {
+			return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
+		} else {
+			return new ResponseEntity<Object>(response, HttpStatus.OK);
+		}
 	}
 	
 	@RequestMapping(value = "/getuser/userId" , method = RequestMethod.GET)

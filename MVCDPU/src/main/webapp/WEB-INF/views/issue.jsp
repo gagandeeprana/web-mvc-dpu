@@ -292,7 +292,7 @@ function emptyMessageDiv(){
 											<div class="col-sm-12">
 												<div class="input-group ui-widget"  >
 												<span class="input-group-addon">
-													 <i class="glyphicon glyphicon-inbox"></i>												
+													 <b>Title</b>												
 												</span>
 												<input type="text" class="form-control" placeHolder="Enter Title" id="title" name="title" value="" autofocus />
 											</div>
@@ -304,12 +304,12 @@ function emptyMessageDiv(){
 											<div class="col-sm-12">
 												<div class="input-group">
 													<!-- <span class="input-group-addon">
-														 <i class="glyphicon glyphicon-list-alt"></i>												
+														 <b>VMC</b>												
 													</span>
 													<input type="text" placeHolder="Enter VMC" id="vmcId" name="vmcId" class="form-control"/>
 													<input type="hidden" id="vmcIdhidden" /> -->
 													<span class="input-group-addon">
-														 <i class="glyphicon glyphicon-list-alt"></i>												
+														 <b>VMC</b>												
 													</span>
 													<select class="form-control" name="vmcId" id="vmcId">
 													</select>
@@ -322,7 +322,7 @@ function emptyMessageDiv(){
 											<div class="col-sm-12">
 												<div class="input-group">
 													<span class="input-group-addon">
-														 <i class="glyphicon glyphicon-list-alt"></i>												
+														 <b>UnitType</b>												
 													</span>
 													<select id="unitType" class="form-control" name="unitTypeId">
 													</select>
@@ -335,7 +335,7 @@ function emptyMessageDiv(){
 											<div class="col-sm-12">
 												<div class="input-group">
 													<span class="input-group-addon">
-														 <i class="glyphicon glyphicon-list-alt"></i>												
+														 <b>Category</b>												
 													</span>
 													<select id="issueCategory" class="form-control" name="categoryId" onchange="getUnitNo()">
 													</select>
@@ -348,7 +348,7 @@ function emptyMessageDiv(){
 											<div class="col-sm-12">
 												<div class="input-group">
 													<span class="input-group-addon">
-														 <i class="glyphicon glyphicon-list-alt"></i>												
+														 <b>UnitNo</b>												
 													</span>
 													<select id="unitNo" class="form-control" name="unitNo">
 													</select>
@@ -361,7 +361,7 @@ function emptyMessageDiv(){
 											<div class="col-sm-12">
 												<div class="input-group">
 													<span class="input-group-addon">
-														 <i class="glyphicon glyphicon-list-alt"></i>												
+														 <b>ReportedBy</b>												
 													</span>
 													<select id="reportedBy" class="form-control" name="reportedById">
 													</select>
@@ -374,7 +374,7 @@ function emptyMessageDiv(){
 											<div class="col-sm-12">
 												<div class="input-group">
 													<span class="input-group-addon">
-														 <i class="glyphicon glyphicon-list-alt"></i>												
+														 <b>Status</b>												
 													</span>
 													<select id="status" class="form-control" name="statusId">
 													</select>

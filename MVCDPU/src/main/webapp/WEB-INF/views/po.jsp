@@ -333,7 +333,7 @@ function emptyMessageDiv(){
 											<div class="col-sm-12">
 												<div class="input-group">
 												<span class="input-group-addon">
-													<i class="glyphicon glyphicon-list-alt"></i>												
+													<b>Vendor</b>												
 												</span>
 												<select class="form-control" name="vendorId" id="vendorId">
 												</select>
@@ -346,7 +346,7 @@ function emptyMessageDiv(){
 											<div class="col-sm-12">
 												<div class="input-group">
 													<span class="input-group-addon">
-														 <i class="glyphicon glyphicon-list-alt"></i>												
+														 <b>UnitType</b>												
 													</span>
 													<select id="unitTypeId" class="form-control" name="unitTypeId">
 													</select>
@@ -359,7 +359,7 @@ function emptyMessageDiv(){
 											<div class="col-sm-12">
 												<div class="input-group">
 													<span class="input-group-addon">
-														 <i class="glyphicon glyphicon-list-alt"></i>												
+														 <b>Category</b>												
 													</span>
 													<select class="form-control" name="categoryId" id="categoryId" onchange="getUnitNo()">
 													</select>
@@ -400,7 +400,7 @@ function emptyMessageDiv(){
 											<div class="col-sm-12">
 												<div class="input-group">
 													<span class="input-group-addon">
-														 <i class="glyphicon glyphicon-list-alt"></i>												
+														 <b>Status</b>												
 													</span>
 													<select id="statusId" class="form-control" name="statusId" onchange="showInvoiceNo()">
 													</select>
@@ -413,7 +413,7 @@ function emptyMessageDiv(){
 											<div class="col-sm-12">
 												<div class="input-group">
 													<span class="input-group-addon">
-													 <i class="glyphicon glyphicon-inbox"></i>												
+													 <b>InvoiceNo</b>												
 												</span>
 												<input type="text" class="form-control" placeHolder="Enter InvoiceNo" id="invoiceNo" name="invoiceNo" value="" />
 												</div>
@@ -425,7 +425,7 @@ function emptyMessageDiv(){
 											<div class="col-sm-12">
 												<div class="input-group">
 													<span class="input-group-addon">
-														 <i class="glyphicon glyphicon-inbox"></i>												
+														 <b>Message</b>												
 													</span>
 													<textarea class="form-control" rows="1" cols="1" placeholder="Enter Message" name="message" id = "message"></textarea>
 												</div>

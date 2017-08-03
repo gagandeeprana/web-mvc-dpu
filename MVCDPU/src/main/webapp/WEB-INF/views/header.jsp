@@ -51,6 +51,8 @@
 			}
 		});
 	</script>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.css" >
+	<script  src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js" ></script>
 	<div id = "pageName" style="font-weight: bold; display: none;"></div>
 	<nav class="navbar navbar-light" style="background-color: #e3f2fd;">
 	<div class="container-fluid">

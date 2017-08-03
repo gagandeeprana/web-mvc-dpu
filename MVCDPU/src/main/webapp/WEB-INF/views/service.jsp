@@ -197,7 +197,7 @@ function emptyMessageDiv(){
 											<div class="col-sm-12">
 												<div class="input-group">
 												<span class="input-group-addon">
-													 <i class="glyphicon glyphicon-inbox"></i>												
+													 <b>ServiceName</b>												
 												</span>
 												<input type="text" class="form-control" placeHolder="Enter ServiceName" id="serviceName" name="serviceName" value="" autofocus />
 											</div>
@@ -209,7 +209,7 @@ function emptyMessageDiv(){
 											<div class="col-sm-12">
 												<div class="input-group">
 													<span class="input-group-addon">
-														 <i class="glyphicon glyphicon-list-alt"></i>												
+														 <b>TextField</b>												
 													</span>
 													<select class="form-control" name="textFieldId" id="textFieldId">
 													</select>
@@ -222,7 +222,7 @@ function emptyMessageDiv(){
 											<div class="col-sm-12">
 												<div class="input-group">
 													<span class="input-group-addon">
-														 <i class="glyphicon glyphicon-list-alt"></i>												
+														 <b>AssociationWith</b>												
 													</span>
 													<select id="associationId" class="form-control" name="associationWithId">
 													</select>
@@ -236,7 +236,7 @@ function emptyMessageDiv(){
 											<div class="col-sm-12">
 												<div class="input-group">
 													<span class="input-group-addon">
-														 <i class="glyphicon glyphicon-list-alt"></i>												
+														 <b>Status</b>												
 													</span>
 													<select id="statusId" class="form-control" name="statusId">
 													</select>

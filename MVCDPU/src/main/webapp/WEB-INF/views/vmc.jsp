@@ -153,7 +153,7 @@ function emptyMessageDiv(){
 											<div class="col-sm-12">
 												<div class="input-group">
 													<span class="input-group-addon">
-														<i class="glyphicon glyphicon-inbox"></i>												
+														<b>VMC</b>												
 													</span>
 													<input type="text" class="form-control" placeHolder="Enter VMC Name" id="name" name="name" value="" autofocus />
 												</div>
@@ -165,7 +165,7 @@ function emptyMessageDiv(){
 											<div class="col-sm-12">
 												<div class="input-group">
 												<span class="input-group-addon">
-														 <i class="glyphicon glyphicon-inbox"></i>												
+														 <b>Description</b>												
 													</span>
 													<textarea class="form-control" rows="1" cols="1" placeholder="Enter Description" name="description" id = "description"></textarea>
 												</div>

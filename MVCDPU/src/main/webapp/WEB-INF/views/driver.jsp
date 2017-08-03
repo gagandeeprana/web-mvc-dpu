@@ -51,14 +51,83 @@ textarea{
 			      type:"GET",
 			      success: function(result){
 		    	  try{	
-					toastr.success(result.message, 'Success!')
+						var list = result.resultList;
+						var tableValue = "";
+						if(list.length > 0) {
+							 for(var i=0;i<list.length;i++) {
+								var obj = list[i];
+								tableValue = tableValue + ("<tr class='info'>");
+								var driverCode = "";
+			            		if(obj.driverCode != 'undefined') {
+			            			driverCode = obj.driverCode;
+			            		}
+			            		var firstName = "";
+			            		if(obj.firstName != 'undefined') {
+			            			firstName = obj.firstName;
+			            		}
+			            		var lastName = "";
+			            		if(obj.lastName != 'undefined') {
+			            			lastName = obj.lastName;
+			            		}
+			            		var address = "";
+			            		if(obj.address != 'undefined') {
+			            			address = obj.address;
+			            		}
+			            		var unit = "";
+			            		if(obj.unit != 'undefined') {
+			            			unit = obj.unit;
+			            		}
+			            		var city = "";
+			            		if(obj.city != 'undefined') {
+			            			city = obj.city;
+			            		}
+			            		var stateName = "";
+			            		if(obj.stateName != 'undefined') {
+			            			stateName = obj.stateName;
+			            		}
+			            		var faxNo = "";
+			            		if(obj.faxNo != 'undefined') {
+			            			faxNo = obj.faxNo;
+			            		}
+			            		var cellular = "";
+			            		if(obj.cellular != 'undefined') {
+			            			cellular = obj.cellular;
+			            		}
+			            		var pager = "";
+			            		if(obj.pager != 'undefined') {
+			            			pager = obj.pager;
+			            		}
+			            		var email = "";
+			            		if(obj.email != 'undefined') {
+			            			email = obj.email;
+			            		}
+			            		
+			            		tableValue = tableValue + ("<td>"+(driverCode)+"</td>");
+			            		
+			            		tableValue = tableValue + ("<td>"+(firstName)+"</td>");
+			            		tableValue = tableValue + ("<td>"+(lastName)+"</td>");
+			            		tableValue = tableValue + ("<td>"+(address)+"</td>");
+			            		tableValue = tableValue + ("<td>"+(unit)+"</td>");
+			            		tableValue = tableValue + ("<td>"+(city)+"</td>");
+			            		tableValue = tableValue + ("<td>"+ (stateName)+"</td>");
+			            		tableValue = tableValue + ("<td>"+(faxNo)+"</td>");
+			            		tableValue = tableValue + ("<td>"+(cellular)+"</td>");
+			            		tableValue = tableValue + ("<td>"+(pager)+"</td>");
+			            		tableValue = tableValue + ("<td>"+(email)+"</td>");
+			            		tableValue = tableValue + "<td><a href = '#' data-toggle='modal' data-target='#myModal'  onclick='checkFlag('update');onClickMethodQuestion('"+(obj.driverId)+"')>Update</a> / <a href='#' onclick=deleteDriver('"+(obj.driverId)+"')>Delete</a></td>";
+			            		 tableValue = tableValue + ("</tr>");
+							}
+							$("#driverData").html(tableValue);
+						}
+						
+		    		  toastr.success(result.message, 'Success!')
 				  }catch(e){
-					toastr.success('Something went wrong', 'Success!')
+					toastr.error('Something went wrong', 'Error!')
 				  }
 		  },error:function(result){
-			  //alert(failed.message);
-			  try{	
-				  	toastr.error('Unable to delete', 'Error!')
+			  try{
+				  	var obj = JSON.parse(result.responseText);
+				  	toastr.error(obj.message, 'Error!')
 				  }catch(e){
 					  toastr.error('Something went wrong', 'Error!')
 				  }
@@ -386,7 +455,7 @@ function check() {
 											<div class="col-sm-6">
 												<div class="input-group">
 												<span class="input-group-addon">
-													 <i class="glyphicon glyphicon-inbox"></i>												
+													 <b>Code</b>												
 												</span>
 												<input type="text" class="form-control" placeHolder="Enter DriverCode" id="driverCode" name="driverCode" value="" autofocus />
 											</div>
@@ -394,7 +463,7 @@ function check() {
 											<div class="col-sm-6">
 												<div class="input-group">
 													<span class="input-group-addon">
-														 <i class="glyphicon glyphicon-inbox"></i>												
+														 <b>Email</b>												
 													</span>
 													<input type="text" class="form-control" placeHolder="Enter Email" id="email" name="email" value="" />
 												</div>
@@ -406,7 +475,7 @@ function check() {
 											<div class="col-sm-6">
 												<div class="input-group">
 													<span class="input-group-addon">
-														 <i class="glyphicon glyphicon-inbox"></i>												
+														 <b>FirstName</b>												
 													</span>
 													<input type="text" class="form-control" placeHolder="Enter FirstName" id="firstName" name="firstName" value="" />
 												</div>
@@ -416,7 +485,7 @@ function check() {
 													<div class="col-sm-6">
 														<div class="input-group">
 															<span class="input-group-addon">
-																 <i class="glyphicon glyphicon-inbox"></i>												
+																 <b>Home</b>												
 															</span>
 															<input type="text" class="form-control" placeHolder="Enter Home" id="home" name="home" value="" />
 														</div>
@@ -424,7 +493,7 @@ function check() {
 													<div class="col-sm-6">
 														<div class="input-group">
 													<span class="input-group-addon">
-														 <i class="glyphicon glyphicon-inbox"></i>												
+														 <b>Fax</b>												
 													</span>
 													<input type="text" class="form-control" placeHolder="Enter Fax" id="fax" name="faxNo" value="" />
 													</div>
@@ -439,7 +508,7 @@ function check() {
 											<div class="col-sm-6">
 												<div class="input-group">
 													<span class="input-group-addon">
-														 <i class="glyphicon glyphicon-inbox"></i>												
+														 <b>LastName</b>												
 													</span>
 													<input type="text" class="form-control" placeHolder="Enter LastName" id="lastName" name="lastName" value="" />
 												</div>
@@ -449,7 +518,7 @@ function check() {
 													<div class="col-sm-6">
 														<div class="input-group">
 													<span class="input-group-addon">
-														 <i class="glyphicon glyphicon-inbox"></i>												
+														 <b>Cellular</b>												
 													</span>
 													<input type="text" class="form-control" placeHolder="Enter Cellular" id="cellular" name="cellular" value="" />
 													</div>
@@ -457,7 +526,7 @@ function check() {
 													<div class="col-sm-6">
 													<div class="input-group">
 													<span class="input-group-addon">
-														 <i class="glyphicon glyphicon-inbox"></i>												
+														 <b>Pager</b>												
 													</span>
 													<input type="text" class="form-control" placeHolder="Enter Pager" id="pager" name="pager" value="" />
 													</div>
@@ -472,7 +541,7 @@ function check() {
 											<div class="col-sm-6">
 												<div class="input-group">
 													<span class="input-group-addon">
-														 <i class="glyphicon glyphicon-inbox"></i>												
+														 <b>Address</b>												
 													</span>
 													<input type="text" class="form-control" placeHolder="Enter Address" id="address" name="address" value="" />
 												</div>
@@ -480,7 +549,7 @@ function check() {
 											<div class="col-sm-6">
 												<div class="input-group">
 													<span class="input-group-addon">
-														 <i class="glyphicon glyphicon-list-alt"></i>												
+														 <b>Division</b>												
 													</span>
 													<select class="form-control" name="divisionId" id="divisionId">
 													</select>
@@ -494,7 +563,7 @@ function check() {
 											<div class="col-sm-6">
 												<div class="input-group">
 													<span class="input-group-addon">
-														 <i class="glyphicon glyphicon-inbox"></i>												
+														 <b>City</b>												
 													</span>
 													<input type="text" class="form-control" placeHolder="Enter City" id="city" name="city" value="" />
 												</div>
@@ -502,7 +571,7 @@ function check() {
 											<div class="col-sm-6">
 												<div class="input-group">
 													<span class="input-group-addon">
-														 <i class="glyphicon glyphicon-list-alt"></i>												
+														 <b>Terminal</b>												
 													</span>
 													<select class="form-control" name="terminalId" id="terminalId">
 													</select>
@@ -518,7 +587,7 @@ function check() {
 													<div class="col-sm-6">
 														<div class="input-group">
 													<span class="input-group-addon">
-														 <i class="glyphicon glyphicon-inbox"></i>												
+														 <b>Zip</b>												
 													</span>
 													<input type="text" class="form-control" placeHolder="Enter Zip" id="zip" name="postalCode" value="" />
 													</div>
@@ -526,7 +595,7 @@ function check() {
 													<div class="col-sm-6">
 													<div class="input-group">
 													<span class="input-group-addon">
-														 <i class="glyphicon glyphicon-inbox"></i>												
+														 <b>Province</b>												
 													</span>
 													<input type="text" class="form-control" placeHolder="Enter Province" id="province" name="pvs" value="" />
 													</div>
@@ -538,7 +607,7 @@ function check() {
 													<div class="col-sm-6">
 													<div class="input-group">
 														<span class="input-group-addon">
-															 <i class="glyphicon glyphicon-list-alt"></i>												
+															 <b>Category</b>												
 														</span>
 														<select class="form-control" name="categoryId" id="categoryId">
 														</select>
@@ -547,7 +616,7 @@ function check() {
 													<div class="col-sm-6">
 													<div class="input-group">
 														<span class="input-group-addon">
-															 <i class="glyphicon glyphicon-list-alt"></i>												
+															 <b>Role</b>												
 														</span>
 														<select class="form-control" name="roleId" id="roleId">
 														</select>
@@ -565,7 +634,7 @@ function check() {
 													<div class="col-sm-6">
 													<div class="input-group">
 														<span class="input-group-addon">
-															 <i class="glyphicon glyphicon-list-alt"></i>												
+															 <b>Status</b>												
 														</span>
 														<select class="form-control" name="statusId" id="statusId">
 														</select>
@@ -574,7 +643,7 @@ function check() {
 													<div class="col-sm-6">
 													<div class="input-group">
 														<span class="input-group-addon">
-															 <i class="glyphicon glyphicon-list-alt"></i>												
+															 <b>Class</b>												
 														</span>
 														<select class="form-control" name="driverClassId" id="classId">
 														</select>
@@ -585,7 +654,7 @@ function check() {
 											<div class="col-sm-6">
 												<div class="input-group">
 													<span class="input-group-addon">
-														 <i class="glyphicon glyphicon-inbox"></i>												
+														 <b>Unit</b>												
 													</span>
 													<input type="text" class="form-control" placeHolder="Enter Unit" id="unit" name="unit" value="" />
 												</div>
@@ -651,7 +720,7 @@ function check() {
 						<th>Links</th>
 					</tr>
 				</thead>
-				<tbody>
+				<tbody id="driverData">
 					<c:forEach items="${LIST_DRIVER}" var="obj">
 						<tr class="info">
 							<c:if test = "${obj.firstName.length() <= 20}">
