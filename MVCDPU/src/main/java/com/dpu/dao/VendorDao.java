@@ -41,5 +41,7 @@ public interface VendorDao extends GenericDao<Vendor>{
 	boolean deleteAdditionalContact(Long vendorId, Session session, Long additionalContactId);
 
 	boolean deleteBillingLocation(Long vendorId, Session session, Long billingLocationId);
+
+	List<Vendor> findAll(Session session);
 	
 }

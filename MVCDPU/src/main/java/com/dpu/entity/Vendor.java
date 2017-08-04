@@ -8,6 +8,8 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -31,9 +33,6 @@ public class Vendor {
 	
 	@Column(name = "city")
 	private String city;
-	
-	@Column(name = "province_state")
-	private String provinceState;
 	
 	@Column(name = "zip")
 	private String zip;
@@ -76,6 +75,14 @@ public class Vendor {
 	
 	@Column(name = "after_hours")
 	private String afterHours;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "country_id")
+	private Country country;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "state_id")
+	private State state;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "vendorObj")
     private List<VendorBillingLocation> billingLocations = new ArrayList<VendorBillingLocation>();
@@ -113,14 +120,6 @@ public class Vendor {
 
 	public void setCity(String city) {
 		this.city = city;
-	}
-
-	public String getProvinceState() {
-		return provinceState;
-	}
-
-	public void setProvinceState(String provinceState) {
-		this.provinceState = provinceState;
 	}
 
 	public String getZip() {
@@ -257,6 +256,22 @@ public class Vendor {
 
 	public void setAdditionalContacts(List<VendorContacts> additionalContacts) {
 		this.additionalContacts = additionalContacts;
+	}
+
+	public Country getCountry() {
+		return country;
+	}
+
+	public void setCountry(Country country) {
+		this.country = country;
+	}
+
+	public State getState() {
+		return state;
+	}
+
+	public void setState(State state) {
+		this.state = state;
 	}
 
 	

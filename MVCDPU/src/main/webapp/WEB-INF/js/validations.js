@@ -65,6 +65,18 @@ function isName(strName)
     }
     return true;
 }
+function isNameWithoutSpace(strName)
+{
+    for(i=0 ; i< strName.length ; i++)
+    {
+        ch=strName.charAt(i);
+        if(!((ch >="a" && ch <="z")||(ch>="A" && ch <="Z")))
+        {
+            return false;
+        }
+    }
+    return true;
+}
 
 function isFutugreenate(strDate)
 {

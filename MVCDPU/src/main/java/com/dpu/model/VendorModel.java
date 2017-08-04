@@ -14,65 +14,51 @@ public class VendorModel implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 
-	//@JsonProperty("company_id")
 	private Long vendorId;
 	
-	//@JsonProperty("name")
 	private String name;
 	
-	//@JsonProperty("address")
 	private String address;
 	
-	//@JsonProperty("unit-no")
 	private String unitNo;
 	
-	//@JsonProperty("city")
 	private String city;
 	
-	//@JsonProperty("province_state")
-	private String provinceState;
-	
-	//@JsonProperty("zip")
 	private String zip;
 	
-	//@JsonProperty("email")
 	private String email;
 	
-	//@JsonProperty("website")
 	private String website;
 	
-	//@JsonProperty("contact")
 	private String contact;
 	
-	//@JsonProperty("position")
 	private String position;
 	
-	//@JsonProperty("phone")
 	private String phone;
 	
-	//@JsonProperty("ext")
 	private String ext;
 	
-	//@JsonProperty("fax")
 	private String fax;
 	
-	//@JsonProperty("company_prefix")
 	private String vendorPrefix;
 	
-	//@JsonProperty("tollfree")
 	private String tollfree;
 	
-	//@JsonProperty("cellular")
 	private String cellular;
 	
-	//@JsonProperty("pager")
 	private String pager;
 	
-	//@JsonProperty("customer_notes")
 	private String vendorNotes;
 	
-	//@JsonProperty("after_hours")
 	private String afterHours;
+	
+	private String stateName;
+	private Long stateId;
+	private List<CountryStateCityModel> stateList;
+	
+	private String countryName;
+	private Long countryId;
+	private List<CountryStateCityModel> countryList;
 
 	private List<VendorBillingLocationModel> billingLocations;
 	
@@ -118,14 +104,6 @@ public class VendorModel implements Serializable{
 
 	public void setCity(String city) {
 		this.city = city;
-	}
-
-	public String getProvinceState() {
-		return provinceState;
-	}
-
-	public void setProvinceState(String provinceState) {
-		this.provinceState = provinceState;
 	}
 
 	public String getZip() {
@@ -263,6 +241,54 @@ public class VendorModel implements Serializable{
 
 	public void setVendorNotes(String vendorNotes) {
 		this.vendorNotes = vendorNotes;
+	}
+
+	public String getStateName() {
+		return stateName;
+	}
+
+	public void setStateName(String stateName) {
+		this.stateName = stateName;
+	}
+
+	public Long getStateId() {
+		return stateId;
+	}
+
+	public void setStateId(Long stateId) {
+		this.stateId = stateId;
+	}
+
+	public List<CountryStateCityModel> getStateList() {
+		return stateList;
+	}
+
+	public void setStateList(List<CountryStateCityModel> stateList) {
+		this.stateList = stateList;
+	}
+
+	public String getCountryName() {
+		return countryName;
+	}
+
+	public void setCountryName(String countryName) {
+		this.countryName = countryName;
+	}
+
+	public Long getCountryId() {
+		return countryId;
+	}
+
+	public void setCountryId(Long countryId) {
+		this.countryId = countryId;
+	}
+
+	public List<CountryStateCityModel> getCountryList() {
+		return countryList;
+	}
+
+	public void setCountryList(List<CountryStateCityModel> countryList) {
+		this.countryList = countryList;
 	}
 
 }

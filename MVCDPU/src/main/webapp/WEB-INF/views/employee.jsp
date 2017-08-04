@@ -72,6 +72,59 @@ function createUser(){
 		      },
 		      success: function(result){
 	        try{
+	        	$('#myModal').modal('toggle');
+	        	var list = result.resultList;
+				var tableValue = "";
+				if(list.length > 0) {
+					 for(var i=0;i<list.length;i++) {
+						var obj = list[i];
+						tableValue = tableValue + ("<tr class='info'>");
+						var firstName = "";
+	            		if(obj.firstName != null) {
+	            			firstName = obj.firstName;
+	            		}
+	            		var lastName = "";
+	            		if(obj.lastName != null) {
+	            			lastName = obj.lastName;
+	            		}
+	            		var jobTitle = "";
+	            		if(obj.jobTitle != null) {
+	            			jobTitle = obj.jobTitle;
+	            		}
+	            		var username = "";
+	            		if(obj.username != null) {
+	            			username = obj.username;
+	            		}
+	            		var email = "";
+	            		if(obj.email != null) {
+	            			email = obj.email;
+	            		}
+	            		var phone = "";
+	            		if(obj.phone != null) {
+	            			phone = obj.phone;
+	            		}
+	            		var hiringDate = "";
+	            		if(obj.hiringdate != null) {
+	            			hiringDate = obj.hiringdate;
+	            		}
+	            		var terminationDate = "";
+	            		if(obj.terminationdate != null) {
+	            			terminationDate = obj.terminationdate;
+	            		}
+	            		
+	            		tableValue = tableValue + ("<td>"+(firstName)+"</td>");
+	            		tableValue = tableValue + ("<td>"+(lastName)+"</td>");
+	            		tableValue = tableValue + ("<td>"+(jobTitle)+"</td>");
+	            		tableValue = tableValue + ("<td>"+(username)+"</td>");
+	            		tableValue = tableValue + ("<td>"+(email)+"</td>");
+	            		tableValue = tableValue + ("<td>"+ (phone)+"</td>");
+	            		tableValue = tableValue + ("<td>"+(hiringDate)+"</td>");
+	            		tableValue = tableValue + ("<td>"+(terminationDate)+"</td>");
+	            		tableValue = tableValue + "<td><a href = '#' data-toggle='modal' data-target='#myModal'  onclick='checkFlag('update');onClickMethodQuestion('"+(obj.employeeId)+"')>Update</a> / <a href='#' onclick=deleteDriver('"+(obj.employeeId)+"')>Delete</a></td>";
+	            		 tableValue = tableValue + ("</tr>");
+					}
+					$("#employeeData").html(tableValue);
+				}
 		        toastr.success(result.message, 'Success!')
 			} catch(e){
 				toastr.error('Something went wrong', 'Error!')
@@ -446,7 +499,7 @@ function emptyMessageDiv(){
 						<th>Links</th>
 					</tr>
 				</thead>
-				<tbody>
+				<tbody id = "employeeData">
 					<c:forEach items="${LIST_EMPLOYEE}" var="obj">
 						<tr class="info">
 							<td>${obj.firstName}</td>							

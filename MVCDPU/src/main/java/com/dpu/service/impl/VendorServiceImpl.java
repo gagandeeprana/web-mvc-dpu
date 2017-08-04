@@ -16,19 +16,22 @@ import com.dpu.common.AllList;
 import com.dpu.dao.CompanyAdditionalContactsDao;
 import com.dpu.dao.CompanyBillingLocationDao;
 import com.dpu.dao.VendorDao;
+import com.dpu.entity.Country;
+import com.dpu.entity.State;
 import com.dpu.entity.Status;
 import com.dpu.entity.Vendor;
 import com.dpu.entity.VendorBillingLocation;
 import com.dpu.entity.VendorContacts;
 import com.dpu.model.CompanyResponse;
+import com.dpu.model.CountryStateCityModel;
 import com.dpu.model.Failed;
 import com.dpu.model.Success;
-import com.dpu.model.VehicleMaintainanceCategoryModel;
 import com.dpu.model.VendorAdditionalContactsModel;
 import com.dpu.model.VendorBillingLocationModel;
 import com.dpu.model.VendorModel;
 import com.dpu.service.CompanyAdditionalContactsService;
 import com.dpu.service.CompanyBillingLocationService;
+import com.dpu.service.CountryStateCityService;
 import com.dpu.service.StatusService;
 import com.dpu.service.VendorService;
 
@@ -55,6 +58,9 @@ public class VendorServiceImpl implements VendorService {
 
 	@Autowired
 	StatusService statusService;
+	
+	@Autowired
+	CountryStateCityService countryStateCityService;
 
 	Logger logger = Logger.getLogger(VendorServiceImpl.class);
 
@@ -107,7 +113,7 @@ public class VendorServiceImpl implements VendorService {
 		try {
 			session = sessionFactory.openSession();
 			tx = session.beginTransaction();
-			Vendor vendor = setVendorValues(null, vendorModel);
+			Vendor vendor = setVendorValues(null, vendorModel, session);
 			vendor = vendorDao.insertVendorData(vendor, session);
 
 			List<VendorBillingLocationModel> billingLocations = vendorModel.getBillingLocations();
@@ -158,7 +164,7 @@ public class VendorServiceImpl implements VendorService {
 			Vendor vendor = (Vendor) session.get(Vendor.class, id);
 			if (vendor != null) {
 
-				setVendorValues(vendor, vendorModel);
+				setVendorValues(vendor, vendorModel, session);
 				vendorDao.updateData(vendor, session);
 
 				if(vendorModel.getBillingLocations() != null && vendorModel.getBillingLocations().size() > 0) {
@@ -274,7 +280,7 @@ public class VendorServiceImpl implements VendorService {
 		return vendorBillingLocation;
 	}
 
-	private Vendor setVendorValues(Vendor vendor, VendorModel vendorModel) {
+	private Vendor setVendorValues(Vendor vendor, VendorModel vendorModel, Session session) {
 		if (vendor == null) {
 			vendor = new Vendor();
 		}
@@ -288,7 +294,6 @@ public class VendorServiceImpl implements VendorService {
 		vendor.setCity(vendorModel.getCity());
 		vendor.setFax(vendorModel.getFax());
 		vendor.setVendorPrefix(vendorModel.getVendorPrefix());
-		vendor.setProvinceState(vendorModel.getProvinceState());
 		vendor.setZip(vendorModel.getZip());
 		vendor.setAfterHours(vendorModel.getAfterHours());
 		vendor.setEmail(vendorModel.getEmail());
@@ -296,6 +301,16 @@ public class VendorServiceImpl implements VendorService {
 		vendor.setWebsite(vendorModel.getWebsite());
 		vendor.setCellular(vendorModel.getCellular());
 		vendor.setPager(vendorModel.getPager());
+		
+		if(vendorModel.getCountryId() != null) {
+			Country country = (Country) session.get(Country.class, vendorModel.getCountryId());
+			vendor.setCountry(country);
+		}
+		
+		if(vendorModel.getStateId() != null) {
+			State state = (State) session.get(State.class, vendorModel.getStateId());
+			vendor.setState(state);
+		}
 		return vendor;
 	}
 
@@ -357,19 +372,27 @@ public class VendorServiceImpl implements VendorService {
 	@Override
 	public List<VendorModel> getAll() {
 
-		List<Vendor> vendors = vendorDao.findAll();
 		List<VendorModel> returnResponse = new ArrayList<VendorModel>();
+		Session session = null;
+		
+		try{
+			session = sessionFactory.openSession();
+			List<Vendor> vendors = vendorDao.findAll(session);
+			if (vendors != null && !vendors.isEmpty()) {
+				for (Vendor vendor : vendors) {
+					VendorModel response = new VendorModel();
+					setVendorData(vendor, response);
 
-		if (vendors != null && !vendors.isEmpty()) {
-			for (Vendor vendor : vendors) {
-				VendorModel response = new VendorModel();
-				setVendorData(vendor, response);
+					returnResponse.add(response);
+				}
 
-				returnResponse.add(response);
 			}
-
+		} finally {
+			if( session != null ){
+				session.close();
+			}
 		}
-
+		
 		return returnResponse;
 	}
 
@@ -385,7 +408,6 @@ public class VendorServiceImpl implements VendorService {
 
 			if (vendor != null) {
 				setVendorData(vendor, response);
-				// BeanUtils.copyProperties(response, company);
 				List<VendorBillingLocation> listCompanyBillingLocations = vendor.getBillingLocations();
 
 				if (listCompanyBillingLocations != null && !listCompanyBillingLocations.isEmpty()) {
@@ -393,35 +415,20 @@ public class VendorServiceImpl implements VendorService {
 					for (VendorBillingLocation vendorBillingLocation : listCompanyBillingLocations) {
 						VendorBillingLocationModel location = new VendorBillingLocationModel();
 						org.springframework.beans.BeanUtils.copyProperties(vendorBillingLocation, location);
-						// BeanUtils.copyProperties(location,
-						// vendorBillingLocation);
-						location.setStatusId(vendorBillingLocation.getStatus().getId());
+						
+						if(vendorBillingLocation.getStatus() != null) {
+							location.setStatusId(vendorBillingLocation.getStatus().getId());
+						}
 						billingLocations.add(location);
 					}
 					response.setBillingLocations(billingLocations);
 				}
 
-				/*
-				 * List<VendorContacts> comAddContacts =
-				 * vendor.getAdditionalContacts();
-				 * 
-				 * if(comAddContacts != null && !comAddContacts.isEmpty()){
-				 * List<VendorAdditionalContactsModel> addContacts = new
-				 * ArrayList<VendorAdditionalContactsModel>(); for
-				 * (VendorContacts vendorContacts : comAddContacts) {
-				 * VendorAdditionalContactsModel addContact = new
-				 * VendorAdditionalContactsModel();
-				 * org.springframework.beans.BeanUtils.copyProperties(
-				 * vendorContacts, addContact);
-				 * addContact.setStatusId(vendorContacts.getStatus().getId());
-				 * 
-				 * addContacts.add(addContact); }
-				 * 
-				 * response.setAdditionalContacts(addContacts); }
-				 */
-
 				List<Status> statusList = AllList.getStatusList(session);
 				response.setStatusList(statusList);
+				
+				List<CountryStateCityModel> countryList = countryStateCityService.getAllCountries();
+				response.setCountryList(countryList);
 			}
 		} finally {
 			if (session != null) {
@@ -449,12 +456,20 @@ public class VendorServiceImpl implements VendorService {
 		response.setPager(vendor.getPager());
 		response.setPhone(vendor.getPhone());
 		response.setPosition(vendor.getPosition());
-		response.setProvinceState(vendor.getProvinceState());
 		response.setTollfree(vendor.getTollfree());
 		response.setZip(vendor.getZip());
 		response.setUnitNo(vendor.getUnitNo());
 		response.setWebsite(vendor.getWebsite());
-
+		
+		if( vendor.getCountry() != null){
+			response.setCountryName(vendor.getCountry().getCountryName());
+			response.setCountryId(vendor.getCountry().getCountryId());
+		}
+		
+		if( vendor.getState() != null){
+			response.setStateName(vendor.getState().getStateName());
+			response.setStateId(vendor.getState().getStateId());
+		}
 	}
 
 	@Override
@@ -484,8 +499,10 @@ public class VendorServiceImpl implements VendorService {
 		try {
 			List<Status> statusList = AllList.getStatusList(session);
 			vendorModel.setStatusList(statusList);
-		} catch (Exception e) {
-
+			
+			List<CountryStateCityModel> countryList = countryStateCityService.getAllCountries();
+			vendorModel.setCountryList(countryList);
+			
 		} finally {
 			if (session != null) {
 				session.close();

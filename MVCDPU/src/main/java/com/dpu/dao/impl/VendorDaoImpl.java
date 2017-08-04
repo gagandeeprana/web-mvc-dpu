@@ -187,4 +187,13 @@ public class VendorDaoImpl extends GenericDaoImpl<Vendor> implements VendorDao {
 		return returnVal;
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Vendor> findAll(Session session) {
+
+		StringBuilder sb = new StringBuilder(" select v from Vendor v left join fetch v.country left join fetch v.state ");
+		Query query = session.createQuery(sb.toString());
+		return query.list();
+	}
+
 }

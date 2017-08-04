@@ -21,6 +21,7 @@
 	
 	
 	<jsp:include page="Include.jsp"></jsp:include>
+ <script src="<c:url value="/resources/validations.js" />"></script>
 <style type="text/css">
 .modal-dialog {
   width: 98%;
@@ -78,7 +79,7 @@ textarea{
 			            			unit = obj.unit;
 			            		}
 			            		var city = "";
-			            		if(obj.city != 'undefined') {
+			            		if(obj.city != null) {
 			            			city = obj.city;
 			            		}
 			            		var stateName = "";
@@ -86,19 +87,19 @@ textarea{
 			            			stateName = obj.stateName;
 			            		}
 			            		var faxNo = "";
-			            		if(obj.faxNo != 'undefined') {
+			            		if(obj.faxNo != null) {
 			            			faxNo = obj.faxNo;
 			            		}
 			            		var cellular = "";
-			            		if(obj.cellular != 'undefined') {
+			            		if(obj.cellular != null) {
 			            			cellular = obj.cellular;
 			            		}
 			            		var pager = "";
-			            		if(obj.pager != 'undefined') {
+			            		if(obj.pager != null) {
 			            			pager = obj.pager;
 			            		}
 			            		var email = "";
-			            		if(obj.email != 'undefined') {
+			            		if(obj.email != null) {
 			            			email = obj.email;
 			            		}
 			            		
@@ -145,6 +146,36 @@ textarea{
 			$('#frmSearch').submit();
 		});
 	});
+	
+	function getStates() {
+		
+		var countryId = $('#countryId :selected').val();
+    	document.getElementById("stateId").innerHTML = "";
+		$.get("states/" + countryId, function(response) {
+	           
+            if(response.length > 0) {
+	            var state = document.getElementById("stateId");
+            	for(var i = 0;i < response.length;i++) {
+            		state.options[state.options.length] = new Option(response[i].stateName);
+            		state.options[i].value = response[i].stateId;
+	            }
+            }
+		});
+	}
+	
+	function changeStateLabel() {
+		
+		var country = $('#countryId :selected').text();
+		if(country == 'USA') {
+			$("#zipLabel").text("Zip");
+			$("#zip").attr("placeholder","Enter Zip");
+			$("#stateLabel").text("State");
+		} else if(country == 'Canada'){
+			$("#zipLabel").text("PostalCode");
+			$("#zip").attr("placeholder","Enter PostalCode");
+			$("#stateLabel").text("Province");
+		}
+	}
 </script>
 <script type="text/javascript">
 	function checkFlag(field) {
@@ -173,7 +204,6 @@ textarea{
         	clearAll();
         	if(quesId == 0) {
 	        	$.get("driver/getopenadd", function(data) {
-		           
 		            var status = document.getElementById("statusId");
 		            for(var i = 0;i < data.statusList.length;i++) {
 		            	status.options[status.options.length] = new Option(data.statusList[i].status);
@@ -208,6 +238,12 @@ textarea{
 		            for(var i = 0;i < data.driverClassList.length;i++) {
 		            	driverClass.options[driverClass.options.length] = new Option(data.driverClassList[i].typeName);
 		            	driverClass.options[i].value = data.driverClassList[i].typeId;
+		            }
+		            
+		            var country = document.getElementById("countryId");
+		            for(var i = 0;i < data.countryList.length;i++) {
+		            	country.options[country.options.length] = new Option(data.countryList[i].countryName);
+		            	country.options[i].value = data.countryList[i].countryId;
 		            }
 		        });
         	} else {
@@ -353,6 +389,12 @@ function check() {
 		$("#email").focus();
 		return false;
 	}
+	if(!isEmail(email)) {
+		msg.show();
+		msgvalue.text("Invalid email pattern");
+		$("#email").focus();
+		return false;
+	}
 	if(firstName == "") {
 		msg.show();
 		msgvalue.text("FirstName cannot be left blank.");
@@ -365,9 +407,33 @@ function check() {
 		$("#home").focus();
 		return false;
 	}
+	if(!isNumeric(home)) {
+		msg.show();
+		msgvalue.text("Only numerics allowed in Home");
+		$("#home").focus();
+		return false;
+	}
+	if(home.length != 10) {
+		msg.show();
+		msgvalue.text("Length 10 allowed in Home");
+		$("#home").focus();
+		return false;
+	}
 	if(fax == "") {
 		msg.show();
 		msgvalue.text("Fax cannot be left blank.");
+		$("#fax").focus();
+		return false;
+	}
+	if(!isNumeric(fax)) {
+		msg.show();
+		msgvalue.text("Only numerics allowed in fax");
+		$("#home").focus();
+		return false;
+	}
+	if(fax.length != 10) {
+		msg.show();
+		msgvalue.text("Length 10 allowed in fax");
 		$("#fax").focus();
 		return false;
 	}
@@ -383,9 +449,33 @@ function check() {
 		$("#cellular").focus();
 		return false;
 	}
+	if(!isNumeric(cellular)) {
+		msg.show();
+		msgvalue.text("Only numerics allowed in cellular");
+		$("#cellular").focus();
+		return false;
+	}
+	if(cellular.length != 10) {
+		msg.show();
+		msgvalue.text("Length 10 allowed in cellular");
+		$("#cellular").focus();
+		return false;
+	}
 	if(pager == "") {
 		msg.show();
 		msgvalue.text("Pager cannot be left blank.");
+		$("#pager").focus();
+		return false;
+	}
+	if(!isNumeric(pager)) {
+		msg.show();
+		msgvalue.text("Only numerics allowed in pager");
+		$("#pager").focus();
+		return false;
+	}
+	if(pager.length != 10) {
+		msg.show();
+		msgvalue.text("Length 10 allowed in pager");
 		$("#pager").focus();
 		return false;
 	}
@@ -401,11 +491,53 @@ function check() {
 		$("#city").focus();
 		return false;
 	}
-	if(zip == "") {
-		msg.show();
-		msgvalue.text("Zip cannot be left blank.");
-		$("#zip").focus();
-		return false;
+	var country = $('#countryId :selected').text();
+	if(country == 'USA') {
+		if(zip == "") {
+			msg.show();
+			msgvalue.text("Zip cannot be left blank.");
+			$("#zip").focus();
+			return false;
+		}
+		if(!isNumeric(zip)) {
+			msg.show();
+			msgvalue.text("Only numerics allowed in Zip");
+			$("#zip").focus();
+			return false;
+		}
+		if(zip.length != 5) {
+			msg.show();
+			msgvalue.text("Length 5 allowed in Zip");
+			$("#zip").focus();
+			return false;
+		}
+	}
+	var country = $('#countryId :selected').text();
+	if(country == 'Canada') {
+		if(zip == "") {
+			msg.show();
+			msgvalue.text("PostalCode cannot be left blank.");
+			$("#zip").focus();
+			return false;
+		}
+		if(!isAlphaNumeric(zip)) {
+			msg.show();
+			msgvalue.text("Only alphanumerics allowed in PostalCode");
+			$("#zip").focus();
+			return false;
+		}
+		if(zip.length != 6) {
+			msg.show();
+			msgvalue.text("Length 6 allowed in PostalCode");
+			$("#zip").focus();
+			return false;
+		}
+		if((!isNameWithoutSpace(zip[0])) || (!isNumeric(zip[1])) || (!isNameWithoutSpace(zip[2])) || (!isNumeric(zip[3])) || (!isNameWithoutSpace(zip[4])) || (!isNumeric(zip[5]))) {
+			msg.show();
+			msgvalue.text("Invalid pattern PostalCode");
+			$("#zip").focus();
+			return false;
+		}
 	}
 	if(unit == "") {
 		msg.show();
@@ -560,15 +692,16 @@ function check() {
 									
 									<div class="form-group">
 										<div class="row">
-											<div class="col-sm-6">
+										<div class="col-sm-6">
 												<div class="input-group">
 													<span class="input-group-addon">
-														 <b>City</b>												
+														 <b>UnitNo</b>												
 													</span>
-													<input type="text" class="form-control" placeHolder="Enter City" id="city" name="city" value="" />
+													<input type="text" class="form-control" placeHolder="Enter UnitNo" id="unit" name="unit" value="" />
 												</div>
-											</div>	
-											<div class="col-sm-6">
+											</div>
+											
+												<div class="col-sm-6">
 												<div class="input-group">
 													<span class="input-group-addon">
 														 <b>Terminal</b>												
@@ -586,22 +719,24 @@ function check() {
 												<div class="row">
 													<div class="col-sm-6">
 														<div class="input-group">
-													<span class="input-group-addon">
-														 <b>Zip</b>												
-													</span>
-													<input type="text" class="form-control" placeHolder="Enter Zip" id="zip" name="postalCode" value="" />
-													</div>
+															<span class="input-group-addon">
+																 <b>Country</b>												
+															</span>
+															<select class="form-control" name="countryId" id="countryId" onchange="getStates();changeStateLabel()">
+															</select>
+														</div>
 													</div>
 													<div class="col-sm-6">
-													<div class="input-group">
-													<span class="input-group-addon">
-														 <b>Province</b>												
-													</span>
-													<input type="text" class="form-control" placeHolder="Enter Province" id="province" name="pvs" value="" />
-													</div>
+														<div class="input-group">
+															<span class="input-group-addon">
+																 <b id="stateLabel">Province</b>												
+															</span>
+															<select class="form-control" name="stateId" id="stateId">
+															</select>
+														</div>
 													</div>												
 												</div>
-											</div>
+											</div>	
 											<div class="col-sm-6">
 												<div class="row">
 													<div class="col-sm-6">
@@ -632,6 +767,28 @@ function check() {
 											<div class="col-sm-6">
 												<div class="row">
 													<div class="col-sm-6">
+														<div class="input-group">
+													<span class="input-group-addon">
+														 <b id="zipLabel">Zip</b>												
+													</span>
+													<input type="text" class="form-control" placeHolder="Enter Zip" id="zip" name="postalCode" value="" />
+													</div>
+													</div>
+													<div class="col-sm-6">
+												<div class="input-group">
+													<span class="input-group-addon">
+														 <b>City</b>												
+													</span>
+													<input type="text" class="form-control" placeHolder="Enter City" id="city" name="city" value="" />
+												</div>
+											</div>
+																									
+												</div>
+											</div>
+											
+											<div class="col-sm-6">
+												<div class="row">
+													<div class="col-sm-6">
 													<div class="input-group">
 														<span class="input-group-addon">
 															 <b>Status</b>												
@@ -649,14 +806,6 @@ function check() {
 														</select>
 													</div>
 													</div>													
-												</div>
-											</div>
-											<div class="col-sm-6">
-												<div class="input-group">
-													<span class="input-group-addon">
-														 <b>Unit</b>												
-													</span>
-													<input type="text" class="form-control" placeHolder="Enter Unit" id="unit" name="unit" value="" />
 												</div>
 											</div>
 										</div>

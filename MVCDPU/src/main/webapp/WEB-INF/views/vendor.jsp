@@ -37,6 +37,7 @@ textarea{
   max-height:360px;
 }
 </style>
+ <script src="<c:url value="/resources/validations.js" />"></script>
 <script type="text/javascript">
 	$(document).ready(function(){
 		$('#btnSave').click(function(){
@@ -119,6 +120,129 @@ function checkFlag(field) {
     }
 </script>
 <script type="text/javascript">
+function changeStateLabel() {
+	
+	var country = $('#countryId :selected').text();
+	if(country == 'USA') {
+		$("#zipLabel").text("Zip");
+		$("#zip").attr("placeholder","Enter Zip");
+		$("#stateLabel").text("State");
+	} else if(country == 'Canada'){
+		$("#zipLabel").text("PostalCode");
+		$("#zip").attr("placeholder","Enter PostalCode");
+		$("#stateLabel").text("Province");
+	}
+}
+
+function getStates() {
+	
+	var countryId = $('#countryId :selected').val();
+	document.getElementById("stateId").innerHTML = "";
+	$.get("states/" + countryId, function(response) {
+           
+        if(response.length > 0) {
+            var state = document.getElementById("stateId");
+        	for(var i = 0;i < response.length;i++) {
+        		state.options[state.options.length] = new Option(response[i].stateName);
+        		state.options[i].value = response[i].stateId;
+            }
+        }
+	});
+}
+function onClickMethodQuestion(quesId){
+	emptyMessageDiv();
+	clearAll();
+	if(quesId == 0) {
+    	$.get("driver/getopenadd", function(data) {
+
+    		var country = document.getElementById("countryId");
+            for(var i = 0;i < data.countryList.length;i++) {
+            	country.options[country.options.length] = new Option(data.countryList[i].countryName);
+            	country.options[i].value = data.countryList[i].countryId;
+            }
+        });
+	} else {
+		/* $.get("getdriver/driverId",{"driverId" : quesId}, function(data) {
+            document.getElementById("driverid").value = data.resultList.driverId;
+            $("#driverCode").val(data.resultList.driverCode);
+        	$("#email").val(data.resultList.email);
+        	$("#firstName").val(data.resultList.firstName);
+        	$("#home").val(data.resultList.home);
+        	$("#fax").val(data.resultList.faxNo);
+        	$("#lastName").val(data.resultList.lastName);
+        	$("#cellular").val(data.resultList.cellular);
+        	$("#pager").val(data.resultList.pager);
+        	$("#address").val(data.resultList.address);
+        	$("#city").val(data.resultList.city);
+        	$("#zip").val(data.resultList.zip);
+        	$("#province").val(data.resultList.province);
+        	$("#unit").val(data.resultList.unit);
+        	$("#zip").val(data.resultList.postalCode);
+        	$("#province").val(data.resultList.pvs);
+        	
+            var division = document.getElementById("divisionId");
+            var divisionList = data.resultList.divisionList;
+            for(var i = 0;i < divisionList.length;i++) {
+            	division.options[division.options.length] = new Option(divisionList[i].divisionName);
+            	division.options[i].value = divisionList[i].divisionId;
+            	if(divisionList[i].divisionId == data.resultList.divisionId) {
+            		document.getElementById("divisionId").selectedIndex = i;
+            	}
+            }
+            
+            var terminal = document.getElementById("terminalId");
+            var terminalList = data.resultList.terminalList;
+            for(var i = 0;i < terminalList.length;i++) {
+            	terminal.options[terminal.options.length] = new Option(terminalList[i].terminalName);
+            	terminal.options[i].value = terminalList[i].terminalId;
+            	if(terminalList[i].terminalId == data.resultList.terminalId) {
+            		document.getElementById("terminalId").selectedIndex = i;
+            	}
+            }
+            
+            var category = document.getElementById("categoryId");
+            var categoryList = data.resultList.categoryList;
+            for(var i = 0;i < categoryList.length;i++) {
+            	category.options[category.options.length] = new Option(categoryList[i].name);
+            	category.options[i].value = categoryList[i].categoryId;
+            	if(categoryList[i].categoryId == data.resultList.categoryId) {
+            		document.getElementById("categoryId").selectedIndex = i;
+            	}
+            }
+            
+            var role = document.getElementById("roleId");
+            var roleList = data.resultList.roleList;
+            for(var i = 0;i < roleList.length;i++) {
+            	role.options[role.options.length] = new Option(roleList[i].typeName);
+            	role.options[i].value = roleList[i].typeId;
+            	if(roleList[i].typeId == data.resultList.roleId) {
+            		document.getElementById("roleId").selectedIndex = i;
+            	}
+            }
+            
+            var status = document.getElementById("statusId");
+            var statusList = data.resultList.statusList;
+            for(var i = 0;i < statusList.length;i++) {
+            	status.options[status.options.length] = new Option(statusList[i].status);
+            	status.options[i].value = statusList[i].id;
+            	if(statusList[i].id == data.resultList.statusId) {
+            		document.getElementById("statusId").selectedIndex = i;
+            	}
+            }
+            
+            var driverClass = document.getElementById("classId");
+            var driverClassList = data.resultList.driverClassList;
+            for(var i = 0;i < driverClassList.length;i++) {
+            	driverClass.options[driverClass.options.length] = new Option(driverClassList[i].typeName);
+            	driverClass.options[i].value = driverClassList[i].typeId;
+            	if(driverClassList[i].typeId == data.resultList.driverClassId) {
+            		document.getElementById("classId").selectedIndex = i;
+            	}
+            }
+    	}); */
+	}
+}
+
 function check() {
 	var vendorName = $("#vendorName").val();
 	var contact = $("#contact").val();
@@ -151,6 +275,18 @@ function check() {
 	if(contact == "") {
 		msg.show();
 		msgvalue.text("Contact cannot be left blank.");
+		$("#contact").focus();
+		return false;
+	}
+	if(!isNumeric(contact)) {
+		msg.show();
+		msgvalue.text("Only numerics allowed in contact");
+		$("#contact").focus();
+		return false;
+	}
+	if(contact.length != 10) {
+		msg.show();
+		msgvalue.text("Length 10 allowed in contact");
 		$("#contact").focus();
 		return false;
 	}
@@ -190,6 +326,18 @@ function check() {
 		$("#phone").focus();
 		return false;
 	}
+	if(!isNumeric(phone)) {
+		msg.show();
+		msgvalue.text("Only numerics allowed in phone");
+		$("#phone").focus();
+		return false;
+	}
+	if(phone.length != 10) {
+		msg.show();
+		msgvalue.text("Length 10 allowed in phone");
+		$("#phone").focus();
+		return false;
+	}
 	if(city == "") {
 		msg.show();
 		msgvalue.text("City cannot be left blank.");
@@ -202,21 +350,87 @@ function check() {
 		$("#fax").focus();
 		return false;
 	}
+	if(!isNumeric(fax)) {
+		msg.show();
+		msgvalue.text("Only numerics allowed in fax");
+		$("#fax").focus();
+		return false;
+	}
+	if(fax.length != 10) {
+		msg.show();
+		msgvalue.text("Length 10 allowed in fax");
+		$("#fax").focus();
+		return false;
+	}
 	if(province == "") {
 		msg.show();
 		msgvalue.text("Province cannot be left blank.");
 		$("#province").focus();
 		return false;
 	}
-	if(zip == "") {
-		msg.show();
-		msgvalue.text("Zip cannot be left blank.");
-		$("#zip").focus();
-		return false;
+	var country = $('#countryId :selected').text();
+	if(country == 'USA') {
+		if(zip == "") {
+			msg.show();
+			msgvalue.text("Zip cannot be left blank.");
+			$("#zip").focus();
+			return false;
+		}
+		if(!isNumeric(zip)) {
+			msg.show();
+			msgvalue.text("Only numerics allowed in Zip");
+			$("#zip").focus();
+			return false;
+		}
+		if(zip.length != 5) {
+			msg.show();
+			msgvalue.text("Length 5 allowed in Zip");
+			$("#zip").focus();
+			return false;
+		}
+	}
+	var country = $('#countryId :selected').text();
+	if(country == 'Canada') {
+		if(zip == "") {
+			msg.show();
+			msgvalue.text("PostalCode cannot be left blank.");
+			$("#zip").focus();
+			return false;
+		}
+		if(!isAlphaNumeric(zip)) {
+			msg.show();
+			msgvalue.text("Only alphanumerics allowed in PostalCode");
+			$("#zip").focus();
+			return false;
+		}
+		if(zip.length != 6) {
+			msg.show();
+			msgvalue.text("Length 6 allowed in PostalCode");
+			$("#zip").focus();
+			return false;
+		}
+		if((!isNameWithoutSpace(zip[0])) || (!isNumeric(zip[1])) || (!isNameWithoutSpace(zip[2])) || (!isNumeric(zip[3])) || (!isNameWithoutSpace(zip[4])) || (!isNumeric(zip[5]))) {
+			msg.show();
+			msgvalue.text("Invalid pattern PostalCode");
+			$("#zip").focus();
+			return false;
+		}
 	}
 	if(afterHours == "") {
 		msg.show();
 		msgvalue.text("AfterHours cannot be left blank.");
+		$("#afterHours").focus();
+		return false;
+	}
+	if(!isNumeric(afterHours)) {
+		msg.show();
+		msgvalue.text("Only numerics allowed in afterHours");
+		$("#afterHours").focus();
+		return false;
+	}
+	if(afterHours.length != 10) {
+		msg.show();
+		msgvalue.text("Length 10 allowed in afterHours");
 		$("#afterHours").focus();
 		return false;
 	}
@@ -226,9 +440,27 @@ function check() {
 		$("#email").focus();
 		return false;
 	}
+	if(!isEmail(email)) {
+		msg.show();
+		msgvalue.text("Invalid email pattern");
+		$("#email").focus();
+		return false;
+	}
 	if(tollFree == "") {
 		msg.show();
 		msgvalue.text("TollFree cannot be left blank.");
+		$("#tollfree").focus();
+		return false;
+	}
+	if(!isNumeric(tollFree)) {
+		msg.show();
+		msgvalue.text("Only numerics allowed in tollFree");
+		$("#tollfree").focus();
+		return false;
+	}
+	if(tollFree.length != 10) {
+		msg.show();
+		msgvalue.text("Length 10 allowed in tollFree");
 		$("#tollfree").focus();
 		return false;
 	}
@@ -244,9 +476,33 @@ function check() {
 		$("#cellular").focus();
 		return false;
 	}
+	if(!isNumeric(cellular)) {
+		msg.show();
+		msgvalue.text("Only numerics allowed in cellular");
+		$("#cellular").focus();
+		return false;
+	}
+	if(cellular.length != 10) {
+		msg.show();
+		msgvalue.text("Length 10 allowed in cellular");
+		$("#cellular").focus();
+		return false;
+	}
 	if(pager == "") {
 		msg.show();
 		msgvalue.text("Pager cannot be left blank.");
+		$("#pager").focus();
+		return false;
+	}
+	if(!isNumeric(pager)) {
+		msg.show();
+		msgvalue.text("Only numerics allowed in pager");
+		$("#pager").focus();
+		return false;
+	}
+	if(pager.length != 10) {
+		msg.show();
+		msgvalue.text("Length 10 allowed in pager");
 		$("#pager").focus();
 		return false;
 	}
@@ -263,12 +519,6 @@ function emptyMessageDiv(){
 </script>
 </head>
 <body>
-	<%
-		/*List<QuestionBean> lstQuestions = ((List<QuestionBean>) request.getAttribute("LIST_QUES"));
-		pageContext.setAttribute("LIST_QUES", lstQuestions);
-		List<CategoryBean> lstCategories = ((List<CategoryBean>) request.getAttribute("LIST_CAT"));
-		pageContext.setAttribute("LIST_CAT", lstCategories); */
-	%>
 	<jsp:include page="header.jsp"></jsp:include>
 	<div class="container">
 		<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="checkFlag('add'); onClickMethodQuestion('0'); emptyMessageDiv();" >Add New</button>
@@ -337,14 +587,15 @@ function emptyMessageDiv(){
 									
 									<div class="form-group">
 										<div class="row">
-											<div class="col-sm-6">
+										<div class="col-sm-6">
 												<div class="input-group">
 													<span class="input-group-addon">
-														 <b>Ext</b>												
+														 <b>Unit No</b>												
 													</span>
-													<input type="text" class="form-control" placeHolder="Enter Ext" id="ext" name="ext" value="" />
+													<input type="text" class="form-control" placeHolder="Enter UnitNo" id="unitNo" name="unitNo" value="" />
 												</div>
 											</div>
+											
 											<div class="col-sm-6">
 												<div class="input-group">
 													<span class="input-group-addon">
@@ -361,9 +612,9 @@ function emptyMessageDiv(){
 											<div class="col-sm-6">
 												<div class="input-group">
 													<span class="input-group-addon">
-														 <b>Unit No</b>												
+														 <b>Ext</b>												
 													</span>
-													<input type="text" class="form-control" placeHolder="Enter UnitNo" id="unitNo" name="unitNo" value="" />
+													<input type="text" class="form-control" placeHolder="Enter Ext" id="ext" name="ext" value="" />
 												</div>
 											</div>
 											<div class="col-sm-6">
@@ -372,6 +623,41 @@ function emptyMessageDiv(){
 														 <b>Phone</b>												
 													</span>
 													<input type="text" class="form-control" placeHolder="Enter Phone" id="phone" name="phone" value="" />
+												</div>
+											</div>
+										</div>
+									</div>
+									
+									<div class="form-group">
+										<div class="row">
+											<div class="col-sm-6">
+												<div class="row">
+													<div class="col-sm-6">
+														<div class="input-group">
+															<span class="input-group-addon">
+																 <b>Country</b>												
+															</span>
+															<select class="form-control" name="countryId" id="countryId" onchange="getStates();changeStateLabel()">
+															</select>
+														</div>
+													</div>
+													<div class="col-sm-6">
+														<div class="input-group">
+															<span class="input-group-addon">
+																 <b id="stateLabel">Province</b>												
+															</span>
+															<select class="form-control" name="stateId" id="stateId">
+															</select>
+														</div>
+													</div>												
+												</div>
+											</div>	
+											<div class="col-sm-6">
+												<div class="input-group">
+													<span class="input-group-addon">
+														 <b>Fax</b>												
+													</span>
+													<input type="text" class="form-control" placeHolder="Enter Fax" id="fax" name="fax" value="" />
 												</div>
 											</div>
 										</div>
@@ -390,39 +676,6 @@ function emptyMessageDiv(){
 											<div class="col-sm-6">
 												<div class="input-group">
 													<span class="input-group-addon">
-														 <b>Fax</b>												
-													</span>
-													<input type="text" class="form-control" placeHolder="Enter Fax" id="fax" name="fax" value="" />
-												</div>
-											</div>
-										</div>
-									</div>
-									
-									<div class="form-group">
-										<div class="row">
-											<div class="col-sm-6">
-												<div class="row">
-													<div class="col-sm-6">
-														<div class="input-group">
-													<span class="input-group-addon">
-														 <b>Province</b>												
-													</span>
-													<input type="text" class="form-control" placeHolder="Enter Province" id="province" name="provinceState" value="" />
-													</div>
-													</div>
-													<div class="col-sm-6">
-													<div class="input-group">
-													<span class="input-group-addon">
-														 <b>Zip</b>												
-													</span>
-													<input type="text" class="form-control" placeHolder="Enter Zip" id="zip" name="zip" value="" />
-													</div>
-													</div>												
-												</div>
-											</div>
-											<div class="col-sm-6">
-												<div class="input-group">
-													<span class="input-group-addon">
 														 <b>AfterHours</b>												
 													</span>
 													<input type="text" class="form-control" placeHolder="Enter AfterHours" id="afterHours" name="afterHours" value="" />
@@ -433,14 +686,14 @@ function emptyMessageDiv(){
 
 									<div class="form-group">
 										<div class="row">
-											<div class="col-sm-6">
-												<div class="input-group">
+													<div class="col-sm-6">
+													<div class="input-group">
 													<span class="input-group-addon">
-														 <b>Email</b>												
+														 <b id="zipLabel">Zip</b>												
 													</span>
-													<input type="text" class="form-control" placeHolder="Enter Email" id="email" name="email" value="" />
-												</div>
-											</div>
+													<input type="text" class="form-control" placeHolder="Enter Zip" id="zip" name="zip" value="" />
+													</div>
+													</div>	
 											<div class="col-sm-6">
 												<div class="input-group">
 													<span class="input-group-addon">
@@ -457,9 +710,9 @@ function emptyMessageDiv(){
 											<div class="col-sm-6">
 												<div class="input-group">
 													<span class="input-group-addon">
-														 <b>Website</b>												
+														 <b>Email</b>												
 													</span>
-													<input type="text" class="form-control" placeHolder="Enter Website" id="website" name="website" value="" />
+													<input type="text" class="form-control" placeHolder="Enter Email" id="email" name="email" value="" />
 												</div>
 											</div>
 											<div class="col-sm-6">
@@ -475,6 +728,14 @@ function emptyMessageDiv(){
 									
 									<div class="form-group">
 										<div class="row">
+											<div class="col-sm-6">
+												<div class="input-group">
+													<span class="input-group-addon">
+														 <b>Website</b>												
+													</span>
+													<input type="text" class="form-control" placeHolder="Enter Website" id="website" name="website" value="" />
+												</div>
+											</div>
 											<div class="col-sm-6">
 												<div class="input-group">
 													<span class="input-group-addon">
@@ -546,7 +807,7 @@ function emptyMessageDiv(){
 							<td>${obj.name}</td>
 							<td>${obj.email}</td>
 							<td>${obj.city}</td>
-							<td>${obj.provinceState}</td>
+							<td>${obj.stateName}</td>
 							<td>${obj.phone}</td>
 							<td>${obj.fax}</td>
 							<td>${obj.afterHours}</td>
