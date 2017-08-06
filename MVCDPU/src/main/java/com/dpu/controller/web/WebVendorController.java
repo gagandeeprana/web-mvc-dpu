@@ -7,6 +7,8 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.dpu.model.Failed;
 import com.dpu.model.VendorModel;
 import com.dpu.service.VendorService;
 
@@ -37,8 +40,7 @@ public class WebVendorController {
 	}
 	
 	@RequestMapping(value = "/savevendor" , method = RequestMethod.POST)
-	public ModelAndView saveVendor(@ModelAttribute("vendor") VendorModel vendorModel, HttpServletRequest request) {
-		ModelAndView modelAndView = new ModelAndView();
+	@ResponseBody public Object saveVendor(@ModelAttribute("vendor") VendorModel vendorModel, HttpServletRequest request) {
 		HttpSession session = request.getSession();
 		String createdBy = "";
 		if(session != null) {
@@ -46,9 +48,12 @@ public class WebVendorController {
 		}
 //		divisionReq.setCreatedBy(createdBy);
 //		divisionReq.setCreatedOn(new Date());
-		vendorService.addVendorData(vendorModel);
-		modelAndView.setViewName("redirect:showvendor");
-		return modelAndView;
+		Object response = vendorService.addVendorData(vendorModel);
+		if(response instanceof Failed) {
+			return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
+		} else {
+			return new ResponseEntity<Object>(response, HttpStatus.OK);
+		}
 	}
 	
 	@RequestMapping(value = "/getvendor/vendorId" , method = RequestMethod.GET)
@@ -63,6 +68,17 @@ public class WebVendorController {
 		return vendorModel;
 	}
 	
+	@RequestMapping(value = "/vendor/getopenadd" , method = RequestMethod.GET)
+	@ResponseBody public VendorModel getOpenAdd() {
+		VendorModel VendorModel = null;
+		try {
+			VendorModel = vendorService.getOpenAdd();
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		return VendorModel;
+	}
+	
 	@RequestMapping(value = "/updatevendor" , method = RequestMethod.POST)
 	public ModelAndView updateVendor(@ModelAttribute("vendor") VendorModel vendorModel, @RequestParam("vendorid") Long vendorId) {
 		ModelAndView modelAndView = new ModelAndView();
@@ -72,10 +88,12 @@ public class WebVendorController {
 	}
 	
 	@RequestMapping(value = "/deletevendor/{vendorid}" , method = RequestMethod.GET)
-	public ModelAndView deleteVendor(@PathVariable("vendorid") Long vendorId) {
-		ModelAndView modelAndView = new ModelAndView();
-		vendorService.delete(vendorId);
-		modelAndView.setViewName("redirect:/showvendor");
-		return modelAndView;
+	@ResponseBody public Object deleteVendor(@PathVariable("vendorid") Long vendorId) {
+		Object response = vendorService.delete(vendorId);
+		if(response instanceof Failed) {
+			return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
+		} else {
+			return new ResponseEntity<Object>(response, HttpStatus.OK);
+		}
 	}
 }

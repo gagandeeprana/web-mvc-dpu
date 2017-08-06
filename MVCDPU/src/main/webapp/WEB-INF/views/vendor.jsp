@@ -37,8 +37,158 @@ textarea{
   max-height:360px;
 }
 </style>
+	
+	
+	<jsp:include page="Include.jsp"></jsp:include>
  <script src="<c:url value="/resources/validations.js" />"></script>
 <script type="text/javascript">
+	
+function createVendor(){
+	 
+	if(!check()){
+		 return false;
+	 }
+	var vendorName = $("#vendorName").val();
+   	var contact = $("#contact").val();
+   	var address = $("#address").val();
+   	var position = $("#position").val();
+   	var ext = $("#ext").val();
+   	var unitNo = $("#unitNo").val();
+   	var phone = $("#phone").val();
+   	var city = $("#city").val();
+   	var fax = $("#fax").val();
+   	var zip = $("#zip").val();
+   	var afterHours = $("#afterHours").val();
+   	var email = $("#email").val();
+   	var tollfree = $("#tollfree").val();
+   	var website = $("#website").val();
+   	var cellular = $("#cellular").val();
+   	var pager = $("#pager").val();
+   	var countryId = $('#countryId :selected').val();
+	var stateId = $('#stateId :selected').val();
+	
+	  $.ajax({url: BASE_URL+ "savevendor",
+		      type:"POST",
+		      data:{
+		    	vendorName:vendorName,
+		    	contact:contact,
+		    	address:address,
+		    	position:position,
+		    	ext:ext,
+		    	unitNo:unitNo,
+		    	phone:phone,
+		    	city:city,
+		    	fax:fax,
+		    	zip:zip,
+		    	afterHours:afterHours,
+		    	email:email,
+		    	countryId:countryId,
+		    	stateId:stateId,
+		    	tollfree:tollfree,
+		    	cellular:cellular,
+		    	website:website,
+		    	pager:pager,
+		      },
+		      success: function(result){
+	        try{
+	        	$('#myModal').modal('toggle');
+	        	var list = result.resultList;
+				fillVendorData(list);
+
+		        toastr.success(result.message, 'Success!')
+			} catch(e){
+				toastr.error('Something went wrong', 'Error!')
+			}
+	  },error:function(result){
+		  try{
+			  	var obj = JSON.parse(result.responseText);
+			  	toastr.error(obj.message, 'Error!')
+			  }catch(e){
+				  toastr.error('Something went wrong', 'Error!')
+			  }
+	  }});
+	  return true;
+}
+
+function fillVendorData(list) {
+	var tableValue = "";
+	if(list.length > 0) {
+		 for(var i=0;i<list.length;i++) {
+			var obj = list[i];
+			tableValue = tableValue + ("<tr class='info'>");
+			var vendorName = "";
+    		if(obj.vendorName != null) {
+    			vendorName = obj.vendorName;
+    		}
+    		var unitNo = "";
+    		if(obj.unitNo != null) {
+    			unitNo = obj.unitNo;
+    		}
+    		var email = "";
+    		if(obj.email != null) {
+    			email = obj.email;
+    		}
+    		var city = "";
+    		if(obj.city != null) {
+    			city = obj.city;
+    		}
+    		var stateName = "";
+    		if(obj.stateName != null) {
+    			stateName = obj.stateName;
+    		}
+    		var faxNo = "";
+    		if(obj.fax != null) {
+    			faxNo = obj.fax;
+    		}
+    		var cellular = "";
+    		if(obj.phone != null) {
+    			cellular = obj.phone;
+    		}
+    		var afterHours = "";
+    		if(obj.afterHours != null) {
+    			afterHours = obj.afterHours;
+    		}
+    		
+    		tableValue = tableValue + ("<td>"+(unitNo)+"</td>");
+    		tableValue = tableValue + ("<td>"+(name)+"</td>");
+    		tableValue = tableValue + ("<td>"+(email)+"</td>");
+    		tableValue = tableValue + ("<td>"+(city)+"</td>");
+    		tableValue = tableValue + ("<td>"+(stateName)+"</td>");
+    		tableValue = tableValue + ("<td>"+(phone)+"</td>");
+    		tableValue = tableValue + ("<td>"+(fax)+"</td>");
+    		tableValue = tableValue + ("<td>"+(afterHours)+"</td>");
+    		tableValue = tableValue + "<td><a href = '#' data-toggle='modal' data-target='#myModal'  onclick='checkFlag('update');onClickMethodQuestion('"+(obj.vendorId)+"')>Update</a> / <a href='#' onclick=deleteVendor('"+(obj.vendorId)+"')>Delete</a></td>";
+    		tableValue = tableValue + ("</tr>");
+		}
+		$("#vendorData").html(tableValue);
+	}
+}
+
+function deleteVendor(vendorId){
+	 
+	alert(vendorId);
+	  $.ajax({url: BASE_URL + "deletevendor/" + vendorId,
+		      type:"GET",
+		      success: function(result){
+	    	  try{	
+					var list = result.resultList;
+					fillVendorData(list);
+					
+	    		  toastr.success(result.message, 'Success!')
+			  }catch(e){
+				toastr.error('Something went wrong', 'Error!')
+			  }
+	  },error:function(result){
+		  try{
+			  	var obj = JSON.parse(result.responseText);
+			  	toastr.error(obj.message, 'Error!')
+			  }catch(e){
+				  toastr.error('Something went wrong', 'Error!')
+			  }
+	  }});
+	  return true;
+}
+
 	$(document).ready(function(){
 		$('#btnSave').click(function(){
 			$('#frm1').submit();
@@ -76,27 +226,59 @@ function checkFlag(field) {
     function onClickMethodQuestion(quesId){
     	emptyMessageDiv();
     	clearAll();
-   		$.get("getvendor/vendorId",{"vendorId" : quesId}, function(data) {
-            document.getElementById("vendorid").value = data.vendorId;
-           	$("#vendorName").val(data.name);
-           	$("#contact").val(data.contact);
-           	$("#address").val(data.address);
-           	$("#position").val(data.position);
-           	$("#ext").val(data.ext);
-           	$("#prefix").val(data.vendorPrefix);
-           	$("#unitNo").val(data.unitNo);
-           	$("#phone").val(data.phone);
-           	$("#city").val(data.city);
-           	$("#fax").val(data.fax);
-           	$("#province").val(data.provinceState);
-           	$("#zip").val(data.zip);
-           	$("#afterHours").val(data.afterHours);
-           	$("#email").val(data.email);
-           	$("#tollfree").val(data.tollfree);
-           	$("#website").val(data.website);
-           	$("#cellular").val(data.cellular);
-           	$("#pager").val(data.pager);
-       	});
+    	if(quesId == 0) {
+
+    		$.get("vendor/getopenadd", function(data) {
+	    		var country = document.getElementById("countryId");
+	            for(var i = 0;i < data.countryList.length;i++) {
+	            	country.options[country.options.length] = new Option(data.countryList[i].countryName);
+	            	country.options[i].value = data.countryList[i].countryId;
+	            }
+
+	            getStates();
+				changeStateLabel();
+    		});
+    	} else {
+	   		$.get("getvendor/vendorId",{"vendorId" : quesId}, function(data) {
+	            document.getElementById("vendorid").value = data.vendorId;
+	           	$("#vendorName").val(data.name);
+	           	$("#contact").val(data.contact);
+	           	$("#address").val(data.address);
+	           	$("#position").val(data.position);
+	           	$("#ext").val(data.ext);
+	           	$("#unitNo").val(data.unitNo);
+	           	$("#phone").val(data.phone);
+	           	$("#city").val(data.city);
+	           	$("#fax").val(data.fax);
+	           	$("#zip").val(data.zip);
+	           	$("#afterHours").val(data.afterHours);
+	           	$("#email").val(data.email);
+	           	$("#tollfree").val(data.tollfree);
+	           	$("#website").val(data.website);
+	           	$("#cellular").val(data.cellular);
+	           	$("#pager").val(data.pager);
+	           	
+	           	var country = document.getElementById("countryId");
+	            var countryList = data.countryList;
+	            for(var i = 0;i < data.countryList.length;i++) {
+	            	country.options[country.options.length] = new Option(data.countryList[i].countryName);
+	            	country.options[i].value = data.countryList[i].countryId;
+	            	if(countryList[i].countryId == data.countryId) {
+	            		document.getElementById("countryId").selectedIndex = i;		            		
+	            	}
+	            }
+	            
+	            var driverState = document.getElementById("stateId");
+	            var stateList = data.stateList;
+	            for(var i = 0;i < data.stateList.length;i++) {
+	            	driverState.options[driverState.options.length] = new Option(data.stateList[i].stateName);
+	            	driverState.options[i].value = data.stateList[i].stateId;
+	            	if(stateList[i].stateId == data.stateId) {
+	            		document.getElementById("stateId").selectedIndex = i;		            		
+	            	}
+	            }
+	       	});
+    	}
     }
     function clearAll() {
     	$("#vendorName").val("");
@@ -104,12 +286,10 @@ function checkFlag(field) {
     	$("#address").val("");
     	$("#position").val("");
     	$("#ext").val("");
-    	$("#prefix").val("");
     	$("#unitNo").val("");
     	$("#phone").val("");
     	$("#city").val("");
     	$("#fax").val("");
-    	$("#province").val("");
     	$("#zip").val("");
     	$("#afterHours").val("");
     	$("#email").val("");
@@ -149,100 +329,6 @@ function getStates() {
         }
 	});
 }
-function onClickMethodQuestion(quesId){
-	emptyMessageDiv();
-	clearAll();
-	if(quesId == 0) {
-    	$.get("driver/getopenadd", function(data) {
-
-    		var country = document.getElementById("countryId");
-            for(var i = 0;i < data.countryList.length;i++) {
-            	country.options[country.options.length] = new Option(data.countryList[i].countryName);
-            	country.options[i].value = data.countryList[i].countryId;
-            }
-        });
-	} else {
-		/* $.get("getdriver/driverId",{"driverId" : quesId}, function(data) {
-            document.getElementById("driverid").value = data.resultList.driverId;
-            $("#driverCode").val(data.resultList.driverCode);
-        	$("#email").val(data.resultList.email);
-        	$("#firstName").val(data.resultList.firstName);
-        	$("#home").val(data.resultList.home);
-        	$("#fax").val(data.resultList.faxNo);
-        	$("#lastName").val(data.resultList.lastName);
-        	$("#cellular").val(data.resultList.cellular);
-        	$("#pager").val(data.resultList.pager);
-        	$("#address").val(data.resultList.address);
-        	$("#city").val(data.resultList.city);
-        	$("#zip").val(data.resultList.zip);
-        	$("#province").val(data.resultList.province);
-        	$("#unit").val(data.resultList.unit);
-        	$("#zip").val(data.resultList.postalCode);
-        	$("#province").val(data.resultList.pvs);
-        	
-            var division = document.getElementById("divisionId");
-            var divisionList = data.resultList.divisionList;
-            for(var i = 0;i < divisionList.length;i++) {
-            	division.options[division.options.length] = new Option(divisionList[i].divisionName);
-            	division.options[i].value = divisionList[i].divisionId;
-            	if(divisionList[i].divisionId == data.resultList.divisionId) {
-            		document.getElementById("divisionId").selectedIndex = i;
-            	}
-            }
-            
-            var terminal = document.getElementById("terminalId");
-            var terminalList = data.resultList.terminalList;
-            for(var i = 0;i < terminalList.length;i++) {
-            	terminal.options[terminal.options.length] = new Option(terminalList[i].terminalName);
-            	terminal.options[i].value = terminalList[i].terminalId;
-            	if(terminalList[i].terminalId == data.resultList.terminalId) {
-            		document.getElementById("terminalId").selectedIndex = i;
-            	}
-            }
-            
-            var category = document.getElementById("categoryId");
-            var categoryList = data.resultList.categoryList;
-            for(var i = 0;i < categoryList.length;i++) {
-            	category.options[category.options.length] = new Option(categoryList[i].name);
-            	category.options[i].value = categoryList[i].categoryId;
-            	if(categoryList[i].categoryId == data.resultList.categoryId) {
-            		document.getElementById("categoryId").selectedIndex = i;
-            	}
-            }
-            
-            var role = document.getElementById("roleId");
-            var roleList = data.resultList.roleList;
-            for(var i = 0;i < roleList.length;i++) {
-            	role.options[role.options.length] = new Option(roleList[i].typeName);
-            	role.options[i].value = roleList[i].typeId;
-            	if(roleList[i].typeId == data.resultList.roleId) {
-            		document.getElementById("roleId").selectedIndex = i;
-            	}
-            }
-            
-            var status = document.getElementById("statusId");
-            var statusList = data.resultList.statusList;
-            for(var i = 0;i < statusList.length;i++) {
-            	status.options[status.options.length] = new Option(statusList[i].status);
-            	status.options[i].value = statusList[i].id;
-            	if(statusList[i].id == data.resultList.statusId) {
-            		document.getElementById("statusId").selectedIndex = i;
-            	}
-            }
-            
-            var driverClass = document.getElementById("classId");
-            var driverClassList = data.resultList.driverClassList;
-            for(var i = 0;i < driverClassList.length;i++) {
-            	driverClass.options[driverClass.options.length] = new Option(driverClassList[i].typeName);
-            	driverClass.options[i].value = driverClassList[i].typeId;
-            	if(driverClassList[i].typeId == data.resultList.driverClassId) {
-            		document.getElementById("classId").selectedIndex = i;
-            	}
-            }
-    	}); */
-	}
-}
-
 function check() {
 	var vendorName = $("#vendorName").val();
 	var contact = $("#contact").val();
@@ -442,7 +528,7 @@ function check() {
 	}
 	if(!isEmail(email)) {
 		msg.show();
-		msgvalue.text("Invalid email pattern");
+		msgvalue.text("Email should contain dot, @, anydomainname");
 		$("#email").focus();
 		return false;
 	}
@@ -527,7 +613,7 @@ function emptyMessageDiv(){
 			<div class="col-sm-8">
 					<div class="modal fade" id="myModal" role="dialog">
 					    <div class="modal-dialog">
-						<form action="savevendor" method="POST" name="vendor" id="frm1" onsubmit="return check()">
+						<form id="frm1">
 						<input type="hidden" id = "vendorid" name= "vendorid" value = "" />					
 						<input type="hidden" id = "addUpdateFlag" value = "" />					
 	
@@ -567,13 +653,14 @@ function emptyMessageDiv(){
 									<div class="form-group">
 										<div class="row">
 											<div class="col-sm-6">
-												<div class="input-group">
-													<span class="input-group-addon">
-														 <b>Address</b>												
-													</span>
-													<input type="text" class="form-control" placeHolder="Enter Address" id="address" name="address" value="" />
-												</div>
-											</div>
+														<div class="input-group">
+															<span class="input-group-addon">
+																 <b>Country</b>												
+															</span>
+															<select class="form-control" name="countryId" id="countryId" onchange="getStates();changeStateLabel()">
+															</select>
+														</div>
+													</div>
 											<div class="col-sm-6">
 												<div class="input-group">
 													<span class="input-group-addon">
@@ -590,18 +677,18 @@ function emptyMessageDiv(){
 										<div class="col-sm-6">
 												<div class="input-group">
 													<span class="input-group-addon">
-														 <b>Unit No</b>												
+														 <b>Address</b>												
 													</span>
-													<input type="text" class="form-control" placeHolder="Enter UnitNo" id="unitNo" name="unitNo" value="" />
+													<input type="text" class="form-control" placeHolder="Enter Address" id="address" name="address" value="" />
 												</div>
 											</div>
 											
 											<div class="col-sm-6">
 												<div class="input-group">
 													<span class="input-group-addon">
-														 <b>Prefix</b>												
+														 <b>Ext</b>												
 													</span>
-													<input type="text" class="form-control" placeHolder="Enter Prefix" id="prefix" name="vendorPrefix" value="" />
+													<input type="text" class="form-control" placeHolder="Enter Ext" id="ext" name="ext" value="" />
 												</div>
 											</div>
 										</div>
@@ -612,11 +699,11 @@ function emptyMessageDiv(){
 											<div class="col-sm-6">
 												<div class="input-group">
 													<span class="input-group-addon">
-														 <b>Ext</b>												
+														 <b>Unit No</b>												
 													</span>
-													<input type="text" class="form-control" placeHolder="Enter Ext" id="ext" name="ext" value="" />
+													<input type="text" class="form-control" placeHolder="Enter UnitNo" id="unitNo" name="unitNo" value="" />
 												</div>
-											</div>
+											</div>	
 											<div class="col-sm-6">
 												<div class="input-group">
 													<span class="input-group-addon">
@@ -632,15 +719,7 @@ function emptyMessageDiv(){
 										<div class="row">
 											<div class="col-sm-6">
 												<div class="row">
-													<div class="col-sm-6">
-														<div class="input-group">
-															<span class="input-group-addon">
-																 <b>Country</b>												
-															</span>
-															<select class="form-control" name="countryId" id="countryId" onchange="getStates();changeStateLabel()">
-															</select>
-														</div>
-													</div>
+													
 													<div class="col-sm-6">
 														<div class="input-group">
 															<span class="input-group-addon">
@@ -649,6 +728,14 @@ function emptyMessageDiv(){
 															<select class="form-control" name="stateId" id="stateId">
 															</select>
 														</div>
+													</div>
+													<div class="col-sm-6">
+													<div class="input-group">
+													<span class="input-group-addon">
+														 <b id="zipLabel">Zip</b>												
+													</span>
+													<input type="text" class="form-control" placeHolder="Enter Zip" id="zip" name="zip" value="" />
+													</div>
 													</div>												
 												</div>
 											</div>	
@@ -686,20 +773,21 @@ function emptyMessageDiv(){
 
 									<div class="form-group">
 										<div class="row">
-													<div class="col-sm-6">
-													<div class="input-group">
-													<span class="input-group-addon">
-														 <b id="zipLabel">Zip</b>												
-													</span>
-													<input type="text" class="form-control" placeHolder="Enter Zip" id="zip" name="zip" value="" />
-													</div>
-													</div>	
+														
 											<div class="col-sm-6">
 												<div class="input-group">
 													<span class="input-group-addon">
 														 <b>TollFree</b>												
 													</span>
 													<input type="text" class="form-control" placeHolder="Enter TollFree" id="tollfree" name="tollfree" value="" />
+												</div>
+											</div>												
+											<div class="col-sm-6">
+												<div class="input-group">
+													<span class="input-group-addon">
+														 <b>Cellular</b>												
+													</span>
+													<input type="text" class="form-control" placeHolder="Enter Cellular" id="cellular" name="cellular" value="" />
 												</div>
 											</div>												
 										</div>
@@ -718,11 +806,11 @@ function emptyMessageDiv(){
 											<div class="col-sm-6">
 												<div class="input-group">
 													<span class="input-group-addon">
-														 <b>Cellular</b>												
+														<b>Pager</b>												
 													</span>
-													<input type="text" class="form-control" placeHolder="Enter Cellular" id="cellular" name="cellular" value="" />
+													<input type="text" class="form-control" placeHolder="Enter Pager" id="pager" name="pager" value="" />
 												</div>
-											</div>												
+											</div>
 										</div>
 									</div>
 									
@@ -736,21 +824,13 @@ function emptyMessageDiv(){
 													<input type="text" class="form-control" placeHolder="Enter Website" id="website" name="website" value="" />
 												</div>
 											</div>
-											<div class="col-sm-6">
-												<div class="input-group">
-													<span class="input-group-addon">
-														<b>Pager</b>												
-													</span>
-													<input type="text" class="form-control" placeHolder="Enter Pager" id="pager" name="pager" value="" />
-												</div>
-											</div>
 										</div>
 									</div>
 				        	</div>
 				        	</div>
 				        	</div>
 				        	<div class="modal-footer">
-					          <input type="button" class="btn btn-primary" id= "btnSave" value="Save" />
+					          <input type="button" class="btn btn-primary" id= "btnSave" value="Save" onclick="createVendor();" />
 							  <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
 					        </div>
 					        </div>
@@ -800,7 +880,7 @@ function emptyMessageDiv(){
 						<th>Links</th>
 					</tr>
 				</thead>
-				<tbody>
+				<tbody id="vendorData">
 					<c:forEach items="${LIST_VENDOR}" var="obj">
 						<tr class="info">
 							<td>${obj.unitNo}</td>							
@@ -811,7 +891,7 @@ function emptyMessageDiv(){
 							<td>${obj.phone}</td>
 							<td>${obj.fax}</td>
 							<td>${obj.afterHours}</td>
-							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.vendorId}')">Update</a> / <a href="deletevendor/${obj.vendorId}">Delete</a></td>
+							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.vendorId}')">Update</a> / <a href="#" onclick="deleteVendor('${obj.vendorId}')">Delete</a></td>
 						</tr>
 					</c:forEach>
 				</tbody>

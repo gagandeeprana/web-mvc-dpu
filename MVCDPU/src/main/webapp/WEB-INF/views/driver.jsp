@@ -46,6 +46,148 @@ textarea{
 </style>
 <script type="text/javascript">
 
+function createDriver(){
+	 
+	if(!check()){
+		 return false;
+	 }
+	var driverCode = $("#driverCode").val();
+ 	var email = $("#email").val();
+ 	var firstName = $("#firstName").val();
+ 	var home = $("#home").val();
+ 	var fax = $("#fax").val();
+ 	var lastName = $("#lastName").val();
+ 	var cellular = $("#cellular").val();
+ 	var pager = $("#pager").val();
+ 	var address = $("#address").val();
+ 	var city = $("#city").val();
+ 	var zip = $("#zip").val();
+ 	var unit = $("#unit").val();
+ 	var zip = $("#zip").val();
+ 	var province = $("#province").val();
+	var divisionId = $('#divisionId :selected').val();
+	var terminalId = $('#terminalId :selected').val();
+	var countryId = $('#countryId :selected').val();
+	var stateId = $('#stateId :selected').val();
+	var categoryId = $('#categoryId :selected').val();
+	var roleId = $('#roleId :selected').val();
+	var statusId = $('#statusId :selected').val();
+	var driverClassId = $('#classId :selected').val();
+	
+	  $.ajax({url: BASE_URL+ "savedriver",
+		      type:"POST",
+		      data:{
+		    	driverCode:driverCode,
+		    	email:email,
+		    	firstName:firstName,
+		    	home:home,
+		    	faxNo:fax,
+		    	lastName:lastName,
+		    	cellular:cellular,
+		    	pager:pager,
+		    	address:address,
+		    	divisionId:divisionId,
+		    	unit:unit,
+		    	terminalId:terminalId,
+		    	countryId:countryId,
+		    	stateId:stateId,
+		    	categoryId:categoryId,
+		    	roleId:roleId,
+		    	postalCode:zip,
+		    	city:city,
+		    	statusId:statusId,
+		    	driverClassId:driverClassId
+		      },
+		      success: function(result){
+	        try{
+	        	$('#myModal').modal('toggle');
+	        	var list = result.resultList;
+				fillDriverData(list);
+
+		        toastr.success(result.message, 'Success!')
+			} catch(e){
+				toastr.error('Something went wrong', 'Error!')
+			}
+	  },error:function(result){
+		  try{
+			  	var obj = JSON.parse(result.responseText);
+			  	toastr.error(obj.message, 'Error!')
+			  }catch(e){
+				  toastr.error('Something went wrong', 'Error!')
+			  }
+	  }});
+	  return true;
+}
+
+function fillDriverData(list) {
+	var tableValue = "";
+	if(list.length > 0) {
+		 for(var i=0;i<list.length;i++) {
+			var obj = list[i];
+			tableValue = tableValue + ("<tr class='info'>");
+			var driverCode = "";
+    		if(obj.driverCode != null) {
+    			driverCode = obj.driverCode;
+    		}
+    		var firstName = "";
+    		if(obj.firstName != null) {
+    			firstName = obj.firstName;
+    		}
+    		var lastName = "";
+    		if(obj.lastName != null) {
+    			lastName = obj.lastName;
+    		}
+    		var address = "";
+    		if(obj.address != null) {
+    			address = obj.address;
+    		}
+    		var unit = "";
+    		if(obj.unit != null) {
+    			unit = obj.unit;
+    		}
+    		var city = "";
+    		if(obj.city != null) {
+    			city = obj.city;
+    		}
+    		var stateName = "";
+    		if(obj.stateName != null) {
+    			stateName = obj.stateName;
+    		}
+    		var faxNo = "";
+    		if(obj.faxNo != null) {
+    			faxNo = obj.faxNo;
+    		}
+    		var cellular = "";
+    		if(obj.cellular != null) {
+    			cellular = obj.cellular;
+    		}
+    		var pager = "";
+    		if(obj.pager != null) {
+    			pager = obj.pager;
+    		}
+    		var email = "";
+    		if(obj.email != null) {
+    			email = obj.email;
+    		}
+    		
+    		tableValue = tableValue + ("<td>"+(driverCode)+"</td>");
+    		
+    		tableValue = tableValue + ("<td>"+(firstName)+"</td>");
+    		tableValue = tableValue + ("<td>"+(lastName)+"</td>");
+    		tableValue = tableValue + ("<td>"+(address)+"</td>");
+    		tableValue = tableValue + ("<td>"+(unit)+"</td>");
+    		tableValue = tableValue + ("<td>"+(city)+"</td>");
+    		tableValue = tableValue + ("<td>"+ (stateName)+"</td>");
+    		tableValue = tableValue + ("<td>"+(faxNo)+"</td>");
+    		tableValue = tableValue + ("<td>"+(cellular)+"</td>");
+    		tableValue = tableValue + ("<td>"+(pager)+"</td>");
+    		tableValue = tableValue + ("<td>"+(email)+"</td>");
+    		tableValue = tableValue + "<td><a href = '#' data-toggle='modal' data-target='#myModal'  onclick='checkFlag('update');onClickMethodQuestion('"+(obj.driverId)+"')>Update</a> / <a href='#' onclick=deleteDriver('"+(obj.driverId)+"')>Delete</a></td>";
+    		 tableValue = tableValue + ("</tr>");
+		}
+		$("#driverData").html(tableValue);
+	}
+}
 	function deleteDriver(driverId){
 		 
 		  $.ajax({url: BASE_URL + "deletedriver/" + driverId,
@@ -53,73 +195,7 @@ textarea{
 			      success: function(result){
 		    	  try{	
 						var list = result.resultList;
-						var tableValue = "";
-						if(list.length > 0) {
-							 for(var i=0;i<list.length;i++) {
-								var obj = list[i];
-								tableValue = tableValue + ("<tr class='info'>");
-								var driverCode = "";
-			            		if(obj.driverCode != null) {
-			            			driverCode = obj.driverCode;
-			            		}
-			            		var firstName = "";
-			            		if(obj.firstName != null) {
-			            			firstName = obj.firstName;
-			            		}
-			            		var lastName = "";
-			            		if(obj.lastName != null) {
-			            			lastName = obj.lastName;
-			            		}
-			            		var address = "";
-			            		if(obj.address != null) {
-			            			address = obj.address;
-			            		}
-			            		var unit = "";
-			            		if(obj.unit != null) {
-			            			unit = obj.unit;
-			            		}
-			            		var city = "";
-			            		if(obj.city != null) {
-			            			city = obj.city;
-			            		}
-			            		var stateName = "";
-			            		if(obj.stateName != null) {
-			            			stateName = obj.stateName;
-			            		}
-			            		var faxNo = "";
-			            		if(obj.faxNo != null) {
-			            			faxNo = obj.faxNo;
-			            		}
-			            		var cellular = "";
-			            		if(obj.cellular != null) {
-			            			cellular = obj.cellular;
-			            		}
-			            		var pager = "";
-			            		if(obj.pager != null) {
-			            			pager = obj.pager;
-			            		}
-			            		var email = "";
-			            		if(obj.email != null) {
-			            			email = obj.email;
-			            		}
-			            		
-			            		tableValue = tableValue + ("<td>"+(driverCode)+"</td>");
-			            		
-			            		tableValue = tableValue + ("<td>"+(firstName)+"</td>");
-			            		tableValue = tableValue + ("<td>"+(lastName)+"</td>");
-			            		tableValue = tableValue + ("<td>"+(address)+"</td>");
-			            		tableValue = tableValue + ("<td>"+(unit)+"</td>");
-			            		tableValue = tableValue + ("<td>"+(city)+"</td>");
-			            		tableValue = tableValue + ("<td>"+ (stateName)+"</td>");
-			            		tableValue = tableValue + ("<td>"+(faxNo)+"</td>");
-			            		tableValue = tableValue + ("<td>"+(cellular)+"</td>");
-			            		tableValue = tableValue + ("<td>"+(pager)+"</td>");
-			            		tableValue = tableValue + ("<td>"+(email)+"</td>");
-			            		tableValue = tableValue + "<td><a href = '#' data-toggle='modal' data-target='#myModal'  onclick='checkFlag('update');onClickMethodQuestion('"+(obj.driverId)+"')>Update</a> / <a href='#' onclick=deleteDriver('"+(obj.driverId)+"')>Delete</a></td>";
-			            		 tableValue = tableValue + ("</tr>");
-							}
-							$("#driverData").html(tableValue);
-						}
+						fillDriverData(list);
 						
 		    		  toastr.success(result.message, 'Success!')
 				  }catch(e){
@@ -135,6 +211,7 @@ textarea{
 		  }});
 		  return true;
 	}
+	
 	$(document).ready(function(){
 		$('#btnSave').click(function(){
 			$('#frm1').submit();
@@ -245,83 +322,106 @@ textarea{
 		            	country.options[country.options.length] = new Option(data.countryList[i].countryName);
 		            	country.options[i].value = data.countryList[i].countryId;
 		            }
+		            
+		            changeStateLabel();
+		            getStates();
 		        });
         	} else {
         		$.get("getdriver/driverId",{"driverId" : quesId}, function(data) {
-		            document.getElementById("driverid").value = data.resultList.driverId;
-		            $("#driverCode").val(data.resultList.driverCode);
-	            	$("#email").val(data.resultList.email);
-	            	$("#firstName").val(data.resultList.firstName);
-	            	$("#home").val(data.resultList.home);
-	            	$("#fax").val(data.resultList.faxNo);
-	            	$("#lastName").val(data.resultList.lastName);
-	            	$("#cellular").val(data.resultList.cellular);
-	            	$("#pager").val(data.resultList.pager);
-	            	$("#address").val(data.resultList.address);
-	            	$("#city").val(data.resultList.city);
-	            	$("#zip").val(data.resultList.zip);
-	            	$("#province").val(data.resultList.province);
-	            	$("#unit").val(data.resultList.unit);
-	            	$("#zip").val(data.resultList.postalCode);
-	            	$("#province").val(data.resultList.pvs);
+		            document.getElementById("driverid").value = data.driverId;
+		            $("#driverCode").val(data.driverCode);
+	            	$("#email").val(data.email);
+	            	$("#firstName").val(data.firstName);
+	            	$("#home").val(data.home);
+	            	$("#fax").val(data.faxNo);
+	            	$("#lastName").val(data.lastName);
+	            	$("#cellular").val(data.cellular);
+	            	$("#pager").val(data.pager);
+	            	$("#address").val(data.address);
+	            	$("#city").val(data.city);
+	            	$("#zip").val(data.zip);
+	            	$("#province").val(data.province);
+	            	$("#unit").val(data.unit);
+	            	$("#zip").val(data.postalCode);
+	            	$("#province").val(data.pvs);
 	            	
 		            var division = document.getElementById("divisionId");
-		            var divisionList = data.resultList.divisionList;
+		            var divisionList = data.divisionList;
 		            for(var i = 0;i < divisionList.length;i++) {
 		            	division.options[division.options.length] = new Option(divisionList[i].divisionName);
 		            	division.options[i].value = divisionList[i].divisionId;
-		            	if(divisionList[i].divisionId == data.resultList.divisionId) {
+		            	if(divisionList[i].divisionId == data.divisionId) {
 		            		document.getElementById("divisionId").selectedIndex = i;
 		            	}
 		            }
 		            
 		            var terminal = document.getElementById("terminalId");
-		            var terminalList = data.resultList.terminalList;
+		            var terminalList = data.terminalList;
 		            for(var i = 0;i < terminalList.length;i++) {
 		            	terminal.options[terminal.options.length] = new Option(terminalList[i].terminalName);
 		            	terminal.options[i].value = terminalList[i].terminalId;
-		            	if(terminalList[i].terminalId == data.resultList.terminalId) {
+		            	if(terminalList[i].terminalId == data.terminalId) {
 		            		document.getElementById("terminalId").selectedIndex = i;
 		            	}
 		            }
 		            
 		            var category = document.getElementById("categoryId");
-		            var categoryList = data.resultList.categoryList;
+		            var categoryList = data.categoryList;
 		            for(var i = 0;i < categoryList.length;i++) {
 		            	category.options[category.options.length] = new Option(categoryList[i].name);
 		            	category.options[i].value = categoryList[i].categoryId;
-		            	if(categoryList[i].categoryId == data.resultList.categoryId) {
+		            	if(categoryList[i].categoryId == data.categoryId) {
 		            		document.getElementById("categoryId").selectedIndex = i;
 		            	}
 		            }
 		            
 		            var role = document.getElementById("roleId");
-		            var roleList = data.resultList.roleList;
+		            var roleList = data.roleList;
 		            for(var i = 0;i < roleList.length;i++) {
 		            	role.options[role.options.length] = new Option(roleList[i].typeName);
 		            	role.options[i].value = roleList[i].typeId;
-		            	if(roleList[i].typeId == data.resultList.roleId) {
+		            	if(roleList[i].typeId == data.roleId) {
 		            		document.getElementById("roleId").selectedIndex = i;
 		            	}
 		            }
 		            
 		            var status = document.getElementById("statusId");
-		            var statusList = data.resultList.statusList;
+		            var statusList = data.statusList;
 		            for(var i = 0;i < statusList.length;i++) {
 		            	status.options[status.options.length] = new Option(statusList[i].status);
 		            	status.options[i].value = statusList[i].id;
-		            	if(statusList[i].id == data.resultList.statusId) {
+		            	if(statusList[i].id == data.statusId) {
 		            		document.getElementById("statusId").selectedIndex = i;
 		            	}
 		            }
 		            
 		            var driverClass = document.getElementById("classId");
-		            var driverClassList = data.resultList.driverClassList;
+		            var driverClassList = data.driverClassList;
 		            for(var i = 0;i < driverClassList.length;i++) {
 		            	driverClass.options[driverClass.options.length] = new Option(driverClassList[i].typeName);
 		            	driverClass.options[i].value = driverClassList[i].typeId;
-		            	if(driverClassList[i].typeId == data.resultList.driverClassId) {
+		            	if(driverClassList[i].typeId == data.driverClassId) {
 		            		document.getElementById("classId").selectedIndex = i;
+		            	}
+		            }
+		            
+		            var country = document.getElementById("countryId");
+		            var countryList = data.countryList;
+		            for(var i = 0;i < data.countryList.length;i++) {
+		            	country.options[country.options.length] = new Option(data.countryList[i].countryName);
+		            	country.options[i].value = data.countryList[i].countryId;
+		            	if(countryList[i].countryId == data.countryId) {
+		            		document.getElementById("countryId").selectedIndex = i;		            		
+		            	}
+		            }
+		            
+		            var driverState = document.getElementById("stateId");
+		            var stateList = data.stateList;
+		            for(var i = 0;i < data.stateList.length;i++) {
+		            	driverState.options[driverState.options.length] = new Option(data.stateList[i].stateName);
+		            	driverState.options[i].value = data.stateList[i].stateId;
+		            	if(stateList[i].stateId == data.stateId) {
+		            		document.getElementById("stateId").selectedIndex = i;		            		
 		            	}
 		            }
             	});
@@ -391,7 +491,7 @@ function check() {
 	}
 	if(!isEmail(email)) {
 		msg.show();
-		msgvalue.text("Invalid email pattern");
+		msgvalue.text("Email should contain dot, @, anydomainname");
 		$("#email").focus();
 		return false;
 	}
@@ -551,7 +651,6 @@ function check() {
 		$("#province").focus();
 		return false;
 	}
-	$('#modal').modal('toggle');
 	return true;
 }
 </script>
@@ -559,13 +658,14 @@ function check() {
 <body>
 	<jsp:include page="header.jsp"></jsp:include>
 	<div class="container">
-		<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="checkFlag('add'); onClickMethodQuestion('0'); emptyMessageDiv();" >Add New</button>
+		<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="checkFlag('add'); onClickMethodQuestion('0'); emptyMessageDiv()" >Add New</button>
 		<div class="form-group">
 		<div class="row">
 			<div class="col-sm-8">
 					<div class="modal fade" id="myModal" role="dialog">
 					    <div class="modal-dialog">
-						<form action="savedriver" method="POST" name="driver" id="frm1" onsubmit="return check()">
+						<!-- <form action="savedriver" method="POST" name="driver" id="frm1" onsubmit="return check()"> -->
+						<form id="frm1">
 						<input type="hidden" id = "driverid" name= "driverid" value = "" />					
 						<input type="hidden" id = "addUpdateFlag" value = "" />					
 	
@@ -605,11 +705,23 @@ function check() {
 									<div class="form-group">
 										<div class="row">
 											<div class="col-sm-6">
+												<div class="row">
+													<div class="col-sm-6">
+														<div class="input-group">
+															<span class="input-group-addon">
+																 <b>FirstName</b>												
+															</span>
+															<input type="text" class="form-control" placeHolder="Enter FirstName" id="firstName" name="firstName" value="" />
+														</div>
+													</div>
+													<div class="col-sm-6">
 												<div class="input-group">
 													<span class="input-group-addon">
-														 <b>FirstName</b>												
+														 <b>LastName</b>												
 													</span>
-													<input type="text" class="form-control" placeHolder="Enter FirstName" id="firstName" name="firstName" value="" />
+													<input type="text" class="form-control" placeHolder="Enter LastName" id="lastName" name="lastName" value="" />
+												</div>
+											</div>
 												</div>
 											</div>
 											<div class="col-sm-6">
@@ -637,14 +749,16 @@ function check() {
 									
 									<div class="form-group">
 										<div class="row">
+											
 											<div class="col-sm-6">
-												<div class="input-group">
-													<span class="input-group-addon">
-														 <b>LastName</b>												
-													</span>
-													<input type="text" class="form-control" placeHolder="Enter LastName" id="lastName" name="lastName" value="" />
-												</div>
-											</div>
+														<div class="input-group">
+															<span class="input-group-addon">
+																 <b>Country</b>												
+															</span>
+															<select class="form-control" name="countryId" id="countryId" onchange="getStates();changeStateLabel()">
+															</select>
+														</div>
+													</div>
 											<div class="col-sm-6">
 												<div class="row">
 													<div class="col-sm-6">
@@ -658,9 +772,9 @@ function check() {
 													<div class="col-sm-6">
 													<div class="input-group">
 													<span class="input-group-addon">
-														 <b>Pager</b>												
+														 <b>RoamingPhone</b>												
 													</span>
-													<input type="text" class="form-control" placeHolder="Enter Pager" id="pager" name="pager" value="" />
+													<input type="text" class="form-control" placeHolder="Enter RoamingPhone" id="pager" name="pager" value="" />
 													</div>
 													</div>												
 												</div>
@@ -716,25 +830,11 @@ function check() {
 									<div class="form-group">
 										<div class="row">
 											<div class="col-sm-6">
-												<div class="row">
-													<div class="col-sm-6">
-														<div class="input-group">
-															<span class="input-group-addon">
-																 <b>Country</b>												
-															</span>
-															<select class="form-control" name="countryId" id="countryId" onchange="getStates();changeStateLabel()">
-															</select>
-														</div>
-													</div>
-													<div class="col-sm-6">
-														<div class="input-group">
-															<span class="input-group-addon">
-																 <b id="stateLabel">Province</b>												
-															</span>
-															<select class="form-control" name="stateId" id="stateId">
-															</select>
-														</div>
-													</div>												
+												<div class="input-group">
+													<span class="input-group-addon">
+														 <b>City</b>												
+													</span>
+													<input type="text" class="form-control" placeHolder="Enter City" id="city" name="city" value="" />
 												</div>
 											</div>	
 											<div class="col-sm-6">
@@ -766,6 +866,16 @@ function check() {
 										<div class="row">
 											<div class="col-sm-6">
 												<div class="row">
+													
+													<div class="col-sm-6">
+														<div class="input-group">
+															<span class="input-group-addon">
+																 <b id="stateLabel">Province</b>												
+															</span>
+															<select class="form-control" name="stateId" id="stateId">
+															</select>
+														</div>
+													</div>
 													<div class="col-sm-6">
 														<div class="input-group">
 													<span class="input-group-addon">
@@ -774,14 +884,6 @@ function check() {
 													<input type="text" class="form-control" placeHolder="Enter Zip" id="zip" name="postalCode" value="" />
 													</div>
 													</div>
-													<div class="col-sm-6">
-												<div class="input-group">
-													<span class="input-group-addon">
-														 <b>City</b>												
-													</span>
-													<input type="text" class="form-control" placeHolder="Enter City" id="city" name="city" value="" />
-												</div>
-											</div>
 																									
 												</div>
 											</div>
@@ -814,7 +916,7 @@ function check() {
 				        	</div>
 					        </div>
 					         <div class="modal-footer">
-					          <input type="button" class="btn btn-primary" id= "btnSave" value="Save" />
+					          <input type="button" class="btn btn-primary" id= "btnSave" value="Save" onclick="createDriver()" />
 							  <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
 					        </div>
 					      </div>

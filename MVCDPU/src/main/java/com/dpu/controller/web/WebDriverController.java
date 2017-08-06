@@ -20,7 +20,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.dpu.model.DriverModel;
 import com.dpu.model.Failed;
-import com.dpu.model.Success;
 import com.dpu.service.DriverService;
 
 @Controller
@@ -52,8 +51,7 @@ public class WebDriverController {
 	}
 	
 	@RequestMapping(value = "/savedriver" , method = RequestMethod.POST)
-	public ModelAndView saveTruck(@ModelAttribute("driver") DriverModel DriverModel, HttpServletRequest request) {
-		ModelAndView modelAndView = new ModelAndView();
+	public @ResponseBody Object saveTruck(@ModelAttribute("driver") DriverModel DriverModel, HttpServletRequest request) {
 		HttpSession session = request.getSession();
 		String createdBy = "";
 		if(session != null) {
@@ -61,16 +59,19 @@ public class WebDriverController {
 		}
 //		divisionReq.setCreatedBy(createdBy);
 //		divisionReq.setCreatedOn(new Date());
-		driverService.addDriver(DriverModel);
-		modelAndView.setViewName("redirect:showdriver");
-		return modelAndView;
+		Object response = driverService.addDriver(DriverModel);
+		if(response instanceof Failed) {
+			return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
+		} else {
+			return new ResponseEntity<Object>(response, HttpStatus.OK);
+		}
 	}
 	
 	@RequestMapping(value = "/getdriver/driverId" , method = RequestMethod.GET)
-	@ResponseBody  public Success getDriver(@RequestParam("driverId") Long driverId) {
-		Success DriverModel = null;
+	@ResponseBody  public DriverModel getDriver(@RequestParam("driverId") Long driverId) {
+		DriverModel DriverModel = null;
 		try {
-			DriverModel = (Success) driverService.getDriverByDriverId(driverId);
+			DriverModel = (DriverModel) driverService.getDriverByDriverId(driverId);
 		} catch (Exception e) {
 			System.out.println(e);
 			logger.info("Exception in getCategory is: " + e);
