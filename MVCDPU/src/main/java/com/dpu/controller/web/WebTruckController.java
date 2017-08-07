@@ -7,6 +7,8 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.dpu.model.Failed;
 import com.dpu.model.TruckResponse;
 import com.dpu.service.TruckService;
 
@@ -48,8 +51,7 @@ public class WebTruckController {
 	}
 	
 	@RequestMapping(value = "/savetruck" , method = RequestMethod.POST)
-	public ModelAndView saveTruck(@ModelAttribute("truck") TruckResponse truckResponse, HttpServletRequest request) {
-		ModelAndView modelAndView = new ModelAndView();
+	@ResponseBody public Object saveTruck(@ModelAttribute("truck") TruckResponse truckResponse, HttpServletRequest request) {
 		HttpSession session = request.getSession();
 		String createdBy = "";
 		if(session != null) {
@@ -57,9 +59,13 @@ public class WebTruckController {
 		}
 //		divisionReq.setCreatedBy(createdBy);
 //		divisionReq.setCreatedOn(new Date());
-		truckService.add(truckResponse);
-		modelAndView.setViewName("redirect:showtruck");
-		return modelAndView;
+		Object response = truckService.add(truckResponse);
+		if(response instanceof Failed) {
+			return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
+		} else {
+			return new ResponseEntity<Object>(response, HttpStatus.OK);
+		}
+//		modelAndView.setViewName("redirect:showtruck");
 	}
 	
 	@RequestMapping(value = "/gettruck/truckId" , method = RequestMethod.GET)
@@ -75,18 +81,22 @@ public class WebTruckController {
 	}
 	
 	@RequestMapping(value = "/updatetruck" , method = RequestMethod.POST)
-	public ModelAndView updateTruck(@ModelAttribute("truck") TruckResponse truckResponse, @RequestParam("truckid") Long truckId) {
-		ModelAndView modelAndView = new ModelAndView();
-		truckService.update(truckId, truckResponse);
-		modelAndView.setViewName("redirect:showtruck");
-		return modelAndView;
+	@ResponseBody public Object updateTruck(@ModelAttribute("truck") TruckResponse truckResponse, @RequestParam("truckid") Long truckId) {
+		Object response = truckService.update(truckId, truckResponse);
+		if(response instanceof Failed) {
+			return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
+		} else {
+			return new ResponseEntity<Object>(response, HttpStatus.OK);
+		}
 	}
 	
 	@RequestMapping(value = "/deletetruck/{truckid}" , method = RequestMethod.GET)
-	public ModelAndView deleteTruck(@PathVariable("truckid") Long truckId) {
-		ModelAndView modelAndView = new ModelAndView();
-		truckService.delete(truckId);
-		modelAndView.setViewName("redirect:/showtruck");
-		return modelAndView;
+	@ResponseBody public Object deleteTruck(@PathVariable("truckid") Long truckId) {
+		Object response = truckService.delete(truckId);
+		if(response instanceof Failed) {
+			return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
+		} else {
+			return new ResponseEntity<Object>(response, HttpStatus.OK);
+		}
 	}
 }

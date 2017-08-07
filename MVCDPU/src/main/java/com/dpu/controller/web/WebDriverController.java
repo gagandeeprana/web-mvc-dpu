@@ -80,11 +80,13 @@ public class WebDriverController {
 	}
 	
 	@RequestMapping(value = "/updatedriver" , method = RequestMethod.POST)
-	public ModelAndView updateDriver(@ModelAttribute("driver") DriverModel DriverModel, @RequestParam("driverid") Long driverId) {
-		ModelAndView modelAndView = new ModelAndView();
-		driverService.updateDriver(driverId, DriverModel);
-		modelAndView.setViewName("redirect:showdriver");
-		return modelAndView;
+	@ResponseBody public Object updateDriver(@ModelAttribute("driver") DriverModel DriverModel, @RequestParam("driverid") Long driverId) {
+		Object response = driverService.updateDriver(driverId, DriverModel);
+		if(response instanceof Failed) {
+			return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
+		} else {
+			return new ResponseEntity<Object>(response, HttpStatus.OK);
+		}
 	}
 	
 	@RequestMapping(value = "/deletedriver/{driverid}" , method = RequestMethod.GET)

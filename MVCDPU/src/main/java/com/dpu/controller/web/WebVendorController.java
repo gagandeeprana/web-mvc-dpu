@@ -80,11 +80,13 @@ public class WebVendorController {
 	}
 	
 	@RequestMapping(value = "/updatevendor" , method = RequestMethod.POST)
-	public ModelAndView updateVendor(@ModelAttribute("vendor") VendorModel vendorModel, @RequestParam("vendorid") Long vendorId) {
-		ModelAndView modelAndView = new ModelAndView();
-		vendorService.update(vendorId, vendorModel);
-		modelAndView.setViewName("redirect:showvendor");
-		return modelAndView;
+	@ResponseBody public Object updateVendor(@ModelAttribute("vendor") VendorModel vendorModel, @RequestParam("vendorid") Long vendorId) {
+		Object response = vendorService.update(vendorId, vendorModel);
+		if(response instanceof Failed) {
+			return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
+		} else {
+			return new ResponseEntity<Object>(response, HttpStatus.OK);
+		}
 	}
 	
 	@RequestMapping(value = "/deletevendor/{vendorid}" , method = RequestMethod.GET)

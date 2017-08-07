@@ -15,6 +15,8 @@
 	src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script
 	src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+		<jsp:include page="Include.jsp"></jsp:include>
+ <script src="<c:url value="/resources/validations.js" />"></script>
 <style type="text/css">
 .modal-dialog {
   width: 98%;
@@ -38,10 +40,151 @@ textarea{
 }
 </style>
 <script type="text/javascript">
+function createTruck(urlToHit, methodType){
+	 
+	 if(!check()){
+		 return false;
+	 } 
+	var unitNo = $("#unitNo").val();
+   	var usage = $("#usage").val();
+   	var owner = $("#owner").val();
+   	var oOName = $("#oOName").val();
+   	var finance = $("#finance").val();
+   	var statusId = $('#statusId :selected').val();
+   	var divisionId = $('#divisionId :selected').val();
+   	var terminalId = $('#terminalId :selected').val();
+   	var categoryId = $('#categoryId :selected').val();
+   	var truckTypeId = $('#truckTypeId :selected').val();
+  	var truckId;
+   	if(methodType == 'PUT') {
+   		truckId = $('#truckid').val();
+   	}
+	  $.ajax({url: BASE_URL+ urlToHit,
+		      type:"POST",
+		      data:{
+		    	unitNo:unitNo,
+		    	truchUsage:usage,
+		    	owner:owner,
+		    	oOName:oOName,
+		    	finance:finance,
+		    	statusId:statusId,
+		    	divisionId:divisionId,
+		    	terminalId:terminalId,
+		    	categoryId:categoryId,
+		    	truckTypeId:truckTypeId,
+		    	truckid:truckId
+		      },
+		      success: function(result){
+	        try{
+	        	$('#myModal').modal('toggle');
+	        	var list = result.resultList;
+				fillTruckData(list);
+
+		        toastr.success(result.message, 'Success!')
+			} catch(e){
+				toastr.error('Something went wrong', 'Error!')
+			}
+	  },error:function(result){
+		  try{
+			  	var obj = JSON.parse(result.responseText);
+			  	toastr.error(obj.message, 'Error!')
+			  }catch(e){
+				  toastr.error('Something went wrong', 'Error!')
+			  }
+	  }});
+	  return true;
+}
+
+function fillTruckData(list) {
+	var tableValue = "";
+	if(list.length > 0) {
+		 for(var i=0;i<list.length;i++) {
+			var obj = list[i];
+			tableValue = tableValue + ("<tr class='info'>");
+    		var unitNo = "";
+    		if(obj.unitNo != null) {
+    			unitNo = obj.unitNo;
+    		}
+    		var owner = "";
+    		if(obj.owner != null) {
+    			owner = obj.owner;
+    		}
+    		var oOName = "";
+    		if(obj.oOName != null) {
+    			oOName = obj.oOName;
+    		}
+    		var category = "";
+    		if(obj.catogoryName != null) {
+    			category = obj.catogoryName;
+    		}
+    		var status = "";
+    		if(obj.statusName != null) {
+    			status = obj.statusName;
+    		}
+    		var usage = "";
+    		if(obj.truchUsage != null) {
+    			usage = obj.truchUsage;
+    		}
+    		var divisionName = "";
+    		if(obj.divisionName != null) {
+    			divisionName = obj.divisionName;
+    		}
+    		var terminalName = "";
+    		if(obj.terminalName != null) {
+    			terminal = obj.terminalName;
+    		}
+    		var truckType = "";
+    		if(obj.truckType != null) {
+    			truckType = obj.truckType;
+    		}
+    		var finance = "";
+    		if(obj.finance != null) {
+    			finance = obj.finance;
+    		}
+    		
+    		tableValue = tableValue + ("<td>"+(unitNo)+"</td>");
+    		tableValue = tableValue + ("<td>"+(owner)+"</td>");
+    		tableValue = tableValue + ("<td>"+(oOName)+"</td>");
+    		tableValue = tableValue + ("<td>"+(category)+"</td>");
+    		tableValue = tableValue + ("<td>"+(status)+"</td>");
+    		tableValue = tableValue + ("<td>"+(usage)+"</td>");
+    		tableValue = tableValue + ("<td>"+(divisionName)+"</td>");
+    		tableValue = tableValue + ("<td>"+(terminal)+"</td>");
+    		tableValue = tableValue + ("<td>"+(truckType)+"</td>");
+    		tableValue = tableValue + ("<td>"+(finance)+"</td>");
+    		tableValue = tableValue + "<td><a href = '#' data-toggle='modal' data-target='#myModal'  onclick=checkFlag('update');onClickMethodQuestion('"+(obj.truckId)+"')>Update</a> / <a href='#' onclick=deleteTruck('"+(obj.truckId)+"')>Delete</a></td>";
+    		tableValue = tableValue + ("</tr>");
+		}
+		$("#truckData").html(tableValue);
+	}
+}
+
+function deleteTruck(truckId){
+	 
+	  $.ajax({url: BASE_URL + "deletetruck/" + truckId,
+		      type:"GET",
+		      success: function(result){
+	    	  try{	
+					var list = result.resultList;
+					fillTruckData(list);
+	    		  toastr.success(result.message, 'Success!')
+			  }catch(e){
+				toastr.error('Something went wrong', 'Error!')
+			  }
+	  },error:function(result){
+		  try{
+			  	var obj = JSON.parse(result.responseText);
+			  	toastr.error(obj.message, 'Error!')
+			  }catch(e){
+				  toastr.error('Something went wrong', 'Error!')
+			  }
+	  }});
+	  return true;
+}
 	$(document).ready(function(){
-		$('#btnSave').click(function(){
+		/* $('#btnSave').click(function(){
 			$('#frm1').submit();
-		});
+		}); */
 		$('#btnSearch').click(function(){
 			$("#frmSearch").change(function() {
 			  $("#frmSearch").attr("action", "showques");
@@ -54,7 +197,7 @@ textarea{
 	function checkFlag(field) {
 		document.getElementById("addUpdateFlag").value = field;
 		if(field == 'update') {
-			document.getElementById("frm1").action = "updatetruck";
+			//document.getElementById("frm1").action = "updatetruck";
 			document.getElementById("btnSave").value = "Update";
 			$("#modelTitle").html("Edit Truck");
 		}
@@ -68,6 +211,14 @@ textarea{
 			/* document.getElementById("frm1").method = "GET";
 			document.getElementById("frm1").action = "showques";
 			document.getElementById("frm1").submit(); */
+		}
+	}
+	function navigate() {
+		var flag = $("#addUpdateFlag").val();
+		if(flag == 'add') {
+			createTruck('savetruck','POST');
+		} else if(flag == 'update') {
+			createTruck('updatetruck','PUT');			
 		}
 	}
 </script>
@@ -202,6 +353,12 @@ function check() {
 		$("#unitNo").focus();
 		return false;
 	}
+	if(!isNumeric(unitNo)) {
+		msg.show();
+		msgvalue.text("Only numerics allowed in UnitNo");
+		$("#unitNo").focus();
+		return false;
+	}
 	if(usage == "") {
 		msg.show();
 		msgvalue.text("Usage cannot be left blank.");
@@ -247,7 +404,7 @@ function emptyMessageDiv(){
 			<div class="col-sm-8">
 					<div class="modal fade" id="myModal" role="dialog">
 					    <div class="modal-dialog">
-						<form action="savetruck" method="POST" name="truck" id="frm1" onsubmit="return check()">
+						<form id="frm1">
 						<input type="hidden" id = "truckid" name= "truckid" value = "" />					
 						<input type="hidden" id = "addUpdateFlag" value = "" />					
 	
@@ -378,7 +535,7 @@ function emptyMessageDiv(){
 				        	</div>
 					        </div>
 					        <div class="modal-footer">
-					          <input type="button" class="btn btn-primary" id= "btnSave" value="Save" />
+					          <input type="button" class="btn btn-primary" id= "btnSave" value="Save" onclick="navigate()" />
 							  <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
 					        </div>
 					      </div>
@@ -430,7 +587,7 @@ function emptyMessageDiv(){
 						<th>Links</th>
 					</tr>
 				</thead>
-				<tbody>
+				<tbody id="truckData">
 					<c:forEach items="${LIST_TRUCK}" var="obj">
 						<tr class="info">
 							<td>${obj.unitNo}</td>							
@@ -443,7 +600,7 @@ function emptyMessageDiv(){
 							<td>${obj.terminalName}</td>
 							<td>${obj.truckType}</td>
 							<td>${obj.finance}</td>
-							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.truckId}')">Update</a> / <a href="deletetruck/${obj.truckId}">Delete</a></td>
+							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.truckId}')">Update</a> / <a href="#" onclick="deleteTruck('${obj.truckId}')">Delete</a></td>
 						</tr>
 					</c:forEach>
 				</tbody>

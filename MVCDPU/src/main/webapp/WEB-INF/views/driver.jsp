@@ -46,7 +46,15 @@ textarea{
 </style>
 <script type="text/javascript">
 
-function createDriver(){
+function navigate() {
+	var flag = $("#addUpdateFlag").val();
+	if(flag == 'add') {
+		createDriver('savedriver','POST');
+	} else if(flag == 'update') {
+		createDriver('updatedriver','PUT');			
+	}
+}
+function createDriver(urlToHit, methodType){
 	 
 	if(!check()){
 		 return false;
@@ -73,8 +81,11 @@ function createDriver(){
 	var roleId = $('#roleId :selected').val();
 	var statusId = $('#statusId :selected').val();
 	var driverClassId = $('#classId :selected').val();
-	
-	  $.ajax({url: BASE_URL+ "savedriver",
+	var driverId;
+	if(methodType == 'PUT') {
+		driverId = $("#driverid").val();
+	}
+	  $.ajax({url: BASE_URL+ urlToHit,
 		      type:"POST",
 		      data:{
 		    	driverCode:driverCode,
@@ -96,7 +107,8 @@ function createDriver(){
 		    	postalCode:zip,
 		    	city:city,
 		    	statusId:statusId,
-		    	driverClassId:driverClassId
+		    	driverClassId:driverClassId,
+		    	driverid:driverId
 		      },
 		      success: function(result){
 	        try{
@@ -213,9 +225,9 @@ function fillDriverData(list) {
 	}
 	
 	$(document).ready(function(){
-		$('#btnSave').click(function(){
+		/* $('#btnSave').click(function(){
 			$('#frm1').submit();
-		});
+		}); */
 		$('#btnSearch').click(function(){
 			$("#frmSearch").change(function() {
 			  $("#frmSearch").attr("action", "showques");
@@ -258,7 +270,7 @@ function fillDriverData(list) {
 	function checkFlag(field) {
 		document.getElementById("addUpdateFlag").value = field;
 		if(field == 'update') {
-			document.getElementById("frm1").action = "updatedriver";
+			//document.getElementById("frm1").action = "updatedriver";
 			document.getElementById("btnSave").value = "Update";
 			$("#modelTitle").html("Edit Driver");
 		}
@@ -424,6 +436,9 @@ function fillDriverData(list) {
 		            		document.getElementById("stateId").selectedIndex = i;		            		
 		            	}
 		            }
+		            
+		            changeStateLabel();
+		            getStates();
             	});
         	}
         }
@@ -442,13 +457,14 @@ function fillDriverData(list) {
         	$("#province").val("");
         	$("#unit").val("");
         	$("#zip").val("");
-        	$("#province").val("");
         	document.getElementById("statusId").innerHTML = "";
         	document.getElementById("divisionId").innerHTML = "";
         	document.getElementById("terminalId").innerHTML = "";
         	document.getElementById("categoryId").innerHTML = "";
         	document.getElementById("roleId").innerHTML = "";
         	document.getElementById("classId").innerHTML = ""; 
+        	document.getElementById("countryId").innerHTML = ""; 
+        	document.getElementById("stateId").innerHTML = ""; 
         }
         function emptyMessageDiv(){
         	var msg = $("#msg");
@@ -916,7 +932,7 @@ function check() {
 				        	</div>
 					        </div>
 					         <div class="modal-footer">
-					          <input type="button" class="btn btn-primary" id= "btnSave" value="Save" onclick="createDriver()" />
+					          <input type="button" class="btn btn-primary" id= "btnSave" value="Save" onclick="navigate()" />
 							  <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
 					        </div>
 					      </div>

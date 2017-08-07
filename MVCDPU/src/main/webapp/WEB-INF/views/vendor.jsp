@@ -43,9 +43,17 @@ textarea{
  <script src="<c:url value="/resources/validations.js" />"></script>
 <script type="text/javascript">
 	
-function createVendor(){
+function navigate() {
+	var flag = $("#addUpdateFlag").val();
+	if(flag == 'add') {
+		createVendor('savevendor','POST');
+	} else if(flag == 'update') {
+		createVendor('updatevendor','PUT');			
+	}
+}
+function createVendor(urlToHit,methodType){
 	 
-	if(!check()){
+	 if(!check()){
 		 return false;
 	 }
 	var vendorName = $("#vendorName").val();
@@ -66,11 +74,14 @@ function createVendor(){
    	var pager = $("#pager").val();
    	var countryId = $('#countryId :selected').val();
 	var stateId = $('#stateId :selected').val();
-	
-	  $.ajax({url: BASE_URL+ "savevendor",
+	var vendorId;
+	if(methodType == 'PUT') {
+		vendorId = $("#vendorid").val();
+	}
+	  $.ajax({url: BASE_URL+ urlToHit,
 		      type:"POST",
 		      data:{
-		    	vendorName:vendorName,
+		    	name:vendorName,
 		    	contact:contact,
 		    	address:address,
 		    	position:position,
@@ -88,6 +99,7 @@ function createVendor(){
 		    	cellular:cellular,
 		    	website:website,
 		    	pager:pager,
+		    	vendorid:vendorId
 		      },
 		      success: function(result){
 	        try{
@@ -117,8 +129,8 @@ function fillVendorData(list) {
 			var obj = list[i];
 			tableValue = tableValue + ("<tr class='info'>");
 			var vendorName = "";
-    		if(obj.vendorName != null) {
-    			vendorName = obj.vendorName;
+    		if(obj.name != null) {
+    			vendorName = obj.name;
     		}
     		var unitNo = "";
     		if(obj.unitNo != null) {
@@ -150,12 +162,12 @@ function fillVendorData(list) {
     		}
     		
     		tableValue = tableValue + ("<td>"+(unitNo)+"</td>");
-    		tableValue = tableValue + ("<td>"+(name)+"</td>");
+    		tableValue = tableValue + ("<td>"+(vendorName)+"</td>");
     		tableValue = tableValue + ("<td>"+(email)+"</td>");
     		tableValue = tableValue + ("<td>"+(city)+"</td>");
     		tableValue = tableValue + ("<td>"+(stateName)+"</td>");
-    		tableValue = tableValue + ("<td>"+(phone)+"</td>");
-    		tableValue = tableValue + ("<td>"+(fax)+"</td>");
+    		tableValue = tableValue + ("<td>"+(cellular)+"</td>");
+    		tableValue = tableValue + ("<td>"+(faxNo)+"</td>");
     		tableValue = tableValue + ("<td>"+(afterHours)+"</td>");
     		tableValue = tableValue + "<td><a href = '#' data-toggle='modal' data-target='#myModal'  onclick='checkFlag('update');onClickMethodQuestion('"+(obj.vendorId)+"')>Update</a> / <a href='#' onclick=deleteVendor('"+(obj.vendorId)+"')>Delete</a></td>";
     		tableValue = tableValue + ("</tr>");
@@ -166,7 +178,6 @@ function fillVendorData(list) {
 
 function deleteVendor(vendorId){
 	 
-	alert(vendorId);
 	  $.ajax({url: BASE_URL + "deletevendor/" + vendorId,
 		      type:"GET",
 		      success: function(result){
@@ -190,9 +201,9 @@ function deleteVendor(vendorId){
 }
 
 	$(document).ready(function(){
-		$('#btnSave').click(function(){
+		/* $('#btnSave').click(function(){
 			$('#frm1').submit();
-		});
+		}); */
 		$('#btnSearch').click(function(){
 			$("#frmSearch").change(function() {
 			  $("#frmSearch").attr("action", "showques");
@@ -205,7 +216,7 @@ function deleteVendor(vendorId){
 function checkFlag(field) {
 	document.getElementById("addUpdateFlag").value = field;
 	if(field == 'update') {
-		document.getElementById("frm1").action = "updatevendor";
+		//document.getElementById("frm1").action = "updatevendor";
 		document.getElementById("btnSave").value = "Update";
 		$("#modelTitle").html("Edit Vendor");
 	}
@@ -277,6 +288,9 @@ function checkFlag(field) {
 	            		document.getElementById("stateId").selectedIndex = i;		            		
 	            	}
 	            }
+	            
+	            changeStateLabel();
+	            getStates();
 	       	});
     	}
     }
@@ -297,6 +311,8 @@ function checkFlag(field) {
     	$("#website").val("");
     	$("#cellular").val("");
     	$("#pager").val("");
+    	document.getElementById("countryId").innerHTML = ""; 
+    	document.getElementById("stateId").innerHTML = ""; 
     }
 </script>
 <script type="text/javascript">
@@ -830,7 +846,7 @@ function emptyMessageDiv(){
 				        	</div>
 				        	</div>
 				        	<div class="modal-footer">
-					          <input type="button" class="btn btn-primary" id= "btnSave" value="Save" onclick="createVendor();" />
+					          <input type="button" class="btn btn-primary" id= "btnSave" value="Save" onclick="navigate()" />
 							  <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
 					        </div>
 					        </div>

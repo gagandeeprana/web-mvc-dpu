@@ -429,6 +429,11 @@ public class VendorServiceImpl implements VendorService {
 				
 				List<CountryStateCityModel> countryList = countryStateCityService.getAllCountries();
 				response.setCountryList(countryList);
+				
+				if(vendor.getCountry() != null){
+					List<CountryStateCityModel> stateList = countryStateCityService.getStatesByCountryId(vendor.getCountry().getCountryId());
+					response.setStateList(stateList);
+				}
 			}
 		} finally {
 			if (session != null) {
