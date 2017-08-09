@@ -16,6 +16,8 @@ public class IssueModel implements Serializable{
 
 	private String title;
 	
+	private String description;
+	
 	private String vmcName;
 	private Long vmcId;
 	private List<VehicleMaintainanceCategoryModel> vmcList;
@@ -192,6 +194,14 @@ public class IssueModel implements Serializable{
 
 	public void setUnitTypeList(List<TypeResponse> unitTypeList) {
 		this.unitTypeList = unitTypeList;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 	
 }

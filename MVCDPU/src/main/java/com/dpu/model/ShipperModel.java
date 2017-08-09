@@ -8,80 +8,63 @@ import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 import com.dpu.entity.Status;
 
 @JsonSerialize(include = Inclusion.NON_NULL)
-public class ShipperResponse {
+public class ShipperModel {
 
-	//@JsonProperty(value = "shipper_id")
 	private Long shipperId;
 
-	//@JsonProperty(value = "company")
 	private String locationName;
 
-	//@JsonProperty(value = "address")
 	private String address;
 
-	//@JsonProperty(value = "unit")
 	private String unit;
 
-	//@JsonProperty(value = "city")
 	private String city;
 
-	//@JsonProperty(value = "province_state")
-	private String provinceState;
-
-	//@JsonProperty(value = "postal_zip")
 	private String postalZip;
 
-	//@JsonProperty(value = "status")
-	private String status;
-	private Long statusId;
-
-	//@JsonProperty(value = "zone")
 	private String zone;
 
-	//@JsonProperty(value = "lead_time")
 	private String leadTime;
 
-	//@JsonProperty(value = "time_zone")
 	private String timeZone;
 
-	//@JsonProperty(value = "contact")
 	private String contact;
 
-	//@JsonProperty(value = "position")
 	private String position;
 
-	//@JsonProperty(value = "phone")
 	private String phone;
 
-	//@JsonProperty(value = "ext")
 	private String ext;
 
-	//@JsonProperty(value = "fax")
 	private String fax;
 
-	//@JsonProperty(value = "prefix")
 	private String prefix;
 
-	//@JsonProperty(value = "toll_free")
 	private String tollFree;
 
-	//@JsonProperty(value = "plant")
 	private String plant;
 
-	//@JsonProperty(value = "email")
 	private String email;
 
-	//@JsonProperty(value = "importer")
 	private String importer;
 
-	//@JsonProperty(value = "internal_notes")
 	private String internalNotes;
 
-	//@JsonProperty(value = "standard_notes")
 	private String standardNotes;
 	
 	private List<CompanyResponse> companyList;
+	
+	private String status;
+	private Long statusId;
 	private List<Status> statusList;
+	
+	private String stateName;
+	private Long stateId;
+	private List<CountryStateCityModel> stateList;
+	
+	private String countryName;
+	private Long countryId;
+	private List<CountryStateCityModel> countryList;
 
 	public List<CompanyResponse> getCompanyList() {
 		return companyList;
@@ -129,14 +112,6 @@ public class ShipperResponse {
 
 	public void setCity(String city) {
 		this.city = city;
-	}
-
-	public String getProvinceState() {
-		return provinceState;
-	}
-
-	public void setProvinceState(String provinceState) {
-		this.provinceState = provinceState;
 	}
 
 	public String getPostalZip() {
@@ -289,5 +264,53 @@ public class ShipperResponse {
 
 	public void setStatusList(List<Status> statusList) {
 		this.statusList = statusList;
+	}
+
+	public String getStateName() {
+		return stateName;
+	}
+
+	public void setStateName(String stateName) {
+		this.stateName = stateName;
+	}
+
+	public Long getStateId() {
+		return stateId;
+	}
+
+	public void setStateId(Long stateId) {
+		this.stateId = stateId;
+	}
+
+	public List<CountryStateCityModel> getStateList() {
+		return stateList;
+	}
+
+	public void setStateList(List<CountryStateCityModel> stateList) {
+		this.stateList = stateList;
+	}
+
+	public String getCountryName() {
+		return countryName;
+	}
+
+	public void setCountryName(String countryName) {
+		this.countryName = countryName;
+	}
+
+	public Long getCountryId() {
+		return countryId;
+	}
+
+	public void setCountryId(Long countryId) {
+		this.countryId = countryId;
+	}
+
+	public List<CountryStateCityModel> getCountryList() {
+		return countryList;
+	}
+
+	public void setCountryList(List<CountryStateCityModel> countryList) {
+		this.countryList = countryList;
 	}
 }

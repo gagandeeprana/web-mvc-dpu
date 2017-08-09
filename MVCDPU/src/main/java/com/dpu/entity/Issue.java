@@ -45,6 +45,9 @@ public class Issue implements Serializable {
 	@Column(name = "unit_no")
 	private String unitNo;
 	
+	@Column(name = "description")
+	private String description;
+	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "reported_by_id")
 	private Driver reportedBy;
@@ -115,6 +118,14 @@ public class Issue implements Serializable {
 
 	public void setUnitType(Type unitType) {
 		this.unitType = unitType;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 	
 	

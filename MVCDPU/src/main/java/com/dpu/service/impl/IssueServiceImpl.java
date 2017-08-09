@@ -108,6 +108,7 @@ public class IssueServiceImpl implements IssueService  {
 				IssueModel issueObj = new IssueModel();
 				issueObj.setId(issue.getId());
 				issueObj.setTitle(issue.getIssueName());
+				issueObj.setDescription(issue.getDescription());
 				issueObj.setVmcName(issue.getVmc().getName());
 				issueObj.setReportedByName(issue.getReportedBy().getFirstName());
 				issueObj.setUnitTypeName(issue.getUnitType().getTypeName());
@@ -225,7 +226,7 @@ public class IssueServiceImpl implements IssueService  {
 
 				issueModel.setId(issue.getId());
 				issueModel.setTitle(issue.getIssueName());
-				
+				issueModel.setDescription(issue.getDescription());
 				issueModel.setVmcId(issue.getVmc().getId());
 				issueModel.setReportedById(issue.getReportedBy().getDriverId());
 				issueModel.setUnitTypeId(issue.getUnitType().getTypeId());
@@ -417,6 +418,7 @@ public class IssueServiceImpl implements IssueService  {
 		issue.setStatus(status);
 		issue.setIssueName(issueModel.getTitle());
 		issue.setUnitNo(issueModel.getUnitNo());
+		issue.setDescription(issueModel.getDescription());
 		return issue;
 	}
 

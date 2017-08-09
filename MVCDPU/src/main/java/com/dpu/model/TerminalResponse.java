@@ -40,7 +40,7 @@ public class TerminalResponse {
 	public void setServiceIds(List<Long> serviceIds) {
 		this.serviceIds = serviceIds;
 	}
-	private List<ShipperResponse> shipperList;
+	private List<ShipperModel> shipperList;
 	
 	public Long getTerminalId() {
 		return terminalId;
@@ -127,10 +127,10 @@ public class TerminalResponse {
 	public void setShipperName(String shipperName) {
 		this.shipperName = shipperName;
 	}
-	public List<ShipperResponse> getShipperList() {
+	public List<ShipperModel> getShipperList() {
 		return shipperList;
 	}
-	public void setShipperList(List<ShipperResponse> shipperList) {
+	public void setShipperList(List<ShipperModel> shipperList) {
 		this.shipperList = shipperList;
 	}
 }

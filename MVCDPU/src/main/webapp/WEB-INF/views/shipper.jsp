@@ -81,7 +81,13 @@ textarea{
 	          for(var i = 0;i < data.statusList.length;i++) {
 	          	status.options[status.options.length] = new Option(data.statusList[i].status);
 	          	status.options[i].value = data.statusList[i].id;
-	          } 
+	          }
+	          
+		        var country = document.getElementById("countryId");
+	            for(var i = 0;i < data.countryList.length;i++) {
+	            	country.options[country.options.length] = new Option(data.countryList[i].countryName);
+	            	country.options[i].value = data.countryList[i].countryId;
+	            }
 	      });
     	} else {
     		$.get("getshipper/shipperId",{"shipperId" : quesId}, function(data) {
@@ -357,9 +363,9 @@ function emptyMessageDiv(){
 											<div class="col-sm-6">
 												<div class="input-group">
 													<span class="input-group-addon">
-														 <b>Contact</b>												
+														 <b>Importer</b>												
 													</span>
-													<input type="text" class="form-control" placeHolder="Enter Contact" id="contact" name="contact" value="" />
+													<input type="text" class="form-control" placeHolder="Enter Importer" id="importer" name="importer" value="" />
 												</div>
 											</div>
 										</div>
@@ -369,18 +375,31 @@ function emptyMessageDiv(){
 											<div class="col-sm-6">
 												<div class="input-group">
 													<span class="input-group-addon">
-														 <b>Address</b>												
+														 <b>Country</b>												
 													</span>
-													<input type="text" class="form-control" placeHolder="Enter Address" id="address" name="address" value="" />
+													<select class="form-control" name="countryId" id="countryId" onchange="getStates();changeStateLabel()">
+													</select>
 												</div>
 											</div>
 											<div class="col-sm-6">
-												<div class="input-group">
-													<span class="input-group-addon">
-														 <b>Position</b>												
-													</span>
-													<input type="text" class="form-control" placeHolder="Enter Position" id="position" name="position" value="" />
+												<div class="row">
+													<div class="col-sm-6">
+														<div class="input-group">
+															<span class="input-group-addon">
+														 		<b>Contact</b>												
+															</span>
+															<input type="text" class="form-control" placeHolder="Enter Contact" id="contact" name="contact" value="" />
+														</div>
+													</div>
+												<div class="col-sm-6">
+													<div class="input-group">
+														<span class="input-group-addon">
+															 <b>Position</b>												
+														</span>
+														<input type="text" class="form-control" placeHolder="Enter Position" id="position" name="position" value="" />
+													</div>
 												</div>
+											</div>
 											</div>
 										</div>
 									</div>
@@ -390,9 +409,9 @@ function emptyMessageDiv(){
 											<div class="col-sm-6">
 												<div class="input-group">
 													<span class="input-group-addon">
-														 <b>UnitNo</b>												
+														 <b>Address</b>												
 													</span>
-													<input type="text" class="form-control" placeHolder="Enter UnitNo" id="unitNo" name="unit" value="" />
+													<input type="text" class="form-control" placeHolder="Enter Address" id="address" name="address" value="" />
 												</div>
 											</div>
 											<div class="col-sm-6">
@@ -423,9 +442,9 @@ function emptyMessageDiv(){
 											<div class="col-sm-6">
 												<div class="input-group">
 													<span class="input-group-addon">
-														 <b>City</b>												
+														 <b>UnitNo</b>												
 													</span>
-													<input type="text" class="form-control" placeHolder="Enter City" id="city" name="city" value="" />
+													<input type="text" class="form-control" placeHolder="Enter UnitNo" id="unitNo" name="unit" value="" />
 												</div>
 											</div>	
 											<div class="col-sm-6">
@@ -456,11 +475,11 @@ function emptyMessageDiv(){
 											<div class="col-sm-6">
 												<div class="input-group">
 													<span class="input-group-addon">
-														 <b>Province</b>												
+														 <b>City</b>												
 													</span>
-													<input type="text" class="form-control" placeHolder="Enter Province/State" id="province" name="provinceState" value="" />
+													<input type="text" class="form-control" placeHolder="Enter City" id="city" name="city" value="" />
 												</div>
-											</div>	
+											</div>			
 											<div class="col-sm-6">
 												<div class="row">
 													<div class="col-sm-6">
@@ -492,22 +511,22 @@ function emptyMessageDiv(){
 													<div class="col-sm-6">
 														<div class="input-group">
 															<span class="input-group-addon">
-																 <b>Status</b>												
+																 <b id="stateLabel">Province</b>												
 															</span>
-															<select class="form-control" name="statusId" id="statusId">
+															<select class="form-control" name="stateId" id="stateId">
 															</select>
 														</div>
 													</div>
 													<div class="col-sm-6">
 														<div class="input-group">
 															<span class="input-group-addon">
-																 <b>CellNumber</b>												
+																 <b>Zip</b>												
 															</span>
-															<input type="text" class="form-control" placeHolder="Enter CellNumber" id="cellnumber" name="cellnumber" value="" />
+															<input type="text" class="form-control" placeHolder="Enter Province/State" id="province" name="provinceState" value="" />
 														</div>
-													</div>												
+													</div>
 												</div>
-											</div>	
+											</div>
 											<div class="col-sm-6">
 												<div class="row">
 													<div class="col-sm-6">
@@ -538,17 +557,18 @@ function emptyMessageDiv(){
 													<div class="col-sm-6">
 														<div class="input-group">
 															<span class="input-group-addon">
-																 <b>LeadTime</b>												
+																 <b>Status</b>												
 															</span>
-															<input type="text" class="form-control" placeHolder="Enter LeadTime" id="leadTime" name="leadTime" value="" />
+															<select class="form-control" name="statusId" id="statusId">
+															</select>
 														</div>
 													</div>
 													<div class="col-sm-6">
 														<div class="input-group">
 															<span class="input-group-addon">
-																 <b>TimeZone</b>												
+																 <b>CellNumber</b>												
 															</span>
-															<input type="text" class="form-control" placeHolder="Enter TimeZone" id="timeZone" name="timeZone" value="" />
+															<input type="text" class="form-control" placeHolder="Enter CellNumber" id="cellnumber" name="cellnumber" value="" />
 														</div>
 													</div>												
 												</div>
@@ -570,14 +590,26 @@ function emptyMessageDiv(){
 									
 									<div class="form-group">
 										<div class="row">
-											<div class="col-sm-6">
-												<div class="input-group">
-													<span class="input-group-addon">
-														 <b>Importer</b>												
-													</span>
-													<input type="text" class="form-control" placeHolder="Enter Importer" id="importer" name="importer" value="" />
+												<div class="col-sm-6">
+												<div class="row">
+													<div class="col-sm-6">
+														<div class="input-group">
+															<span class="input-group-addon">
+																 <b>LeadTime</b>												
+															</span>
+															<input type="text" class="form-control" placeHolder="Enter LeadTime" id="leadTime" name="leadTime" value="" />
+														</div>
+													</div>
+													<div class="col-sm-6">
+														<div class="input-group">
+															<span class="input-group-addon">
+																 <b>TimeZone</b>												
+															</span>
+															<input type="text" class="form-control" placeHolder="Enter TimeZone" id="timeZone" name="timeZone" value="" />
+														</div>
+													</div>												
 												</div>
-											</div>	
+											</div>
 											<div class="col-sm-6">
 												<div class="row">
 													<div class="col-sm-12">
@@ -685,7 +717,7 @@ function emptyMessageDiv(){
 							<td>${obj.address}</td>
 							<td>${obj.unit}</td>
 							<td>${obj.city}</td>
-							<td>${obj.provinceState}</td>
+							<td>${obj.stateName}</td>
 							<td>${obj.phone}</td>
 							<td>${obj.prefix}</td>
 							<td>${obj.tollFree}</td>

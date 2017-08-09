@@ -49,7 +49,7 @@ public class OrderModel implements Serializable{
 	
 	private List<ProbilModel> probilList;
 	
-	private List<ShipperResponse> shipperConsineeList;
+	private List<ShipperModel> shipperConsineeList;
 	
 	private List<TypeResponse> pickupList;
 	
@@ -241,11 +241,11 @@ public class OrderModel implements Serializable{
 		this.companyList = companyList;
 	}
 
-	public List<ShipperResponse> getShipperConsineeList() {
+	public List<ShipperModel> getShipperConsineeList() {
 		return shipperConsineeList;
 	}
 
-	public void setShipperConsineeList(List<ShipperResponse> shipperConsineeList) {
+	public void setShipperConsineeList(List<ShipperModel> shipperConsineeList) {
 		this.shipperConsineeList = shipperConsineeList;
 	}
 

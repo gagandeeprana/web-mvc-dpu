@@ -4,25 +4,25 @@ import java.util.List;
 
 import org.hibernate.Session;
 
-import com.dpu.model.ShipperResponse;
+import com.dpu.model.ShipperModel;
 
 public interface ShipperService {
 
-	Object add(ShipperResponse shipperResponse);
+	Object add(ShipperModel shipperResponse);
 
 	Object delete(Long id);
 
-	List<ShipperResponse> getAll();
+	List<ShipperModel> getAll();
 
-	ShipperResponse get(Long id);
+	ShipperModel get(Long id);
 
-	ShipperResponse getMasterData();
+	ShipperModel getMasterData();
 
-	List<ShipperResponse> getShipperByCompanyName(String companyName);
+	List<ShipperModel> getShipperByCompanyName(String companyName);
 
-	Object update(Long id, ShipperResponse shipperResponse);
+	Object update(Long id, ShipperModel shipperResponse);
 	
-	List<ShipperResponse> getSpecificData(Session session);
+	List<ShipperModel> getSpecificData(Session session);
 
-	ShipperResponse getParticularData(Long id);
+	ShipperModel getParticularData(Long id);
 }

@@ -19,11 +19,11 @@ public class ProbilModel implements Serializable{
 	
 	private String shipperName;
 	private Long shipperId;
-	private List<ShipperResponse> shipperList;
+	private List<ShipperModel> shipperList;
 	
 	private String consineeName;
 	private Long consineeId;
-	private List<ShipperResponse> consineeList;
+	private List<ShipperModel> consineeList;
 	
 	private String pickupName;
 	private Long pickupId;
@@ -108,11 +108,11 @@ public class ProbilModel implements Serializable{
 		this.shipperId = shipperId;
 	}
 
-	public List<ShipperResponse> getShipperList() {
+	public List<ShipperModel> getShipperList() {
 		return shipperList;
 	}
 
-	public void setShipperList(List<ShipperResponse> shipperList) {
+	public void setShipperList(List<ShipperModel> shipperList) {
 		this.shipperList = shipperList;
 	}
 
@@ -132,11 +132,11 @@ public class ProbilModel implements Serializable{
 		this.consineeId = consineeId;
 	}
 
-	public List<ShipperResponse> getConsineeList() {
+	public List<ShipperModel> getConsineeList() {
 		return consineeList;
 	}
 
-	public void setConsineeList(List<ShipperResponse> consineeList) {
+	public void setConsineeList(List<ShipperModel> consineeList) {
 		this.consineeList = consineeList;
 	}
 

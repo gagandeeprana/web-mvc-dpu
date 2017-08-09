@@ -33,7 +33,7 @@ import com.dpu.model.Failed;
 import com.dpu.model.OrderModel;
 import com.dpu.model.OrderPickUpDeliveryModel;
 import com.dpu.model.ProbilModel;
-import com.dpu.model.ShipperResponse;
+import com.dpu.model.ShipperModel;
 import com.dpu.model.Success;
 import com.dpu.model.TypeResponse;
 import com.dpu.service.CompanyService;
@@ -533,7 +533,7 @@ public class OrderServiceImpl implements OrderService {
 		List<TypeResponse> currencyList = AllList.getTypeResponse(session, 9l);
 		order.setCurrencyList(currencyList);
 		
-		List<ShipperResponse> shipperConsineeList = shipperService.getSpecificData(session);
+		List<ShipperModel> shipperConsineeList = shipperService.getSpecificData(session);
 		order.setShipperConsineeList(shipperConsineeList);
 		
 		List<TypeResponse> pickUpTypes = AllList.getTypeResponse(session, 10l);
@@ -600,13 +600,13 @@ public class OrderServiceImpl implements OrderService {
 						BeanUtils.copyProperties(probil, probilModel);
 						probilModel.setConsineeName(probil.getConsine().getLocationName());
 						probilModel.setConsineeId(probil.getConsine().getShipperId());
-						List<ShipperResponse> consineeList = new ArrayList<ShipperResponse>();
+						List<ShipperModel> consineeList = new ArrayList<ShipperModel>();
 						consineeList.add(shipperService.getParticularData(probil.getConsine().getShipperId()));
 						probilModel.setConsineeList(consineeList);
 						
 						probilModel.setShipperName(probil.getShipper().getLocationName());
 						probilModel.setShipperId(probil.getShipper().getShipperId());
-						List<ShipperResponse> shipperList = new ArrayList<ShipperResponse>();
+						List<ShipperModel> shipperList = new ArrayList<ShipperModel>();
 						shipperList.add(shipperService.getParticularData(probil.getShipper().getShipperId()));
 						probilModel.setShipperList(shipperList);
 						
@@ -659,7 +659,7 @@ public class OrderServiceImpl implements OrderService {
 					List<TypeResponse> currencyList = AllList.getTypeResponse(session, 9l);
 					orderModel.setCurrencyList(currencyList);
 					
-					List<ShipperResponse> shipperConsineeList = shipperService.getSpecificData(session);
+					List<ShipperModel> shipperConsineeList = shipperService.getSpecificData(session);
 					orderModel.setShipperConsineeList(shipperConsineeList);
 					
 					List<TypeResponse> pickUpTypes = AllList.getTypeResponse(session, 10l);;

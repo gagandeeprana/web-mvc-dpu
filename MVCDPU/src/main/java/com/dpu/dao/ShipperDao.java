@@ -14,14 +14,8 @@ public interface ShipperDao extends GenericDao<Shipper> {
 
 	List<Shipper> findByLoactionName(String locationName, Session session);
 
-	// boolean add(Shipper shipper);
-	//
-	// boolean update(int id, Shipper shipper);
-	//
-	// boolean delete(int id);
-	//
-	// List<Shipper> getAll(String name);
-	//
-	// Shipper get(int id);
+	void save(Shipper shipper, Session session);
+
+	void update(Shipper shipper, Session session);
 
 }

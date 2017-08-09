@@ -19,7 +19,6 @@ public class Shipper {
 
 	@Id
 	@Column(name = "shipper_id")
-	//@JsonProperty(value = "shipper_id")
 	@GeneratedValue
 	private Long shipperId;
 
@@ -27,23 +26,15 @@ public class Shipper {
 	private String locationName;
 
 	@Column(name = "Address")
-	//@JsonProperty(value = "address")
 	private String address;
 
 	@Column(name = "unit")
-	//@JsonProperty(value = "unit")
 	private String unit;
 
 	@Column(name = "city")
-	//@JsonProperty(value = "city")
 	private String city;
 
-	@Column(name = "prov_state")
-	//@JsonProperty(value = "province_state")
-	private String provinceState;
-
 	@Column(name = "postal_zip")
-	//@JsonProperty(value = "postal_zip")
 	private String postalZip;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -51,65 +42,58 @@ public class Shipper {
 	private Status status;
 
 	@Column(name = "zone")
-	//@JsonProperty(value = "zone")
 	private String zone;
 
 	@Column(name = "lead_time")
-	//@JsonProperty(value = "lead_time")
 	private String leadTime;
 
 	@Column(name = "time_zone")
-	//@JsonProperty(value = "time_zone")
 	private String timeZone;
 
 	@Column(name = "contact")
-	//@JsonProperty(value = "contact")
 	private String contact;
 
 	@Column(name = "position")
-	//@JsonProperty(value = "position")
 	private String position;
 
 	@Column(name = "phone")
-	//@JsonProperty(value = "phone")
 	private String phone;
 
 	@Column(name = "ext")
-	//@JsonProperty(value = "ext")
 	private String ext;
 
 	@Column(name = "fax")
-	//@JsonProperty(value = "fax")
 	private String fax;
 
 	@Column(name = "shipper_prefix")
-	//@JsonProperty(value = "prefix")
 	private String prefix;
 
 	@Column(name = "toll_free")
-	//@JsonProperty(value = "toll_free")
 	private String tollFree;
 
 	@Column(name = "plant")
-	//@JsonProperty(value = "plant")
 	private String plant;
 
 	@Column(name = "email")
-	//@JsonProperty(value = "email")
 	private String email;
 
 	@Column(name = "importer")
-	//@JsonProperty(value = "importer")
 	private String importer;
 
 	@Column(name = "internam_notes")
-	//@JsonProperty(value = "internal_notes")
 	private String internalNotes;
 
 	@Column(name = "standard_notes")
-	//@JsonProperty(value = "standard_notes")
 	private String standardNotes;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "country_id")
+	private Country country;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "state_id")
+	private State state;
+	
 	public Long getShipperId() {
 		return shipperId;
 	}
@@ -148,14 +132,6 @@ public class Shipper {
 
 	public void setCity(String city) {
 		this.city = city;
-	}
-
-	public String getProvinceState() {
-		return provinceState;
-	}
-
-	public void setProvinceState(String provinceState) {
-		this.provinceState = provinceState;
 	}
 
 	public String getPostalZip() {
@@ -292,6 +268,22 @@ public class Shipper {
 
 	public void setStatus(Status status) {
 		this.status = status;
+	}
+
+	public Country getCountry() {
+		return country;
+	}
+
+	public void setCountry(Country country) {
+		this.country = country;
+	}
+
+	public State getState() {
+		return state;
+	}
+
+	public void setState(State state) {
+		this.state = state;
 	}
 
 	// private String ReportName;

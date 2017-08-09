@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.dpu.model.ShipperResponse;
+import com.dpu.model.ShipperModel;
 import com.dpu.service.ShipperService;
 
 @Controller
@@ -30,25 +30,25 @@ public class WebLocationController {
 	@RequestMapping(value = "/showshipper", method = RequestMethod.GET)
 	public ModelAndView showShipperScreen() {
 		ModelAndView modelAndView = new ModelAndView();
-		List<ShipperResponse> lstLocations = shipperService.getAll();
+		List<ShipperModel> lstLocations = shipperService.getAll();
 		modelAndView.addObject("LIST_LOCATION", lstLocations);
 		modelAndView.setViewName("shipper");
 		return modelAndView;
 	}
 	
 	@RequestMapping(value = "/shipper/getopenadd" , method = RequestMethod.GET)
-	@ResponseBody public ShipperResponse getOpenAdd() {
-		ShipperResponse shipperResponse = null;
+	@ResponseBody public ShipperModel getOpenAdd() {
+		ShipperModel ShipperModel = null;
 		try {
-			shipperResponse = shipperService.getMasterData();
+			ShipperModel = shipperService.getMasterData();
 		} catch (Exception e) {
 			System.out.println(e);
 		}
-		return shipperResponse;
+		return ShipperModel;
 	}
 	
 	@RequestMapping(value = "/saveshipper" , method = RequestMethod.POST)
-	public ModelAndView saveShipper(@ModelAttribute("shipper") ShipperResponse shipperResponse, HttpServletRequest request) {
+	public ModelAndView saveShipper(@ModelAttribute("shipper") ShipperModel ShipperModel, HttpServletRequest request) {
 		ModelAndView modelAndView = new ModelAndView();
 		HttpSession session = request.getSession();
 		String createdBy = "";
@@ -57,27 +57,27 @@ public class WebLocationController {
 		}
 //		divisionReq.setCreatedBy(createdBy);
 //		divisionReq.setCreatedOn(new Date());
-		shipperService.add(shipperResponse);
+		shipperService.add(ShipperModel);
 		modelAndView.setViewName("redirect:showshipper");
 		return modelAndView;
 	}
 	
 	@RequestMapping(value = "/getshipper/shipperId" , method = RequestMethod.GET)
-	@ResponseBody  public ShipperResponse getShipper(@RequestParam("shipperId") Long shipperId) {
-		ShipperResponse shipperResponse = null;
+	@ResponseBody  public ShipperModel getShipper(@RequestParam("shipperId") Long shipperId) {
+		ShipperModel ShipperModel = null;
 		try {
-			shipperResponse = (ShipperResponse) shipperService.get(shipperId);
+			ShipperModel = (ShipperModel) shipperService.get(shipperId);
 		} catch (Exception e) {
 			System.out.println(e);
 			logger.info("Exception in getCategory is: " + e);
 		}
-		return shipperResponse;
+		return ShipperModel;
 	}
 	
 	@RequestMapping(value = "/updateshipper" , method = RequestMethod.POST)
-	public ModelAndView updateShipper(@ModelAttribute("shipper") ShipperResponse shipperResponse, @RequestParam("shipperid") Long shipperId) {
+	public ModelAndView updateShipper(@ModelAttribute("shipper") ShipperModel ShipperModel, @RequestParam("shipperid") Long shipperId) {
 		ModelAndView modelAndView = new ModelAndView();
-		shipperService.update(shipperId, shipperResponse);
+		shipperService.update(shipperId, ShipperModel);
 		modelAndView.setViewName("redirect:showshipper");
 		return modelAndView;
 	}
