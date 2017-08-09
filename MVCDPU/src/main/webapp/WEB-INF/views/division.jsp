@@ -40,14 +40,138 @@ textarea{
 }
 
 </style>
+	<jsp:include page="Include.jsp"></jsp:include>
+ <script src="<c:url value="/resources/validations.js" />"></script>
 <script type="text/javascript">
+function navigate() {
+	var flag = $("#addUpdateFlag").val();
+	if(flag == 'add') {
+		createDivision('savedivision','POST');
+	} else if(flag == 'update') {
+		createDivision('updatedivision','PUT');			
+	}
+}
+function createDivision(urlToHit,methodType){
+	 
+	 if(!check()){
+		 return false;
+	 }
+	 
+	 	var divisionCode = $("#divisionCode").val();
+	   	var divisionName = $("#divisionName").val();
+	   	var federal = $("#federal").val();
+	   	var provincial = $("#provincial").val();
+	   	var scac = $("#scac").val();
+	   	var carrierCode = $("#carrierCode").val();
+	   	var contractPrefix = $("#contractPrefix").val();
+	   	var invoicePrefix = $("#invoicePrefix").val();
+	   	var statusId = $('#status :selected').val();
+	  	var divisionId;
+	   	if(methodType == 'PUT') {
+	   		divisionId = $('#divisionid').val();
+	   	}
+	   
+
+	   	
+		  $.ajax({url: BASE_URL+ urlToHit,
+			      type:"POST",
+			      data:{
+			    	divisionCode:divisionCode,
+			    	divisionName:divisionName,
+			    	fedral:federal,
+			    	provincial:provincial,
+			    	scac:scac,
+			    	statusId:statusId,
+			    	carrierCode:carrierCode,
+			    	contractPrefix:contractPrefix,
+			    	invoicePrefix:invoicePrefix,
+			    	divisionid:divisionId
+			      },
+			      success: function(result){
+		        try{
+		        	$('#myModal').modal('toggle');
+		        	var list = result.resultList;
+					fillDivisionData(list);
+
+			        toastr.success(result.message, 'Success!')
+				} catch(e){
+					toastr.error('Something went wrong', 'Error!')
+				}
+		  },error:function(result){
+			  try{
+				  	var obj = JSON.parse(result.responseText);
+				  	toastr.error(obj.message, 'Error!')
+				  }catch(e){
+					  toastr.error('Something went wrong', 'Error!')
+				  }
+		  }});
+		  return true;
+}
+
+function fillDivisionData(list) {
+	var tableValue = "";
+	if(list.length > 0) {
+		 for(var i=0;i<list.length;i++) {
+			var obj = list[i];
+			tableValue = tableValue + ("<tr class='info'>");
+    		var divisionCode = "";
+    		if(obj.divisionCode != null) {
+    			divisionCode = obj.divisionCode;
+    		}
+    		var divisionName = "";
+    		if(obj.divisionName != null) {
+    			divisionName = obj.divisionName;
+    		}
+    		var federal = "";
+    		if(obj.fedral != null) {
+    			federal = obj.fedral;
+    		}
+    		var provincial = "";
+    		if(obj.provincial != null) {
+    			provincial = obj.provincial;
+    		}
+    		
+    		tableValue = tableValue + ("<td>"+(divisionCode)+"</td>");
+    		tableValue = tableValue + ("<td>"+(divisionName)+"</td>");
+    		tableValue = tableValue + ("<td>"+(federal)+"</td>");
+    		tableValue = tableValue + ("<td>"+(provincial)+"</td>");
+    		tableValue = tableValue + "<td><a href = '#' data-toggle='modal' data-target='#myModal'  onclick=checkFlag('update');onClickMethodQuestion('"+(obj.divisionId)+"')>Update</a> / <a href='#' onclick=deleteDivision('"+(obj.divisionId)+"')>Delete</a></td>";
+    		tableValue = tableValue + ("</tr>");
+		}
+		$("#divisionData").html(tableValue);
+	}
+}
+
+function deleteDivision(divisionId){
+	 
+	  $.ajax({url: BASE_URL + "deletedivision/" + divisionId,
+		      type:"GET",
+		      success: function(result){
+	    	  try{	
+					var list = result.resultList;
+					fillDivisionData(list);
+					
+	    		  toastr.success(result.message, 'Success!')
+			  }catch(e){
+				toastr.error('Something went wrong', 'Error!')
+			  }
+	  },error:function(result){
+		  try{
+			  	var obj = JSON.parse(result.responseText);
+			  	toastr.error(obj.message, 'Error!')
+			  }catch(e){
+				  toastr.error('Something went wrong', 'Error!')
+			  }
+	  }});
+	  return true;
+}
 	$(document).ready(function(){
 		var msg = document.getElementById("used").value;
 		if(msg.length > 0) {
 			alert($("#used").val());
 		}
 		$('#btnSave').click(function(){
-			$('#frm1').submit();
+		//	$('#frm1').submit();
 		});
 		$('#btnSearch').click(function(){
 			$("#frmSearch").change(function() {
@@ -61,7 +185,7 @@ textarea{
 function checkFlag(field) {
 	document.getElementById("addUpdateFlag").value = field;
 	if(field == 'update') {
-		document.getElementById("frm1").action = "updatedivision";
+		//document.getElementById("frm1").action = "updatedivision";
 		document.getElementById("btnSave").value = "Update";
 		$("#modelTitle").html("Edit Division");
 	}
@@ -215,25 +339,6 @@ function checkFlag(field) {
            	$("#invoicePrefix").val("");
            	document.getElementById("status").innerHTML = "";
         }
-        
-        function deleteItem(delId) {
-
-  	/* $.ajax({
-			method : "GET",
-			url : "deletedivision",
-			data : {
-				"divisionid" : delId
-			}
-		}).done(function(data) {
-			alert($(data).find('#used').val());
-		}); */
-
-		 $.get("deletedivision/divisionid",{"divisionid" : delId}, function(data) {
-			//console.log(data);
-			//alert(data);
-			alert($(data).find('#used').val());
-		});
-	}
 </script>
 <script src="//cdn.ckeditor.com/4.5.11/basic/ckeditor.js"></script>
 </head>
@@ -248,7 +353,7 @@ function checkFlag(field) {
 				    <div class="modal-dialog">
 
 				      <!-- Modal content-->
-				      	<form action="savedivision" method="POST" name="division" id="frm1" onsubmit="return check()">
+				      	<form id="frm1">
 						<input type="hidden" id = "addUpdateFlag" value = "" />
 						<input type="hidden" id = "divisionid" name = "divisionid" value = "" />
 						<% 
@@ -389,7 +494,7 @@ function checkFlag(field) {
 				        	</div>
 				        </div>
 				        <div class="modal-footer">
-				          <input type="button" class="btn btn-primary" id= "btnSave" value="Save" />
+				          <input type="button" class="btn btn-primary" id= "btnSave" value="Save" onclick="navigate()" />
 						  <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
 				        </div>
 				      </div>
@@ -437,14 +542,14 @@ function checkFlag(field) {
 						<th>Links</th>
 					</tr>
 				</thead>
-				<tbody>
+				<tbody id="divisionData">
 					<c:forEach items="${LIST_DIVISION}" var="obj">
 						<tr class="info">
 							<td>${obj.divisionCode}</td>							
 							<td>${obj.divisionName}</td>
 							<td>${obj.fedral}</td>
 							<td>${obj.provincial}</td>
-							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.divisionId}')">Update</a> / <a href="deletedivision/${obj.divisionId}">Delete</a></td>
+							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.divisionId}')">Update</a> / <a href="#" onclick="deleteDivision('${obj.divisionId}')">Delete</a></td>
 						</tr>
 					</c:forEach>
 				</tbody>

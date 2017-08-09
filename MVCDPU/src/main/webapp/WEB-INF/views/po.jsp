@@ -39,6 +39,12 @@ textarea{
 </style>
 <script type="text/javascript">
 	$(document).ready(function(){
+		var url = window.location.href;
+		if(url.indexOf("Active")) {
+			$("#btnActive").removeClass("btn btn-default").addClass("btn btn-info");
+			$("#btnComplete").addClass("btn btn-default");; 
+			$("#btnInvoiced").addClass("btn btn-default");; 
+		}
 		$("#btnNew").click(function(){
 			$("#frm1").submit();
 		});
@@ -109,13 +115,13 @@ function checkFlag(field) {
 			});
 		}
 		
-		function showInvoiceNo() {
+		/* function showInvoiceNo() {
 			if($('#statusId :selected').val() == "110") {
 				$("#invoceNoDiv").show();
 			} else {
 				$("#invoceNoDiv").hide();				
 			}
-		}
+		} */
 
 		var editIssueIds = new Array();
         function onClickMethodQuestion(quesId){
@@ -126,7 +132,7 @@ function checkFlag(field) {
        			$("#issueIds").html("");
        			$("#invoceNoDiv").hide();
             	$("#invoiceNo").val("");
-            	$.get("po/getopenadd", function(data) {
+            	$.get("/MVCDPU/po/getopenadd", function(data) {
     	           
     	            var vendor = document.getElementById("vendorId");
     	            for(var i = 0;i < data.vendorList.length;i++) {
@@ -146,11 +152,11 @@ function checkFlag(field) {
     	            	unitType.options[i].value = data.unitTypeList[i].typeId;
     	            }
     	            
-    	            var status = document.getElementById("statusId");
+    	            /* var status = document.getElementById("statusId");
     	            for(var i = 0;i < data.statusList.length;i++) {
     	            	status.options[status.options.length] = new Option(data.statusList[i].typeName);
     	            	status.options[i].value = data.statusList[i].typeId;
-    	            }
+    	            } */
     	        });
         	} else {
         		$("#mainDiv").hide();
@@ -190,7 +196,7 @@ function checkFlag(field) {
                     	}
                     }
                     
-                    var status = document.getElementById("statusId");
+                   /*  var status = document.getElementById("statusId");
                     var statusList = data.statusList;
     	            for(var i = 0;i < data.statusList.length;i++) {
     	            	status.options[status.options.length] = new Option(data.statusList[i].typeName);
@@ -198,9 +204,9 @@ function checkFlag(field) {
     	            	if(statusList[i].typeId == data.statusId) {
                     		document.getElementById("statusId").selectedIndex = i;
                     	}
-    	            }
+    	            } */
     	            
-    	            var status = document.getElementById("statusId");
+    	           /*  var status = document.getElementById("statusId"); */
                     var issueList = data.issueList;
 	            	var tableValue = "";
 					$("#issuesTable").html("");
@@ -246,7 +252,7 @@ function checkFlag(field) {
         	document.getElementById("vendorId").innerHTML = "";
         	document.getElementById("unitTypeId").innerHTML = "";
         	document.getElementById("categoryId").innerHTML = "";
-        	document.getElementById("statusId").innerHTML = "";
+        	/* document.getElementById("statusId").innerHTML = ""; */
             $("#invoiceNo").val("");
             $("#message").val("");
         }
@@ -307,6 +313,15 @@ function emptyMessageDiv(){
 	<div class="container">
 		<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="checkFlag('add'); onClickMethodQuestion('0'); emptyMessageDiv();" >Add New</button>
 		<div class="form-group">
+		<div class="row">
+			<div class="col-sm-4">
+			</div>
+			<div class="col-sm-8" align= "right">
+	          <input type="button" class="btn btn-default" id= "btnActive" value="Active" />
+	          <input type="button" class="btn btn-default" id= "btnComplete" value="Complete" />
+	          <input type="button" class="btn btn-default" id= "btnInvoiced" value="Invoiced" />
+			</div>			
+		</div>
 		<div class="row">
 			<div class="col-sm-8">
 					<div class="modal fade" id="myModal" role="dialog">
@@ -395,7 +410,7 @@ function emptyMessageDiv(){
 											</div>
 										</div>
 									</div>
-									<div class="form-group" id="statusDiv">
+									<!-- <div class="form-group" id="statusDiv">
 										<div class="row">
 											<div class="col-sm-12">
 												<div class="input-group">
@@ -407,7 +422,7 @@ function emptyMessageDiv(){
 												</div>
 											</div>
 										</div>
-									</div>
+									</div> -->
 									<div class="form-group" style="display: none;" id = "invoceNoDiv">
 										<div class="row">
 											<div class="col-sm-12">

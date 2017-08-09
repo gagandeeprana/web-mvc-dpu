@@ -23,6 +23,8 @@ public interface PurchaseOrderService {
 
 	List<PurchaseOrderModel> getPoByPoNo(Long poNo);
 
-	Object updateStatus(Long poId, Long statusId);
+	Object updateStatus(Long poId, Long statusId, PurchaseOrderModel poModel);
+
+	List<PurchaseOrderModel> getStatusPOs(String statusVal);
 
 }

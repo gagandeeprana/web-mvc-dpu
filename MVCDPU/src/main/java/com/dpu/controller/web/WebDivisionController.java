@@ -1,6 +1,5 @@
 package com.dpu.controller.web;
 
-import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -9,6 +8,8 @@ import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,7 +22,6 @@ import org.springframework.web.servlet.ModelAndView;
 import com.dpu.entity.Status;
 import com.dpu.model.DivisionReq;
 import com.dpu.model.Failed;
-import com.dpu.model.Success;
 import com.dpu.service.DivisionService;
 import com.dpu.service.StatusService;
 
@@ -60,8 +60,7 @@ public class WebDivisionController {
 	}
 	
 	@RequestMapping(value = "/savedivision" , method = RequestMethod.POST)
-	public ModelAndView saveDivision(@ModelAttribute("division") DivisionReq divisionReq, HttpServletRequest request) {
-		ModelAndView modelAndView = new ModelAndView();
+	@ResponseBody public Object saveDivision(@ModelAttribute("division") DivisionReq divisionReq, HttpServletRequest request) {
 		HttpSession session = request.getSession();
 		String createdBy = "";
 		if(session != null) {
@@ -69,9 +68,12 @@ public class WebDivisionController {
 		}
 //		divisionReq.setCreatedBy(createdBy);
 //		divisionReq.setCreatedOn(new Date());
-		divisionService.add(divisionReq);
-		modelAndView.setViewName("redirect:showdivision");
-		return modelAndView;
+		Object response = divisionService.add(divisionReq);
+		if(response instanceof Failed) {
+			return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
+		} else {
+			return new ResponseEntity<Object>(response, HttpStatus.OK);
+		}
 	}
 	
 	@RequestMapping(value = "/getdivision/divisionId" , method = RequestMethod.GET)
@@ -87,93 +89,23 @@ public class WebDivisionController {
 	}
 	
 	@RequestMapping(value = "/updatedivision" , method = RequestMethod.POST)
-	public ModelAndView updateDivision(@ModelAttribute("division") DivisionReq divisionReq, @RequestParam("divisionid") Long divisionId) {
-		ModelAndView modelAndView = new ModelAndView();
-		divisionService.update(divisionId, divisionReq);
-		modelAndView.setViewName("redirect:showdivision");
-		return modelAndView;
+	@ResponseBody public Object updateDivision(@ModelAttribute("division") DivisionReq divisionReq, @RequestParam("divisionid") Long divisionId) {
+		Object response = divisionService.update(divisionId, divisionReq);
+		if(response instanceof Failed) {
+			return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
+		} else {
+			return new ResponseEntity<Object>(response, HttpStatus.OK);
+		}
 	}
 
-	ObjectMapper mapper = new ObjectMapper();
-
-	@ResponseBody
 	@RequestMapping(value = "/deletedivision/{divisionid}" , method = RequestMethod.GET)
-	public ModelAndView deleteDivision(@PathVariable("divisionid") Long divisionId) {
-		ModelAndView modelAndView = new ModelAndView();
+	@ResponseBody public Object deleteDivision(@PathVariable("divisionid") Long divisionId) {
 		Object response = divisionService.delete(divisionId);
-		String msg = null;
 		if(response instanceof Failed) {
-			Failed failed = (Failed) response;
-			msg = failed.getMessage();
+			return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
 		} else {
-			Success success = (Success) response;
-			msg = success.getMessage();
+			return new ResponseEntity<Object>(response, HttpStatus.OK);
 		}
-		modelAndView.setViewName("redirect:/showdivision?msg=" + msg);
-		return modelAndView;
-		/**
-		 * old working style
-		 */
-/*		ModelAndView modelAndView = new ModelAndView();
-		Long divisionId = Long.parseLong(String.valueOf(request.getParameter("divisionid")));
-
-		Object response = divisionService.delete(divisionId);
-		String msg = null;
-		if(response instanceof Failed) {
-			Failed failed = (Failed) response;
-			msg = failed.getMessage();
-//			modelAndView.addObject("msg", msg);
-			modelAndView.setViewName("redirect:/redirectdivision");
-			return modelAndView;
-		} else {
-			try {
-				Success success = (Success) response;
-				msg = success.getMessage();
-				List<DivisionReq> divisionList = (List<DivisionReq>) success.getResultList();
-				String res = mapper.writeValueAsString(divisionList);
-//				modelAndView.addObject("msg", msg); 
-				modelAndView.addObject("msg", res);
-				modelAndView.setViewName("redirect:/redirectdivision");
-				return modelAndView;
-			} catch (Exception e) {
-				System.out.println(e);
-			}
-		}
-		return null;*/
 	}
-	
-	/*@RequestMapping(value = "redirectdivision", method = RequestMethod.GET)
-	public Object redirectDivision(String stringList) {
-		List<DivisionReq> divisionList = new ArrayList<DivisionReq>();
-		try {
-			if(stringList != null && stringList.length() > 0) {
-				DivisionReq c[] = mapper.readValue(stringList, DivisionReq[].class);
-				for (DivisionReq ccl : c) {
-					divisionList.add(ccl);
-				}
-			}
-			ModelAndView modelAndView = new ModelAndView();
-			modelAndView.addObject("LIST_DIVISION", divisionList);
-//			modelAndView.addObject("msg", msg);
-			modelAndView.setViewName("division");
-			return modelAndView;
-		} catch (Exception e) {
-			System.out.println(e);
-		}
-		return null;
-	}*/
-	
-	/*@SuppressWarnings("unchecked")
-	@ResponseBody
-	@RequestMapping(value = "/deletedivision1" , method = RequestMethod.GET)
-	public String deletedivision1(HttpServletRequest request) {
-		ModelAndView modelAndView = new ModelAndView();
-		String dataval = request.getParameter("delId");
-		
-		modelAndView.addObject("msg", "sdfsdf");
-		//modelAndView.setViewName("division");
-		return "sdfsdfsdsd";
-	}*/
-	
 	
 }

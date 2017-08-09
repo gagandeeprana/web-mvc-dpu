@@ -5,6 +5,7 @@ import java.util.List;
 import org.hibernate.Session;
 
 import com.dpu.entity.PurchaseOrder;
+import com.dpu.entity.PurchaseOrderInvoice;
 import com.dpu.entity.PurchaseOrderIssue;
 import com.dpu.entity.Type;
 
@@ -21,5 +22,9 @@ public interface PurchaseOrderDao extends GenericDao<PurchaseOrder> {
 	void update(PurchaseOrder po, List<PurchaseOrderIssue> poIssues, Type assignStatus, Type openStatus, Session session);
 
 	void updateStatus(PurchaseOrder po, Type status, Session session);
+
+	List<PurchaseOrder> getStatusPOs(Session session, String statusVal);
+
+	void createInvoice(PurchaseOrderInvoice invoice, Session session);
 
 }

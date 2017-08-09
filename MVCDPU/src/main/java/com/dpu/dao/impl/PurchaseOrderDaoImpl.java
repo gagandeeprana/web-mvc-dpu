@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import com.dpu.dao.PurchaseOrderDao;
 import com.dpu.entity.Issue;
 import com.dpu.entity.PurchaseOrder;
+import com.dpu.entity.PurchaseOrderInvoice;
 import com.dpu.entity.PurchaseOrderIssue;
 import com.dpu.entity.Type;
 
@@ -89,6 +90,21 @@ public class PurchaseOrderDaoImpl extends GenericDaoImpl<PurchaseOrder> implemen
 		po.setStatus(status);
 		session.update(po);
 		
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<PurchaseOrder> getStatusPOs(Session session, String statusVal) {
+		StringBuilder sb = new StringBuilder(" select i from PurchaseOrder i left join fetch i.vendor left join fetch i.category left join fetch i.unitType join fetch i.status ")
+		.append(" where i.status.typeName = :statusVal ");
+		Query query = session.createQuery(sb.toString());
+		query.setParameter("statusVal", statusVal);
+		return query.list();
+	}
+
+	@Override
+	public void createInvoice(PurchaseOrderInvoice invoice, Session session) {
+		session.save(invoice);
 	}
 
 }

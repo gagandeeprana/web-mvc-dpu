@@ -7,6 +7,8 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.dpu.model.Failed;
 import com.dpu.model.TrailerRequest;
 import com.dpu.service.TrailerService;
 
@@ -49,8 +52,7 @@ public class WebTrailerController {
 	
 	
 	@RequestMapping(value = "/savetrailer" , method = RequestMethod.POST)
-	public ModelAndView saveTrailer(@ModelAttribute("trailer") TrailerRequest trailerRequest, HttpServletRequest request) {
-		ModelAndView modelAndView = new ModelAndView();
+	@ResponseBody public Object saveTrailer(@ModelAttribute("trailer") TrailerRequest trailerRequest, HttpServletRequest request) {
 		HttpSession session = request.getSession();
 		String createdBy = "";
 		if(session != null) {
@@ -58,9 +60,12 @@ public class WebTrailerController {
 		}
 //		divisionReq.setCreatedBy(createdBy);
 //		divisionReq.setCreatedOn(new Date());
-		trailerService.add(trailerRequest);
-		modelAndView.setViewName("redirect:showtrailer");
-		return modelAndView;
+		Object response = trailerService.add(trailerRequest);
+		if(response instanceof Failed) {
+			return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
+		} else {
+			return new ResponseEntity<Object>(response, HttpStatus.OK);
+		}
 	}
 	
 	@RequestMapping(value = "/gettrailer/trailerId" , method = RequestMethod.GET)
@@ -76,18 +81,22 @@ public class WebTrailerController {
 	}
 	
 	@RequestMapping(value = "/updatetrailer" , method = RequestMethod.POST)
-	public ModelAndView updateTrailer(@ModelAttribute("trailer") TrailerRequest trailerRequest, @RequestParam("trailerid") Long trailerId) {
-		ModelAndView modelAndView = new ModelAndView();
-		trailerService.update(trailerId, trailerRequest);
-		modelAndView.setViewName("redirect:showtrailer");
-		return modelAndView;
+	@ResponseBody public Object updateTrailer(@ModelAttribute("trailer") TrailerRequest trailerRequest, @RequestParam("trailerid") Long trailerId) {
+		Object response = trailerService.update(trailerId, trailerRequest);
+		if(response instanceof Failed) {
+			return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
+		} else {
+			return new ResponseEntity<Object>(response, HttpStatus.OK);
+		}
 	}
 	
 	@RequestMapping(value = "/deletetrailer/{trailerid}" , method = RequestMethod.GET)
-	public ModelAndView deleteTrailer(@PathVariable("trailerid") Long trailerId) {
-		ModelAndView modelAndView = new ModelAndView();
-		trailerService.delete(trailerId);
-		modelAndView.setViewName("redirect:/showtrailer");
-		return modelAndView;
+	@ResponseBody public Object deleteTrailer(@PathVariable("trailerid") Long trailerId) {
+		Object response = trailerService.delete(trailerId);
+		if(response instanceof Failed) {
+			return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
+		} else {
+			return new ResponseEntity<Object>(response, HttpStatus.OK);
+		}
 	}
 }

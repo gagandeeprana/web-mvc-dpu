@@ -169,7 +169,7 @@ function fillVendorData(list) {
     		tableValue = tableValue + ("<td>"+(cellular)+"</td>");
     		tableValue = tableValue + ("<td>"+(faxNo)+"</td>");
     		tableValue = tableValue + ("<td>"+(afterHours)+"</td>");
-    		tableValue = tableValue + "<td><a href = '#' data-toggle='modal' data-target='#myModal'  onclick='checkFlag('update');onClickMethodQuestion('"+(obj.vendorId)+"')>Update</a> / <a href='#' onclick=deleteVendor('"+(obj.vendorId)+"')>Delete</a></td>";
+    		tableValue = tableValue + "<td><a href = '#' data-toggle='modal' data-target='#myModal'  onclick=checkFlag('update');onClickMethodQuestion('"+(obj.vendorId)+"')>Update</a> / <a href='#' onclick=deleteVendor('"+(obj.vendorId)+"')>Delete</a></td>";
     		tableValue = tableValue + ("</tr>");
 		}
 		$("#vendorData").html(tableValue);

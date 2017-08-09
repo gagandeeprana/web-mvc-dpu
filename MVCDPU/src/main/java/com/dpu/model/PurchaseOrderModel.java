@@ -36,13 +36,18 @@ public class PurchaseOrderModel implements Serializable{
 	private Long statusId;
 	private List<TypeResponse> statusList;
 	
-	private String invoiceNo;
-	
 	private String message;
 	
 	private List<Long> issueIds;
 	
 	private Long PoNo;
+	
+	private Boolean isComplete;
+	
+	// for invoice status
+	private String invoiceNo;
+	private Double amount;
+	private String invoiceDate;
 	
 	public Long getId() {
 		return id;
@@ -210,6 +215,30 @@ public class PurchaseOrderModel implements Serializable{
 
 	public void setPoNo(Long poNo) {
 		PoNo = poNo;
+	}
+
+	public Boolean getIsComplete() {
+		return isComplete;
+	}
+
+	public void setIsComplete(Boolean isComplete) {
+		this.isComplete = isComplete;
+	}
+
+	public Double getAmount() {
+		return amount;
+	}
+
+	public void setAmount(Double amount) {
+		this.amount = amount;
+	}
+
+	public String getInvoiceDate() {
+		return invoiceDate;
+	}
+
+	public void setInvoiceDate(String invoiceDate) {
+		this.invoiceDate = invoiceDate;
 	}
 
 	/*public List<Long> getIssueIds() {

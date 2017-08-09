@@ -194,7 +194,7 @@ function fillDriverData(list) {
     		tableValue = tableValue + ("<td>"+(cellular)+"</td>");
     		tableValue = tableValue + ("<td>"+(pager)+"</td>");
     		tableValue = tableValue + ("<td>"+(email)+"</td>");
-    		tableValue = tableValue + "<td><a href = '#' data-toggle='modal' data-target='#myModal'  onclick='checkFlag('update');onClickMethodQuestion('"+(obj.driverId)+"')>Update</a> / <a href='#' onclick=deleteDriver('"+(obj.driverId)+"')>Delete</a></td>";
+    		tableValue = tableValue + "<td><a href = '#' data-toggle='modal' data-target='#myModal'  onclick=checkFlag('update');onClickMethodQuestion('"+(obj.driverId)+"')>Update</a> / <a href='#' onclick=deleteDriver('"+(obj.driverId)+"')>Delete</a></td>";
     		 tableValue = tableValue + ("</tr>");
 		}
 		$("#driverData").html(tableValue);

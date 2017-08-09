@@ -9,6 +9,7 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@page isELIgnored="false"%>
+ <jsp:include page="Include.jsp"></jsp:include>
 <link rel="stylesheet"
 	href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 <script
@@ -37,20 +38,175 @@ textarea{
   max-height:360px;
 }
 </style>
+ <script src="<c:url value="/resources/validations.js" />"></script>
 <script type="text/javascript">
-	$(document).ready(function(){
-		$('#btnSave').click(function(){
-			$('#frm1').submit();
-		});
-		$('#btnSearch').click(function(){
-			$("#frmSearch").change(function() {
-			  $("#frmSearch").attr("action", "showques");
-			});
-			$('#frmSearch').submit();
-		});
-	});
+function navigate() {
+	var flag = $("#addUpdateFlag").val();
+	if(flag == 'add') {
+		createTrailer('savetrailer','POST');
+	} else if(flag == 'update') {
+		createTrailer('updatetrailer','PUT');			
+	}
+}
+function createTrailer(urlToHit,methodType){
+	 
+	 if(!check()){
+		 return false;
+	 }
+	 var unitNo = $("#unitNo").val();
+	   	var usage = $("#usage").val();
+	   	var owner = $("#owner").val();
+	   	var oOName = $("#oOName").val();
+	   	var finance = $("#finance").val();
+	   	var statusId = $('#statusId :selected').val();
+	   	var divisionId = $('#divisionId :selected').val();
+	   	var terminalId = $('#terminalId :selected').val();
+	   	var categoryId = $('#categoryId :selected').val();
+	   	var trailerTypeId = $('#trailerTypeId :selected').val();
+	  	var trailerId;
+	   	if(methodType == 'PUT') {
+	   		trailerId = $('#trailerid').val();
+	   	}
+		  $.ajax({url: BASE_URL+ urlToHit,
+			      type:"POST",
+			      data:{
+			    	unitNo:unitNo,
+			    	usage:usage,
+			    	owner:owner,
+			    	oOName:oOName,
+			    	finance:finance,
+			    	statusId:statusId,
+			    	divisionId:divisionId,
+			    	terminalId:terminalId,
+			    	categoryId:categoryId,
+			    	trailerTypeId:trailerTypeId,
+			    	trailerid:trailerId
+			      },
+			      success: function(result){
+		        try{
+		        	
+		        	$('#myModal').modal('toggle');
+		        	var list = result.resultList;
+					fillTrailerData(list);
+
+			        toastr.success(result.message, 'Success!')
+				} catch(e){
+					toastr.error('Something went wrong', 'Error!')
+				}
+		  },error:function(result){
+			  try{
+				  	var obj = JSON.parse(result.responseText);
+				  	toastr.error(obj.message, 'Error!')
+				  }catch(e){
+					  toastr.error('Something went wrong', 'Error!')
+				  }
+		  }});
+		  return true;
+}
+
+function fillTrailerData(list) {
+	var tableValue = "";
+	if(list.length > 0) {
+		 for(var i=0;i<list.length;i++) {
+			var obj = list[i];
+			tableValue = tableValue + ("<tr class='info'>");
+    		var unitNo = "";
+    		if(obj.unitNo != null) {
+    			unitNo = obj.unitNo;
+    		}
+    		var owner = "";
+    		if(obj.owner != null) {
+    			owner = obj.owner;
+    		}
+    		var oOName = "";
+    		if(obj.oOName != null) {
+    			oOName = obj.oOName;
+    		}
+    		var category = "";
+    		if(obj.catogory != null) {
+    			category = obj.catogory;
+    		}
+    		var status = "";
+    		if(obj.status != null) {
+    			status = obj.status;
+    		}
+    		var usage = "";
+    		if(obj.usage != null) {
+    			usage = obj.usage;
+    		}
+    		var divisionName = "";
+    		if(obj.division != null) {
+    			divisionName = obj.division;
+    		}
+    		var terminal = "";
+    		if(obj.terminal != null) {
+    			terminal = obj.terminal;
+    		}
+    		var trailerType = "";
+    		if(obj.trailerType != null) {
+    			trailerType = obj.trailerType;
+    		}
+    		var finance = "";
+    		if(obj.finance != null) {
+    			finance = obj.finance;
+    		}
+    		
+    		tableValue = tableValue + ("<td>"+(unitNo)+"</td>");
+    		tableValue = tableValue + ("<td>"+(owner)+"</td>");
+    		tableValue = tableValue + ("<td>"+(oOName)+"</td>");
+    		tableValue = tableValue + ("<td>"+(category)+"</td>");
+    		tableValue = tableValue + ("<td>"+(status)+"</td>");
+    		tableValue = tableValue + ("<td>"+(usage)+"</td>");
+    		tableValue = tableValue + ("<td>"+(divisionName)+"</td>");
+    		tableValue = tableValue + ("<td>"+(terminal)+"</td>");
+    		tableValue = tableValue + ("<td>"+(trailerType)+"</td>");
+    		tableValue = tableValue + ("<td>"+(finance)+"</td>");
+    		tableValue = tableValue + "<td><a href = '#' data-toggle='modal' data-target='#myModal'  onclick=checkFlag('update');onClickMethodQuestion('"+(obj.trailerId)+"')>Update</a> / <a href='#' onclick=deleteTrailer('"+(obj.trailerId)+"')>Delete</a></td>";
+    		tableValue = tableValue + ("</tr>");
+		}
+		$("#trailerData").html(tableValue);
+	}
+}
+
+function deleteTrailer(trailerId){
+	 
+	  $.ajax({url: BASE_URL + "deletetrailer/" + trailerId,
+		      type:"GET",
+		      success: function(result){
+	    	  try{	
+					var list = result.resultList;
+					fillTrailerData(list);
+					
+	    		  toastr.success(result.message, 'Success!')
+			  }catch(e){
+				toastr.error('Something went wrong', 'Error!')
+			  }
+	  },error:function(result){
+		  try{
+			  	var obj = JSON.parse(result.responseText);
+			  	toastr.error(obj.message, 'Error!')
+			  }catch(e){
+				  toastr.error('Something went wrong', 'Error!')
+			  }
+	  }});
+	  return true;
+}
 </script>
 <script type="text/javascript">
+$(document).ready(function(){
+	/* $('#btnSave').click(function(){
+		$('#frm1').submit();
+	}); */
+	$('#btnSearch').click(function(){
+		$("#frmSearch").change(function() {
+		  $("#frmSearch").attr("action", "showques");
+		});
+		$('#frmSearch').submit();
+	});
+});
+</script>
+<script type="text/javascript">
+
 function checkFlag(field) {
 	document.getElementById("addUpdateFlag").value = field;
 	if(field == 'update') {
@@ -246,7 +402,7 @@ function emptyMessageDiv(){
 			<div class="col-sm-8">
 					<div class="modal fade" id="myModal" role="dialog">
 					    <div class="modal-dialog">
-						<form action="savetrailer" method="POST" name="trailer" id="frm1" onsubmit="return check()">
+						<form id="frm1">
 						<input type="hidden" id = "trailerid" name= "trailerid" value = "" />					
 						<input type="hidden" id = "addUpdateFlag" value = "" />					
 	
@@ -375,7 +531,7 @@ function emptyMessageDiv(){
 				        	</div>
 					        </div>
 					        <div class="modal-footer">
-					          <input type="button" class="btn btn-primary" id= "btnSave" value="Save" />
+					          <input type="button" class="btn btn-primary" id= "btnSave" value="Save" onclick="navigate()" />
 							  <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
 					        </div>
 					      </div>
@@ -427,7 +583,7 @@ function emptyMessageDiv(){
 						<th>Links</th>
 					</tr>
 				</thead>
-				<tbody>
+				<tbody id="trailerData">
 					<c:forEach items="${LIST_TRAILER}" var="obj">
 						<tr class="info">
 							<td>${obj.unitNo}</td>							
@@ -440,7 +596,7 @@ function emptyMessageDiv(){
 							<td>${obj.terminal}</td>
 							<td>${obj.trailerType}</td>
 							<td>${obj.finance}</td>
-							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.trailerId}')">Update</a> / <a href="deletetrailer/${obj.trailerId}">Delete</a></td>
+							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.trailerId}')">Update</a> / <a href="#" onclick="deleteTrailer('${obj.trailerId}')">Delete</a></td>
 						</tr>
 					</c:forEach>
 				</tbody>

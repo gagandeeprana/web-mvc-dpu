@@ -37,7 +37,16 @@ public class WebPOController {
 		return modelAndView;
 	}
 	
-	@RequestMapping(value = "/po/getopenadd" , method = RequestMethod.GET)
+	@RequestMapping(value = "/showpo/status/{statusValue}", method = RequestMethod.GET)
+	public ModelAndView showPOScreenByStatus(@PathVariable("statusValue") String status) {
+		ModelAndView modelAndView = new ModelAndView();
+		List<PurchaseOrderModel> lstPOs = purchaseOrderService.getStatusPOs(status);
+		modelAndView.addObject("LIST_PO", lstPOs);
+		modelAndView.setViewName("po");
+		return modelAndView;
+	}
+	
+	@RequestMapping(value = "po/getopenadd" , method = RequestMethod.GET)
 	@ResponseBody public PurchaseOrderModel getOpenAdd() {
 		PurchaseOrderModel purchaseOrderModel = null;
 		try {
@@ -48,7 +57,7 @@ public class WebPOController {
 		return purchaseOrderModel;
 	}
 	
-	@RequestMapping(value = "/po/getissues/category/{category}/unittype/{unittype}" , method = RequestMethod.GET)
+	@RequestMapping(value = "po/getissues/category/{category}/unittype/{unittype}" , method = RequestMethod.GET)
 	@ResponseBody public List<IssueModel> getCategoryAndUnitTypeIssues(@PathVariable("category") Long categoryId, @PathVariable("unittype") Long unitTypeId) {
 		List<IssueModel> issueModelList = null;
 		try {

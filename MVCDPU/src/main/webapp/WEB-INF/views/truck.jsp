@@ -129,7 +129,7 @@ function fillTruckData(list) {
     		if(obj.divisionName != null) {
     			divisionName = obj.divisionName;
     		}
-    		var terminalName = "";
+    		var terminal = "";
     		if(obj.terminalName != null) {
     			terminal = obj.terminalName;
     		}
