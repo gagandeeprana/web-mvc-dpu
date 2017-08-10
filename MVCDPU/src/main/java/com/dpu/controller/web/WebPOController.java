@@ -7,6 +7,8 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.dpu.model.Failed;
 import com.dpu.model.IssueModel;
 import com.dpu.model.PurchaseOrderModel;
 import com.dpu.service.PurchaseOrderService;
@@ -46,7 +49,17 @@ public class WebPOController {
 		return modelAndView;
 	}
 	
-	@RequestMapping(value = "po/getopenadd" , method = RequestMethod.GET)
+	@RequestMapping(value = "/{poId}/complete/{statusId}", method = RequestMethod.GET)
+	@ResponseBody public Object changeToCompleteStatus(@PathVariable("poId") Long poId, @PathVariable("statusId") Long statusId) {
+		Object response = purchaseOrderService.updateStatus(poId, statusId, null);
+		if(response instanceof Failed) {
+			return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
+		} else {
+			return new ResponseEntity<Object>(response, HttpStatus.OK);
+		}
+	}
+	
+	@RequestMapping(value = "/po/getopenadd" , method = RequestMethod.GET)
 	@ResponseBody public PurchaseOrderModel getOpenAdd() {
 		PurchaseOrderModel purchaseOrderModel = null;
 		try {
@@ -57,7 +70,7 @@ public class WebPOController {
 		return purchaseOrderModel;
 	}
 	
-	@RequestMapping(value = "po/getissues/category/{category}/unittype/{unittype}" , method = RequestMethod.GET)
+	@RequestMapping(value = "/po/getissues/category/{category}/unittype/{unittype}" , method = RequestMethod.GET)
 	@ResponseBody public List<IssueModel> getCategoryAndUnitTypeIssues(@PathVariable("category") Long categoryId, @PathVariable("unittype") Long unitTypeId) {
 		List<IssueModel> issueModelList = null;
 		try {

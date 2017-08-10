@@ -37,6 +37,8 @@ textarea{
   max-height:100px;
 }
 </style>
+<jsp:include page="Include.jsp"></jsp:include>
+ <script src="<c:url value="/resources/validations.js" />"></script>
 <script type="text/javascript">
 	$(document).ready(function(){
 		var url = window.location.href;
@@ -60,7 +62,6 @@ textarea{
 function checkFlag(field) {
 	document.getElementById("addUpdateFlag").value = field;
 	if(field == 'update') {
-		document.getElementById("frm1").action = "updatepo";
 		document.getElementById("btnNew").value = "Update";
 		//$("#btnExit").hide();
 		$("#modelTitle").html("Edit PO");
@@ -68,6 +69,7 @@ function checkFlag(field) {
 	else if(field == 'add') {
 		//$("#cke_1_contents").html('');
 		$(":text").val("");
+		document.getElementById("frm1").action = '<%=request.getContextPath()%>'+"/savepo";
    		//document.getElementById('categoryId').selectedIndex = 0;
 		document.getElementById("btnNew").value = "Save";
 		//$("#btnExit").show();
@@ -84,16 +86,29 @@ function checkFlag(field) {
 		function getUnitNo() {
 			var unitTypeId = $('#unitTypeId :selected').val();
 			var categoryId = $('#categoryId :selected').val();
-			$.get("po/getissues/category/"+categoryId+"/unittype/"+unitTypeId, function(issuesResponse) {
+			$.get('<%=request.getContextPath()%>' + "/po/getissues/category/"+categoryId+"/unittype/"+unitTypeId, function(issuesResponse) {
  	           
 				//$("#issuesTable").html();
 	            if(issuesResponse.length > 0) {
 	            	var tableValue = "";
 					//$("#mainDiv").show();
-					//$("#issuesTable").html("");
 	            	for(var i=0;i<issuesResponse.length;i++) {
 	            		var obj = issuesResponse[i];
-	            		if(!editIssueIds.includes(obj.id)) {
+	            		if($("#addUpdateFlag").val() == 'update') {
+		            		if(!editIssueIds.includes(obj.id)) {
+			            		tableValue = tableValue + ("<tr class='info'>");
+			            		tableValue = tableValue + ("<td><div class='form-group'><input type='checkbox' class='form-control issueIds' value='"+(obj.id)+"' id='issueIds' name='issueIds' /></div></td>");
+			            		tableValue = tableValue + ("<td>"+(obj.title)+"</td>");
+			            		tableValue = tableValue + ("<td>"+(obj.vmcName)+"</td>");
+			            		tableValue = tableValue + ("<td>"+(obj.categoryName)+"</td>");
+			            		tableValue = tableValue + ("<td>"+(obj.unitTypeName)+"</td>");
+			            		tableValue = tableValue + ("<td>"+(obj.unitNo)+"</td>");
+			            		tableValue = tableValue + ("<td>"+(obj.reportedByName)+"</td>");
+			            		tableValue = tableValue + ("<td>"+(obj.statusName)+"</td>");
+			            		//tableValue = tableValue + "<td><a href = '#' data-toggle='modal' data-target='#myModal' onclick='checkFlag('update');onClickMethodQuestion('"+${obj.id}+"')>Update</a> / <a href='deleteissue/${obj.id}">Delete</a></td>"
+			            		tableValue = tableValue + ("</tr>");
+		            		}
+	            		} else {
 		            		tableValue = tableValue + ("<tr class='info'>");
 		            		tableValue = tableValue + ("<td><div class='form-group'><input type='checkbox' class='form-control issueIds' value='"+(obj.id)+"' id='issueIds' name='issueIds' /></div></td>");
 		            		tableValue = tableValue + ("<td>"+(obj.title)+"</td>");
@@ -107,7 +122,12 @@ function checkFlag(field) {
 		            		tableValue = tableValue + ("</tr>");
 	            		}
 	            	}
-	            	$("#issuesTable").html($("#issuesTable").html() + tableValue);
+	            	if($("#addUpdateFlag").val() == 'update') {
+		            	$("#issuesTable").html($("#issuesTable").html() + tableValue);
+	            	} else {
+						$("#mainDiv").show();
+		            	$("#issuesTable").html(""+tableValue);	            		
+	            	}
 	            } else {
 	            	//$("#mainDiv").hide();
 					$("#issuesTable").html(editInitialValue);
@@ -132,7 +152,7 @@ function checkFlag(field) {
        			$("#issueIds").html("");
        			$("#invoceNoDiv").hide();
             	$("#invoiceNo").val("");
-            	$.get("/MVCDPU/po/getopenadd", function(data) {
+            	$.get('<%=request.getContextPath()%>'+"/po/getopenadd", function(data) {
     	           
     	            var vendor = document.getElementById("vendorId");
     	            for(var i = 0;i < data.vendorList.length;i++) {
@@ -163,7 +183,7 @@ function checkFlag(field) {
        			$("#issueIds").html("");
        			$("#invoceNoDiv").hide();
             	$("#invoiceNo").val("");
-        		$.get("getpo/poId",{"poId" : quesId}, function(data) {
+        		$.get('<%=request.getContextPath()%>'+"/getpo/poId",{"poId" : quesId}, function(data) {
         			document.getElementById("poid").value = data.id;
                     
         			var vendor = document.getElementById("vendorId");
@@ -304,6 +324,30 @@ function emptyMessageDiv(){
 	msg.hide();
 	msgvalue.val("");
 }
+function changeToCompleteStatus() {
+	
+	 $.ajax({url: BASE_URL + "/{poId}/complete/{statusId}" + driverId,
+	      type:"GET",
+	      success: function(result){
+   	  try{	
+				var list = result.resultList;
+				fillDriverData(list);
+				
+   		  toastr.success(result.message, 'Success!')
+		  }catch(e){
+			toastr.error('Something went wrong', 'Error!')
+		  }
+ },error:function(result){
+	  try{
+		  	var obj = JSON.parse(result.responseText);
+		  	toastr.error(obj.message, 'Error!')
+		  }catch(e){
+			  toastr.error('Something went wrong', 'Error!')
+		  }
+ }});
+ return true;
+	
+}
 
 </script>
 
@@ -326,7 +370,7 @@ function emptyMessageDiv(){
 			<div class="col-sm-8">
 					<div class="modal fade" id="myModal" role="dialog">
 					    <div class="modal-dialog">
-						<form action="savepo" method="POST" name="po" id="frm1" onsubmit="return check()">
+						<form method="POST" name="po" id="frm1" onsubmit="return check()">
 						<input type="hidden" id = "poid" name= "poid" value = "" />					
 						<input type="hidden" id = "addUpdateFlag" value = "" />					
 	
@@ -402,6 +446,7 @@ function emptyMessageDiv(){
 																	</tr>
 																</thead>
 																<tbody id = "issuesTable">
+																
 																</tbody>
 															</table>
 														</div>
@@ -509,7 +554,12 @@ function emptyMessageDiv(){
 							<td>${obj.statusName}</td>
 							<td>${obj.unitTypeName}</td>
 							<td>${obj.vendorName}</td>
-							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.id}')">Update</a> / <a href="deletepo/${obj.id}">Delete</a></td>
+							
+							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.id}')">Update</a> / <a href="deletepo/${obj.id}">Delete</a> 
+							<c:if test="${obj.isComplete == true}">
+								/ <a href="#" id="changeStatus">Change to Complete</a>
+							</c:if>
+							</td>
 						</tr>
 					</c:forEach>
 				</tbody>
