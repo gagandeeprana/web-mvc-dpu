@@ -15,6 +15,8 @@
 	src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script
 	src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+		<link rel = "stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.0/css/bootstrap-datepicker.css"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.0/js/bootstrap-datepicker.js"></script>
 <style type="text/css">
 .modal-dialog {
   width: 98%;
@@ -299,6 +301,15 @@ function checkFlag(field) {
             $("#invoiceNo").val("");
             $("#message").val("");
         }
+        
+        function clearAll() {
+        	document.getElementById("vendorId").innerHTML = "";
+        	document.getElementById("unitTypeId").innerHTML = "";
+        	document.getElementById("categoryId").innerHTML = "";
+        	/* document.getElementById("statusId").innerHTML = ""; */
+            $("#invoiceNo").val("");
+            $("#message").val("");
+        }
 </script>
 
 <script type="text/javascript">
@@ -371,6 +382,35 @@ function emptyMessageDiv(){
  return true;
 	
 } 
+ 
+ function pastePoNo(poNo) {
+	 $("#invoicePoNo").val(poNo);
+ }
+ 
+ function changeStatusToInvoice(poId, statusId) {
+		
+	 $.ajax({url: BASE_URL + poId + "/complete/" + statusId + "/invoiced",
+	      type:"GET",
+	      success: function(result){
+   	  try{	
+				var list = result.resultList;
+				fillPOData(list);
+				
+   		  toastr.success(result.message, 'Success!')
+		  }catch(e){
+			toastr.error('Something went wrong', 'Error!')
+		  }
+ },error:function(result){
+	  try{
+		  	var obj = JSON.parse(result.responseText);
+		  	toastr.error(obj.message, 'Error!')
+		  }catch(e){
+			  toastr.error('Something went wrong', 'Error!')
+		  }
+ }});
+ return true;
+	
+} 
 
   function showCompletePOs() {
 	 $.ajax({url: BASE_URL + "showpo/status/Complete",
@@ -396,10 +436,11 @@ return true;
  } 
   
   function showActivePOs() {
-		 $.ajax({url: BASE_URL + "showpo",
+		 $.ajax({url: BASE_URL + "showpo/status/Active",
 		      type:"GET",
 		      success: function(result){
 	  	  try{	
+	  			$("#poData").html("");
 					var list = result;
 					fillPOData(list);
 					
@@ -454,8 +495,11 @@ return true;
 	    		tableValue = tableValue + ("<td>"+(status)+"</td>");
 	    		tableValue = tableValue + ("<td>"+(unitType)+"</td>");
 	    		tableValue = tableValue + ("<td>"+(vendor)+"</td>");
-	    		tableValue = tableValue + "<td><a href = '#' data-toggle='modal' data-target='#myModal'  onclick=checkFlag('update');onClickMethodQuestion('"+(obj.id)+"')>Update</a> / <a href='#' onclick=deleteDriver('"+(obj.id)+"')>Delete</a></td>";
-	    		tableValue = tableValue + ("</tr>");
+	    		tableValue = tableValue + "<td><a href = '#' data-toggle='modal' data-target='#myModal'  onclick=checkFlag('update');onClickMethodQuestion('"+(obj.id)+"')>Update</a> / <a href='#' onclick=deleteDriver('"+(obj.id)+"')>Delete</a> ";
+	    		if($("#statusFlag").val() == 'Complete') {
+		    		tableValue = tableValue + " / <a href='#' data-toggle='modal' data-target='#invoiceModal' onclick=pastePoNo('"+(poNo)+"')>Change to Invoice</a>";	    			
+	    		}
+	    		tableValue = tableValue + ("</td></tr>");
 			}
 			$("#poData").html(tableValue);
 		}
@@ -601,6 +645,86 @@ return true;
 														 <b>Message</b>												
 													</span>
 													<textarea class="form-control" rows="1" cols="1" placeholder="Enter Message" name="message" id = "message"></textarea>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+				        	</div>
+					        </div>
+					        <div class="modal-footer">
+					          <input type="button" class="btn btn-primary" id= "btnNew" value="Save" />
+					    	  <!-- <input type="button" class="btn btn-primary" id= "btnExit" value="Save&Exit" /> -->
+					    	  <input type="reset" class="btn btn-primary" id= "btnReset" value="Reset" />
+							  <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+					        </div>
+					      </div>
+					      </form>
+					    </div>
+					  </div>
+					  <div class="modal fade" id="invoiceModal" role="dialog">
+					    <div class="modal-dialog">
+						<form method="POST" name="po" id="frm2">
+						<input type="hidden" id = "poid" name= "poid" value = "" />					
+						<input type="hidden" id = "addUpdateFlag" value = "" />					
+	
+					      <!-- Modal content-->
+					      <div class="modal-content">
+					        <div class="modal-header">
+					          <button type="button" class="close" data-dismiss="modal">&times;</button>
+					          <h4 class="modal-title"><p id ="invoiceTitle">Create Invoice</p></h4>
+					          <div class="alert alert-danger fade in" id="msg" style="display: none;">
+									<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+									<strong id = "msgvalue"></strong>
+							  </div>
+					        </div>
+					        <div class="modal-body">
+								<div class = "row">
+								<div class="col-sm-12">
+									<div class="form-group">
+										<div class="row">
+											<div class="col-sm-12">
+												<div class="input-group">
+												<span class="input-group-addon">
+													<b>PO No</b>												
+												</span>
+												<input type="text" class="form-control" disabled="disabled" id="invoicePoNo" name="poNo" value="" />
+											</div>
+											</div>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="row">
+											<div class="col-sm-12">
+												<div class="input-group">
+													<span class="input-group-addon">
+														 <b>Invoice Amount</b>												
+													</span>
+													<input type="text" class="form-control" placeHolder="Enter InvoiceAmount" id="invoiceAmount" name="invoiceAmount" value="" />
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="row">
+											<div class="col-sm-12">
+												<div class="input-group">
+													<span class="input-group-addon">
+														 <b>Invoice No</b>												
+													</span>
+													<input type="text" class="form-control" placeHolder="Enter InvoiceNo" id="invoiceNo" name="invoiceNo" value="" />
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="row">
+											<div class="col-sm-12">
+												<div class="input-group date" data-provide="datepicker">
+													<span class="input-group-addon">
+														 <b>Invoice Date</b>												
+													</span>
+													<input type="text" class="form-control datepicker" placeHolder="Enter InvoiceDate" id="invoiceDate" name="invoiceDate" value="" />
 												</div>
 											</div>
 										</div>
