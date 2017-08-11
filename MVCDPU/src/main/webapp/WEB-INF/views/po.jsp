@@ -41,12 +41,35 @@ textarea{
  <script src="<c:url value="/resources/validations.js" />"></script>
 <script type="text/javascript">
 	$(document).ready(function(){
-		var url = window.location.href;
-		if(url.indexOf("Active")) {
-			$("#btnActive").removeClass("btn btn-default").addClass("btn btn-info");
-			$("#btnComplete").addClass("btn btn-default");; 
-			$("#btnInvoiced").addClass("btn btn-default");; 
+		$("#btnActive").click(function () {
+			showActivePOs();
+			$("#statusFlag").val("Active");
+		});
+		if($("#statusFlag").val() == 'Active') {
+			$("#btnActive").focus();
+			/* $("#btnComplete").addClass("btn btn-default"); 
+			$("#btnInvoiced").addClass("btn btn-default"); */
 		}
+		$("#btnComplete").click(function () {
+			showCompletePOs();
+			$("#statusFlag").val("Complete");
+		});
+		if($("#statusFlag").val() == 'Complete') {
+			$("#btnComplete").focus();
+		}
+		var url = window.location.href;
+		if(url.indexOf("Active") > 0) {
+			$("#btnActive").removeClass("btn btn-default").addClass("btn btn-info");
+			$("#btnComplete").addClass("btn btn-default"); 
+			$("#btnInvoiced").addClass("btn btn-default");
+		}
+		
+		if(url.indexOf("Complete") > 0) {
+			$("#btnActive").addClass("btn btn-default"); 
+			$("#btnComplete").removeClass("btn btn-default").addClass("btn btn-info"); 
+			$("#btnInvoiced").addClass("btn btn-default"); 
+		}
+		
 		$("#btnNew").click(function(){
 			$("#frm1").submit();
 		});
@@ -324,14 +347,14 @@ function emptyMessageDiv(){
 	msg.hide();
 	msgvalue.val("");
 }
-function changeToCompleteStatus() {
+ function changeStatusToComplete(poId, statusId) {
 	
-	 $.ajax({url: BASE_URL + "/{poId}/complete/{statusId}" + driverId,
+	 $.ajax({url: BASE_URL + poId + "/complete/"+statusId,
 	      type:"GET",
 	      success: function(result){
    	  try{	
 				var list = result.resultList;
-				fillDriverData(list);
+				fillPOData(list);
 				
    		  toastr.success(result.message, 'Success!')
 		  }catch(e){
@@ -347,8 +370,97 @@ function changeToCompleteStatus() {
  }});
  return true;
 	
-}
+} 
 
+  function showCompletePOs() {
+	 $.ajax({url: BASE_URL + "showpo/status/Complete",
+	      type:"GET",
+	      success: function(result){
+  	  try{	
+				var list = result;
+				fillPOData(list);
+				
+  		  //toastr.success(result.message, 'Success!')
+		  }catch(e){
+			toastr.error('Something went wrong', 'Error!')
+		  }
+},error:function(result){
+	  try{
+		  	var obj = JSON.parse(result.responseText);
+		  	toastr.error(obj.message, 'Error!')
+		  }catch(e){
+			  toastr.error('Something went wrong', 'Error!')
+		  }
+}});
+return true;
+ } 
+  
+  function showActivePOs() {
+		 $.ajax({url: BASE_URL + "showpo",
+		      type:"GET",
+		      success: function(result){
+	  	  try{	
+					var list = result;
+					fillPOData(list);
+					
+	  		  //toastr.success(result.message, 'Success!')
+			  }catch(e){
+				toastr.error('Something went wrong', 'Error!')
+			  }
+	},error:function(result){
+		  try{
+			  	var obj = JSON.parse(result.responseText);
+			  	toastr.error(obj.message, 'Error!')
+			  }catch(e){
+				  toastr.error('Something went wrong', 'Error!')
+			  }
+	}});
+	return true;
+  }
+ function fillPOData(list) {
+		var tableValue = "";
+		if(list.length > 0) {
+			 for(var i=0;i<list.length;i++) {
+				var obj = list[i];
+				tableValue = tableValue + ("<tr class='info'>");
+				var poNo = "";
+	    		if(obj.PoNo != null) {
+	    			poNo = obj.PoNo;
+	    		}
+	    		var title = "";
+	    		if(obj.message != null) {
+	    			title = obj.message;
+	    		}
+	    		var category = "";
+	    		if(obj.categoryName != null) {
+	    			category = obj.categoryName;
+	    		}
+	    		var status = "";
+	    		if(obj.statusName != null) {
+	    			status = obj.statusName;
+	    		}
+	    		var unitType = "";
+	    		if(obj.unitTypeName != null) {
+	    			unitType = obj.unitTypeName;
+	    		}
+	    		var vendor = "";
+	    		if(obj.vendorName != null) {
+	    			vendor = obj.vendorName;
+	    		}
+
+	    		tableValue = tableValue + ("<td>"+(poNo)+"</td>");
+	    		tableValue = tableValue + ("<td>"+(title)+"</td>");
+	    		tableValue = tableValue + ("<td>"+(category)+"</td>");
+	    		tableValue = tableValue + ("<td>"+(status)+"</td>");
+	    		tableValue = tableValue + ("<td>"+(unitType)+"</td>");
+	    		tableValue = tableValue + ("<td>"+(vendor)+"</td>");
+	    		tableValue = tableValue + "<td><a href = '#' data-toggle='modal' data-target='#myModal'  onclick=checkFlag('update');onClickMethodQuestion('"+(obj.id)+"')>Update</a> / <a href='#' onclick=deleteDriver('"+(obj.id)+"')>Delete</a></td>";
+	    		tableValue = tableValue + ("</tr>");
+			}
+			$("#poData").html(tableValue);
+		}
+	}
+ 
 </script>
 
 </head>
@@ -361,6 +473,7 @@ function changeToCompleteStatus() {
 			<div class="col-sm-4">
 			</div>
 			<div class="col-sm-8" align= "right">
+			<input type="hidden" id="statusFlag" value="Active"/>
 	          <input type="button" class="btn btn-default" id= "btnActive" value="Active" />
 	          <input type="button" class="btn btn-default" id= "btnComplete" value="Complete" />
 	          <input type="button" class="btn btn-default" id= "btnInvoiced" value="Invoiced" />
@@ -545,7 +658,7 @@ function changeToCompleteStatus() {
 						<th>Vendor</th>
 					</tr>
 				</thead>
-				<tbody>
+				<tbody id="poData">
 					<c:forEach items="${LIST_PO}" var="obj">
 						<tr class="info">
 							<td>${obj.poNo}</td>							
@@ -557,7 +670,7 @@ function changeToCompleteStatus() {
 							
 							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.id}')">Update</a> / <a href="deletepo/${obj.id}">Delete</a> 
 							<c:if test="${obj.isComplete == true}">
-								/ <a href="#" id="changeStatus">Change to Complete</a>
+								/ <a href="#" onclick="changeStatusToComplete('${obj.id}','${obj.completeStatusId}')" id="changeStatus">Change to Complete</a>
 							</c:if>
 							</td>
 						</tr>

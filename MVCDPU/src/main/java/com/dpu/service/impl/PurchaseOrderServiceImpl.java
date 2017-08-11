@@ -94,7 +94,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService  {
 		try {
 			session = sessionFactory.openSession();
 			List<PurchaseOrder> pos = poDao.findAll(session);
-			poList = setPOData(pos, poList);
+			// poList = setPOData(pos, poList);
 			
 		} finally {
 			if (session != null) {
@@ -115,7 +115,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService  {
 		try {
 			session = sessionFactory.openSession();
 			List<PurchaseOrder> pos = poDao.getStatusPOs(session, statusVal);
-			poList = setPOData(pos, poList);
+			poList = setPOData(pos, poList, statusVal);
 			
 		} finally {
 			if (session != null) {
@@ -127,7 +127,8 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService  {
 		return poList;
 	}
 
-	private List<PurchaseOrderModel> setPOData(List<PurchaseOrder> pos,List<PurchaseOrderModel> poList) {
+	private List<PurchaseOrderModel> setPOData(List<PurchaseOrder> pos, List<PurchaseOrderModel> poList,
+			String statusVal) {
 		
 		if(pos != null && !pos.isEmpty()) {
 			for (PurchaseOrder purchaseOrder : pos) {
@@ -148,20 +149,29 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService  {
 				poModel.setVendorName(purchaseOrder.getVendor().getName());
 				poList.add(poModel);
 				
-				List<PurchaseOrderIssue> poIssues = purchaseOrder.getPoIssues();
-				
-				if(poIssues != null && ! poIssues.isEmpty()) {
-					Boolean isSuccess = true;
-					for (PurchaseOrderIssue purchaseOrderIssue : poIssues) {
-						Issue issue = purchaseOrderIssue.getIssue();
-						if(!"Complete".equals(issue.getStatus().getTypeName()) && !"Incomplete".equals(issue.getStatus().getTypeName())) {
-							isSuccess = false;
-							break;
+				if (statusVal.equals("Active")) {
+					List<PurchaseOrderIssue> poIssues = purchaseOrder.getPoIssues();
+
+					if (poIssues != null && !poIssues.isEmpty()) {
+						Boolean isSuccess = true;
+						for (PurchaseOrderIssue purchaseOrderIssue : poIssues) {
+							Issue issue = purchaseOrderIssue.getIssue();
+							if (!"Complete".equals(issue.getStatus().getTypeName())
+									&& !"Incomplete".equals(issue.getStatus().getTypeName())) {
+								isSuccess = false;
+								break;
+							}
 						}
+
+						poModel.setIsComplete(isSuccess);
+						poModel.setCompleteStatusId(109l);
 					}
-					
-					poModel.setIsComplete(isSuccess);
 				}
+
+				if (statusVal.equals("Complete")) {
+					poModel.setInvoiceStatusId(110l);
+				}
+
 			}
 		}
 		
@@ -169,11 +179,11 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService  {
 	}
 
 
-	private Object createSuccessObject(String msg) {
+	private Object createSuccessObject(String msg, String statusVal) {
 
 		Success success = new Success();
 		success.setMessage(msg);
-		success.setResultList(getAll());
+		success.setResultList(getStatusPOs(statusVal));
 		return success;
 	}
 
@@ -219,7 +229,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService  {
 		}
 
 		logger.info("PurchaseOrderServiceImpl update() ends.");
-		return createSuccessObject(po_updated_message);
+		return createSuccessObject(po_updated_message, "Active");
 	}
 
 	@Override
@@ -265,7 +275,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService  {
 		}
 
 		logger.info("PurchaseOrderServiceImpl delete() ends.");
-		return createSuccessObject(po_deleted_message);
+		return createSuccessObject(po_deleted_message, "Active");
 	}
 
 	@Override
@@ -405,7 +415,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService  {
 		}
 
 		logger.info("PurchaseOrderServiceImpl addPO() ends ");
-		return createSuccessObject(po_added_message);
+		return createSuccessObject(po_added_message, "Active");
 	}
 
 	private void setPoValues(PurchaseOrderModel poModel, PurchaseOrder po, List<PurchaseOrderIssue> poIssues, Session session, String type) {
@@ -464,13 +474,13 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService  {
 		logger.info("PurchaseOrderServiceImpl updateStatus() starts.");
 		Session session = null;
 		Transaction tx = null;
-		
+		Type status = null;
 		try {
 			session = sessionFactory.openSession();
 			tx = session.beginTransaction();
 			PurchaseOrder po = (PurchaseOrder) session.get(PurchaseOrder.class, poId);
 			if (po != null) {
-				Type status = (Type) session.get(Type.class, statusId);
+				status = (Type) session.get(Type.class, statusId);
 				poDao.updateStatus(po, status, session);
 				
 				if(Iconstants.PO_INVOICE_STATUS.equals(status.getTypeName())) {
@@ -495,7 +505,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService  {
 		}
 
 		logger.info("PurchaseOrderServiceImpl updateStatus() ends.");
-		return createSuccessObject(po_status_update);
+		return createSuccessObject(po_status_update, poModel.getCurrentStatusVal());
 	}
 
 	private PurchaseOrderInvoice createPOInvoice(PurchaseOrder po, PurchaseOrderModel poModel) {

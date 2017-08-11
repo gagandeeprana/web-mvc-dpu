@@ -31,19 +31,25 @@ public class WebPOController {
 	
 	Logger logger = Logger.getLogger(WebPOController.class);
 	
-	@RequestMapping(value = "/showpo", method = RequestMethod.GET)
+	/*@RequestMapping(value = "/showpo", method = RequestMethod.GET)
 	public ModelAndView showPOScreen() {
 		ModelAndView modelAndView = new ModelAndView();
 		List<PurchaseOrderModel> lstPOs = purchaseOrderService.getAll();
 		modelAndView.addObject("LIST_PO", lstPOs);
 		modelAndView.setViewName("po");
 		return modelAndView;
+	}*/
+	
+	@RequestMapping(value = "/showpo/status/Complete", method = RequestMethod.GET)
+	@ResponseBody public Object showCompletePOs() {
+		List<PurchaseOrderModel> lstPOs = purchaseOrderService.getStatusPOs("Complete");
+		return lstPOs;
 	}
 	
-	@RequestMapping(value = "/showpo/status/{statusValue}", method = RequestMethod.GET)
-	public ModelAndView showPOScreenByStatus(@PathVariable("statusValue") String status) {
+	@RequestMapping(value = "/showpo", method = RequestMethod.GET)
+	public ModelAndView showPOScreenByStatus() {
 		ModelAndView modelAndView = new ModelAndView();
-		List<PurchaseOrderModel> lstPOs = purchaseOrderService.getStatusPOs(status);
+		List<PurchaseOrderModel> lstPOs = purchaseOrderService.getStatusPOs("Active");
 		modelAndView.addObject("LIST_PO", lstPOs);
 		modelAndView.setViewName("po");
 		return modelAndView;
@@ -51,7 +57,9 @@ public class WebPOController {
 	
 	@RequestMapping(value = "/{poId}/complete/{statusId}", method = RequestMethod.GET)
 	@ResponseBody public Object changeToCompleteStatus(@PathVariable("poId") Long poId, @PathVariable("statusId") Long statusId) {
-		Object response = purchaseOrderService.updateStatus(poId, statusId, null);
+		PurchaseOrderModel purchaseOrderModel = new PurchaseOrderModel();
+		purchaseOrderModel.setCurrentStatusVal("Complete");
+		Object response = purchaseOrderService.updateStatus(poId, statusId, purchaseOrderModel);
 		if(response instanceof Failed) {
 			return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
 		} else {
