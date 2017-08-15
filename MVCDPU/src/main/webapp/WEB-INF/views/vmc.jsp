@@ -37,11 +37,112 @@ textarea{
   max-height:360px;
 }
 </style>
+	<jsp:include page="Include.jsp"></jsp:include>
+ <script src="<c:url value="/resources/validations.js" />"></script>
 <script type="text/javascript">
+function navigate() {
+	var flag = $("#addUpdateFlag").val();
+	if(flag == 'add') {
+		createVMC('savevmc','POST');
+	} else if(flag == 'update') {
+		createVMC('updatevmc','PUT');			
+	}
+}
+function createVMC(urlToHit,methodType){
+	 
+	 if(!check()){
+		 return false;
+	 }
+	 
+	 	var name = $("#name").val();
+	 	var desc = $("#description").val();
+	 	
+	   	var vmcId;
+	   	if(methodType == 'PUT') {
+	   		vmcId = $('#vmcid').val();
+	   	}
+	   	
+		  $.ajax({url: BASE_URL + urlToHit,
+			      type:"POST",
+			      data:{
+			    	name:name,
+			    	description:desc,
+			    	vmcid:vmcId,
+			      },
+			      success: function(result){
+		        try{
+		        	$('#myModal').modal('toggle');
+		        	var list = result.resultList;
+					fillVMCData(list);
+
+			        toastr.success(result.message, 'Success!')
+				} catch(e){
+					toastr.error('Something went wrong', 'Error!')
+				}
+		  },error:function(result){
+			  try{
+				  	var obj = JSON.parse(result.responseText);
+				  	toastr.error(obj.message, 'Error!')
+				  }catch(e){
+					  toastr.error('Something went wrong', 'Error!')
+				  }
+		  }});
+		  return true;
+}
+
+function fillVMCData(list) {
+	var tableValue = "";
+	if(list.length > 0) {
+		 for(var i=0;i<list.length;i++) {
+			var obj = list[i];
+			tableValue = tableValue + ("<tr class='info'>");
+    		var name = "";
+    		if(obj.name != null) {
+    			name = obj.name;
+    		}
+    		var description = "";
+    		if(obj.description != null) {
+    			description = obj.description;
+    		}
+    		
+    		tableValue = tableValue + ("<td>"+(name)+"</td>");
+    		tableValue = tableValue + ("<td>"+(description)+"</td>");
+    		tableValue = tableValue + "<td><a href = '#' data-toggle='modal' data-target='#myModal'  onclick=checkFlag('update');onClickMethodQuestion('"+(obj.id)+"')>Update</a> / <a href='#' onclick=deleteVMC('"+(obj.id)+"')>Delete</a></td>";
+    		tableValue = tableValue + ("</tr>");
+		}
+		$("#vmcData").html(tableValue);
+	} else {
+		$("#vmcData").html("No records found.");		
+	}
+}
+
+function deleteVMC(terminalId){
+	  $.ajax({url: BASE_URL + "deletevmc/" + terminalId,
+		      type:"GET",
+		      success: function(result){
+	    	  try{	
+					var list = result.resultList;
+					fillVMCData(list);
+					
+	    		  toastr.success(result.message, 'Success!')
+			  }catch(e){
+				toastr.error('Something went wrong', 'Error!')
+			  }
+	  },error:function(result){
+		  try{
+			  	var obj = JSON.parse(result.responseText);
+			  	toastr.error(obj.message, 'Error!')
+			  }catch(e){
+				  toastr.error('Something went wrong', 'Error!')
+			  }
+	  }});
+	  return true;
+}
+
 	$(document).ready(function(){
-		$('#btnSave').click(function(){
+		/* $('#btnSave').click(function(){
 			$('#frm1').submit();
-		});
+		}); */
 		$('#btnSearch').click(function(){
 			$("#frmSearch").change(function() {
 			  $("#frmSearch").attr("action", "showvmc");
@@ -54,7 +155,7 @@ textarea{
 function checkFlag(field) {
 	document.getElementById("addUpdateFlag").value = field;
 	if(field == 'update') {
-		document.getElementById("frm1").action = "updatevmc";
+		//document.getElementById("frm1").action = "updatevmc";
 		document.getElementById("btnSave").value = "Update";
 		$("#modelTitle").html("Edit VMC");
 	}
@@ -131,7 +232,7 @@ function emptyMessageDiv(){
 			<div class="col-sm-8">
 					<div class="modal fade" id="myModal" role="dialog">
 					    <div class="modal-dialog">
-						<form action="savevmc" method="POST" name="cat" id="frm1" onsubmit="return check()">
+						<form id="frm1">
  						<input type="hidden" id = "vmcid" name= "vmcid" value = "" />					
 						<input type="hidden" id = "addUpdateFlag" value = "" />					
 	
@@ -176,7 +277,7 @@ function emptyMessageDiv(){
 								</div>
 				        	</div>
 				        	 <div class="modal-footer">
-					          <input type="button" class="btn btn-primary" id= "btnSave" value="Save" />
+					          <input type="button" class="btn btn-primary" id= "btnSave" value="Save" onclick="navigate()" />
 							  <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
 					        </div>
 					        </div>
@@ -220,12 +321,12 @@ function emptyMessageDiv(){
 						<th>Links</th>
 					</tr>
 				</thead>
-				<tbody>
+				<tbody id="vmcData">
 					<c:forEach items="${LIST_VMC}" var="obj">
 						<tr class="info">
 							<td>${obj.name}</td>							
 							<td>${obj.description}</td>
-							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.id}')">Update</a> / <a href="deletevmc/${obj.id}">Delete</a></td>
+							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.id}')">Update</a> / <a href="#" onclick="deleteVMC('${obj.id}')">Delete</a></td>
 						</tr>
 					</c:forEach>
 				</tbody>

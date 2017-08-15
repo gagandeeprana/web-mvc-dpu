@@ -1,5 +1,6 @@
 package com.dpu.controller.web;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -7,6 +8,8 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.dpu.model.Failed;
 import com.dpu.model.TerminalResponse;
 import com.dpu.service.TerminalService;
 
@@ -48,8 +52,7 @@ public class WebTerminalController {
 	}
 	
 	@RequestMapping(value = "/saveterminal" , method = RequestMethod.POST)
-	public ModelAndView saveTerminal(@ModelAttribute("terminal") TerminalResponse terminalResponse, HttpServletRequest request) {
-		ModelAndView modelAndView = new ModelAndView();
+	@ResponseBody public Object saveTerminal(@ModelAttribute("terminal") TerminalResponse terminalResponse, HttpServletRequest request) {
 		HttpSession session = request.getSession();
 		String createdBy = "";
 		if(session != null) {
@@ -57,10 +60,19 @@ public class WebTerminalController {
 		}
 //		divisionReq.setCreatedBy(createdBy);
 //		divisionReq.setCreatedOn(new Date());
+		List<String> stringServiceIds = terminalResponse.getStringServiceIds();
+		List<Long> serviceIds = new ArrayList<Long>();
+		for(int i=0;i<stringServiceIds.size();i++) {
+			serviceIds.add(Long.parseLong(stringServiceIds.get(i)));
+		}
+		terminalResponse.setServiceIds(serviceIds);
 		terminalResponse.setStatusId(1l);
-		terminalService.addTerminal(terminalResponse);
-		modelAndView.setViewName("redirect:showterminal");
-		return modelAndView;
+		Object response = terminalService.addTerminal(terminalResponse);
+		if(response instanceof Failed) {
+			return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
+		} else {
+			return new ResponseEntity<Object>(response, HttpStatus.OK);
+		}
 	}
 	
 	@RequestMapping(value = "/getterminal/terminalId" , method = RequestMethod.GET)
@@ -76,18 +88,22 @@ public class WebTerminalController {
 	}
 	
 	@RequestMapping(value = "/updateterminal" , method = RequestMethod.POST)
-	public ModelAndView updateTerminal(@ModelAttribute("terminal") TerminalResponse terminalResponse, @RequestParam("terminalid") Long terminalId) {
-		ModelAndView modelAndView = new ModelAndView();
-		terminalService.updateTerminal(terminalId, terminalResponse);
-		modelAndView.setViewName("redirect:showterminal");
-		return modelAndView;
+	@ResponseBody public Object updateTerminal(@ModelAttribute("terminal") TerminalResponse terminalResponse, @RequestParam("terminalid") Long terminalId) {
+		Object response = terminalService.updateTerminal(terminalId, terminalResponse);
+		if(response instanceof Failed) {
+			return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
+		} else {
+			return new ResponseEntity<Object>(response, HttpStatus.OK);
+		}
 	}
 	
 	@RequestMapping(value = "/deleteterminal/{terminalid}" , method = RequestMethod.GET)
-	public ModelAndView deleteTerminal(@PathVariable("terminalid") Long terminalId) {
-		ModelAndView modelAndView = new ModelAndView();
-		terminalService.deleteTerminal(terminalId);
-		modelAndView.setViewName("redirect:/showterminal");
-		return modelAndView;
+	@ResponseBody public Object deleteTerminal(@PathVariable("terminalid") Long terminalId) {
+		Object response = terminalService.deleteTerminal(terminalId);
+		if(response instanceof Failed) {
+			return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
+		} else {
+			return new ResponseEntity<Object>(response, HttpStatus.OK);
+		}
 	}
 }

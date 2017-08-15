@@ -39,13 +39,155 @@ textarea{
   max-height:100px;
 }
 </style>
-<jsp:include page="Include.jsp"></jsp:include>
+	<jsp:include page="Include.jsp"></jsp:include>
  <script src="<c:url value="/resources/validations.js" />"></script>
 <script type="text/javascript">
+function navigate() {
+	var flag = $("#addUpdateFlag").val();
+	if(flag == 'add') {
+		createPO('savepo','POST');
+	} else if(flag == 'update') {
+		createPO('updatepo','PUT');			
+	}
+}
+function createPO(urlToHit,methodType){
+	 
+	 /* if(!check()){
+		 return false;
+	 } */
+	 alert('1');
+	 	var vendorId = $('#vendorId :selected').val();
+	   	var unitTypeId = $('#unitTypeId :selected').val();
+	   	var categoryId = $('#categoryId :selected').val();
+	   	var message = $("#message").val();
+	   	var poIssues = $('.poIssueIds:checkbox:checked');
+
+	   	var issueArr = new Array();
+	   	for(var i=0;i<poIssues.length;i++) {
+	   		issueArr.push(parseInt(poIssues[i].value));
+	   	}
+	   	
+	   	var poId;
+	   	if(methodType == 'PUT') {
+	   		poId = $('#poid').val();
+	   	}
+	   	
+		  $.ajax({url: BASE_URL + urlToHit,
+			      type:"POST",
+			      data:{
+			    	vendorId:vendorId,
+			    	unitTypeId:unitTypeId,
+			    	categoryId:categoryId,
+			    	message:message,
+			    	issueIds:issueArr,
+			    	poid:poId
+			      },
+			      success: function(result){
+		        try{
+		        	$('#myModal').modal('toggle');
+		        	var list = result.resultList;
+					fillPOData(list);
+
+			        toastr.success(result.message, 'Success!')
+				} catch(e){
+					toastr.error('Something went wrong', 'Error!')
+				}
+		  },error:function(result){
+			  try{
+				  	var obj = JSON.parse(result.responseText);
+				  	toastr.error(obj.message, 'Error!')
+				  }catch(e){
+					  toastr.error('Something went wrong', 'Error!')
+				  }
+		  }});
+		  return true;
+}
+
+function fillPOData(list) {
+	var tableValue = "";
+	if(list.length > 0) {
+		 for(var i=0;i<list.length;i++) {
+			var obj = list[i];
+			tableValue = tableValue + ("<tr class='info'>");
+    		var poNo = "";
+    		if(obj.poNo != null) {
+    			poNo = obj.poNo;
+    		}
+    		var message = "";
+    		if(obj.message != null) {
+    			message = obj.message;
+    		}
+    		var categoryName = "";
+    		if(obj.categoryName != null) {
+    			categoryName = obj.categoryName;
+    		}
+    		var statusName = "";
+    		if(obj.statusName != null) {
+    			statusName = obj.statusName;
+    		}
+    		var unitTypeName = "";
+    		if(obj.unitTypeName != null) {
+    			unitTypeName = obj.unitTypeName;
+    		}
+    		var vendorName = "";
+    		if(obj.vendorName != null) {
+    			vendorName = obj.vendorName;
+    		}
+    		
+    		tableValue = tableValue + ("<td>"+(poNo)+"</td>");
+    		tableValue = tableValue + ("<td>"+(message)+"</td>");
+    		tableValue = tableValue + ("<td>"+(categoryName)+"</td>");
+    		tableValue = tableValue + ("<td>"+(statusName)+"</td>");
+    		tableValue = tableValue + ("<td>"+(unitTypeName)+"</td>");
+    		tableValue = tableValue + ("<td>"+(vendorName)+"</td>");
+    		tableValue = tableValue + "<td><a href = '#' data-toggle='modal' data-target='#myModal'  onclick=checkFlag('update');onClickMethodQuestion('"+(obj.id)+"')>Update</a> / <a href='#' onclick=deletePO('"+(obj.id)+"')>Delete</a></td>";
+    		tableValue = tableValue + ("</tr>");
+		}
+		$("#poData").html(tableValue);
+	} else {
+		$("#poData").html("No records found.");		
+	}
+}
+
+function deletePO(terminalId){
+	  $.ajax({url: BASE_URL + "deletepo/" + terminalId,
+		      type:"GET",
+		      success: function(result){
+	    	  try{	
+					var list = result.resultList;
+					fill
+					
+	    		  toastr.success(result.message, 'Success!')
+			  }catch(e){
+				toastr.error('Something went wrong', 'Error!')
+			  }
+	  },error:function(result){
+		  try{
+			  	var obj = JSON.parse(result.responseText);
+			  	toastr.error(obj.message, 'Error!')
+			  }catch(e){
+				  toastr.error('Something went wrong', 'Error!')
+			  }
+	  }});
+	  return true;
+}
+
 	$(document).ready(function(){
+		$("#btnActive").css('background','pink');
+		$("#btnInvoiced").css('background','white');
+		$("#btnComplete").css('background','white');
 		$("#btnActive").click(function () {
 			showActivePOs();
+			$("#btnActive").css('background','pink');
+			$("#btnInvoiced").css('background','white');
+			$("#btnComplete").css('background','white');
 			$("#statusFlag").val("Active");
+		});
+		$('#message').keyup(function() {
+		    if($('#message').val().length > 200) {
+				toastr.error('Only 200 words allowed', 'Error!')
+				return false;
+		    }
 		});
 		if($("#statusFlag").val() == 'Active') {
 			$("#btnActive").focus();
@@ -53,8 +195,19 @@ textarea{
 			$("#btnInvoiced").addClass("btn btn-default"); */
 		}
 		$("#btnComplete").click(function () {
+			$("#btnActive").css('background','white');
+			$("#btnInvoiced").css('background','white');
+			$("#btnComplete").css('background','pink');
 			showCompletePOs();
 			$("#statusFlag").val("Complete");
+		});
+		
+		$("#btnInvoiced").click(function () {
+			$("#btnActive").css('background','white');
+			$("#btnInvoiced").css('background','pink');
+			$("#btnComplete").css('background','white');
+			showInvoicedPOs();
+			$("#statusFlag").val("Invoiced");
 		});
 		if($("#statusFlag").val() == 'Complete') {
 			$("#btnComplete").focus();
@@ -72,9 +225,9 @@ textarea{
 			$("#btnInvoiced").addClass("btn btn-default"); 
 		}
 		
-		$("#btnNew").click(function(){
+	/* 	$("#btnNew").click(function(){
 			$("#frm1").submit();
-		});
+		}); */
 		$('#btnSearch').click(function(){
 			$("#frmSearch").change(function() {
 			  $("#frmSearch").attr("action", "showques");
@@ -105,6 +258,81 @@ function checkFlag(field) {
 		document.getElementById("frm1").submit(); */
 	}
 }
+
+function showIssueDetail(quesId) {
+	$("#title").val("");
+    $("#description").val("");
+	document.getElementById("vmcId").innerHTML = "";
+	document.getElementById("unitType").innerHTML = "";
+	document.getElementById("issueCategory").innerHTML = "";
+	document.getElementById("unitNo").innerHTML = "";
+	document.getElementById("reportedBy").innerHTML = "";
+	document.getElementById("status").innerHTML = "";
+	$.get("getissue/issueId",{"issueId" : quesId}, function(data) {
+        $("#title").val(data.title);
+        $("#description").val(data.description);                    
+        var vmc = document.getElementById("vmcId");
+        var vmcList = data.vmcList;
+        for(var i = 0;i < vmcList.length;i++) {
+        	vmc.options[vmc.options.length] = new Option(vmcList[i].name);
+        	vmc.options[i].value = vmcList[i].id;
+        	if(vmcList[i].id == data.vmcId) {
+        		document.getElementById("vmcId").selectedIndex = i;
+        	}
+        }
+        
+        var unitType = document.getElementById("unitType");
+        var unitTypeList = data.unitTypeList;
+        for(var i = 0;i < unitTypeList.length;i++) {
+        	unitType.options[unitType.options.length] = new Option(unitTypeList[i].typeName);
+        	unitType.options[i].value = unitTypeList[i].typeId;
+        	if(unitTypeList[i].typeId == data.unitTypeId) {
+        		document.getElementById("unitType").selectedIndex = i;
+        	}
+        }
+        
+        var category = document.getElementById("issueCategory");
+        var categoryList = data.categoryList;
+        for(var i = 0;i < categoryList.length;i++) {
+        	category.options[category.options.length] = new Option(categoryList[i].name);
+        	category.options[i].value = categoryList[i].categoryId;
+        	if(categoryList[i].categoryId == data.categoryId) {
+        		document.getElementById("issueCategory").selectedIndex = i;
+        	}
+        }
+        
+        var unitNo = document.getElementById("unitNo");
+        var unitNos = data.unitNos;
+        for(var i = 0;i < unitNos.length;i++) {
+        	unitNo.options[unitNo.options.length] = new Option(unitNos[i]);
+        	unitNo.options[i].value = unitNos[i];
+        	if(unitNos[i] == data.unitNo) {
+        		document.getElementById("unitNo").selectedIndex = i;
+        	}
+        }
+        
+        var reportedBy = document.getElementById("reportedBy");
+        var reportedByList = data.reportedByList;
+        for(var i = 0;i < reportedByList.length;i++) {
+        	reportedBy.options[reportedBy.options.length] = new Option(reportedByList[i].fullName);
+        	reportedBy.options[i].value = reportedByList[i].driverId;
+        	if(reportedByList[i].driverId == data.reportedById) {
+        		document.getElementById("reportedBy").selectedIndex = i;
+        	}
+        }
+        
+        var status = document.getElementById("status");
+        var statusList = data.statusList;
+        for(var i = 0;i < data.statusList.length;i++) {
+        	status.options[status.options.length] = new Option(data.statusList[i].typeName);
+        	status.options[i].value = data.statusList[i].typeId;
+        	if(statusList[i].typeId == data.statusId) {
+        		document.getElementById("status").selectedIndex = i;
+        	}
+        }
+   	}); 
+}
+
 </script>
 <script type="text/javascript">
 		var editInitialValue = "";
@@ -116,14 +344,14 @@ function checkFlag(field) {
 				//$("#issuesTable").html();
 	            if(issuesResponse.length > 0) {
 	            	var tableValue = "";
-					//$("#mainDiv").show();
+					$("#mainDiv").show();
 	            	for(var i=0;i<issuesResponse.length;i++) {
 	            		var obj = issuesResponse[i];
 	            		if($("#addUpdateFlag").val() == 'update') {
 		            		if(!editIssueIds.includes(obj.id)) {
 			            		tableValue = tableValue + ("<tr class='info'>");
-			            		tableValue = tableValue + ("<td><div class='form-group'><input type='checkbox' class='form-control issueIds' value='"+(obj.id)+"' id='issueIds' name='issueIds' /></div></td>");
-			            		tableValue = tableValue + ("<td>"+(obj.title)+"</td>");
+			            		tableValue = tableValue + ("<td><div class='form-group'><input type='checkbox' class='form-control poIssueIds' value='"+(obj.id)+"' id='issueIds' name='issueIds' /></div></td>");
+			            		tableValue = tableValue + ("<td><a href='#' onclick=showIssueDetail('"+(obj.id) + "') data-toggle='modal' data-target='#issueModal'>" + (obj.title)+"</a></td>");
 			            		tableValue = tableValue + ("<td>"+(obj.vmcName)+"</td>");
 			            		tableValue = tableValue + ("<td>"+(obj.categoryName)+"</td>");
 			            		tableValue = tableValue + ("<td>"+(obj.unitTypeName)+"</td>");
@@ -133,10 +361,11 @@ function checkFlag(field) {
 			            		//tableValue = tableValue + "<td><a href = '#' data-toggle='modal' data-target='#myModal' onclick='checkFlag('update');onClickMethodQuestion('"+${obj.id}+"')>Update</a> / <a href='deleteissue/${obj.id}">Delete</a></td>"
 			            		tableValue = tableValue + ("</tr>");
 		            		}
-	            		} else {
+	            		}
+	            		else {
 		            		tableValue = tableValue + ("<tr class='info'>");
-		            		tableValue = tableValue + ("<td><div class='form-group'><input type='checkbox' class='form-control issueIds' value='"+(obj.id)+"' id='issueIds' name='issueIds' /></div></td>");
-		            		tableValue = tableValue + ("<td>"+(obj.title)+"</td>");
+		            		tableValue = tableValue + ("<td><div class='form-group'><input type='checkbox' class='form-control poIssueIds' value='"+(obj.id)+"' id='issueIds' name='issueIds' /></div></td>");
+		            		tableValue = tableValue + ("<td><a href='#' onclick=showIssueDetail('"+(obj.id) + "') data-toggle='modal' data-target='#issueModal'>"+(obj.title)+"</a></td>");
 		            		tableValue = tableValue + ("<td>"+(obj.vmcName)+"</td>");
 		            		tableValue = tableValue + ("<td>"+(obj.categoryName)+"</td>");
 		            		tableValue = tableValue + ("<td>"+(obj.unitTypeName)+"</td>");
@@ -337,7 +566,14 @@ function check() {
 			msgvalue.text("Choose any issue");
 			return false;
 		}
-	}
+	} 
+	if($('#message').val().length > 200) {
+		msg.show();
+		$("#message").focus();
+		msgvalue.text("Only 200 words allowed in message");
+		return false;
+
+    }
 	
 	var invoiceNo = $("#invoiceNo");
 	var invoceNoDiv = $("#invoceNoDiv");
@@ -387,12 +623,32 @@ function emptyMessageDiv(){
 	 $("#invoicePoNo").val(poNo);
  }
  
- function changeStatusToInvoice(poId, statusId) {
-		
+ var invoicePoId;
+ var invoiceStatusId;
+ function pastePoIdAndStatusId(poId,statusId) {
+	 invoicePoId=poId;
+	 invoiceStatusId = statusId;
+	 $("#invoicePoId").val(poId);
+	 $("#invoiceStatusId").val(statusId);	 
+ }
+ 
+ function changeStatusToInvoice() {
+		var poId = invoicePoId;
+		var statusId = invoiceStatusId;
+	 	var amount = $("#invoiceAmount").val();
+	 	var invoiceNo = $("#invoiceNo").val();
+	 	var invoiceDate = $("#invoiceDate").val();
 	 $.ajax({url: BASE_URL + poId + "/complete/" + statusId + "/invoiced",
 	      type:"GET",
+	      data:{
+		    	invoiceDate:invoiceDate,
+		    	invoiceNo:invoiceNo,
+		    	invoiceAmount:amount
+		      },
 	      success: function(result){
    	  try{	
+      	$('#invoiceModal').modal('toggle');
+
 				var list = result.resultList;
 				fillPOData(list);
 				
@@ -434,6 +690,29 @@ function emptyMessageDiv(){
 }});
 return true;
  } 
+  
+  function showInvoicedPOs() {
+		 $.ajax({url: BASE_URL + "showpo/status/Invoiced",
+		      type:"GET",
+		      success: function(result){
+	  	  try{	
+					var list = result;
+					fillPOData(list);
+					
+	  		  //toastr.success(result.message, 'Success!')
+			  }catch(e){
+				toastr.error('Something went wrong', 'Error!')
+			  }
+	},error:function(result){
+		  try{
+			  	var obj = JSON.parse(result.responseText);
+			  	toastr.error(obj.message, 'Error!')
+			  }catch(e){
+				  toastr.error('Something went wrong', 'Error!')
+			  }
+	}});
+	return true;
+	 } 
   
   function showActivePOs() {
 		 $.ajax({url: BASE_URL + "showpo/status/Active",
@@ -497,12 +776,28 @@ return true;
 	    		tableValue = tableValue + ("<td>"+(vendor)+"</td>");
 	    		tableValue = tableValue + "<td><a href = '#' data-toggle='modal' data-target='#myModal'  onclick=checkFlag('update');onClickMethodQuestion('"+(obj.id)+"')>Update</a> / <a href='#' onclick=deleteDriver('"+(obj.id)+"')>Delete</a> ";
 	    		if($("#statusFlag").val() == 'Complete') {
-		    		tableValue = tableValue + " / <a href='#' data-toggle='modal' data-target='#invoiceModal' onclick=pastePoNo('"+(poNo)+"')>Change to Invoice</a>";	    			
+		    		tableValue = tableValue + " / <a href='#' data-toggle='modal' data-target='#invoiceModal' onclick=pastePoNo('"+(poNo)+"');pastePoIdAndStatusId('"+(obj.id)+"','"+(obj.invoiceStatusId)+"')>Change to Invoice</a>";	    			
 	    		}
 	    		tableValue = tableValue + ("</td></tr>");
 			}
 			$("#poData").html(tableValue);
+		} else {
+			$("#poData").html("No records Found.");			
 		}
+	}
+ 
+ function getUnitNos() {
+		var unitTypeId = $('#unitType :selected').val();
+		var categoryId = $('#issueCategory :selected').val();
+		$.get("issue/getunitno/category/"+categoryId+"/unittype/"+unitTypeId, function(data) {
+         
+         var unitNo = document.getElementById("unitNo");
+         $("#unitNo").empty();
+         for(var i = 0;i < data.unitNos.length;i++) {
+         	unitNo.options[unitNo.options.length] = new Option(data.unitNos[i]);
+         	unitNo.options[i].value = data.unitNos[i];
+         }
+		});
 	}
  
 </script>
@@ -527,7 +822,7 @@ return true;
 			<div class="col-sm-8">
 					<div class="modal fade" id="myModal" role="dialog">
 					    <div class="modal-dialog">
-						<form method="POST" name="po" id="frm1" onsubmit="return check()">
+						<form id="frm1">
 						<input type="hidden" id = "poid" name= "poid" value = "" />					
 						<input type="hidden" id = "addUpdateFlag" value = "" />					
 	
@@ -625,18 +920,6 @@ return true;
 											</div>
 										</div>
 									</div> -->
-									<div class="form-group" style="display: none;" id = "invoceNoDiv">
-										<div class="row">
-											<div class="col-sm-12">
-												<div class="input-group">
-													<span class="input-group-addon">
-													 <b>InvoiceNo</b>												
-												</span>
-												<input type="text" class="form-control" placeHolder="Enter InvoiceNo" id="invoiceNo" name="invoiceNo" value="" />
-												</div>
-											</div>
-										</div>
-									</div>
 									<div class="form-group">
 										<div class="row">
 											<div class="col-sm-12">
@@ -653,7 +936,7 @@ return true;
 				        	</div>
 					        </div>
 					        <div class="modal-footer">
-					          <input type="button" class="btn btn-primary" id= "btnNew" value="Save" />
+					          <input type="button" class="btn btn-primary" id= "btnNew" value="Save" onclick="navigate()" />
 					    	  <!-- <input type="button" class="btn btn-primary" id= "btnExit" value="Save&Exit" /> -->
 					    	  <input type="reset" class="btn btn-primary" id= "btnReset" value="Reset" />
 							  <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
@@ -665,8 +948,8 @@ return true;
 					  <div class="modal fade" id="invoiceModal" role="dialog">
 					    <div class="modal-dialog">
 						<form method="POST" name="po" id="frm2">
-						<input type="hidden" id = "poid" name= "poid" value = "" />					
-						<input type="hidden" id = "addUpdateFlag" value = "" />					
+						<input type="hidden" id = "invoicePoId" value = "" />					
+						<input type="hidden" id = "invoiceStatusId" value = "" />					
 	
 					      <!-- Modal content-->
 					      <div class="modal-content">
@@ -688,7 +971,7 @@ return true;
 												<span class="input-group-addon">
 													<b>PO No</b>												
 												</span>
-												<input type="text" class="form-control" disabled="disabled" id="invoicePoNo" name="poNo" value="" />
+												<input type="text" class="form-control" disabled="disabled" id="invoicePoNo" name="PoNo" value="" />
 											</div>
 											</div>
 										</div>
@@ -700,7 +983,7 @@ return true;
 													<span class="input-group-addon">
 														 <b>Invoice Amount</b>												
 													</span>
-													<input type="text" class="form-control" placeHolder="Enter InvoiceAmount" id="invoiceAmount" name="invoiceAmount" value="" />
+													<input type="text" class="form-control" placeHolder="Enter InvoiceAmount" id="invoiceAmount" name="amount" value="" />
 												</div>
 											</div>
 										</div>
@@ -733,9 +1016,144 @@ return true;
 				        	</div>
 					        </div>
 					        <div class="modal-footer">
-					          <input type="button" class="btn btn-primary" id= "btnNew" value="Save" />
+					          <input type="button" class="btn btn-primary" id= "btnChangeToInvoice" value="Create" onclick="changeStatusToInvoice()" />
 					    	  <!-- <input type="button" class="btn btn-primary" id= "btnExit" value="Save&Exit" /> -->
 					    	  <input type="reset" class="btn btn-primary" id= "btnReset" value="Reset" />
+							  <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+					        </div>
+					      </div>
+					      </form>
+					    </div>
+					  </div>
+				</div>
+				<div class="col-sm-4">
+				</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-8">
+					<div class="modal fade" id="issueModal" role="dialog">
+					    <div class="modal-dialog">
+					      <!-- Modal content-->
+					      <div class="modal-content">
+					        <div class="modal-header">
+					          <button type="button" class="close" data-dismiss="modal">&times;</button>
+					          <h4 class="modal-title"><p id ="modelTitle">View Issue</p></h4>
+					        </div>
+					        <div class="modal-body">
+								<div class = "row">
+								<div class="col-sm-12">
+									<div class="form-group">
+										<div class="row">
+											<div class="col-sm-12">
+												<div class="input-group ui-widget"  >
+												<span class="input-group-addon">
+													 <b>Title</b>												
+												</span>
+												<input type="text" class="form-control" placeHolder="Enter Title" id="title" name="title" value="" autofocus />
+											</div>
+											</div>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="row">
+											<div class="col-sm-12">
+												<div class="input-group">
+													<!-- <span class="input-group-addon">
+														 <b>VMC</b>												
+													</span>
+													<input type="text" placeHolder="Enter VMC" id="vmcId" name="vmcId" class="form-control"/>
+													<input type="hidden" id="vmcIdhidden" /> -->
+													<span class="input-group-addon">
+														 <b>VMC</b>												
+													</span>
+													<select class="form-control" name="vmcId" id="vmcId">
+													</select>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="row">
+											<div class="col-sm-12">
+												<div class="input-group">
+													<span class="input-group-addon">
+														 <b>UnitType</b>												
+													</span>
+													<select id="unitType" class="form-control" name="unitTypeId">
+													</select>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="row">
+											<div class="col-sm-12">
+												<div class="input-group">
+													<span class="input-group-addon">
+														 <b>Category</b>												
+													</span>
+													<select id="issueCategory" class="form-control" name="categoryId" onchange="getUnitNos()">
+													</select>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="row">
+											<div class="col-sm-12">
+												<div class="input-group">
+													<span class="input-group-addon">
+														 <b>UnitNo</b>												
+													</span>
+													<select id="unitNo" class="form-control" name="unitNo">
+													</select>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="row">
+											<div class="col-sm-12">
+												<div class="input-group">
+													<span class="input-group-addon">
+														 <b>ReportedBy</b>												
+													</span>
+													<select id="reportedBy" class="form-control" name="reportedById">
+													</select>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="row">
+											<div class="col-sm-12">
+												<div class="input-group">
+													<span class="input-group-addon">
+														 <b>Status</b>												
+													</span>
+													<select id="status" class="form-control" name="statusId">
+													</select>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="row">
+											<div class="col-sm-12">
+												<div class="input-group">
+													<span class="input-group-addon">
+														 <b>Description</b>												
+													</span>
+														<textarea class="form-control" rows="1" cols="1" placeholder="Enter Description" name="description" id = "description"></textarea>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+				        	</div>
+					        </div>
+					        <div class="modal-footer">
+					    	  <input type="reset" class="btn btn-primary" id= "btnIssueReset" value="Reset" />
 							  <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
 					        </div>
 					      </div>

@@ -7,6 +7,8 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.dpu.model.CategoryReq;
+import com.dpu.model.Failed;
 import com.dpu.service.CategoryService;
 
 @Controller
@@ -48,8 +51,7 @@ public class WebCategoryController {
 	}
 	
 	@RequestMapping(value = "/savecategory" , method = RequestMethod.POST)
-	public ModelAndView saveCategory(@ModelAttribute("cat") CategoryReq categoryReq, HttpServletRequest request) {
-		ModelAndView modelAndView = new ModelAndView();
+	@ResponseBody public Object saveCategory(@ModelAttribute("cat") CategoryReq categoryReq, HttpServletRequest request) {
 		HttpSession session = request.getSession();
 		String createdBy = "";
 		if(session != null) {
@@ -57,9 +59,12 @@ public class WebCategoryController {
 		}
 //		divisionReq.setCreatedBy(createdBy);
 //		divisionReq.setCreatedOn(new Date());
-		categoryService.addCategory(categoryReq);
-		modelAndView.setViewName("redirect:showcategory");
-		return modelAndView;
+		Object response = categoryService.addCategory(categoryReq);
+		if(response instanceof Failed) {
+			return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
+		} else {
+			return new ResponseEntity<Object>(response, HttpStatus.OK);
+		}
 	}
 	
 	@RequestMapping(value = "/getcategory/categoryId" , method = RequestMethod.GET)
@@ -75,18 +80,22 @@ public class WebCategoryController {
 	}
 	
 	@RequestMapping(value = "/updatecategory" , method = RequestMethod.POST)
-	public ModelAndView updateCategory(@ModelAttribute("cat") CategoryReq categoryReq, @RequestParam("categoryid") Long categoryId) {
-		ModelAndView modelAndView = new ModelAndView();
-		categoryService.update(categoryId, categoryReq);
-		modelAndView.setViewName("redirect:showcategory");
-		return modelAndView;
+	@ResponseBody public Object updateCategory(@ModelAttribute("cat") CategoryReq categoryReq, @RequestParam("categoryid") Long categoryId) {
+		Object response = categoryService.update(categoryId, categoryReq);
+		if(response instanceof Failed) {
+			return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
+		} else {
+			return new ResponseEntity<Object>(response, HttpStatus.OK);
+		}
 	}
 	
 	@RequestMapping(value = "/deletecategory/{categoryid}" , method = RequestMethod.GET)
-	public ModelAndView deleteCategory(@PathVariable("categoryid") Long categoryId) {
-		ModelAndView modelAndView = new ModelAndView();
-		categoryService.delete(categoryId);
-		modelAndView.setViewName("redirect:/showcategory");
-		return modelAndView;
+	@ResponseBody public Object deleteCategory(@PathVariable("categoryid") Long categoryId) {
+		Object response = categoryService.delete(categoryId);
+		if(response instanceof Failed) {
+			return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
+		} else {
+			return new ResponseEntity<Object>(response, HttpStatus.OK);
+		}
 	}
 }

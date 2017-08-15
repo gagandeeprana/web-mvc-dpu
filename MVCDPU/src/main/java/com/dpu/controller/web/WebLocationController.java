@@ -7,6 +7,8 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.dpu.model.Failed;
 import com.dpu.model.ShipperModel;
 import com.dpu.service.ShipperService;
 
@@ -48,8 +51,7 @@ public class WebLocationController {
 	}
 	
 	@RequestMapping(value = "/saveshipper" , method = RequestMethod.POST)
-	public ModelAndView saveShipper(@ModelAttribute("shipper") ShipperModel ShipperModel, HttpServletRequest request) {
-		ModelAndView modelAndView = new ModelAndView();
+	@ResponseBody public Object saveShipper(@ModelAttribute("shipper") ShipperModel ShipperModel, HttpServletRequest request) {
 		HttpSession session = request.getSession();
 		String createdBy = "";
 		if(session != null) {
@@ -57,9 +59,12 @@ public class WebLocationController {
 		}
 //		divisionReq.setCreatedBy(createdBy);
 //		divisionReq.setCreatedOn(new Date());
-		shipperService.add(ShipperModel);
-		modelAndView.setViewName("redirect:showshipper");
-		return modelAndView;
+		Object response = shipperService.add(ShipperModel);
+		if(response instanceof Failed) {
+			return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
+		} else {
+			return new ResponseEntity<Object>(response, HttpStatus.OK);
+		}
 	}
 	
 	@RequestMapping(value = "/getshipper/shipperId" , method = RequestMethod.GET)
@@ -75,18 +80,22 @@ public class WebLocationController {
 	}
 	
 	@RequestMapping(value = "/updateshipper" , method = RequestMethod.POST)
-	public ModelAndView updateShipper(@ModelAttribute("shipper") ShipperModel ShipperModel, @RequestParam("shipperid") Long shipperId) {
-		ModelAndView modelAndView = new ModelAndView();
-		shipperService.update(shipperId, ShipperModel);
-		modelAndView.setViewName("redirect:showshipper");
-		return modelAndView;
+	@ResponseBody public Object updateShipper(@ModelAttribute("shipper") ShipperModel ShipperModel, @RequestParam("shipperid") Long shipperId) {
+		Object response = shipperService.update(shipperId, ShipperModel);
+		if(response instanceof Failed) {
+			return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
+		} else {
+			return new ResponseEntity<Object>(response, HttpStatus.OK);
+		}
 	}
 	
 	@RequestMapping(value = "/deleteshipper/{shipperid}" , method = RequestMethod.GET)
-	public ModelAndView deleteShipper(@PathVariable("shipperid") Long shipperId) {
-		ModelAndView modelAndView = new ModelAndView();
-		shipperService.delete(shipperId);
-		modelAndView.setViewName("redirect:/showshipper");
-		return modelAndView;
+	@ResponseBody public Object deleteShipper(@PathVariable("shipperid") Long shipperId) {
+		Object response = shipperService.delete(shipperId);
+		if(response instanceof Failed) {
+			return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
+		} else {
+			return new ResponseEntity<Object>(response, HttpStatus.OK);
+		}
 	}
 }

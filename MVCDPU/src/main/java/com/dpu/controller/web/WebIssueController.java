@@ -1,6 +1,5 @@
 package com.dpu.controller.web;
 
-import java.util.HashSet;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -8,6 +7,8 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.dpu.model.Failed;
 import com.dpu.model.IssueModel;
 import com.dpu.service.IssueService;
 
@@ -60,8 +62,7 @@ public class WebIssueController {
 	}
 	
 	@RequestMapping(value = "/saveissue" , method = RequestMethod.POST)
-	public ModelAndView saveIssue(@ModelAttribute("issue") IssueModel issueModel, HttpServletRequest request) {
-		ModelAndView modelAndView = new ModelAndView();
+	@ResponseBody public Object saveIssue(@ModelAttribute("issue") IssueModel issueModel, HttpServletRequest request) {
 		HttpSession session = request.getSession();
 		String createdBy = "";
 		if(session != null) {
@@ -69,9 +70,12 @@ public class WebIssueController {
 		}
 //		divisionReq.setCreatedBy(createdBy);
 //		divisionReq.setCreatedOn(new Date());
-		issueService.addIssue(issueModel);
-		modelAndView.setViewName("redirect:showissue");
-		return modelAndView;
+		Object response = issueService.addIssue(issueModel);
+		if(response instanceof Failed) {
+			return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
+		} else {
+			return new ResponseEntity<Object>(response, HttpStatus.OK);
+		}
 	}
 	
 	@RequestMapping(value = "/getissue/issueId" , method = RequestMethod.GET)
@@ -87,18 +91,22 @@ public class WebIssueController {
 	}
 	
 	@RequestMapping(value = "/updateissue" , method = RequestMethod.POST)
-	public ModelAndView updateIssue(@ModelAttribute("issue") IssueModel issueModel, @RequestParam("issueid") Long issueId) {
-		ModelAndView modelAndView = new ModelAndView();
-		issueService.update(issueId, issueModel);
-		modelAndView.setViewName("redirect:showissue");
-		return modelAndView;
+	@ResponseBody public Object updateIssue(@ModelAttribute("issue") IssueModel issueModel, @RequestParam("issueid") Long issueId) {
+		Object response = issueService.update(issueId, issueModel);
+		if(response instanceof Failed) {
+			return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
+		} else {
+			return new ResponseEntity<Object>(response, HttpStatus.OK);
+		}
 	}
 	
 	@RequestMapping(value = "/deleteissue/{issueid}" , method = RequestMethod.GET)
-	public ModelAndView deleteTerminal(@PathVariable("issueid") Long issueId) {
-		ModelAndView modelAndView = new ModelAndView();
-		issueService.delete(issueId);
-		modelAndView.setViewName("redirect:/showissue");
-		return modelAndView;
+	@ResponseBody public Object deleteTerminal(@PathVariable("issueid") Long issueId) {
+		Object response = issueService.delete(issueId);
+		if(response instanceof Failed) {
+			return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
+		} else {
+			return new ResponseEntity<Object>(response, HttpStatus.OK);
+		}
 	}
 }

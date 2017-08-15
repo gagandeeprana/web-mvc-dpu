@@ -36,20 +36,153 @@ textarea{
   min-width:100%; 
   max-width:100%; 
 
-  height:360px; 
-  min-height:360px;  
-  max-height:360px;
+  height:100px; 
+  min-height:100px;  
+  max-height:100px;
 }
 .ui-autocomplete{
 z-index: 99999!important;
 }
 
 </style>
+	<jsp:include page="Include.jsp"></jsp:include>
+ <script src="<c:url value="/resources/validations.js" />"></script>
 <script type="text/javascript">
+function navigate() {
+	var flag = $("#addUpdateFlag").val();
+	if(flag == 'add') {
+		createIssue('saveissue','POST');
+	} else if(flag == 'update') {
+		createIssue('updateissue','PUT');			
+	}
+}
+function createIssue(urlToHit,methodType){
+	 
+	 if(!check()){
+		 return false;
+	 }
+	 
+	 	var title = $("#title").val();
+	   	var vmcId = $('#vmcId :selected').val();
+	   	var unitType = $('#unitType :selected').val();
+	   	var issueCategory = $('#issueCategory :selected').val();
+	   	var unitNo = $('#unitNo :selected').val();
+	   	var reportedBy = $('#reportedBy :selected').val();
+	   	var status = $('#status :selected').val();
+	 	var description = $("#description").val();
+	   	
+	 	var issueId;
+	   	if(methodType == 'PUT') {
+	   		issueId = $('#issueid').val();
+	   	}
+	   	
+		  $.ajax({url: BASE_URL + urlToHit,
+			      type:"POST",
+			      data:{
+			    	title:title,
+			    	vmcId:vmcId,
+			    	unitTypeId:unitType,
+			    	categoryId:issueCategory,
+			    	unitNo:unitNo,
+			    	reportedById:reportedBy,
+			    	statusId:status,
+			    	description:description,
+			    	issueid:issueId
+			      },
+			      success: function(result){
+		        try{
+		        	$('#myModal').modal('toggle');
+		        	var list = result.resultList;
+					fillIssueData(list);
+
+			        toastr.success(result.message, 'Success!')
+				} catch(e){
+					toastr.error('Something went wrong', 'Error!')
+				}
+		  },error:function(result){
+			  try{
+				  	var obj = JSON.parse(result.responseText);
+				  	toastr.error(obj.message, 'Error!')
+				  }catch(e){
+					  toastr.error('Something went wrong', 'Error!')
+				  }
+		  }});
+		  return true;
+}
+
+function fillIssueData(list) {
+	var tableValue = "";
+	if(list.length > 0) {
+		 for(var i=0;i<list.length;i++) {
+			var obj = list[i];
+			tableValue = tableValue + ("<tr class='info'>");
+    		var title = "";
+    		if(obj.title != null) {
+    			title = obj.title;
+    		}
+    		var vmc = "";
+    		if(obj.vmcName != null) {
+    			vmc = obj.vmcName;
+    		}
+    		var unitTypeName = "";
+    		if(obj.unitTypeName != null) {
+    			unitTypeName = obj.unitTypeName;
+    		}
+    		var unitNo = "";
+    		if(obj.unitNo != null) {
+    			unitNo = obj.unitNo;
+    		}
+    		var reportedByName = "";
+    		if(obj.reportedByName != null) {
+    			reportedByName = obj.reportedByName;
+    		}
+    		var statusName = "";
+    		if(obj.statusName != null) {
+    			statusName = obj.statusName;
+    		}
+    		
+    		tableValue = tableValue + ("<td>"+(title)+"</td>");
+    		tableValue = tableValue + ("<td>"+(vmc)+"</td>");
+    		tableValue = tableValue + ("<td>"+(unitTypeName)+"</td>");
+    		tableValue = tableValue + ("<td>"+(unitNo)+"</td>");
+    		tableValue = tableValue + ("<td>"+(reportedByName)+"</td>");
+    		tableValue = tableValue + ("<td>"+(statusName)+"</td>");
+    		tableValue = tableValue + "<td><a href = '#' data-toggle='modal' data-target='#myModal'  onclick=checkFlag('update');onClickMethodQuestion('"+(obj.id)+"')>Update</a> / <a href='#' onclick=deleteIssue('"+(obj.id)+"')>Delete</a></td>";
+    		tableValue = tableValue + ("</tr>");
+		}
+		$("#issueData").html(tableValue);
+	} else {
+		$("#issueData").html("No records found.");		
+	}
+}
+
+function deleteIssue(terminalId){
+	  $.ajax({url: BASE_URL + "deleteissue/" + terminalId,
+		      type:"GET",
+		      success: function(result){
+	    	  try{	
+					var list = result.resultList;
+					fillIssueData(list);
+					
+	    		  toastr.success(result.message, 'Success!')
+			  }catch(e){
+				toastr.error('Something went wrong', 'Error!')
+			  }
+	  },error:function(result){
+		  try{
+			  	var obj = JSON.parse(result.responseText);
+			  	toastr.error(obj.message, 'Error!')
+			  }catch(e){
+				  toastr.error('Something went wrong', 'Error!')
+			  }
+	  }});
+	  return true;
+}
+
 	$(document).ready(function(){
-		$("#btnNew").click(function(){
+		/* $("#btnNew").click(function(){
 			$("#frm1").submit();
-		});
+		}); */
 		$('#btnSearch').click(function(){
 			$("#frmSearch").change(function() {
 			  $("#frmSearch").attr("action", "showques");
@@ -62,7 +195,7 @@ z-index: 99999!important;
 function checkFlag(field) {
 	document.getElementById("addUpdateFlag").value = field;
 	if(field == 'update') {
-		document.getElementById("frm1").action = "updateissue";
+		//document.getElementById("frm1").action = "updateissue";
 		document.getElementById("btnNew").value = "Update";
 		//$("#btnExit").hide();
 		$("#modelTitle").html("Edit Issue");
@@ -160,7 +293,7 @@ function checkFlag(field) {
         		 $.get("getissue/issueId",{"issueId" : quesId}, function(data) {
         			document.getElementById("issueid").value = data.id;
                     $("#title").val(data.title);
-                    
+                    $("#description").val(data.description);                    
                     var vmc = document.getElementById("vmcId");
                     var vmcList = data.vmcList;
                     for(var i = 0;i < vmcList.length;i++) {
@@ -226,6 +359,7 @@ function checkFlag(field) {
         
         function clearAll() {
             $("#title").val("");
+            $("#description").val("");
         	document.getElementById("vmcId").innerHTML = "";
         	document.getElementById("unitType").innerHTML = "";
         	document.getElementById("issueCategory").innerHTML = "";
@@ -270,7 +404,7 @@ function emptyMessageDiv(){
 			<div class="col-sm-8">
 					<div class="modal fade" id="myModal" role="dialog">
 					    <div class="modal-dialog">
-						<form action="saveissue" method="POST" name="issue" id="frm1" onsubmit="return check()">
+						<form id="frm1">
 						<input type="hidden" id = "issueid" name= "issueid" value = "" />					
 						<input type="hidden" id = "addUpdateFlag" value = "" />					
 	
@@ -382,11 +516,23 @@ function emptyMessageDiv(){
 											</div>
 										</div>
 									</div>
+									<div class="form-group">
+										<div class="row">
+											<div class="col-sm-12">
+												<div class="input-group">
+													<span class="input-group-addon">
+														 <b>Description</b>												
+													</span>
+														<textarea class="form-control" rows="1" cols="1" placeholder="Enter Description" name="description" id = "description"></textarea>
+												</div>
+											</div>
+										</div>
+									</div>
 								</div>
 				        	</div>
 					        </div>
 					        <div class="modal-footer">
-					          <input type="button" class="btn btn-primary" id= "btnNew" value="Save&New" />
+					          <input type="button" class="btn btn-primary" id= "btnNew" value="Save&New" onclick="navigate()"/>
 					    	  <!-- <input type="button" class="btn btn-primary" id= "btnExit" value="Save&Exit" /> -->
 					    	  <input type="reset" class="btn btn-primary" id= "btnReset" value="Reset" />
 							  <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
@@ -435,7 +581,7 @@ function emptyMessageDiv(){
 						<th>Status</th>
 					</tr>
 				</thead>
-				<tbody>
+				<tbody id="issueData">
 					<c:forEach items="${LIST_ISSUE}" var="obj">
 						<tr class="info">
 							<td>${obj.title}</td>							
@@ -444,7 +590,7 @@ function emptyMessageDiv(){
 							<td>${obj.unitNo}</td>
 							<td>${obj.reportedByName}</td>
 							<td>${obj.statusName}</td>
-							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.id}')">Update</a> / <a href="deleteissue/${obj.id}">Delete</a></td>
+							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.id}')">Update</a> / <a href="#" onclick="deleteIssue('${obj.id}')">Delete</a></td>
 						</tr>
 					</c:forEach>
 				</tbody>

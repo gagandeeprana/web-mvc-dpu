@@ -75,22 +75,26 @@ public class WebEmployeeController {
 	}
 	
 	@RequestMapping(value = "/updateuser" , method = RequestMethod.POST)
-	public ModelAndView updateUser(@ModelAttribute("user") EmployeeModel employeeModel, @RequestParam("employeeid") Long employeeId) {
-		ModelAndView modelAndView = new ModelAndView();
+	@ResponseBody public Object updateUser(@ModelAttribute("user") EmployeeModel employeeModel, @RequestParam("employeeid") Long employeeId) {
 		String hiring = DateUtil.rearrangeDate(employeeModel.getHiringdate());
 		String termination = DateUtil.rearrangeDate(employeeModel.getTerminationdate());
 		employeeModel.setHiringdate(hiring);
 		employeeModel.setTerminationdate(termination);
-		employeeService.update(employeeId, employeeModel);
-		modelAndView.setViewName("redirect:showuser");
-		return modelAndView;
+		Object response = employeeService.update(employeeId, employeeModel);
+		if(response instanceof Failed) {
+			return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
+		} else {
+			return new ResponseEntity<Object>(response, HttpStatus.OK);
+		}
 	}
 	
 	@RequestMapping(value = "/deleteuser/{userid}" , method = RequestMethod.GET)
-	public ModelAndView deleteUser(@PathVariable("userid") Long employeeId) {
-		ModelAndView modelAndView = new ModelAndView();
-		employeeService.delete(employeeId);
-		modelAndView.setViewName("redirect:/showuser");
-		return modelAndView;
+	@ResponseBody public Object deleteUser(@PathVariable("userid") Long employeeId) {
+		Object response = employeeService.delete(employeeId);
+		if(response instanceof Failed) {
+			return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
+		} else {
+			return new ResponseEntity<Object>(response, HttpStatus.OK);
+		}
 	}
 }

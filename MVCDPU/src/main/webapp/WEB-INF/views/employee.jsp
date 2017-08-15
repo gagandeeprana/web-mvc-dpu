@@ -41,8 +41,15 @@ textarea{
 </style>
 <jsp:include page="Include.jsp"></jsp:include>
 <script type="text/javascript">
-
-function createUser(){
+function navigate() {
+	var flag = $("#addUpdateFlag").val();
+	if(flag == 'add') {
+		createUser('saveuser','POST');
+	} else if(flag == 'update') {
+		createUser('updateuser','PUT');			
+	}
+}
+function createUser(urlToHit, methodType){
 	 
 	 if(!check()){
 		 return false;
@@ -58,9 +65,15 @@ function createUser(){
 	 var hiringDate = $("#hiringDate").val();
 	 var terminationDate = $("#terminationDate").val();
 	 
-	  $.ajax({url: BASE_URL+ "saveuser",
+	 var employeeId;
+	 if(methodType == 'PUT') {
+		 employeeId = $("#employeeid").val();
+	 } 
+	 
+	  $.ajax({url: BASE_URL + urlToHit,
 		      type:"POST",
-		      data:{firstName:firstName,
+		      data:{
+		    	firstName:firstName,
 		    	lastName:lastName,
 		    	jobTitle:jobTitle,
 		    	username:username,
@@ -68,67 +81,95 @@ function createUser(){
 		    	email:email,
 		    	phone:phone,
 		    	hiringdate:hiringDate,
-		    	terminationdate:terminationDate
+		    	terminationdate:terminationDate,
+		    	employeeid:employeeId
 		      },
 		      success: function(result){
 	        try{
 	        	$('#myModal').modal('toggle');
 	        	var list = result.resultList;
-				var tableValue = "";
-				if(list.length > 0) {
-					 for(var i=0;i<list.length;i++) {
-						var obj = list[i];
-						tableValue = tableValue + ("<tr class='info'>");
-						var firstName = "";
-	            		if(obj.firstName != null) {
-	            			firstName = obj.firstName;
-	            		}
-	            		var lastName = "";
-	            		if(obj.lastName != null) {
-	            			lastName = obj.lastName;
-	            		}
-	            		var jobTitle = "";
-	            		if(obj.jobTitle != null) {
-	            			jobTitle = obj.jobTitle;
-	            		}
-	            		var username = "";
-	            		if(obj.username != null) {
-	            			username = obj.username;
-	            		}
-	            		var email = "";
-	            		if(obj.email != null) {
-	            			email = obj.email;
-	            		}
-	            		var phone = "";
-	            		if(obj.phone != null) {
-	            			phone = obj.phone;
-	            		}
-	            		var hiringDate = "";
-	            		if(obj.hiringdate != null) {
-	            			hiringDate = obj.hiringdate;
-	            		}
-	            		var terminationDate = "";
-	            		if(obj.terminationdate != null) {
-	            			terminationDate = obj.terminationdate;
-	            		}
-	            		
-	            		tableValue = tableValue + ("<td>"+(firstName)+"</td>");
-	            		tableValue = tableValue + ("<td>"+(lastName)+"</td>");
-	            		tableValue = tableValue + ("<td>"+(jobTitle)+"</td>");
-	            		tableValue = tableValue + ("<td>"+(username)+"</td>");
-	            		tableValue = tableValue + ("<td>"+(email)+"</td>");
-	            		tableValue = tableValue + ("<td>"+ (phone)+"</td>");
-	            		tableValue = tableValue + ("<td>"+(hiringDate)+"</td>");
-	            		tableValue = tableValue + ("<td>"+(terminationDate)+"</td>");
-	            		tableValue = tableValue + "<td><a href = '#' data-toggle='modal' data-target='#myModal'  onclick='checkFlag('update');onClickMethodQuestion('"+(obj.employeeId)+"')>Update</a> / <a href='#' onclick=deleteDriver('"+(obj.employeeId)+"')>Delete</a></td>";
-	            		 tableValue = tableValue + ("</tr>");
-					}
-					$("#employeeData").html(tableValue);
-				}
+				fillEmployeeData(list);
 		        toastr.success(result.message, 'Success!')
 			} catch(e){
 				toastr.error('Something went wrong', 'Error!')
 			}
+	  },error:function(result){
+		  try{
+			  	var obj = JSON.parse(result.responseText);
+			  	toastr.error(obj.message, 'Error!')
+			  }catch(e){
+				  toastr.error('Something went wrong', 'Error!')
+			  }
+	  }});
+	  return true;
+}
+
+function fillEmployeeData(list) {
+	var tableValue = "";
+	if(list.length > 0) {
+		 for(var i=0;i<list.length;i++) {
+				var obj = list[i];
+				tableValue = tableValue + ("<tr class='info'>");
+				var firstName = "";
+     		if(obj.firstName != null) {
+     			firstName = obj.firstName;
+     		}
+     		var lastName = "";
+     		if(obj.lastName != null) {
+     			lastName = obj.lastName;
+     		}
+     		var jobTitle = "";
+     		if(obj.jobTitle != null) {
+     			jobTitle = obj.jobTitle;
+     		}
+     		var username = "";
+     		if(obj.username != null) {
+     			username = obj.username;
+     		}
+     		var email = "";
+     		if(obj.email != null) {
+     			email = obj.email;
+     		}
+     		var phone = "";
+     		if(obj.phone != null) {
+     			phone = obj.phone;
+     		}
+     		var hiringDate = "";
+     		if(obj.hiringdate != null) {
+     			hiringDate = obj.hiringdate;
+     		}
+     		var terminationDate = "";
+     		if(obj.terminationdate != null) {
+     			terminationDate = obj.terminationdate;
+     		}
+     		
+     		tableValue = tableValue + ("<td>"+(firstName)+"</td>");
+     		tableValue = tableValue + ("<td>"+(lastName)+"</td>");
+     		tableValue = tableValue + ("<td>"+(jobTitle)+"</td>");
+     		tableValue = tableValue + ("<td>"+(username)+"</td>");
+     		tableValue = tableValue + ("<td>"+(email)+"</td>");
+     		tableValue = tableValue + ("<td>"+ (phone)+"</td>");
+     		tableValue = tableValue + ("<td>"+(hiringDate)+"</td>");
+     		tableValue = tableValue + ("<td>"+(terminationDate)+"</td>");
+     		tableValue = tableValue + "<td><a href = '#' data-toggle='modal' data-target='#myModal'  onclick=checkFlag('update');onClickMethodQuestion('"+(obj.employeeId)+"')>Update</a> / <a href='#' onclick=deleteEmployee('"+(obj.employeeId)+"')>Delete</a></td>";
+     		 tableValue = tableValue + ("</tr>");
+			}
+			$("#employeeData").html(tableValue);
+	}
+}
+function deleteEmployee(employeeId){
+	 
+	  $.ajax({url: BASE_URL + "deleteuser/" + employeeId,
+		      type:"GET",
+		      success: function(result){
+	    	  try{	
+					var list = result.resultList;
+					fillEmployeeData(list);
+					
+	    		  toastr.success(result.message, 'Success!')
+			  }catch(e){
+				toastr.error('Something went wrong', 'Error!')
+			  }
 	  },error:function(result){
 		  try{
 			  	var obj = JSON.parse(result.responseText);
@@ -159,7 +200,7 @@ function createUser(){
 function checkFlag(field) {
 	document.getElementById("addUpdateFlag").value = field;
 	if(field == 'update') {
-		document.getElementById("frm1").action = "updateuser";
+		//document.getElementById("frm1").action = "updateuser";
 		document.getElementById("btnSave").value = "Update";
 		$("#modelTitle").html("Edit User");
 	}
@@ -449,7 +490,7 @@ function emptyMessageDiv(){
 					        	</div>
 					        </div>
 					        <div class="modal-footer">
-					          <input type="button" class="btn btn-primary" id= "btnSave" value="Save" onclick="createUser()" />
+					          <input type="button" class="btn btn-primary" id= "btnSave" value="Save" onclick="navigate()" />
 							  <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
 					        </div>
 					      </div>
@@ -510,7 +551,7 @@ function emptyMessageDiv(){
 							<td>${obj.phone}</td>
 							<td>${obj.hiringdate}</td>
 							<td>${obj.terminationdate}</td>
-							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.employeeId}')">Update</a> / <a href="deleteuser/${obj.employeeId}">Delete</a></td>
+							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.employeeId}')">Update</a> / <a href="#" onclick="deleteEmployee('${obj.employeeId}')">Delete</a></td>
 						</tr>
 					</c:forEach>
 				</tbody>

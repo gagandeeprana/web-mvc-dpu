@@ -37,11 +37,118 @@ textarea{
   max-height:360px;
 }
 </style>
+	<jsp:include page="Include.jsp"></jsp:include>
+ <script src="<c:url value="/resources/validations.js" />"></script>
 <script type="text/javascript">
+function navigate() {
+	var flag = $("#addUpdateFlag").val();
+	if(flag == 'add') {
+		createTerminal('saveterminal','POST');
+	} else if(flag == 'update') {
+		createTerminal('updateterminal','PUT');			
+	}
+}
+function createTerminal(urlToHit,methodType){
+	 
+	 if(!check()){
+		 return false;
+	 }
+	 
+	 	var terminalName = $("#terminalName").val();
+	   	var locationId = $('#locationId :selected').val();
+	   	//var serviceIds = $('select#serviceIds').val();
+	   	var e = document.getElementById("serviceIds");
+	    var result = new Array()
+        result.push(e.options[e.selectedIndex].value)
+
+	   	var terminalId;
+	   	if(methodType == 'PUT') {
+	   		terminalId = $('#terminalid').val();
+	   	}
+	   	
+	   	var loc = parseInt(locationId);
+		  $.ajax({url: BASE_URL + urlToHit,
+			      type:"POST",
+			      data:{
+			    	terminalName:terminalName,
+			    	shipperId:loc,
+			    	stringServiceIds:result,
+			      },
+			      success: function(result){
+		        try{
+		        	alert("cc " + result);
+		        	$('#myModal').modal('toggle');
+		        	var list = result.resultList;
+					fillTerminalData(list);
+
+			        toastr.success(result.message, 'Success!')
+				} catch(e){
+					toastr.error('Something went wrong', 'Error!')
+				}
+		  },error:function(result){
+			  try{
+				  	var obj = JSON.parse(result.responseText);
+				  	toastr.error(obj.message, 'Error!')
+				  }catch(e){
+					  toastr.error('Something went wrong', 'Error!')
+				  }
+		  }});
+		  return true;
+}
+
+function fillTerminalData(list) {
+	var tableValue = "";
+	if(list.length > 0) {
+		 for(var i=0;i<list.length;i++) {
+			var obj = list[i];
+			tableValue = tableValue + ("<tr class='info'>");
+    		var terminal = "";
+    		if(obj.terminalName != null) {
+    			terminal = obj.terminalName;
+    		}
+    		var shipperName = "";
+    		if(obj.shipperName != null) {
+    			shipperName = obj.shipperName;
+    		}
+    		
+    		tableValue = tableValue + ("<td>"+(terminal)+"</td>");
+    		tableValue = tableValue + ("<td>"+(shipperName)+"</td>");
+    		tableValue = tableValue + "<td><a href = '#' data-toggle='modal' data-target='#myModal'  onclick=checkFlag('update');onClickMethodQuestion('"+(obj.terminalId)+"')>Update</a> / <a href='#' onclick=deleteTerminal('"+(obj.terminalId)+"')>Delete</a></td>";
+    		tableValue = tableValue + ("</tr>");
+		}
+		$("#terminalData").html(tableValue);
+	} else {
+		$("#terminalData").html("No records found.");		
+	}
+}
+
+function deleteTerminal(terminalId){
+	  $.ajax({url: BASE_URL + "deleteterminal/" + terminalId,
+		      type:"GET",
+		      success: function(result){
+	    	  try{	
+					var list = result.resultList;
+					fillTerminalData(list);
+					
+	    		  toastr.success(result.message, 'Success!')
+			  }catch(e){
+				toastr.error('Something went wrong', 'Error!')
+			  }
+	  },error:function(result){
+		  try{
+			  	var obj = JSON.parse(result.responseText);
+			  	toastr.error(obj.message, 'Error!')
+			  }catch(e){
+				  toastr.error('Something went wrong', 'Error!')
+			  }
+	  }});
+	  return true;
+}
+
 	$(document).ready(function(){
-		$('#btnSave').click(function(){
+		/* $('#btnSave').click(function(){
 			$('#frm1').submit();
-		});
+		}); */
 		$('#btnSearch').click(function(){
 			$("#frmSearch").change(function() {
 			  $("#frmSearch").attr("action", "showques");
@@ -54,7 +161,7 @@ textarea{
 function checkFlag(field) {
 	document.getElementById("addUpdateFlag").value = field;
 	if(field == 'update') {
-		document.getElementById("frm1").action = "updateterminal";
+		//document.getElementById("frm1").action = "updateterminal";
 		document.getElementById("btnSave").value = "Update";
 		$("#modelTitle").html("Edit Terminal");
 	}
@@ -166,7 +273,7 @@ function emptyMessageDiv(){
 			<div class="col-sm-8">
 					<div class="modal fade" id="myModal" role="dialog">
 					    <div class="modal-dialog">
-						<form action="saveterminal" method="POST" name="terminal" id="frm1" onsubmit="return check()">
+						<form id="frm1">
 						<input type="hidden" id = "terminalid" name= "terminalid" value = "" />					
 						<input type="hidden" id = "addUpdateFlag" value = "" />					
 	
@@ -225,7 +332,7 @@ function emptyMessageDiv(){
 				        	</div>
 					        </div>
 					        <div class="modal-footer">
-					          <input type="button" class="btn btn-primary" id= "btnSave" value="Save" />
+					          <input type="button" class="btn btn-primary" id= "btnSave" value="Save" onclick="navigate()"/>
 							  <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
 					        </div>
 					      </div>
@@ -269,12 +376,12 @@ function emptyMessageDiv(){
 						<th>Links</th>
 					</tr>
 				</thead>
-				<tbody>
+				<tbody id="terminalData">
 					<c:forEach items="${LIST_TERMINAL}" var="obj">
 						<tr class="info">
 							<td>${obj.terminalName}</td>							
 							<td>${obj.shipperName}</td>
-							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.terminalId}')">Update</a> / <a href="deleteterminal/${obj.terminalId}">Delete</a></td>
+							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.terminalId}')">Update</a> / <a href="#" onclick="deleteTerminal('${obj.terminalId}')">Delete</a></td>
 						</tr>
 					</c:forEach>
 				</tbody>

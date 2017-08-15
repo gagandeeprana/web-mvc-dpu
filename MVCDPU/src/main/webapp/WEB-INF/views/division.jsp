@@ -139,6 +139,8 @@ function fillDivisionData(list) {
     		tableValue = tableValue + ("</tr>");
 		}
 		$("#divisionData").html(tableValue);
+	} else {
+		$("#divisionData").html("No records found.");		
 	}
 }
 

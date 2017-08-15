@@ -1,5 +1,6 @@
 package com.dpu.model;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -9,7 +10,12 @@ import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 import com.dpu.entity.Status;
 
 @JsonSerialize(include = Inclusion.NON_NULL)
-public class TerminalResponse {
+public class TerminalResponse implements Serializable{
+	
+	public TerminalResponse() {
+		// TODO Auto-generated constructor stub
+	}
+	
 	private Long terminalId;
 	private String terminalName;
 	private String availableServices;
@@ -21,10 +27,19 @@ public class TerminalResponse {
 	private Long statusId;
 	private List<Status> statusList;
 	private List<Long> serviceIds;
+	private List<String> stringServiceIds;
 	private List<DPUService> serviceList;
 	private Long shipperId;
 	private String shipperName;
 	
+	public List<String> getStringServiceIds() {
+		return stringServiceIds;
+	}
+
+	public void setStringServiceIds(List<String> stringServiceIds) {
+		this.stringServiceIds = stringServiceIds;
+	}
+
 	public List<DPUService> getServiceList() {
 		return serviceList;
 	}

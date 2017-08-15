@@ -37,11 +37,199 @@ textarea{
   max-height:90px;
 }
 </style>
+
+	<jsp:include page="Include.jsp"></jsp:include>
+ <script src="<c:url value="/resources/validations.js" />"></script>
 <script type="text/javascript">
+function navigate() {
+	var flag = $("#addUpdateFlag").val();
+	if(flag == 'add') {
+		createShipper('saveshipper','POST');
+	} else if(flag == 'update') {
+		createShipper('updateshipper','PUT');			
+	}
+}
+function createShipper(urlToHit,methodType){
+	 
+	 if(!check()){
+		 return false;
+	 }
+	var location = $("#location").val();
+	var importer = $("#importer").val();
+   	var countryId = $('#countryId :selected').val();
+   	var contact = $("#contact").val();
+   	var position = $("#position").val();
+   	var address = $("#address").val();
+   	var phone = $("#phone").val();
+   	var ext = $("#ext").val();
+   	var unitNo = $("#unitNo").val();
+   	var fax = $("#fax").val();
+   	var prefix = $("#prefix").val();
+   	var city = $("#city").val();
+   	var tollfree = $("#tollfree").val();
+   	var plant = $("#plant").val();
+	var stateId = $('#stateId :selected').val();
+   	var zip = $("#zip").val();
+   	var zone = $("#zone").val();
+   	var email = $("#email").val();
+	var statusId = $('#statusId :selected').val();
+   	var leadTime = $("#leadTime").val();
+   	var timeZone = $("#timeZone").val();
+   	var internalNotes = $("#internalNotes").val();
+   	var standardNotes = $("#standardNotes").val();
+
+   	var shipperId;
+	if(methodType == 'PUT') {
+		shipperId = $("#shipperid").val();
+	}
+	  $.ajax({url: BASE_URL + urlToHit,
+		      type:"POST",
+		      data:{
+		    	locationName:location,
+		    	importer:importer,
+		    	countryId:countryId,
+		    	contact:contact,
+		    	position:position,
+		    	address:address,
+		    	phone:phone,
+		    	ext:ext,
+		    	unit:unitNo,
+		    	fax:fax,
+		    	prefix:prefix,
+		    	city:city,
+		    	tollFree:tollfree,
+		    	plant:plant,
+		    	stateId:stateId,
+		    	postalZip:zip,
+		    	zone:zone,
+		    	email:email,
+		    	statusId:statusId,
+		    	leadTime:leadTime,
+		    	timeZone:timeZone,
+		    	internalNotes:internalNotes,
+		    	standardNotes:standardNotes,
+		    	shipperid:shipperId
+		      },
+		      success: function(result){
+	        try{
+	        	$('#myModal').modal('toggle');
+	        	var list = result.resultList;
+				fillShipperData(list);
+
+		        toastr.success(result.message, 'Success!')
+			} catch(e){
+				toastr.error('Something went wrong', 'Error!')
+			}
+	  },error:function(result){
+		  try{
+			  	var obj = JSON.parse(result.responseText);
+			  	toastr.error(obj.message, 'Error!')
+			  }catch(e){
+				  toastr.error('Something went wrong', 'Error!')
+			  }
+	  }});
+	  return true;
+}
+
+function fillShipperData(list) {
+	var tableValue = "";
+	if(list.length > 0) {
+		 for(var i=0;i<list.length;i++) {
+			var obj = list[i];
+			tableValue = tableValue + ("<tr class='info'>");
+			var locationName = "";
+    		if(obj.locationName != null) {
+    			locationName = obj.locationName;
+    		}
+    		var address = "";
+    		if(obj.address != null) {
+    			address = obj.address;
+    		}
+    		var unit = "";
+    		if(obj.unit != null) {
+    			unit = obj.unit;
+    		}
+    		var city = "";
+    		if(obj.city != null) {
+    			city = obj.city;
+    		}
+    		var stateName = "";
+    		if(obj.stateName != null) {
+    			stateName = obj.stateName;
+    		}
+    		var phone = "";
+    		if(obj.phone != null) {
+    			phone = obj.phone;
+    		}
+    		var prefix = "";
+    		if(obj.prefix != null) {
+    			prefix = obj.prefix;
+    		}
+    		var tollFree = "";
+    		if(obj.tollFree != null) {
+    			tollFree = obj.tollFree;
+    		}
+    		var plant = "";
+    		if(obj.plant != null) {
+    			plant = obj.plant;
+    		}
+    		var email = "";
+    		if(obj.email != null) {
+    			email = obj.email;
+    		}
+    		var importer = "";
+    		if(obj.importer != null) {
+    			importer = obj.importer;
+    		}
+    		
+    		tableValue = tableValue + ("<td>"+(locationName)+"</td>");
+    		tableValue = tableValue + ("<td>"+(address)+"</td>");
+    		tableValue = tableValue + ("<td>"+(unit)+"</td>");
+    		tableValue = tableValue + ("<td>"+(city)+"</td>");
+    		tableValue = tableValue + ("<td>"+(stateName)+"</td>");
+    		tableValue = tableValue + ("<td>"+(phone)+"</td>");
+    		tableValue = tableValue + ("<td>"+(prefix)+"</td>");
+    		tableValue = tableValue + ("<td>"+(tollFree)+"</td>");
+    		tableValue = tableValue + ("<td>"+(plant)+"</td>");
+    		tableValue = tableValue + ("<td>"+(email)+"</td>");
+    		tableValue = tableValue + ("<td>"+(importer)+"</td>");
+    		tableValue = tableValue + "<td><a href = '#' data-toggle='modal' data-target='#myModal'  onclick=checkFlag('update');onClickMethodQuestion('"+(obj.shipperId)+"')>Update</a> / <a href='#' onclick=deleteShipper('"+(obj.shipperId)+"')>Delete</a></td>";
+    		tableValue = tableValue + ("</tr>");
+		}
+		$("#shipperData").html(tableValue);
+	} else {
+		$("#shipperData").html("No records found.");		
+	}
+}
+
+function deleteShipper(shipperId){
+	 
+	  $.ajax({url: BASE_URL + "deleteshipper/" + shipperId,
+		      type:"GET",
+		      success: function(result){
+	    	  try{	
+					var list = result.resultList;
+					fillShipperData(list);
+					
+	    		  toastr.success(result.message, 'Success!')
+			  }catch(e){
+				toastr.error('Something went wrong', 'Error!')
+			  }
+	  },error:function(result){
+		  try{
+			  	var obj = JSON.parse(result.responseText);
+			  	toastr.error(obj.message, 'Error!')
+			  }catch(e){
+				  toastr.error('Something went wrong', 'Error!')
+			  }
+	  }});
+	  return true;
+}
+
 	$(document).ready(function(){
-		$('#btnSave').click(function(){
+		/* $('#btnSave').click(function(){
 			$('#frm1').submit();
-		});
+		}); */
 		$('#btnSearch').click(function(){
 			$("#frmSearch").change(function() {
 			  $("#frmSearch").attr("action", "showques");
@@ -54,7 +242,7 @@ textarea{
 	function checkFlag(field) {
 		document.getElementById("addUpdateFlag").value = field;
 		if(field == 'update') {
-			document.getElementById("frm1").action = "updateshipper";
+			//document.getElementById("frm1").action = "updateshipper";
 			document.getElementById("btnSave").value = "Update";
 			$("#modelTitle").html("Edit Location");
 		}
@@ -88,32 +276,58 @@ textarea{
 	            	country.options[country.options.length] = new Option(data.countryList[i].countryName);
 	            	country.options[i].value = data.countryList[i].countryId;
 	            }
+	            
+	            getStates();
+				changeStateLabel();
 	      });
     	} else {
     		$.get("getshipper/shipperId",{"shipperId" : quesId}, function(data) {
     			document.getElementById("shipperid").value = data.shipperId;
             	$("#location").val(data.locationName);
+            	$("#importer").val(data.importer);
             	$("#contact").val(data.contact);
-            	$("#address").val(data.address);
             	$("#position").val(data.position);
-            	$("#unitNo").val(data.unit);
+            	$("#address").val(data.address);
             	$("#phone").val(data.phone);
             	$("#ext").val(data.ext);
-            	$("#city").val(data.city);
+            	$("#unitNo").val(data.unit);
             	$("#fax").val(data.fax);
             	$("#prefix").val(data.prefix);
-            	$("#province").val(data.provinceState);
+            	$("#city").val(data.city);
             	$("#tollfree").val(data.tollFree);
             	$("#plant").val(data.plant);
-            	$("#cellnumber").val(data.cellNumber);
+            	$("#zip").val(data.zip);
             	$("#zone").val(data.zone);
             	$("#email").val(data.email);
             	$("#leadTime").val(data.leadTime);
             	$("#timeZone").val(data.timeZone);
-            	$("#importer").val(data.importer);
             	$("#internalNotes").val(data.internalNotes);
             	$("#standardNotes").val(data.standardNotes);
-                
+            	$("#zip").val(data.postalZip);
+
+            	var country = document.getElementById("countryId");
+	            var countryList = data.countryList;
+	            for(var i = 0;i < data.countryList.length;i++) {
+	            	country.options[country.options.length] = new Option(data.countryList[i].countryName);
+	            	country.options[i].value = data.countryList[i].countryId;
+	            	if(countryList[i].countryId == data.countryId) {
+	            		document.getElementById("countryId").selectedIndex = i;		            		
+	            	}
+	            }
+	            
+                //getStates();
+				changeStateLabel();
+
+				var driverState = document.getElementById("stateId");
+	            var stateList = data.stateList;
+	            for(var i = 0;i < data.stateList.length;i++) {
+	            	driverState.options[driverState.options.length] = new Option(data.stateList[i].stateCode);
+	            	driverState.options[i].value = data.stateList[i].stateId;
+	            	if(stateList[i].stateId == data.stateId) {
+	            		document.getElementById("stateId").selectedIndex = i;		            		
+	            	}
+	            }
+            	
                 var status = document.getElementById("statusId");
                 var statusList = data.statusList;
                 for(var i = 0;i < statusList.length;i++) {
@@ -123,9 +337,41 @@ textarea{
                 		document.getElementById("statusId").selectedIndex = i;
                 	}
                 }
+                
            	});
     	}
     }
+    
+    function getStates() {
+    	
+    	var countryId = $('#countryId :selected').val();
+    	document.getElementById("stateId").innerHTML = "";
+    	$.get("states/" + countryId, function(response) {
+               
+            if(response.length > 0) {
+                var state = document.getElementById("stateId");
+            	for(var i = 0;i < response.length;i++) {
+            		state.options[state.options.length] = new Option(response[i].stateCode);
+            		state.options[i].value = response[i].stateId;
+                }
+            }
+    	});
+    }
+    
+    function changeStateLabel() {
+    	
+    	var country = $('#countryId :selected').text();
+    	if(country == 'USA') {
+    		$("#zipLabel").text("Zip");
+    		$("#zip").attr("placeholder","Enter Zip");
+    		$("#stateLabel").text("State");
+    	} else if(country == 'Canada'){
+    		$("#zipLabel").text("PostalCode");
+    		$("#zip").attr("placeholder","Enter PostalCode");
+    		$("#stateLabel").text("Province");
+    	}
+    }
+    
     function clearAll() {
     	$("#location").val("");
     	$("#contact").val("");
@@ -137,10 +383,8 @@ textarea{
     	$("#city").val("");
     	$("#fax").val("");
     	$("#prefix").val("");
-    	$("#province").val("");
     	$("#tollfree").val("");
     	$("#plant").val("");
-    	$("#cellnumber").val("");
     	$("#zone").val("");
     	$("#email").val("");
     	$("#leadTime").val("");
@@ -148,7 +392,10 @@ textarea{
     	$("#importer").val("");
     	$("#internalNotes").val("");
     	$("#standardNotes").val("");
+    	$("#zip").val("");
        	document.getElementById("statusId").innerHTML = "";
+    	document.getElementById("countryId").innerHTML = ""; 
+    	document.getElementById("stateId").innerHTML = ""; 
     }
 </script>
 
@@ -167,7 +414,6 @@ function check() {
 	var province = $("#province").val();
 	var tollFree = $("#tollfree").val();
 	var plant = $("#plant").val();
-	var cellNumber = $("#cellnumber").val();
 	var zone = $("#zone").val();
 	var email = $("#email").val();
 	var leadTime = $("#leadTime").val();
@@ -257,12 +503,6 @@ function check() {
 		$("#plant").focus();
 		return false;
 	}
-	if(cellNumber == "") {
-		msg.show();
-		msgvalue.text("CellNumber cannot be left blank.");
-		$("#cellnumber").focus();
-		return false;
-	}
 	if(tollFree == "") {
 		msg.show();
 		msgvalue.text("TollFree cannot be left blank.");
@@ -333,7 +573,7 @@ function emptyMessageDiv(){
 			<div class="col-sm-8">
 					<div class="modal fade" id="myModal" role="dialog">
 					    <div class="modal-dialog">
-						<form action="saveshipper" method="POST" name="shipper" id="frm1" onsubmit="return check()">
+						<form id="frm1">
 						<input type="hidden" id = "shipperid" name= "shipperid" value = "" />					
 						<input type="hidden" id = "addUpdateFlag" value = "" />					
 	
@@ -520,9 +760,9 @@ function emptyMessageDiv(){
 													<div class="col-sm-6">
 														<div class="input-group">
 															<span class="input-group-addon">
-																 <b>Zip</b>												
+																 <b id="zipLabel">Zip</b>												
 															</span>
-															<input type="text" class="form-control" placeHolder="Enter Province/State" id="province" name="provinceState" value="" />
+															<input type="text" class="form-control" placeHolder="Enter Zip" id="zip" name="zip" value="" />
 														</div>
 													</div>
 												</div>
@@ -553,24 +793,12 @@ function emptyMessageDiv(){
 									<div class="form-group">
 										<div class="row">
 											<div class="col-sm-6">
-												<div class="row">
-													<div class="col-sm-6">
-														<div class="input-group">
-															<span class="input-group-addon">
-																 <b>Status</b>												
-															</span>
-															<select class="form-control" name="statusId" id="statusId">
-															</select>
-														</div>
-													</div>
-													<div class="col-sm-6">
-														<div class="input-group">
-															<span class="input-group-addon">
-																 <b>CellNumber</b>												
-															</span>
-															<input type="text" class="form-control" placeHolder="Enter CellNumber" id="cellnumber" name="cellnumber" value="" />
-														</div>
-													</div>												
+												<div class="input-group">
+													<span class="input-group-addon">
+														 <b>Status</b>												
+													</span>
+													<select class="form-control" name="statusId" id="statusId">
+													</select>
 												</div>
 											</div>	
 											<div class="col-sm-6">
@@ -656,7 +884,7 @@ function emptyMessageDiv(){
 								  <input type="button" class="btn btn-default" data-dismiss="modal"  value="Notes" />
 								  <button type="button" class="btn btn-default" data-dismiss="modal">Reports</button>
 								  <input type="button" class="btn btn-default" data-dismiss="modal" value="AC" />
-						          <input type="button" class="btn btn-primary" id= "btnSave" value="Save" />
+						          <input type="button" class="btn btn-primary" id= "btnSave" value="Save" onclick="navigate()"/>
 								  <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
 					        </div>
 					      </div>
@@ -704,13 +932,12 @@ function emptyMessageDiv(){
 						<th>Prefix</th>
 						<th>Tollfree</th>
 						<th>Plant</th>
-						<th>CellNumber</th>
 						<th>Email</th>
 						<th>Importer</th>
 						<th>Links</th>
 					</tr>
 				</thead>
-				<tbody>
+				<tbody id="shipperData">
 					<c:forEach items="${LIST_LOCATION}" var="obj">
 						<tr class="info">
 							<td>${obj.locationName}</td>
@@ -722,10 +949,9 @@ function emptyMessageDiv(){
 							<td>${obj.prefix}</td>
 							<td>${obj.tollFree}</td>
 							<td>${obj.plant}</td>
-							<td>${obj.phone}</td>
 							<td>${obj.email}</td>
 							<td>${obj.importer}</td>
-							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update'); onClickMethodQuestion('${obj.shipperId}');">Update</a> / <a href="deleteshipper/${obj.shipperId}">Delete</a></td>
+							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update'); onClickMethodQuestion('${obj.shipperId}');">Update</a> / <a href="#" onclick="deleteShipper('${obj.shipperId}')">Delete</a></td>
 						</tr>
 					</c:forEach>
 				</tbody>

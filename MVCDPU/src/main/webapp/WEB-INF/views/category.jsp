@@ -37,11 +37,116 @@ textarea{
   max-height:360px;
 }
 </style>
+<jsp:include page="Include.jsp"></jsp:include>
+ <script src="<c:url value="/resources/validations.js" />"></script>
 <script type="text/javascript">
+function navigate() {
+	var flag = $("#addUpdateFlag").val();
+	if(flag == 'add') {
+		createCategory('savecategory','POST');
+	} else if(flag == 'update') {
+		createCategory('updatecategory','PUT');			
+	}
+}
+function createCategory(urlToHit,methodType){
+	 
+	 if(!check()){
+		 return false;
+	 }
+	 
+	   	var typeId = $('#type :selected').val();
+	 	var category = $("#category").val();
+	   	var status = $('#status :selected').val();
+	   	var highlight = $('#highlight :selected').val();
+	   	var categoryId;
+	   	if(methodType == 'PUT') {
+	   		categoryId = $('#categoryid').val();
+	   	}
+	   	
+		  $.ajax({url: BASE_URL + urlToHit,
+			      type:"POST",
+			      data:{
+			    	typeId:typeId,
+			    	name:category,
+			    	statusId:status,
+			    	highlightId:highlight,
+			    	categoryid:categoryId
+			      },
+			      success: function(result){
+		        try{
+		        	$('#myModal').modal('toggle');
+		        	var list = result.resultList;
+					fillCategoryData(list);
+
+			        toastr.success(result.message, 'Success!')
+				} catch(e){
+					toastr.error('Something went wrong', 'Error!')
+				}
+		  },error:function(result){
+			  try{
+				  	var obj = JSON.parse(result.responseText);
+				  	toastr.error(obj.message, 'Error!')
+				  }catch(e){
+					  toastr.error('Something went wrong', 'Error!')
+				  }
+		  }});
+		  return true;
+}
+
+function fillCategoryData(list) {
+	var tableValue = "";
+	if(list.length > 0) {
+		 for(var i=0;i<list.length;i++) {
+			var obj = list[i];
+			tableValue = tableValue + ("<tr class='info'>");
+    		var typeName = "";
+    		if(obj.typeName != null) {
+    			typeName = obj.typeName;
+    		}
+    		var name = "";
+    		if(obj.name != null) {
+    			name = obj.name;
+    		}
+    		
+    		tableValue = tableValue + ("<td>"+(typeName)+"</td>");
+    		tableValue = tableValue + ("<td>"+(name)+"</td>");
+    		tableValue = tableValue + "<td><a href = '#' data-toggle='modal' data-target='#myModal'  onclick=checkFlag('update');onClickMethodQuestion('"+(obj.categoryId)+"')>Update</a> / <a href='#' onclick=deleteCategory('"+(obj.categoryId)+"')>Delete</a></td>";
+    		tableValue = tableValue + ("</tr>");
+		}
+		$("#categoryData").html(tableValue);
+	} else {
+		$("#categoryData").html("No records found.");		
+	}
+}
+
+function deleteCategory(categoryId){
+	  $.ajax({url: BASE_URL + "deletecategory/" + categoryId,
+		      type:"GET",
+		      success: function(result){
+	    	  try{	
+					var list = result.resultList;
+					fillCategoryData(list);
+					
+	    		  toastr.success(result.message, 'Success!')
+			  }catch(e){
+				toastr.error('Something went wrong', 'Error!')
+			  }
+	  },error:function(result){
+		  try{
+			  	var obj = JSON.parse(result.responseText);
+			  	toastr.error(obj.message, 'Error!')
+			  }catch(e){
+				  toastr.error('Something went wrong', 'Error!')
+			  }
+	  }});
+	  return true;
+}
+
+
 	$(document).ready(function(){
-		$('#btnSave').click(function(){
+		/* $('#btnSave').click(function(){
 			$('#frm1').submit();
-		});
+		}); */
 		$('#btnSearch').click(function(){
 			$("#frmSearch").change(function() {
 			  $("#frmSearch").attr("action", "showques");
@@ -75,7 +180,7 @@ textarea{
 function checkFlag(field) {
 	document.getElementById("addUpdateFlag").value = field;
 	if(field == 'update') {
-		document.getElementById("frm1").action = "updatecategory";
+		//document.getElementById("frm1").action = "updatecategory";
 		document.getElementById("btnSave").value = "Update";
 		$("#modelTitle").html("Edit Category");
 	}
@@ -178,7 +283,7 @@ function checkFlag(field) {
 			<div class="col-sm-8">
 					<div class="modal fade" id="myModal" role="dialog">
 					    <div class="modal-dialog">
-						<form action="savecategory" method="POST" name="cat" id="frm1" onsubmit="return check()">
+						<form id="frm1">
  						<input type="hidden" id = "categoryid" name= "categoryid" value = "" />					
 						<input type="hidden" id = "addUpdateFlag" value = "" />					
 	
@@ -250,7 +355,7 @@ function checkFlag(field) {
 								</div>
 				        	</div>
 				        	 <div class="modal-footer">
-					          <input type="button" class="btn btn-primary"  id= "btnSave" value="Save" />
+					          <input type="button" class="btn btn-primary"  id= "btnSave" value="Save" onclick="navigate()"/>
 							  <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
 					        </div>
 					        </div>
@@ -294,12 +399,12 @@ function checkFlag(field) {
 						<th>Links</th>
 					</tr>
 				</thead>
-				<tbody>
+				<tbody id="categoryData">
 					<c:forEach items="${LIST_CATEGORY}" var="obj">
 						<tr class="info">
 							<td>${obj.typeName}</td>							
 							<td>${obj.name}</td>
-							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.categoryId}')">Update</a> / <a href="deletecategory/${obj.categoryId}">Delete</a></td>
+							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.categoryId}')">Update</a> / <a href="#" onclick="deleteCategory('${obj.categoryId}')">Delete</a></td>
 						</tr>
 					</c:forEach>
 				</tbody>

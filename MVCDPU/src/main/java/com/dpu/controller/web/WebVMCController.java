@@ -7,6 +7,8 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.dpu.model.Failed;
 import com.dpu.model.VehicleMaintainanceCategoryModel;
 import com.dpu.service.VehicleMaintainanceCategoryService;
 
@@ -37,8 +40,7 @@ public class WebVMCController {
 	}
 	
 	@RequestMapping(value = "/savevmc" , method = RequestMethod.POST)
-	public ModelAndView saveVMC(@ModelAttribute("vmc") VehicleMaintainanceCategoryModel vehicleMaintainanceCategoryModel, HttpServletRequest request) {
-		ModelAndView modelAndView = new ModelAndView();
+	@ResponseBody public Object saveVMC(@ModelAttribute("vmc") VehicleMaintainanceCategoryModel vehicleMaintainanceCategoryModel, HttpServletRequest request) {
 		HttpSession session = request.getSession();
 		String createdBy = "";
 		if(session != null) {
@@ -46,9 +48,12 @@ public class WebVMCController {
 		}
 //		divisionReq.setCreatedBy(createdBy);
 //		divisionReq.setCreatedOn(new Date());
-		vehicleMaintainanceCategoryService.addVMC(vehicleMaintainanceCategoryModel);
-		modelAndView.setViewName("redirect:showvmc");
-		return modelAndView;
+		Object response = vehicleMaintainanceCategoryService.addVMC(vehicleMaintainanceCategoryModel);
+		if(response instanceof Failed) {
+			return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
+		} else {
+			return new ResponseEntity<Object>(response, HttpStatus.OK);
+		}
 	}
 	
 	@RequestMapping(value = "/getvmc/vmcId" , method = RequestMethod.GET)
@@ -64,18 +69,22 @@ public class WebVMCController {
 	}
 	
 	@RequestMapping(value = "/updatevmc" , method = RequestMethod.POST)
-	public ModelAndView updateVendor(@ModelAttribute("vmc") VehicleMaintainanceCategoryModel vehicleMaintainanceCategoryModel, @RequestParam("vmcid") Long vmcId) {
-		ModelAndView modelAndView = new ModelAndView();
-		vehicleMaintainanceCategoryService.update(vmcId, vehicleMaintainanceCategoryModel);
-		modelAndView.setViewName("redirect:showvmc");
-		return modelAndView;
+	@ResponseBody public Object updateVendor(@ModelAttribute("vmc") VehicleMaintainanceCategoryModel vehicleMaintainanceCategoryModel, @RequestParam("vmcid") Long vmcId) {
+		Object response = vehicleMaintainanceCategoryService.update(vmcId, vehicleMaintainanceCategoryModel);
+		if(response instanceof Failed) {
+			return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
+		} else {
+			return new ResponseEntity<Object>(response, HttpStatus.OK);
+		}
 	}
 	
 	@RequestMapping(value = "/deletevmc/{vmcid}" , method = RequestMethod.GET)
-	public ModelAndView deleteVMC(@PathVariable("vmcid") Long vmcId) {
-		ModelAndView modelAndView = new ModelAndView();
-		vehicleMaintainanceCategoryService.delete(vmcId);
-		modelAndView.setViewName("redirect:/showvmc");
-		return modelAndView;
+	@ResponseBody public Object deleteVMC(@PathVariable("vmcid") Long vmcId) {
+		Object response = vehicleMaintainanceCategoryService.delete(vmcId);
+		if(response instanceof Failed) {
+			return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
+		} else {
+			return new ResponseEntity<Object>(response, HttpStatus.OK);
+		}
 	}
 }

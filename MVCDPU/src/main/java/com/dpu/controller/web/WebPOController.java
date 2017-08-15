@@ -22,6 +22,7 @@ import com.dpu.model.Failed;
 import com.dpu.model.IssueModel;
 import com.dpu.model.PurchaseOrderModel;
 import com.dpu.service.PurchaseOrderService;
+import com.dpu.util.DateUtil;
 
 @Controller
 public class WebPOController {
@@ -52,6 +53,12 @@ public class WebPOController {
 		return lstPOs;
 	}
 	
+	@RequestMapping(value = "/showpo/status/Invoiced", method = RequestMethod.GET)
+	@ResponseBody public Object showInvoicedPOs() {
+		List<PurchaseOrderModel> lstPOs = purchaseOrderService.getStatusPOs("Invoiced");
+		return lstPOs;
+	}
+	
 	@RequestMapping(value = "/showpo", method = RequestMethod.GET)
 	public ModelAndView showPOScreenByStatus() {
 		ModelAndView modelAndView = new ModelAndView();
@@ -74,9 +81,16 @@ public class WebPOController {
 	}
 	
 	@RequestMapping(value = "/{poId}/complete/{statusId}/invoiced", method = RequestMethod.GET)
-	@ResponseBody public Object changeToInvoicedStatus(@PathVariable("poId") Long poId, @PathVariable("statusId") Long statusId) {
+	@ResponseBody public Object changeToInvoicedStatus(@PathVariable("poId") Long poId, @PathVariable("statusId") Long statusId, HttpServletRequest httpServletRequest) {
 		PurchaseOrderModel purchaseOrderModel = new PurchaseOrderModel();
+		String invoiceDate = httpServletRequest.getParameter("invoiceDate");
+		String invoiceNo = httpServletRequest.getParameter("invoiceNo");
+		String invoiceAmount = httpServletRequest.getParameter("invoiceAmount");
+		purchaseOrderModel.setInvoiceNo(invoiceNo);
+		purchaseOrderModel.setAmount(Double.parseDouble(invoiceAmount));
 		purchaseOrderModel.setCurrentStatusVal("Complete");
+		invoiceDate = DateUtil.rearrangeDate(invoiceDate);
+		purchaseOrderModel.setInvoiceDate(invoiceDate);
 		Object response = purchaseOrderService.updateStatus(poId, statusId, purchaseOrderModel);
 		if(response instanceof Failed) {
 			return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
@@ -108,8 +122,7 @@ public class WebPOController {
 	}
 	
 	@RequestMapping(value = "/savepo" , method = RequestMethod.POST)
-	public ModelAndView savePO(@ModelAttribute("po") PurchaseOrderModel purchaseOrderModel, HttpServletRequest request) {
-		ModelAndView modelAndView = new ModelAndView();
+	@ResponseBody public Object savePO(@ModelAttribute("po") PurchaseOrderModel purchaseOrderModel, HttpServletRequest request) {
 		HttpSession session = request.getSession();
 		String createdBy = "";
 		if(session != null) {
@@ -117,13 +130,16 @@ public class WebPOController {
 		}
 //		divisionReq.setCreatedBy(createdBy);
 //		divisionReq.setCreatedOn(new Date());
-		purchaseOrderService.addPO(purchaseOrderModel);
-		modelAndView.setViewName("redirect:showpo");
-		return modelAndView;
+		Object response = purchaseOrderService.addPO(purchaseOrderModel);
+		if(response instanceof Failed) {
+			return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
+		} else {
+			return new ResponseEntity<Object>(response, HttpStatus.OK);
+		}
 	}
 	
 	@RequestMapping(value = "/getpo/poId" , method = RequestMethod.GET)
-	@ResponseBody  public PurchaseOrderModel getPO(@RequestParam("poId") Long poId) {
+	@ResponseBody public PurchaseOrderModel getPO(@RequestParam("poId") Long poId) {
 		PurchaseOrderModel purchaseOrderModel = null;
 		try {
 			purchaseOrderModel = purchaseOrderService.get(poId);
@@ -137,18 +153,22 @@ public class WebPOController {
 	}
 	
 	@RequestMapping(value = "/updatepo" , method = RequestMethod.POST)
-	public ModelAndView updatePO(@ModelAttribute("po") PurchaseOrderModel purchaseOrderModel, @RequestParam("poid") Long poId) {
-		ModelAndView modelAndView = new ModelAndView();
-		purchaseOrderService.update(poId, purchaseOrderModel);
-		modelAndView.setViewName("redirect:showpo");
-		return modelAndView;
+	@ResponseBody public Object updatePO(@ModelAttribute("po") PurchaseOrderModel purchaseOrderModel, @RequestParam("poid") Long poId) {
+		Object response = purchaseOrderService.update(poId, purchaseOrderModel);
+		if(response instanceof Failed) {
+			return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
+		} else {
+			return new ResponseEntity<Object>(response, HttpStatus.OK);
+		}
 	}
 	
 	@RequestMapping(value = "/deletepo/{poid}" , method = RequestMethod.GET)
-	public ModelAndView deletePO(@PathVariable("poid") Long poId) {
-		ModelAndView modelAndView = new ModelAndView();
-		purchaseOrderService.delete(poId);
-		modelAndView.setViewName("redirect:/showpo");
-		return modelAndView;
+	@ResponseBody public Object deletePO(@PathVariable("poid") Long poId) {
+		Object response = purchaseOrderService.delete(poId);
+		if(response instanceof Failed) {
+			return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
+		} else {
+			return new ResponseEntity<Object>(response, HttpStatus.OK);
+		}
 	}
 }

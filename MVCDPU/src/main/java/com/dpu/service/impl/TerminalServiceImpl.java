@@ -188,7 +188,7 @@ public class TerminalServiceImpl implements TerminalService {
 				tx.rollback();
 			}
 			if(e instanceof ConstraintViolationException){
-				return createFailedObject(terminal_already_used_message);
+				return createFailedObject("Terminal already used");
 			}
 			return createFailedObject(terminalUnableToDeleteMessage);
 		} finally{

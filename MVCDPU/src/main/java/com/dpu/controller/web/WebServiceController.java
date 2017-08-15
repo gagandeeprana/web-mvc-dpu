@@ -7,6 +7,8 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.dpu.model.DPUService;
+import com.dpu.model.Failed;
 import com.dpu.service.ServiceService;
 
 @Controller
@@ -48,8 +51,7 @@ public class WebServiceController {
 	}
 	
 	@RequestMapping(value = "/saveservice" , method = RequestMethod.POST)
-	public ModelAndView saveTerminal(@ModelAttribute("service") DPUService dpuService, HttpServletRequest request) {
-		ModelAndView modelAndView = new ModelAndView();
+	@ResponseBody public Object saveTerminal(@ModelAttribute("service") DPUService dpuService, HttpServletRequest request) {
 		HttpSession session = request.getSession();
 		String createdBy = "";
 		if(session != null) {
@@ -57,9 +59,12 @@ public class WebServiceController {
 		}
 //		divisionReq.setCreatedBy(createdBy);
 //		divisionReq.setCreatedOn(new Date());
-		serviceService.add(dpuService);
-		modelAndView.setViewName("redirect:showservice");
-		return modelAndView;
+		Object response = serviceService.add(dpuService);
+		if(response instanceof Failed) {
+			return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
+		} else {
+			return new ResponseEntity<Object>(response, HttpStatus.OK);
+		}
 	}
 	
 	@RequestMapping(value = "/getservice/serviceId" , method = RequestMethod.GET)
@@ -75,18 +80,22 @@ public class WebServiceController {
 	}
 	
 	@RequestMapping(value = "/updateservice" , method = RequestMethod.POST)
-	public ModelAndView updateService(@ModelAttribute("service") DPUService dpuService, @RequestParam("serviceid") Long serviceId) {
-		ModelAndView modelAndView = new ModelAndView();
-		serviceService.update(serviceId, dpuService);
-		modelAndView.setViewName("redirect:showservice");
-		return modelAndView;
+	@ResponseBody public Object updateService(@ModelAttribute("service") DPUService dpuService, @RequestParam("serviceid") Long serviceId) {
+		Object response = serviceService.update(serviceId, dpuService);
+		if(response instanceof Failed) {
+			return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
+		} else {
+			return new ResponseEntity<Object>(response, HttpStatus.OK);
+		}
 	}
 	
 	@RequestMapping(value = "/deleteservice/{serviceid}" , method = RequestMethod.GET)
-	public ModelAndView deleteService(@PathVariable("serviceid") Long serviceId) {
-		ModelAndView modelAndView = new ModelAndView();
-		serviceService.delete(serviceId);
-		modelAndView.setViewName("redirect:/showservice");
-		return modelAndView;
+	@ResponseBody public Object deleteService(@PathVariable("serviceid") Long serviceId) {
+		Object response = serviceService.delete(serviceId);
+		if(response instanceof Failed) {
+			return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
+		} else {
+			return new ResponseEntity<Object>(response, HttpStatus.OK);
+		}
 	}
 }

@@ -156,6 +156,8 @@ function fillTruckData(list) {
     		tableValue = tableValue + ("</tr>");
 		}
 		$("#truckData").html(tableValue);
+	} else {
+		$("#truckData").html("No records found.");		
 	}
 }
 

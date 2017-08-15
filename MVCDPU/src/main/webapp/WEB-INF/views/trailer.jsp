@@ -165,6 +165,8 @@ function fillTrailerData(list) {
     		tableValue = tableValue + ("</tr>");
 		}
 		$("#trailerData").html(tableValue);
+	} else {
+		$("#trailerData").html("No records found.");		
 	}
 }
 

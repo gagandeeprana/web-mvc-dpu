@@ -173,6 +173,8 @@ function fillVendorData(list) {
     		tableValue = tableValue + ("</tr>");
 		}
 		$("#vendorData").html(tableValue);
+	} else {
+		$("#vendorData").html("No records found.");		
 	}
 }
 
@@ -282,7 +284,7 @@ function checkFlag(field) {
 	            var driverState = document.getElementById("stateId");
 	            var stateList = data.stateList;
 	            for(var i = 0;i < data.stateList.length;i++) {
-	            	driverState.options[driverState.options.length] = new Option(data.stateList[i].stateName);
+	            	driverState.options[driverState.options.length] = new Option(data.stateList[i].stateCode);
 	            	driverState.options[i].value = data.stateList[i].stateId;
 	            	if(stateList[i].stateId == data.stateId) {
 	            		document.getElementById("stateId").selectedIndex = i;		            		
@@ -290,7 +292,7 @@ function checkFlag(field) {
 	            }
 	            
 	            changeStateLabel();
-	            getStates();
+	            //getStates();
 	       	});
     	}
     }
@@ -339,7 +341,7 @@ function getStates() {
         if(response.length > 0) {
             var state = document.getElementById("stateId");
         	for(var i = 0;i < response.length;i++) {
-        		state.options[state.options.length] = new Option(response[i].stateName);
+        		state.options[state.options.length] = new Option(response[i].stateCode);
         		state.options[i].value = response[i].stateId;
             }
         }
