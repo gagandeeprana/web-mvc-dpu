@@ -39,6 +39,7 @@ public class PurchaseOrderModel implements Serializable{
 	private String message;
 	
 	private List<Long> issueIds;
+	private List<String> poIssueIds;
 	
 	private Long PoNo;
 	
@@ -52,6 +53,14 @@ public class PurchaseOrderModel implements Serializable{
 	
 	private Long invoiceStatusId;
 	private String currentStatusVal;
+
+	public List<String> getPoIssueIds() {
+		return poIssueIds;
+	}
+
+	public void setPoIssueIds(List<String> poIssueIds) {
+		this.poIssueIds = poIssueIds;
+	}
 
 	public Long getId() {
 		return id;

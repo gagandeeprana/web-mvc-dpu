@@ -1,5 +1,6 @@
 package com.dpu.controller.web;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -130,6 +131,14 @@ public class WebPOController {
 		}
 //		divisionReq.setCreatedBy(createdBy);
 //		divisionReq.setCreatedOn(new Date());
+		List<String> poIssues = purchaseOrderModel.getPoIssueIds();
+		List<Long> issues = new ArrayList<Long>();
+		if(poIssues != null && poIssues.size() > 0) {
+			for(String issue : poIssues) {
+				issues.add(Long.parseLong(issue));
+			}
+		}
+		purchaseOrderModel.setIssueIds(issues);
 		Object response = purchaseOrderService.addPO(purchaseOrderModel);
 		if(response instanceof Failed) {
 			return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);

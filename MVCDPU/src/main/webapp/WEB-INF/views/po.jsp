@@ -52,34 +52,29 @@ function navigate() {
 }
 function createPO(urlToHit,methodType){
 	 
-	 /* if(!check()){
-		 return false;
-	 } */
-	 alert('1');
+		 if(!check()){
+			 return false;
+		 }
+
 	 	var vendorId = $('#vendorId :selected').val();
 	   	var unitTypeId = $('#unitTypeId :selected').val();
 	   	var categoryId = $('#categoryId :selected').val();
 	   	var message = $("#message").val();
-	   	var poIssues = $('.poIssueIds:checkbox:checked');
+	   	var poIssues = $('.poIssueIds:checkbox:checked').attr("value");
 
-	   	var issueArr = new Array();
-	   	for(var i=0;i<poIssues.length;i++) {
-	   		issueArr.push(parseInt(poIssues[i].value));
-	   	}
-	   	
 	   	var poId;
 	   	if(methodType == 'PUT') {
 	   		poId = $('#poid').val();
 	   	}
-	   	
 		  $.ajax({url: BASE_URL + urlToHit,
+			      async:false,
 			      type:"POST",
 			      data:{
 			    	vendorId:vendorId,
 			    	unitTypeId:unitTypeId,
 			    	categoryId:categoryId,
 			    	message:message,
-			    	issueIds:issueArr,
+			    	poIssueIds:poIssues.toString(),
 			    	poid:poId
 			      },
 			      success: function(result){
