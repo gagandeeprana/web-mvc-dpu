@@ -14,89 +14,88 @@ import com.dpu.entity.PurchaseOrderIssue;
 import com.dpu.entity.Type;
 
 @Repository
-public class PurchaseOrderDaoImpl extends GenericDaoImpl<PurchaseOrder> implements PurchaseOrderDao{
+public class PurchaseOrderDaoImpl extends GenericDaoImpl<PurchaseOrder> implements PurchaseOrderDao {
 
 	@SuppressWarnings("unchecked")
-
 	@Override
 	public List<PurchaseOrder> findAll(Session session) {
-		StringBuilder sb = new StringBuilder(" select i from PurchaseOrder i join fetch i.vendor join fetch i.category join fetch i.unitType join fetch i.status ");
+		StringBuilder sb = new StringBuilder(
+				" select i from PurchaseOrder i join fetch i.vendor join fetch i.category join fetch i.unitType join fetch i.status ");
 		Query query = session.createQuery(sb.toString());
 		return query.list();
 	}
-	
+
 	@Override
 	public PurchaseOrder findById(Long id, Session session) {
-		StringBuilder sb = new StringBuilder(" select i from PurchaseOrder i join fetch i.vendor join fetch i.category join fetch i.unitType join fetch i.status where i.id =:poId ");
+		StringBuilder sb = new StringBuilder(
+				" select i from PurchaseOrder i join fetch i.vendor join fetch i.category join fetch i.unitType join fetch i.status where i.id =:poId ");
 		Query query = session.createQuery(sb.toString());
 		query.setParameter("poId", id);
 		return (PurchaseOrder) query.uniqueResult();
 	}
 
 	@Override
-	public void addPurchaseOrder(PurchaseOrder po, List<PurchaseOrderIssue> poIssues, Type assignStatus, Session session) {
-	
+	public void addPurchaseOrder(PurchaseOrder po, List<PurchaseOrderIssue> poIssues, List<Issue> issues,
+			Type assignStatus, Session session) {
+
 		session.save(po);
-		
+
 		for (PurchaseOrderIssue purchaseOrderIssue : poIssues) {
-			Issue issue = purchaseOrderIssue.getIssue();
-			issue.setStatus(assignStatus);
-			session.update(issue);
+			/*
+			 * Issue issue = purchaseOrderIssue.getIssue(); issue.setStatus(assignStatus); session.update(issue);
+			 */
 			purchaseOrderIssue.setPurchaseOrder(po);
 			session.save(purchaseOrderIssue);
 		}
-		
+
+		for (Issue issue : issues) {
+			session.update(issue);
+		}
 	}
 
 	@Override
 	public Long getMaxPoNO(Session session) {
-		Long returnVal = 999l; // PO number starts from 100
+		Long returnVal = 999l; // PO number starts from 1000
 		Long maxVal = (Long) session.createQuery(" select max(poNo) from PurchaseOrder ").uniqueResult();
-		if(maxVal != null){
+		if (maxVal != null) {
 			returnVal = maxVal;
 		}
 		return returnVal;
 	}
 
 	@Override
-	public void update(PurchaseOrder po, List<PurchaseOrderIssue> poIssues,  Type assignStatus, Type openStatus, Session session) {
+	public void update(PurchaseOrder po, List<PurchaseOrderIssue> poIssues, List<Issue> issues, Session session) {
 
 		session.update(po);
-		
-		// existing issues
-		List<PurchaseOrderIssue> existingPoIssues = po.getPoIssues();
-		if(existingPoIssues != null && ! existingPoIssues.isEmpty()) {
-			for (PurchaseOrderIssue purchaseOrderIssue : existingPoIssues) {
-				Issue issue = purchaseOrderIssue.getIssue();
-				issue.setStatus(openStatus);
-				session.update(issue);
-				session.delete(purchaseOrderIssue);
-			}
-		}
-		
-		//insert updated issues
+
+		// insert updated issues
 		for (PurchaseOrderIssue purchaseOrderIssue : poIssues) {
-			Issue issue = purchaseOrderIssue.getIssue();
-			issue.setStatus(assignStatus);
-			session.update(issue);
+			/*
+			 * Issue issue = purchaseOrderIssue.getIssue(); issue.setStatus(assignStatus); session.update(issue);
+			 */
 			purchaseOrderIssue.setPurchaseOrder(po);
 			session.save(purchaseOrderIssue);
 		}
-		
+
+		for (Issue issue : issues) {
+			session.update(issue);
+		}
+
 	}
 
 	@Override
 	public void updateStatus(PurchaseOrder po, Type status, Session session) {
 		po.setStatus(status);
 		session.update(po);
-		
+
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<PurchaseOrder> getStatusPOs(Session session, String statusVal) {
-		StringBuilder sb = new StringBuilder(" select i from PurchaseOrder i left join fetch i.vendor left join fetch i.category left join fetch i.unitType join fetch i.status ")
-		.append(" where i.status.typeName = :statusVal ");
+		StringBuilder sb = new StringBuilder(
+				" select i from PurchaseOrder i left join fetch i.vendor left join fetch i.category left join fetch i.unitType join fetch i.status ")
+				.append(" where i.status.typeName = :statusVal ");
 		Query query = session.createQuery(sb.toString());
 		query.setParameter("statusVal", statusVal);
 		return query.list();

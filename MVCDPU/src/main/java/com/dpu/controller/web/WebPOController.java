@@ -22,6 +22,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.dpu.model.Failed;
 import com.dpu.model.IssueModel;
 import com.dpu.model.PurchaseOrderModel;
+import com.dpu.model.TypeResponse;
 import com.dpu.service.PurchaseOrderService;
 import com.dpu.util.DateUtil;
 
@@ -105,6 +106,17 @@ public class WebPOController {
 		PurchaseOrderModel purchaseOrderModel = null;
 		try {
 			purchaseOrderModel = purchaseOrderService.getOpenAdd();
+			
+			List<TypeResponse> issueList = purchaseOrderModel.getIssueStatusList();
+			List<TypeResponse> trimmedIssueStatusList = new ArrayList<TypeResponse>();
+			for(TypeResponse type : issueList) {
+				if(type.getTypeName().equals("Assigned") || type.getTypeName().equals("Complete") || type.getTypeName().equals("Incomplete")) {
+					trimmedIssueStatusList.add(type);
+				}
+			}
+			
+			purchaseOrderModel.setIssueStatusList(trimmedIssueStatusList);
+			
 		} catch (Exception e) {
 			System.out.println(e);
 		}
@@ -131,14 +143,14 @@ public class WebPOController {
 		}
 //		divisionReq.setCreatedBy(createdBy);
 //		divisionReq.setCreatedOn(new Date());
-		List<String> poIssues = purchaseOrderModel.getPoIssueIds();
+		/*List<IssueModel> poIssues = purchaseOrderModel.getIssue();
 		List<Long> issues = new ArrayList<Long>();
 		if(poIssues != null && poIssues.size() > 0) {
-			for(String issue : poIssues) {
+			for(IssueModel issue : poIssues) {
 				issues.add(Long.parseLong(issue));
 			}
 		}
-		purchaseOrderModel.setIssueIds(issues);
+		purchaseOrderModel.setIssueIds(issues);*/
 		Object response = purchaseOrderService.addPO(purchaseOrderModel);
 		if(response instanceof Failed) {
 			return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);

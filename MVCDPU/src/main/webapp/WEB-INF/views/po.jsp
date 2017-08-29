@@ -331,10 +331,11 @@ function showIssueDetail(quesId) {
 </script>
 <script type="text/javascript">
 		var editInitialValue = "";
+		
 		function getUnitNo() {
 			var unitTypeId = $('#unitTypeId :selected').val();
 			var categoryId = $('#categoryId :selected').val();
-			$.get('<%=request.getContextPath()%>' + "/po/getissues/category/"+categoryId+"/unittype/"+unitTypeId, function(issuesResponse) {
+			$.get("<%=request.getContextPath()%>" + "/po/getissues/category/"+ categoryId + "/unittype/" + unitTypeId, function(issuesResponse) {
  	           
 				//$("#issuesTable").html();
 	            if(issuesResponse.length > 0) {
@@ -352,7 +353,7 @@ function showIssueDetail(quesId) {
 			            		tableValue = tableValue + ("<td>"+(obj.unitTypeName)+"</td>");
 			            		tableValue = tableValue + ("<td>"+(obj.unitNo)+"</td>");
 			            		tableValue = tableValue + ("<td>"+(obj.reportedByName)+"</td>");
-			            		tableValue = tableValue + ("<td>"+(obj.statusName)+"</td>");
+			            		tableValue = tableValue + ("<td><select class='form-control' id='issueStatusId'><option value='-1'>Please Select</option><option value='104'>Complete</option><option value='105'>Incomplete</option><option value='106'>Assigned</option></select></td>");
 			            		//tableValue = tableValue + "<td><a href = '#' data-toggle='modal' data-target='#myModal' onclick='checkFlag('update');onClickMethodQuestion('"+${obj.id}+"')>Update</a> / <a href='deleteissue/${obj.id}">Delete</a></td>"
 			            		tableValue = tableValue + ("</tr>");
 		            		}
@@ -366,7 +367,7 @@ function showIssueDetail(quesId) {
 		            		tableValue = tableValue + ("<td>"+(obj.unitTypeName)+"</td>");
 		            		tableValue = tableValue + ("<td>"+(obj.unitNo)+"</td>");
 		            		tableValue = tableValue + ("<td>"+(obj.reportedByName)+"</td>");
-		            		tableValue = tableValue + ("<td>"+(obj.statusName)+"</td>");
+		            		tableValue = tableValue + ("<td><select class='form-control id='issueStatusId'><option value='-1'>Please Select</option><option value='104'>Complete</option><option value='105'>Incomplete</option><option value='106'>Assigned</option></select></td>");
 		            		//tableValue = tableValue + "<td><a href = '#' data-toggle='modal' data-target='#myModal' onclick='checkFlag('update');onClickMethodQuestion('"+${obj.id}+"')>Update</a> / <a href='deleteissue/${obj.id}">Delete</a></td>"
 		            		tableValue = tableValue + ("</tr>");
 	            		}
@@ -377,8 +378,10 @@ function showIssueDetail(quesId) {
 						$("#mainDiv").show();
 		            	$("#issuesTable").html(""+tableValue);	            		
 	            	}
+	            	
 	            } else {
 	            	//$("#mainDiv").hide();
+	            	toastr.error("No Issues related to unittype and category exist.", 'Message!')
 					$("#issuesTable").html(editInitialValue);
 	            }
 			});
@@ -401,7 +404,7 @@ function showIssueDetail(quesId) {
        			$("#issueIds").html("");
        			$("#invoceNoDiv").hide();
             	$("#invoiceNo").val("");
-            	$.get('<%=request.getContextPath()%>'+"/po/getopenadd", function(data) {
+            	$.get("<%=request.getContextPath()%>"+"/po/getopenadd", function(data) {
     	           
     	            var vendor = document.getElementById("vendorId");
     	            for(var i = 0;i < data.vendorList.length;i++) {
@@ -421,11 +424,8 @@ function showIssueDetail(quesId) {
     	            	unitType.options[i].value = data.unitTypeList[i].typeId;
     	            }
     	            
-    	            /* var status = document.getElementById("statusId");
-    	            for(var i = 0;i < data.statusList.length;i++) {
-    	            	status.options[status.options.length] = new Option(data.statusList[i].typeName);
-    	            	status.options[i].value = data.statusList[i].typeId;
-    	            } */
+    	            getUnitNo();
+    	            
     	        });
         	} else {
         		$("#mainDiv").hide();
@@ -526,14 +526,6 @@ function showIssueDetail(quesId) {
             $("#message").val("");
         }
         
-        function clearAll() {
-        	document.getElementById("vendorId").innerHTML = "";
-        	document.getElementById("unitTypeId").innerHTML = "";
-        	document.getElementById("categoryId").innerHTML = "";
-        	/* document.getElementById("statusId").innerHTML = ""; */
-            $("#invoiceNo").val("");
-            $("#message").val("");
-        }
 </script>
 
 <script type="text/javascript">
@@ -854,7 +846,7 @@ return true;
 													<span class="input-group-addon">
 														 <b>UnitType</b>												
 													</span>
-													<select id="unitTypeId" class="form-control" name="unitTypeId">
+													<select id="unitTypeId" class="form-control" name="unitTypeId" onchange="getUnitNo()">
 													</select>
 												</div>
 											</div>

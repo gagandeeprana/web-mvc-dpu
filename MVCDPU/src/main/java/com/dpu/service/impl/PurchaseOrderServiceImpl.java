@@ -206,11 +206,10 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService  {
 			tx = session.beginTransaction();
 			PurchaseOrder po = (PurchaseOrder) session.get(PurchaseOrder.class, id);
 			List<PurchaseOrderIssue> poIssues = new ArrayList<PurchaseOrderIssue>();
+			List<Issue> issues = new ArrayList<Issue>();
 			if (po != null) {
-				Type assignStatus = typeService.get(106l);
-				Type openStatus = typeService.get(103l);
-				setPoValues(poModel, po, poIssues, session, Iconstants.UPDATE_PO);
-				poDao.update(po, poIssues, assignStatus, openStatus, session);
+				setPoValues(poModel, po, poIssues, issues, session, Iconstants.UPDATE_PO);
+				poDao.update(po, poIssues, issues, session);
 				tx.commit();
 			} else {
 				return createFailedObject(po_unable_to_update_message);
@@ -318,6 +317,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService  {
 						issueObj.setCategoryName(issue.getCategory().getName());
 						issueObj.setUnitNo(issue.getUnitNo());
 						issueObj.setStatusName(issue.getStatus().getTypeName());
+						issueObj.setStatusId(issue.getStatus().getTypeId());
 						issueModels.add(issueObj);
 
 					}
@@ -359,8 +359,8 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService  {
 		List<TypeResponse> unitTypeList = typeService.getAll(25l);
 		poModel.setUnitTypeList(unitTypeList);
 		
-		/*List<TypeResponse> statusList = typeService.getAll(24l);
-		poModel.setStatusList(statusList);*/
+		List<TypeResponse> issueStatusList = typeService.getAll(23l);
+		poModel.setIssueStatusList(issueStatusList);
 		
 	}
 
@@ -397,9 +397,10 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService  {
 			tx = session.beginTransaction();
 			PurchaseOrder po = new PurchaseOrder();
 			List<PurchaseOrderIssue> poIssues = new ArrayList<PurchaseOrderIssue>();
-			setPoValues(poModel, po, poIssues, session, Iconstants.ADD_PO);
+			List<Issue> issues = new ArrayList<Issue>();
+			setPoValues(poModel, po, poIssues, issues, session, Iconstants.ADD_PO);
 			Type assignStatus = typeService.get(106l);
-			poDao.addPurchaseOrder(po, poIssues, assignStatus, session);
+			poDao.addPurchaseOrder(po, poIssues, issues, assignStatus, session);
 			tx.commit();
 		} catch (Exception e) {
 			if(tx != null){
@@ -418,9 +419,10 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService  {
 		return createSuccessObject(po_added_message, "Active");
 	}
 
-	private void setPoValues(PurchaseOrderModel poModel, PurchaseOrder po, List<PurchaseOrderIssue> poIssues, Session session, String type) {
+	private void setPoValues(PurchaseOrderModel poModel, PurchaseOrder po, List<PurchaseOrderIssue> poIssues,
+			List<Issue> issues, Session session, String type) {
 		
-		List<Long> issueIds = poModel.getIssueIds();
+		List<IssueModel> issueData = poModel.getIssue();
 		Type unitType = (Type) session.get(Type.class, poModel.getUnitTypeId());
 		Category category = (Category) session.get(Category.class, poModel.getCategoryId());
 		Vendor vendor = (Vendor) session.get(Vendor.class, poModel.getVendorId());
@@ -431,6 +433,18 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService  {
 			poModel.setStatusId(108l);
 			Type status = (Type) session.get(Type.class, poModel.getStatusId());
 			po.setStatus(status);
+		} else {
+			// existing issues
+			List<PurchaseOrderIssue> existingPoIssues = po.getPoIssues();
+			if (existingPoIssues != null && !existingPoIssues.isEmpty()) {
+				Type openStatus = typeService.get(103l);
+				for (PurchaseOrderIssue purchaseOrderIssue : existingPoIssues) {
+					Issue issue = purchaseOrderIssue.getIssue();
+					issue.setStatus(openStatus);
+					session.update(issue);
+					session.delete(purchaseOrderIssue);
+				}
+			}
 		}
 		
 		po.setCategory(category);
@@ -439,13 +453,18 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService  {
 		po.setUnitType(unitType);
 		po.setVendor(vendor);
 
-		if(issueIds != null){
+		if (issueData != null) {
 			
-			for (Long issueId : issueIds) {
+			for (IssueModel issueModel : issueData) {
+				Long issueId = issueModel.getId();
 				PurchaseOrderIssue poIssue = new PurchaseOrderIssue();
 				Issue issue = (Issue) session.get(Issue.class, issueId);
 				poIssue.setIssue(issue);
 				poIssues.add(poIssue);
+
+				Type issueStatus = (Type) session.get(Type.class, issueModel.getStatusId());
+				issue.setStatus(issueStatus);
+				issues.add(issue);
 			}
 		}
 		

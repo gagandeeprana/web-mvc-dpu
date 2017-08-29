@@ -36,10 +36,13 @@ public class PurchaseOrderModel implements Serializable{
 	private Long statusId;
 	private List<TypeResponse> statusList;
 	
+	private String issueStatusName;
+	private Long issueStatusId;
+	private List<TypeResponse> issueStatusList;
+
 	private String message;
 	
-	private List<Long> issueIds;
-	private List<String> poIssueIds;
+	private List<IssueModel> issues;
 	
 	private Long PoNo;
 	
@@ -53,14 +56,6 @@ public class PurchaseOrderModel implements Serializable{
 	
 	private Long invoiceStatusId;
 	private String currentStatusVal;
-
-	public List<String> getPoIssueIds() {
-		return poIssueIds;
-	}
-
-	public void setPoIssueIds(List<String> poIssueIds) {
-		this.poIssueIds = poIssueIds;
-	}
 
 	public Long getId() {
 		return id;
@@ -214,14 +209,6 @@ public class PurchaseOrderModel implements Serializable{
 		this.unitTypeList = unitTypeList;
 	}
 
-	public List<Long> getIssueIds() {
-		return issueIds;
-	}
-
-	public void setIssueIds(List<Long> issueIds) {
-		this.issueIds = issueIds;
-	}
-
 	public Long getPoNo() {
 		return PoNo;
 	}
@@ -276,6 +263,38 @@ public class PurchaseOrderModel implements Serializable{
 
 	public void setCurrentStatusVal(String currentStatusVal) {
 		this.currentStatusVal = currentStatusVal;
+	}
+
+	public String getIssueStatusName() {
+		return issueStatusName;
+	}
+
+	public void setIssueStatusName(String issueStatusName) {
+		this.issueStatusName = issueStatusName;
+	}
+
+	public Long getIssueStatusId() {
+		return issueStatusId;
+	}
+
+	public void setIssueStatusId(Long issueStatusId) {
+		this.issueStatusId = issueStatusId;
+	}
+
+	public List<TypeResponse> getIssueStatusList() {
+		return issueStatusList;
+	}
+
+	public void setIssueStatusList(List<TypeResponse> issueStatusList) {
+		this.issueStatusList = issueStatusList;
+	}
+
+	public List<IssueModel> getIssue() {
+		return issues;
+	}
+
+	public void setIssue(List<IssueModel> issue) {
+		this.issues = issue;
 	}
 
 	/*public List<Long> getIssueIds() {
