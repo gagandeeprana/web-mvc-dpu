@@ -72,7 +72,7 @@ function createTerminal(urlToHit,methodType){
 			      data:{
 			    	terminalName:terminalName,
 			    	shipperId:loc,
-			    	stringServiceIds:result,
+			    	stringServiceIds:result.toString(),
 			      },
 			      success: function(result){
 		        try{
@@ -377,13 +377,20 @@ function emptyMessageDiv(){
 					</tr>
 				</thead>
 				<tbody id="terminalData">
-					<c:forEach items="${LIST_TERMINAL}" var="obj">
-						<tr class="info">
-							<td>${obj.terminalName}</td>							
-							<td>${obj.shipperName}</td>
-							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.terminalId}')">Update</a> / <a href="#" onclick="deleteTerminal('${obj.terminalId}')">Delete</a></td>
-						</tr>
-					</c:forEach>
+				<c:choose>
+					<c:when test="${LIST_TERMINAL.size() > 0}">
+						<c:forEach items="${LIST_TERMINAL}" var="obj">
+							<tr class="info">
+								<td>${obj.terminalName}</td>							
+								<td>${obj.shipperName}</td>
+								<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.terminalId}')">Update</a> / <a href="#" onclick="deleteTerminal('${obj.terminalId}')">Delete</a></td>
+							</tr>
+						</c:forEach>
+					</c:when>
+					<c:otherwise>
+						<tr><td colspan="3">No records found.</td></tr>
+					</c:otherwise>
+				</c:choose>
 				</tbody>
 			</table>
 		</div>

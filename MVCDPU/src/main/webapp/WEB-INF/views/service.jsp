@@ -409,15 +409,22 @@ function emptyMessageDiv(){
 					</tr>
 				</thead>
 				<tbody id="serviceData">
-					<c:forEach items="${LIST_SERVICE}" var="obj">
-						<tr class="info">
-							<td>${obj.serviceName}</td>							
-							<td>${obj.textField}</td>
-							<td>${obj.associationWith}</td>
-							<td>${obj.status}</td>
-							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.serviceId}')">Update</a> / <a href="deleteservice/${obj.serviceId}">Delete</a></td>
-						</tr>
-					</c:forEach>
+				<c:choose>
+					<c:when test="${LIST_SERVICE.size() > 0}">
+						<c:forEach items="${LIST_SERVICE}" var="obj">
+							<tr class="info">
+								<td>${obj.serviceName}</td>							
+								<td>${obj.textField}</td>
+								<td>${obj.associationWith}</td>
+								<td>${obj.status}</td>
+								<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.serviceId}')">Update</a> / <a href="deleteservice/${obj.serviceId}">Delete</a></td>
+							</tr>
+						</c:forEach>
+					</c:when>
+					<c:otherwise>
+						<tr><td colspan="4">No records found.</td></tr>
+					</c:otherwise>
+				</c:choose>
 				</tbody>
 			</table>
 		</div>

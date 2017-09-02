@@ -586,21 +586,28 @@ function emptyMessageDiv(){
 					</tr>
 				</thead>
 				<tbody id="trailerData">
-					<c:forEach items="${LIST_TRAILER}" var="obj">
-						<tr class="info">
-							<td>${obj.unitNo}</td>							
-							<td>${obj.owner}</td>
-							<td>${obj.oOName}</td>
-							<td>${obj.category}</td>
-							<td>${obj.status}</td>
-							<td>${obj.usage}</td>
-							<td>${obj.division}</td>
-							<td>${obj.terminal}</td>
-							<td>${obj.trailerType}</td>
-							<td>${obj.finance}</td>
-							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.trailerId}')">Update</a> / <a href="#" onclick="deleteTrailer('${obj.trailerId}')">Delete</a></td>
-						</tr>
-					</c:forEach>
+				<c:choose>
+					<c:when test="${LIST_TRAILER.size() > 0}">
+						<c:forEach items="${LIST_TRAILER}" var="obj">
+							<tr class="info">
+								<td>${obj.unitNo}</td>							
+								<td>${obj.owner}</td>
+								<td>${obj.oOName}</td>
+								<td>${obj.category}</td>
+								<td>${obj.status}</td>
+								<td>${obj.usage}</td>
+								<td>${obj.division}</td>
+								<td>${obj.terminal}</td>
+								<td>${obj.trailerType}</td>
+								<td>${obj.finance}</td>
+								<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.trailerId}')">Update</a> / <a href="#" onclick="deleteTrailer('${obj.trailerId}')">Delete</a></td>
+							</tr>
+						</c:forEach>
+					</c:when>
+					<c:otherwise>
+						<tr><td colspan="11">No records found.</td></tr>
+					</c:otherwise>
+				</c:choose>
 				</tbody>
 			</table>
 		</div>

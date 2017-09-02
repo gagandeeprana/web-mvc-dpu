@@ -7,55 +7,80 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 
 @JsonSerialize(include = Inclusion.NON_NULL)
-public class PurchaseOrderModel implements Serializable{
+public class PurchaseOrderModel implements Serializable {
 
-	 
 	private static final long serialVersionUID = 1L;
 
 	private Long id;
 
 	private String title;
-	
+
 	private String vendorName;
 	private Long vendorId;
 	private List<VendorModel> vendorList;
-	
+
 	private String categoryName;
 	private Long categoryId;
 	private List<CategoryReq> categoryList;
-	
+
 	private String unitTypeName;
 	private Long unitTypeId;
 	private List<TypeResponse> unitTypeList;
-	
+
 	private String issueName;
 	private Long issueId;
 	private List<IssueModel> issueList;
-	
+
 	private String statusName;
 	private Long statusId;
 	private List<TypeResponse> statusList;
-	
+
 	private String issueStatusName;
 	private Long issueStatusId;
 	private List<TypeResponse> issueStatusList;
 
 	private String message;
-	
+
 	private List<IssueModel> issues;
-	
+
 	private Long PoNo;
-	
+
 	private Boolean isComplete;
 	private Long completeStatusId;
-	
+
 	// for invoice status
 	private String invoiceNo;
 	private Double amount;
 	private String invoiceDate;
-	
+
 	private Long invoiceStatusId;
 	private String currentStatusVal;
+	List<String> issueIds;
+	List<String> issueStatusIds;
+
+	public List<IssueModel> getIssues() {
+		return issues;
+	}
+
+	public void setIssues(List<IssueModel> issues) {
+		this.issues = issues;
+	}
+
+	public List<String> getIssueIds() {
+		return issueIds;
+	}
+
+	public void setIssueIds(List<String> issueIds) {
+		this.issueIds = issueIds;
+	}
+
+	public List<String> getIssueStatusIds() {
+		return issueStatusIds;
+	}
+
+	public void setIssueStatusIds(List<String> issueStatusIds) {
+		this.issueStatusIds = issueStatusIds;
+	}
 
 	public Long getId() {
 		return id;
@@ -289,19 +314,4 @@ public class PurchaseOrderModel implements Serializable{
 		this.issueStatusList = issueStatusList;
 	}
 
-	public List<IssueModel> getIssue() {
-		return issues;
-	}
-
-	public void setIssue(List<IssueModel> issue) {
-		this.issues = issue;
-	}
-
-	/*public List<Long> getIssueIds() {
-		return issueIds;
-	}
-
-	public void setIssueIds(List<Long> issueIds) {
-		this.issueIds = issueIds;
-	}*/
 }

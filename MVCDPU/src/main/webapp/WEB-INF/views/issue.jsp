@@ -220,15 +220,23 @@ function checkFlag(field) {
 		function getUnitNo() {
 			var unitTypeId = $('#unitType :selected').val();
 			var categoryId = $('#issueCategory :selected').val();
-			$.get("issue/getunitno/category/"+categoryId+"/unittype/"+unitTypeId, function(data) {
- 	           
-	            var unitNo = document.getElementById("unitNo");
-	            $("#unitNo").empty();
-	            for(var i = 0;i < data.unitNos.length;i++) {
-	            	unitNo.options[unitNo.options.length] = new Option(data.unitNos[i]);
-	            	unitNo.options[i].value = data.unitNos[i];
-	            }
-			});
+			
+			if(unitTypeId > 0 && categoryId > 0) {
+				$.get("issue/getunitno/category/"+categoryId+"/unittype/"+unitTypeId, function(data) {
+	 	           
+		            var unitNo = document.getElementById("unitNo");
+		            $("#unitNo").empty();
+
+		            if(data.unitNos.length > 0) {
+			            for(var i = 0;i < data.unitNos.length;i++) {
+			            	unitNo.options[unitNo.options.length] = new Option(data.unitNos[i]);
+			            	unitNo.options[i].value = data.unitNos[i];
+			            }
+		            } else {
+						toastr.error('No such UnitNo. exists for selected UnitType and Category', 'Error!')
+		            }
+				});
+			}
 		}
 
         function onClickMethodQuestion(quesId){
@@ -242,27 +250,6 @@ function checkFlag(field) {
     	            	vmc.options[vmc.options.length] = new Option(data.vmcList[i].name);
     	            	vmc.options[i].value = data.vmcList[i].id;
     	            }
-    	           	 /* var arrList = []
-    	           	for(var i=0;i<data.vmcList.length;i++){
-    	           		arrList.push({label:data.vmcList[i]['name'],value:data.vmcList[i]['id']})
-    	           	}
-    	           	
-    	        	$("#vmcId").autocomplete({
-   	        	      source: arrList,
-   	        	   minLength: 0,	 
-		   	        	
-   	        	      select: function (event, ui) {
-   	        	    	   $( "#vmcId" ).val( ui.item.label );
-   	        	           $("#vmcIdhidden").val(ui.item.value); 
-   	        	    		return false;
-   	        	           
-   	        	        }
-   	        	    }).autocomplete("instance")._renderItem = function(ul, item) {
-   	        	      return $( "<li>" )
-   	        	        .append("<div>" + item.label + "</div>")
-   	        	        .appendTo(ul);
-   	        	    }; */ 
-            	
             	
     	            var unitType = document.getElementById("unitType");
     	            for(var i = 0;i < data.unitTypeList.length;i++) {
@@ -287,6 +274,8 @@ function checkFlag(field) {
     	            	status.options[status.options.length] = new Option(data.statusList[i].typeName);
     	            	status.options[i].value = data.statusList[i].typeId;
     	            }
+    	            
+    	            getUnitNo();
     	            
     	        });
         	} else {
@@ -458,7 +447,7 @@ function emptyMessageDiv(){
 													<span class="input-group-addon">
 														 <b>UnitType</b>												
 													</span>
-													<select id="unitType" class="form-control" name="unitTypeId">
+													<select id="unitType" class="form-control" name="unitTypeId" onchange="getUnitNo()">
 													</select>
 												</div>
 											</div>
@@ -582,17 +571,24 @@ function emptyMessageDiv(){
 					</tr>
 				</thead>
 				<tbody id="issueData">
-					<c:forEach items="${LIST_ISSUE}" var="obj">
-						<tr class="info">
-							<td>${obj.title}</td>							
-							<td>${obj.vmcName}</td>
-							<td>${obj.unitTypeName}</td>
-							<td>${obj.unitNo}</td>
-							<td>${obj.reportedByName}</td>
-							<td>${obj.statusName}</td>
-							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.id}')">Update</a> / <a href="#" onclick="deleteIssue('${obj.id}')">Delete</a></td>
-						</tr>
-					</c:forEach>
+					<c:choose>
+						<c:when test="${LIST_ISSUE.size() > 0}">
+							<c:forEach items="${LIST_ISSUE}" var="obj">
+								<tr class="info">
+									<td>${obj.title}</td>							
+									<td>${obj.vmcName}</td>
+									<td>${obj.unitTypeName}</td>
+									<td>${obj.unitNo}</td>
+									<td>${obj.reportedByName}</td>
+									<td>${obj.statusName}</td>
+									<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.id}')">Update</a> / <a href="#" onclick="deleteIssue('${obj.id}')">Delete</a></td>
+								</tr>
+							</c:forEach>
+						</c:when>
+						<c:otherwise>
+							<tr><td colspan="7">No records found.</td></tr>
+						</c:otherwise>
+					</c:choose>
 				</tbody>
 			</table>
 		</div>

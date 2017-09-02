@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.dpu.constants.Iconstants;
 import com.dpu.model.Failed;
 import com.dpu.model.IssueModel;
 import com.dpu.model.PurchaseOrderModel;
@@ -31,36 +32,36 @@ public class WebPOController {
 
 	@Autowired
 	PurchaseOrderService purchaseOrderService;
-	
+
 	Logger logger = Logger.getLogger(WebPOController.class);
-	
-	/*@RequestMapping(value = "/showpo", method = RequestMethod.GET)
-	public ModelAndView showPOScreen() {
-		ModelAndView modelAndView = new ModelAndView();
-		List<PurchaseOrderModel> lstPOs = purchaseOrderService.getAll();
-		modelAndView.addObject("LIST_PO", lstPOs);
-		modelAndView.setViewName("po");
-		return modelAndView;
-	}*/
-	
+
 	@RequestMapping(value = "/showpo/status/Complete", method = RequestMethod.GET)
-	@ResponseBody public Object showCompletePOs() {
+	@ResponseBody
+	public Object showCompletePOs() {
 		List<PurchaseOrderModel> lstPOs = purchaseOrderService.getStatusPOs("Complete");
 		return lstPOs;
 	}
-	
+
+	private Object createFailedObject(String errorMessage) {
+		Failed failed = new Failed();
+		failed.setMessage(errorMessage);
+		return failed;
+	}
+
 	@RequestMapping(value = "/showpo/status/Active", method = RequestMethod.GET)
-	@ResponseBody public Object showActivePOs() {
+	@ResponseBody
+	public Object showActivePOs() {
 		List<PurchaseOrderModel> lstPOs = purchaseOrderService.getStatusPOs("Active");
 		return lstPOs;
 	}
-	
+
 	@RequestMapping(value = "/showpo/status/Invoiced", method = RequestMethod.GET)
-	@ResponseBody public Object showInvoicedPOs() {
+	@ResponseBody
+	public Object showInvoicedPOs() {
 		List<PurchaseOrderModel> lstPOs = purchaseOrderService.getStatusPOs("Invoiced");
 		return lstPOs;
 	}
-	
+
 	@RequestMapping(value = "/showpo", method = RequestMethod.GET)
 	public ModelAndView showPOScreenByStatus() {
 		ModelAndView modelAndView = new ModelAndView();
@@ -69,21 +70,24 @@ public class WebPOController {
 		modelAndView.setViewName("po");
 		return modelAndView;
 	}
-	
+
 	@RequestMapping(value = "/{poId}/complete/{statusId}", method = RequestMethod.GET)
-	@ResponseBody public Object changeToCompleteStatus(@PathVariable("poId") Long poId, @PathVariable("statusId") Long statusId) {
+	@ResponseBody
+	public Object changeToCompleteStatus(@PathVariable("poId") Long poId, @PathVariable("statusId") Long statusId) {
 		PurchaseOrderModel purchaseOrderModel = new PurchaseOrderModel();
 		purchaseOrderModel.setCurrentStatusVal("Active");
 		Object response = purchaseOrderService.updateStatus(poId, statusId, purchaseOrderModel);
-		if(response instanceof Failed) {
+		if (response instanceof Failed) {
 			return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
 		} else {
 			return new ResponseEntity<Object>(response, HttpStatus.OK);
 		}
 	}
-	
+
 	@RequestMapping(value = "/{poId}/complete/{statusId}/invoiced", method = RequestMethod.GET)
-	@ResponseBody public Object changeToInvoicedStatus(@PathVariable("poId") Long poId, @PathVariable("statusId") Long statusId, HttpServletRequest httpServletRequest) {
+	@ResponseBody
+	public Object changeToInvoicedStatus(@PathVariable("poId") Long poId, @PathVariable("statusId") Long statusId,
+			HttpServletRequest httpServletRequest) {
 		PurchaseOrderModel purchaseOrderModel = new PurchaseOrderModel();
 		String invoiceDate = httpServletRequest.getParameter("invoiceDate");
 		String invoiceNo = httpServletRequest.getParameter("invoiceNo");
@@ -94,37 +98,41 @@ public class WebPOController {
 		invoiceDate = DateUtil.rearrangeDate(invoiceDate);
 		purchaseOrderModel.setInvoiceDate(invoiceDate);
 		Object response = purchaseOrderService.updateStatus(poId, statusId, purchaseOrderModel);
-		if(response instanceof Failed) {
+		if (response instanceof Failed) {
 			return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
 		} else {
 			return new ResponseEntity<Object>(response, HttpStatus.OK);
 		}
 	}
-	
-	@RequestMapping(value = "/po/getopenadd" , method = RequestMethod.GET)
-	@ResponseBody public PurchaseOrderModel getOpenAdd() {
+
+	@RequestMapping(value = "/po/getopenadd", method = RequestMethod.GET)
+	@ResponseBody
+	public PurchaseOrderModel getOpenAdd() {
 		PurchaseOrderModel purchaseOrderModel = null;
 		try {
 			purchaseOrderModel = purchaseOrderService.getOpenAdd();
-			
+
 			List<TypeResponse> issueList = purchaseOrderModel.getIssueStatusList();
 			List<TypeResponse> trimmedIssueStatusList = new ArrayList<TypeResponse>();
-			for(TypeResponse type : issueList) {
-				if(type.getTypeName().equals("Assigned") || type.getTypeName().equals("Complete") || type.getTypeName().equals("Incomplete")) {
+			for (TypeResponse type : issueList) {
+				if (type.getTypeName().equals("Assigned") || type.getTypeName().equals("Complete")
+						|| type.getTypeName().equals("Incomplete")) {
 					trimmedIssueStatusList.add(type);
 				}
 			}
-			
+
 			purchaseOrderModel.setIssueStatusList(trimmedIssueStatusList);
-			
+
 		} catch (Exception e) {
 			System.out.println(e);
 		}
 		return purchaseOrderModel;
 	}
-	
-	@RequestMapping(value = "/po/getissues/category/{category}/unittype/{unittype}" , method = RequestMethod.GET)
-	@ResponseBody public List<IssueModel> getCategoryAndUnitTypeIssues(@PathVariable("category") Long categoryId, @PathVariable("unittype") Long unitTypeId) {
+
+	@RequestMapping(value = "/po/getissues/category/{category}/unittype/{unittype}", method = RequestMethod.GET)
+	@ResponseBody
+	public List<IssueModel> getCategoryAndUnitTypeIssues(@PathVariable("category") Long categoryId,
+			@PathVariable("unittype") Long unitTypeId) {
 		List<IssueModel> issueModelList = null;
 		try {
 			issueModelList = purchaseOrderService.getCategoryAndUnitTypeIssues(categoryId, unitTypeId);
@@ -133,60 +141,97 @@ public class WebPOController {
 		}
 		return issueModelList;
 	}
-	
-	@RequestMapping(value = "/savepo" , method = RequestMethod.POST)
-	@ResponseBody public Object savePO(@ModelAttribute("po") PurchaseOrderModel purchaseOrderModel, HttpServletRequest request) {
+
+	@RequestMapping(value = "/savepo", method = RequestMethod.POST)
+	@ResponseBody
+	public Object savePO(@ModelAttribute PurchaseOrderModel purchaseOrderModel, HttpServletRequest request) {
 		HttpSession session = request.getSession();
-		String createdBy = "";
-		if(session != null) {
-			createdBy = session.getAttribute("un").toString();
-		}
-//		divisionReq.setCreatedBy(createdBy);
-//		divisionReq.setCreatedOn(new Date());
-		/*List<IssueModel> poIssues = purchaseOrderModel.getIssue();
-		List<Long> issues = new ArrayList<Long>();
-		if(poIssues != null && poIssues.size() > 0) {
-			for(IssueModel issue : poIssues) {
-				issues.add(Long.parseLong(issue));
+
+		if (session != null) {
+			if (session.getAttribute("un") != null) {
+				List<String> issueIds = purchaseOrderModel.getIssueIds();
+				List<String> issueStatusIds = purchaseOrderModel.getIssueStatusIds();
+
+				List<IssueModel> issueList = new ArrayList<IssueModel>();
+				for (int i = 0; i < issueIds.size(); i++) {
+
+					IssueModel issueModel = new IssueModel();
+					issueModel.setId(Long.parseLong(issueIds.get(i)));
+					issueModel.setStatusId(Long.parseLong(issueStatusIds.get(i)));
+					issueList.add(issueModel);
+				}
+				purchaseOrderModel.setIssues(issueList);
+
+				Object response = purchaseOrderService.addPO(purchaseOrderModel);
+				if (response instanceof Failed) {
+					return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
+				} else {
+					return new ResponseEntity<Object>(response, HttpStatus.OK);
+				}
 			}
 		}
-		purchaseOrderModel.setIssueIds(issues);*/
-		Object response = purchaseOrderService.addPO(purchaseOrderModel);
-		if(response instanceof Failed) {
-			return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
-		} else {
-			return new ResponseEntity<Object>(response, HttpStatus.OK);
-		}
+		return new ResponseEntity<Object>(createFailedObject(Iconstants.SESSION_TIME_OUT_MESSAGE),
+				HttpStatus.BAD_REQUEST);
 	}
-	
-	@RequestMapping(value = "/getpo/poId" , method = RequestMethod.GET)
-	@ResponseBody public PurchaseOrderModel getPO(@RequestParam("poId") Long poId) {
+
+	@RequestMapping(value = "/getpo/poId", method = RequestMethod.GET)
+	@ResponseBody
+	public PurchaseOrderModel getPO(@RequestParam("poId") Long poId) {
 		PurchaseOrderModel purchaseOrderModel = null;
 		try {
 			purchaseOrderModel = purchaseOrderService.get(poId);
-			List<IssueModel> issueModelList = purchaseOrderService.getCategoryAndUnitTypeIssues(purchaseOrderModel.getCategoryId(), purchaseOrderModel.getUnitTypeId());
-			purchaseOrderModel.getIssueList().addAll(issueModelList);
+			List<IssueModel> issueModelList = purchaseOrderService.getCategoryAndUnitTypeIssues(
+					purchaseOrderModel.getCategoryId(), purchaseOrderModel.getUnitTypeId());
+			if (purchaseOrderModel.getIssueList() != null && purchaseOrderModel.getIssueList().size() > 0) {
+				purchaseOrderModel.getIssueList().addAll(issueModelList);
+			} else {
+				purchaseOrderModel.setIssueList(issueModelList);
+			}
 		} catch (Exception e) {
 			System.out.println(e);
 			logger.info("Exception in getCategory is: " + e);
 		}
 		return purchaseOrderModel;
 	}
-	
-	@RequestMapping(value = "/updatepo" , method = RequestMethod.POST)
-	@ResponseBody public Object updatePO(@ModelAttribute("po") PurchaseOrderModel purchaseOrderModel, @RequestParam("poid") Long poId) {
-		Object response = purchaseOrderService.update(poId, purchaseOrderModel);
-		if(response instanceof Failed) {
-			return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
-		} else {
-			return new ResponseEntity<Object>(response, HttpStatus.OK);
+
+	@RequestMapping(value = "/updatepo", method = RequestMethod.POST)
+	@ResponseBody
+	public Object updatePO(@ModelAttribute PurchaseOrderModel purchaseOrderModel, @RequestParam("poid") Long poId,
+			HttpServletRequest request) {
+
+		HttpSession session = request.getSession();
+
+		if (session != null) {
+			if (session.getAttribute("un") != null) {
+				List<String> issueIds = purchaseOrderModel.getIssueIds();
+				List<String> issueStatusIds = purchaseOrderModel.getIssueStatusIds();
+
+				List<IssueModel> issueList = new ArrayList<IssueModel>();
+				for (int i = 0; i < issueIds.size(); i++) {
+
+					IssueModel issueModel = new IssueModel();
+					issueModel.setId(Long.parseLong(issueIds.get(i)));
+					issueModel.setStatusId(Long.parseLong(issueStatusIds.get(i)));
+					issueList.add(issueModel);
+				}
+				purchaseOrderModel.setIssues(issueList);
+				Object response = purchaseOrderService.update(poId, purchaseOrderModel);
+				if (response instanceof Failed) {
+					return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
+				} else {
+					return new ResponseEntity<Object>(response, HttpStatus.OK);
+				}
+			}
 		}
+		return new ResponseEntity<Object>(createFailedObject(Iconstants.SESSION_TIME_OUT_MESSAGE),
+				HttpStatus.BAD_REQUEST);
 	}
-	
-	@RequestMapping(value = "/deletepo/{poid}" , method = RequestMethod.GET)
-	@ResponseBody public Object deletePO(@PathVariable("poid") Long poId) {
+
+	@RequestMapping(value = "/deletepo/{poid}", method = RequestMethod.GET)
+	@ResponseBody
+	public Object deletePO(@PathVariable("poid") Long poId) {
 		Object response = purchaseOrderService.delete(poId);
-		if(response instanceof Failed) {
+		if (response instanceof Failed) {
 			return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
 		} else {
 			return new ResponseEntity<Object>(response, HttpStatus.OK);

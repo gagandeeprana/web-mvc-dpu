@@ -322,13 +322,20 @@ function emptyMessageDiv(){
 					</tr>
 				</thead>
 				<tbody id="vmcData">
-					<c:forEach items="${LIST_VMC}" var="obj">
-						<tr class="info">
-							<td>${obj.name}</td>							
-							<td>${obj.description}</td>
-							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.id}')">Update</a> / <a href="#" onclick="deleteVMC('${obj.id}')">Delete</a></td>
-						</tr>
-					</c:forEach>
+				<c:choose>
+					<c:when test="${LIST_VMC.size() > 0}">
+						<c:forEach items="${LIST_VMC}" var="obj">
+							<tr class="info">
+								<td>${obj.name}</td>							
+								<td>${obj.description}</td>
+								<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.id}')">Update</a> / <a href="#" onclick="deleteVMC('${obj.id}')">Delete</a></td>
+							</tr>
+						</c:forEach>
+					</c:when>
+					<c:otherwise>
+						<tr><td colspan="3">No records found.</td></tr>
+					</c:otherwise>
+				</c:choose>
 				</tbody>
 			</table>
 		</div>

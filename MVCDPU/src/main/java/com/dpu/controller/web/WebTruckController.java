@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.dpu.constants.Iconstants;
 import com.dpu.model.Failed;
 import com.dpu.model.TruckResponse;
 import com.dpu.service.TruckService;
@@ -27,9 +28,9 @@ public class WebTruckController {
 
 	@Autowired
 	TruckService truckService;
-	
+
 	Logger logger = Logger.getLogger(WebTruckController.class);
-	
+
 	@RequestMapping(value = "/showtruck", method = RequestMethod.GET)
 	public ModelAndView showTruckScreen() {
 		ModelAndView modelAndView = new ModelAndView();
@@ -38,9 +39,10 @@ public class WebTruckController {
 		modelAndView.setViewName("truck");
 		return modelAndView;
 	}
-	
-	@RequestMapping(value = "/truck/getopenadd" , method = RequestMethod.GET)
-	@ResponseBody public TruckResponse getOpenAdd() {
+
+	@RequestMapping(value = "/truck/getopenadd", method = RequestMethod.GET)
+	@ResponseBody
+	public TruckResponse getOpenAdd() {
 		TruckResponse truckResponse = null;
 		try {
 			truckResponse = truckService.getOpenAdd();
@@ -49,27 +51,35 @@ public class WebTruckController {
 		}
 		return truckResponse;
 	}
-	
-	@RequestMapping(value = "/savetruck" , method = RequestMethod.POST)
-	@ResponseBody public Object saveTruck(@ModelAttribute("truck") TruckResponse truckResponse, HttpServletRequest request) {
-		HttpSession session = request.getSession();
-		String createdBy = "";
-		if(session != null) {
-			createdBy = session.getAttribute("un").toString();
-		}
-//		divisionReq.setCreatedBy(createdBy);
-//		divisionReq.setCreatedOn(new Date());
-		Object response = truckService.add(truckResponse);
-		if(response instanceof Failed) {
-			return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
-		} else {
-			return new ResponseEntity<Object>(response, HttpStatus.OK);
-		}
-//		modelAndView.setViewName("redirect:showtruck");
+
+	private Object createFailedObject(String errorMessage) {
+		Failed failed = new Failed();
+		failed.setMessage(errorMessage);
+		return failed;
 	}
-	
-	@RequestMapping(value = "/gettruck/truckId" , method = RequestMethod.GET)
-	@ResponseBody  public TruckResponse getTruck(@RequestParam("truckId") Long truckId) {
+
+	@RequestMapping(value = "/savetruck", method = RequestMethod.POST)
+	@ResponseBody
+	public Object saveTruck(@ModelAttribute("truck") TruckResponse truckResponse, HttpServletRequest request) {
+		HttpSession session = request.getSession();
+
+		if (session != null) {
+			if (session.getAttribute("un") != null) {
+				Object response = truckService.add(truckResponse);
+				if (response instanceof Failed) {
+					return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
+				} else {
+					return new ResponseEntity<Object>(response, HttpStatus.OK);
+				}
+			}
+		}
+		return new ResponseEntity<Object>(createFailedObject(Iconstants.SESSION_TIME_OUT_MESSAGE),
+				HttpStatus.BAD_REQUEST);
+	}
+
+	@RequestMapping(value = "/gettruck/truckId", method = RequestMethod.GET)
+	@ResponseBody
+	public TruckResponse getTruck(@RequestParam("truckId") Long truckId) {
 		TruckResponse truckRequest = null;
 		try {
 			truckRequest = truckService.get(truckId);
@@ -79,21 +89,33 @@ public class WebTruckController {
 		}
 		return truckRequest;
 	}
-	
-	@RequestMapping(value = "/updatetruck" , method = RequestMethod.POST)
-	@ResponseBody public Object updateTruck(@ModelAttribute("truck") TruckResponse truckResponse, @RequestParam("truckid") Long truckId) {
-		Object response = truckService.update(truckId, truckResponse);
-		if(response instanceof Failed) {
-			return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
-		} else {
-			return new ResponseEntity<Object>(response, HttpStatus.OK);
+
+	@RequestMapping(value = "/updatetruck", method = RequestMethod.POST)
+	@ResponseBody
+	public Object updateTruck(@ModelAttribute("truck") TruckResponse truckResponse,
+			@RequestParam("truckid") Long truckId, HttpServletRequest request) {
+
+		HttpSession session = request.getSession();
+
+		if (session != null) {
+			if (session.getAttribute("un") != null) {
+				Object response = truckService.update(truckId, truckResponse);
+				if (response instanceof Failed) {
+					return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
+				} else {
+					return new ResponseEntity<Object>(response, HttpStatus.OK);
+				}
+			}
 		}
+		return new ResponseEntity<Object>(createFailedObject(Iconstants.SESSION_TIME_OUT_MESSAGE),
+				HttpStatus.BAD_REQUEST);
 	}
-	
-	@RequestMapping(value = "/deletetruck/{truckid}" , method = RequestMethod.GET)
-	@ResponseBody public Object deleteTruck(@PathVariable("truckid") Long truckId) {
+
+	@RequestMapping(value = "/deletetruck/{truckid}", method = RequestMethod.GET)
+	@ResponseBody
+	public Object deleteTruck(@PathVariable("truckid") Long truckId) {
 		Object response = truckService.delete(truckId);
-		if(response instanceof Failed) {
+		if (response instanceof Failed) {
 			return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
 		} else {
 			return new ResponseEntity<Object>(response, HttpStatus.OK);

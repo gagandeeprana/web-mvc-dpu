@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.dpu.constants.Iconstants;
 import com.dpu.model.EmployeeModel;
 import com.dpu.model.Failed;
 import com.dpu.service.EmployeeService;
@@ -40,26 +41,31 @@ public class WebEmployeeController {
 		return modelAndView;
 	}
 	
+	private Object createFailedObject(String errorMessage) {
+		Failed failed = new Failed();
+		failed.setMessage(errorMessage);
+		return failed;
+	}
+	
 	@RequestMapping(value = "/saveuser" , method = RequestMethod.POST)
 	@ResponseBody public Object saveUser(@ModelAttribute("user") EmployeeModel employeeModel, HttpServletRequest request) {
 		HttpSession session = request.getSession();
-		String createdBy = "";
+
 		if(session != null) {
-			createdBy = session.getAttribute("un").toString();
+			if(session.getAttribute("un") != null) {
+				String hiring = DateUtil.rearrangeDate(employeeModel.getHiringdate());
+				String termination = DateUtil.rearrangeDate(employeeModel.getTerminationdate());
+				employeeModel.setHiringdate(hiring);
+				employeeModel.setTerminationdate(termination);
+				Object response = employeeService.add(employeeModel);
+				if(response instanceof Failed) {
+					return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
+				} else {
+					return new ResponseEntity<Object>(response, HttpStatus.OK);
+				}
+			}
 		}
-//		divisionReq.setCreatedBy(createdBy);
-//		divisionReq.setCreatedOn(new Date());
-		String hiring = DateUtil.rearrangeDate(employeeModel.getHiringdate());
-		String termination = DateUtil.rearrangeDate(employeeModel.getTerminationdate());
-		employeeModel.setHiringdate(hiring);
-		employeeModel.setTerminationdate(termination);
-		//Object response = employeeService.add(employeeModel);
-		Object response = employeeService.add(employeeModel);
-		if(response instanceof Failed) {
-			return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
-		} else {
-			return new ResponseEntity<Object>(response, HttpStatus.OK);
-		}
+		return new ResponseEntity<Object>(createFailedObject(Iconstants.SESSION_TIME_OUT_MESSAGE), HttpStatus.BAD_REQUEST);
 	}
 	
 	@RequestMapping(value = "/getuser/userId" , method = RequestMethod.GET)
@@ -75,17 +81,25 @@ public class WebEmployeeController {
 	}
 	
 	@RequestMapping(value = "/updateuser" , method = RequestMethod.POST)
-	@ResponseBody public Object updateUser(@ModelAttribute("user") EmployeeModel employeeModel, @RequestParam("employeeid") Long employeeId) {
-		String hiring = DateUtil.rearrangeDate(employeeModel.getHiringdate());
-		String termination = DateUtil.rearrangeDate(employeeModel.getTerminationdate());
-		employeeModel.setHiringdate(hiring);
-		employeeModel.setTerminationdate(termination);
-		Object response = employeeService.update(employeeId, employeeModel);
-		if(response instanceof Failed) {
-			return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
-		} else {
-			return new ResponseEntity<Object>(response, HttpStatus.OK);
+	@ResponseBody public Object updateUser(@ModelAttribute("user") EmployeeModel employeeModel, @RequestParam("employeeid") Long employeeId, HttpServletRequest request) {
+		
+		HttpSession session = request.getSession();
+
+		if(session != null) {
+			if(session.getAttribute("un") != null) {
+				String hiring = DateUtil.rearrangeDate(employeeModel.getHiringdate());
+				String termination = DateUtil.rearrangeDate(employeeModel.getTerminationdate());
+				employeeModel.setHiringdate(hiring);
+				employeeModel.setTerminationdate(termination);
+				Object response = employeeService.update(employeeId, employeeModel);
+				if(response instanceof Failed) {
+					return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
+				} else {
+					return new ResponseEntity<Object>(response, HttpStatus.OK);
+				}
+			}
 		}
+		return new ResponseEntity<Object>(createFailedObject(Iconstants.SESSION_TIME_OUT_MESSAGE), HttpStatus.BAD_REQUEST);
 	}
 	
 	@RequestMapping(value = "/deleteuser/{userid}" , method = RequestMethod.GET)

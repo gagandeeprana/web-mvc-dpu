@@ -60,8 +60,16 @@ function createPO(urlToHit,methodType){
 	   	var unitTypeId = $('#unitTypeId :selected').val();
 	   	var categoryId = $('#categoryId :selected').val();
 	   	var message = $("#message").val();
-	   	var poIssues = $('.poIssueIds:checkbox:checked').attr("value");
-
+	   	var poIssues = $('.poIssueIds:checkbox:checked');
+	    var issueIds = new Array();
+	    var issueStatusIds = new Array();
+	    for(var i=0;i<poIssues.length;i++) {
+	    	var valIssue = poIssues[i].value;
+		   	var issueStatusId = $("#issueStatusId" + valIssue + " :selected").val();
+		   	issueIds.push(valIssue);
+		   	issueStatusIds.push(issueStatusId);
+	    }
+		
 	   	var poId;
 	   	if(methodType == 'PUT') {
 	   		poId = $('#poid').val();
@@ -74,7 +82,8 @@ function createPO(urlToHit,methodType){
 			    	unitTypeId:unitTypeId,
 			    	categoryId:categoryId,
 			    	message:message,
-			    	poIssueIds:poIssues.toString(),
+			    	issueIds:issueIds.toString(),
+			    	issueStatusIds:issueStatusIds.toString(),
 			    	poid:poId
 			      },
 			      success: function(result){
@@ -105,8 +114,8 @@ function fillPOData(list) {
 			var obj = list[i];
 			tableValue = tableValue + ("<tr class='info'>");
     		var poNo = "";
-    		if(obj.poNo != null) {
-    			poNo = obj.poNo;
+    		if(obj.PoNo != null) {
+    			poNo = obj.PoNo;
     		}
     		var message = "";
     		if(obj.message != null) {
@@ -135,8 +144,14 @@ function fillPOData(list) {
     		tableValue = tableValue + ("<td>"+(statusName)+"</td>");
     		tableValue = tableValue + ("<td>"+(unitTypeName)+"</td>");
     		tableValue = tableValue + ("<td>"+(vendorName)+"</td>");
-    		tableValue = tableValue + "<td><a href = '#' data-toggle='modal' data-target='#myModal'  onclick=checkFlag('update');onClickMethodQuestion('"+(obj.id)+"')>Update</a> / <a href='#' onclick=deletePO('"+(obj.id)+"')>Delete</a></td>";
-    		tableValue = tableValue + ("</tr>");
+    		tableValue = tableValue + "<td><a href = '#' data-toggle='modal' data-target='#myModal'  onclick=checkFlag('update');onClickMethodQuestion('"+(obj.id)+"')>Update</a> / <a href='#' onclick=deletePO('"+(obj.id)+"')>Delete</a>";
+    		if($("#statusFlag").val() == 'Complete') {
+	    		tableValue = tableValue + " / <a href='#' data-toggle='modal' data-target='#invoiceModal' onclick=pastePoNo('"+(poNo)+"');pastePoIdAndStatusId('"+(obj.id)+"','"+(obj.invoiceStatusId)+"')>Change to Invoice</a>";	    			
+    		}
+    		if(obj.isComplete == true) {
+    			tableValue = tableValue + " / <a href='#' onclick=changeStatusToComplete('"+ (obj.id) + "','" + (obj.completeStatusId) + "') id='changeStatus'>Change to Complete</a>";
+    		}
+    		tableValue = tableValue + ("</td></tr>");
 		}
 		$("#poData").html(tableValue);
 	} else {
@@ -150,7 +165,7 @@ function deletePO(terminalId){
 		      success: function(result){
 	    	  try{	
 					var list = result.resultList;
-					fill
+					fillPOData(list);
 					
 	    		  toastr.success(result.message, 'Success!')
 			  }catch(e){
@@ -332,69 +347,71 @@ function showIssueDetail(quesId) {
 <script type="text/javascript">
 		var editInitialValue = "";
 		
+		var issuesFroDropDown;
 		function getUnitNo() {
 			var unitTypeId = $('#unitTypeId :selected').val();
 			var categoryId = $('#categoryId :selected').val();
-			$.get("<%=request.getContextPath()%>" + "/po/getissues/category/"+ categoryId + "/unittype/" + unitTypeId, function(issuesResponse) {
- 	           
-				//$("#issuesTable").html();
-	            if(issuesResponse.length > 0) {
-	            	var tableValue = "";
-					$("#mainDiv").show();
-	            	for(var i=0;i<issuesResponse.length;i++) {
-	            		var obj = issuesResponse[i];
-	            		if($("#addUpdateFlag").val() == 'update') {
-		            		if(!editIssueIds.includes(obj.id)) {
+			if(unitTypeId > 0 && categoryId > 0 ) {
+				
+				$.get("<%=request.getContextPath()%>" + "/po/getissues/category/"+ categoryId + "/unittype/" + unitTypeId, function(issuesResponse) {
+	 	           
+					issuesFroDropDown = issuesResponse;
+		            if(issuesResponse.length > 0) {
+		            	var tableValue = "";
+						$("#mainDiv").show();
+		            	for(var i=0;i<issuesResponse.length;i++) {
+		            		var obj = issuesResponse[i];
+		            		if($("#addUpdateFlag").val() == 'update') {
+			            		if(!editIssueIds.includes(obj.id)) {
+				            		tableValue = tableValue + ("<tr class='info'>");
+				            		tableValue = tableValue + ("<td><div class='form-group'><input type='checkbox' class='form-control poIssueIds' value='"+(obj.id)+"' id='issueId" + (obj.id) + "' name='issueIds' /></div></td>");
+				            		tableValue = tableValue + ("<td><a href='#' onclick=showIssueDetail('"+(obj.id) + "') data-toggle='modal' data-target='#issueModal'>" + (obj.title)+"</a></td>");
+				            		tableValue = tableValue + ("<td>"+(obj.vmcName)+"</td>");
+				            		tableValue = tableValue + ("<td>"+(obj.categoryName)+"</td>");
+				            		tableValue = tableValue + ("<td>"+(obj.unitTypeName)+"</td>");
+				            		tableValue = tableValue + ("<td>"+(obj.unitNo)+"</td>");
+				            		tableValue = tableValue + ("<td>"+(obj.reportedByName)+"</td>");
+				            		tableValue = tableValue + ("<td><select class='form-control issueStatusClass' id='issueStatusId" + (obj.id)+"'><option value='-1'>Please Select</option><option value='104'>Complete</option><option value='105'>Incomplete</option><option value='106'>Assigned</option></select></td>");
+				            		tableValue = tableValue + ("</tr>");
+			            		}
+		            		}
+		            		else {
 			            		tableValue = tableValue + ("<tr class='info'>");
-			            		tableValue = tableValue + ("<td><div class='form-group'><input type='checkbox' class='form-control poIssueIds' value='"+(obj.id)+"' id='issueIds' name='issueIds' /></div></td>");
-			            		tableValue = tableValue + ("<td><a href='#' onclick=showIssueDetail('"+(obj.id) + "') data-toggle='modal' data-target='#issueModal'>" + (obj.title)+"</a></td>");
+			            		tableValue = tableValue + ("<td><div class='form-group'><input type='checkbox' class='form-control poIssueIds' value='"+(obj.id) + "' id='issueId" + (obj.id) + "' name='issueIds' /></div></td>");
+			            		tableValue = tableValue + ("<td><a href='#' onclick=showIssueDetail('"+(obj.id) + "') data-toggle='modal' data-target='#issueModal'>"+(obj.title)+"</a></td>");
 			            		tableValue = tableValue + ("<td>"+(obj.vmcName)+"</td>");
 			            		tableValue = tableValue + ("<td>"+(obj.categoryName)+"</td>");
 			            		tableValue = tableValue + ("<td>"+(obj.unitTypeName)+"</td>");
 			            		tableValue = tableValue + ("<td>"+(obj.unitNo)+"</td>");
 			            		tableValue = tableValue + ("<td>"+(obj.reportedByName)+"</td>");
-			            		tableValue = tableValue + ("<td><select class='form-control' id='issueStatusId'><option value='-1'>Please Select</option><option value='104'>Complete</option><option value='105'>Incomplete</option><option value='106'>Assigned</option></select></td>");
-			            		//tableValue = tableValue + "<td><a href = '#' data-toggle='modal' data-target='#myModal' onclick='checkFlag('update');onClickMethodQuestion('"+${obj.id}+"')>Update</a> / <a href='deleteissue/${obj.id}">Delete</a></td>"
+			            		tableValue = tableValue + ("<td><select class='form-control issueStatusClass' id='issueStatusId" + (obj.id)+"'><option value='-1'>Please Select</option><option value='104'>Complete</option><option value='105'>Incomplete</option><option value='106'>Assigned</option></select></td>");
 			            		tableValue = tableValue + ("</tr>");
 		            		}
-	            		}
-	            		else {
-		            		tableValue = tableValue + ("<tr class='info'>");
-		            		tableValue = tableValue + ("<td><div class='form-group'><input type='checkbox' class='form-control poIssueIds' value='"+(obj.id)+"' id='issueIds' name='issueIds' /></div></td>");
-		            		tableValue = tableValue + ("<td><a href='#' onclick=showIssueDetail('"+(obj.id) + "') data-toggle='modal' data-target='#issueModal'>"+(obj.title)+"</a></td>");
-		            		tableValue = tableValue + ("<td>"+(obj.vmcName)+"</td>");
-		            		tableValue = tableValue + ("<td>"+(obj.categoryName)+"</td>");
-		            		tableValue = tableValue + ("<td>"+(obj.unitTypeName)+"</td>");
-		            		tableValue = tableValue + ("<td>"+(obj.unitNo)+"</td>");
-		            		tableValue = tableValue + ("<td>"+(obj.reportedByName)+"</td>");
-		            		tableValue = tableValue + ("<td><select class='form-control id='issueStatusId'><option value='-1'>Please Select</option><option value='104'>Complete</option><option value='105'>Incomplete</option><option value='106'>Assigned</option></select></td>");
-		            		//tableValue = tableValue + "<td><a href = '#' data-toggle='modal' data-target='#myModal' onclick='checkFlag('update');onClickMethodQuestion('"+${obj.id}+"')>Update</a> / <a href='deleteissue/${obj.id}">Delete</a></td>"
-		            		tableValue = tableValue + ("</tr>");
-	            		}
-	            	}
-	            	if($("#addUpdateFlag").val() == 'update') {
-		            	$("#issuesTable").html($("#issuesTable").html() + tableValue);
-	            	} else {
-						$("#mainDiv").show();
-		            	$("#issuesTable").html(""+tableValue);	            		
-	            	}
-	            	
-	            } else {
-	            	//$("#mainDiv").hide();
-	            	toastr.error("No Issues related to unittype and category exist.", 'Message!')
-					$("#issuesTable").html(editInitialValue);
-	            }
-			});
+		            	}
+		            	if($("#addUpdateFlag").val() == 'update') {
+			            	$("#issuesTable").html($("#issuesTable").html() + tableValue);
+		            	} else {
+							$("#mainDiv").show();
+			            	$("#issuesTable").html(""+tableValue);	            		
+		            	}
+		            	
+		            } else {
+		            	//$("#mainDiv").hide();
+		            	toastr.error("No Issues related to unittype and category exist.", 'Message!');
+						$("#issuesTable").html(editInitialValue);
+		            }
+		            
+					for(var k=0;k<issuesFroDropDown.length;k++) {
+						var obj = issuesFroDropDown[k];
+						$("#issueId" + obj.id).click(function (){
+						    if ($(this).is(':checked') )
+						   		document.getElementById("issueStatusId" + $(this).val()).selectedIndex = 3;
+						});
+					}
+				});
+			}
 		}
 		
-		/* function showInvoiceNo() {
-			if($('#statusId :selected').val() == "110") {
-				$("#invoceNoDiv").show();
-			} else {
-				$("#invoceNoDiv").hide();				
-			}
-		} */
-
 		var editIssueIds = new Array();
         function onClickMethodQuestion(quesId){
         	emptyMessageDiv();
@@ -485,10 +502,30 @@ function showIssueDetail(quesId) {
 	    	            	var obj = data.issueList[i];
 	    	            	editIssueIds.push(obj.id);
 		            		tableValue = tableValue + ("<tr class='info'>");
+		            		var assigned,complete,incomplete;
 		            		if(obj.statusName == "Assigned") {
-			            		tableValue = tableValue + ("<td><div class='form-group'><input type='checkbox' class='form-control issueIds' value='"+(obj.id)+"' id='issueIds' name='issueIds' checked /></div></td>");
+		            			assigned = "selected";
+		            			complete = "";
+		            			incomplete = "";
+		            		}
+		            		else if(obj.statusName == "Complete") {
+		            			assigned = "";
+		            			complete = "selected";
+		            			incomplete = "";
+		            		}
+		            		else if(obj.statusName == "Incomplete") {
+		            			assigned = "";
+		            			complete = "";
+		            			incomplete = "selected";
 		            		} else {
-			            		tableValue = tableValue + ("<td><div class='form-group'><input type='checkbox' class='form-control issueIds' value='"+(obj.id)+"' id='issueIds' name='issueIds' /></div></td>");		            			
+		            			assigned = "";
+		            			complete = "";
+		            			incomplete = "";
+		            		}
+		            		if((obj.statusName == "Assigned") || (obj.statusName == "Complete") || (obj.statusName == "Incomplete")) {
+			            		tableValue = tableValue + ("<td><div class='form-group'><input type='checkbox' class='form-control issueIds' value='"+(obj.id) + "' id='issueId" + (obj.id) + "' name='issueIds' checked /></div></td>");
+		            		} else {
+			            		tableValue = tableValue + ("<td><div class='form-group'><input type='checkbox' class='form-control issueIds' value='"+(obj.id) + "' id='issueId" + (obj.id) + "' name='issueIds' /></div></td>");		            			
 		            		}
 		            		tableValue = tableValue + ("<td>"+(obj.title)+"</td>");
 		            		tableValue = tableValue + ("<td>"+(obj.vmcName)+"</td>");
@@ -496,10 +533,19 @@ function showIssueDetail(quesId) {
 		            		tableValue = tableValue + ("<td>"+(obj.unitTypeName)+"</td>");
 		            		tableValue = tableValue + ("<td>"+(obj.unitNo)+"</td>");
 		            		tableValue = tableValue + ("<td>"+(obj.reportedByName)+"</td>");
-		            		tableValue = tableValue + ("<td>"+(obj.statusName)+"</td>");
-		            		//tableValue = tableValue + "<td><a href = '#' data-toggle='modal' data-target='#myModal' onclick='checkFlag('update');onClickMethodQuestion('"+${obj.id}+"')>Update</a> / <a href='deleteissue/${obj.id}">Delete</a></td>"
+		            		tableValue = tableValue + ("<td><select class='form-control issueStatusClass' id='issueStatusId" + (obj.id)+"'><option value='-1'>Please Select</option><option value='104' " + complete + ">Complete</option><option value='105' " + incomplete +">Incomplete</option><option value='106' " + assigned +">Assigned</option></select></td>");
 		            		tableValue = tableValue + ("</tr>");
 	    	            }
+					} else {
+						toastr.error("No Issues related to unittype and category exist.", 'Message!');
+					}
+					
+					for(var k=0;k<issueList.length;k++) {
+						var obj = issueList[k];
+						$("#issueId" + obj.id).click(function (){
+						    if ($("#issueId" + obj.id).is(':checked') )
+						   		document.getElementById("issueStatusId" + $("#issueId" + obj.id).val()).selectedIndex = 3;
+						});
 					}
 					editInitialValue = tableValue;
 	            	$("#issuesTable").html(tableValue);
@@ -530,18 +576,18 @@ function showIssueDetail(quesId) {
 
 <script type="text/javascript">
 function check() {
-	var title = $("#issueIds");
+	var title = $(".poIssueIds");
 	var msg = $("#msg");
 	var msgvalue = $("#msgvalue");
 	msg.hide();
 	msgvalue.val("");
-	if(title.length == 0) {
+	/* if(title.length == 0) {
 		msg.show();
 		$("#categoryId").focus();
 		msgvalue.text("Assign Some Issues to PO");
 		return false;
 	} else if(title.length != 0){
-		var issues = $(".issueIds");
+		var issues = $(".poIssueIds");
 		var flag = false;
 		for(var i=0;i<issues.length;i++){
 			if(issues[i].checked) {
@@ -553,7 +599,7 @@ function check() {
 			msgvalue.text("Choose any issue");
 			return false;
 		}
-	} 
+	}  */
 	if($('#message').val().length > 200) {
 		msg.show();
 		$("#message").focus();
@@ -724,55 +770,6 @@ return true;
 	}});
 	return true;
   }
- function fillPOData(list) {
-		var tableValue = "";
-		if(list.length > 0) {
-			 for(var i=0;i<list.length;i++) {
-				var obj = list[i];
-				tableValue = tableValue + ("<tr class='info'>");
-				var poNo = "";
-	    		if(obj.PoNo != null) {
-	    			poNo = obj.PoNo;
-	    		}
-	    		var title = "";
-	    		if(obj.message != null) {
-	    			title = obj.message;
-	    		}
-	    		var category = "";
-	    		if(obj.categoryName != null) {
-	    			category = obj.categoryName;
-	    		}
-	    		var status = "";
-	    		if(obj.statusName != null) {
-	    			status = obj.statusName;
-	    		}
-	    		var unitType = "";
-	    		if(obj.unitTypeName != null) {
-	    			unitType = obj.unitTypeName;
-	    		}
-	    		var vendor = "";
-	    		if(obj.vendorName != null) {
-	    			vendor = obj.vendorName;
-	    		}
-
-	    		tableValue = tableValue + ("<td>"+(poNo)+"</td>");
-	    		tableValue = tableValue + ("<td>"+(title)+"</td>");
-	    		tableValue = tableValue + ("<td>"+(category)+"</td>");
-	    		tableValue = tableValue + ("<td>"+(status)+"</td>");
-	    		tableValue = tableValue + ("<td>"+(unitType)+"</td>");
-	    		tableValue = tableValue + ("<td>"+(vendor)+"</td>");
-	    		tableValue = tableValue + "<td><a href = '#' data-toggle='modal' data-target='#myModal'  onclick=checkFlag('update');onClickMethodQuestion('"+(obj.id)+"')>Update</a> / <a href='#' onclick=deleteDriver('"+(obj.id)+"')>Delete</a> ";
-	    		if($("#statusFlag").val() == 'Complete') {
-		    		tableValue = tableValue + " / <a href='#' data-toggle='modal' data-target='#invoiceModal' onclick=pastePoNo('"+(poNo)+"');pastePoIdAndStatusId('"+(obj.id)+"','"+(obj.invoiceStatusId)+"')>Change to Invoice</a>";	    			
-	    		}
-	    		tableValue = tableValue + ("</td></tr>");
-			}
-			$("#poData").html(tableValue);
-		} else {
-			$("#poData").html("No records Found.");			
-		}
-	}
- 
  function getUnitNos() {
 		var unitTypeId = $('#unitType :selected').val();
 		var categoryId = $('#issueCategory :selected').val();
@@ -1188,22 +1185,29 @@ return true;
 					</tr>
 				</thead>
 				<tbody id="poData">
-					<c:forEach items="${LIST_PO}" var="obj">
-						<tr class="info">
-							<td>${obj.poNo}</td>							
-							<td>${obj.message}</td>
-							<td>${obj.categoryName}</td>
-							<td>${obj.statusName}</td>
-							<td>${obj.unitTypeName}</td>
-							<td>${obj.vendorName}</td>
-							
-							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.id}')">Update</a> / <a href="deletepo/${obj.id}">Delete</a> 
-							<c:if test="${obj.isComplete == true}">
-								/ <a href="#" onclick="changeStatusToComplete('${obj.id}','${obj.completeStatusId}')" id="changeStatus">Change to Complete</a>
-							</c:if>
-							</td>
-						</tr>
-					</c:forEach>
+					<c:choose>
+						<c:when test="${LIST_PO.size() > 0}" >
+							<c:forEach items="${LIST_PO}" var="obj">
+								<tr class="info">
+									<td>${obj.poNo}</td>							
+									<td>${obj.message}</td>
+									<td>${obj.categoryName}</td>
+									<td>${obj.statusName}</td>
+									<td>${obj.unitTypeName}</td>
+									<td>${obj.vendorName}</td>
+									
+									<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.id}')">Update</a> / <a href="#" onclick="deletePO('${obj.id}')">Delete</a> 
+									<c:if test="${obj.isComplete == true}">
+										/ <a href="#" onclick="changeStatusToComplete('${obj.id}','${obj.completeStatusId}')" id="changeStatus">Change to Complete</a>
+									</c:if>
+									</td>
+								</tr>
+							</c:forEach>
+						</c:when>
+						<c:otherwise>
+							<tr><td colspan="7">No records found.</td></tr>
+						</c:otherwise>
+					</c:choose>
 				</tbody>
 			</table>
 		</div>

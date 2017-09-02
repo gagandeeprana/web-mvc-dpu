@@ -938,22 +938,29 @@ function emptyMessageDiv(){
 					</tr>
 				</thead>
 				<tbody id="shipperData">
-					<c:forEach items="${LIST_LOCATION}" var="obj">
-						<tr class="info">
-							<td>${obj.locationName}</td>
-							<td>${obj.address}</td>
-							<td>${obj.unit}</td>
-							<td>${obj.city}</td>
-							<td>${obj.stateName}</td>
-							<td>${obj.phone}</td>
-							<td>${obj.prefix}</td>
-							<td>${obj.tollFree}</td>
-							<td>${obj.plant}</td>
-							<td>${obj.email}</td>
-							<td>${obj.importer}</td>
-							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update'); onClickMethodQuestion('${obj.shipperId}');">Update</a> / <a href="#" onclick="deleteShipper('${obj.shipperId}')">Delete</a></td>
-						</tr>
-					</c:forEach>
+					<c:choose>
+						<c:when test="${LIST_LOCATION.size() > 0}">
+							<c:forEach items="${LIST_LOCATION}" var="obj">
+								<tr class="info">
+									<td>${obj.locationName}</td>
+									<td>${obj.address}</td>
+									<td>${obj.unit}</td>
+									<td>${obj.city}</td>
+									<td>${obj.stateName}</td>
+									<td>${obj.phone}</td>
+									<td>${obj.prefix}</td>
+									<td>${obj.tollFree}</td>
+									<td>${obj.plant}</td>
+									<td>${obj.email}</td>
+									<td>${obj.importer}</td>
+									<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update'); onClickMethodQuestion('${obj.shipperId}');">Update</a> / <a href="#" onclick="deleteShipper('${obj.shipperId}')">Delete</a></td>
+								</tr>
+							</c:forEach>
+						</c:when>
+						<c:otherwise>
+							<tr><td colspan="12">No records found.</td></tr>
+						</c:otherwise>
+					</c:choose>
 				</tbody>
 			</table>
 		</div>

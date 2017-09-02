@@ -899,19 +899,26 @@ function emptyMessageDiv(){
 					</tr>
 				</thead>
 				<tbody id="vendorData">
-					<c:forEach items="${LIST_VENDOR}" var="obj">
-						<tr class="info">
-							<td>${obj.unitNo}</td>							
-							<td>${obj.name}</td>
-							<td>${obj.email}</td>
-							<td>${obj.city}</td>
-							<td>${obj.stateName}</td>
-							<td>${obj.phone}</td>
-							<td>${obj.fax}</td>
-							<td>${obj.afterHours}</td>
-							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.vendorId}')">Update</a> / <a href="#" onclick="deleteVendor('${obj.vendorId}')">Delete</a></td>
-						</tr>
-					</c:forEach>
+				<c:choose>
+					<c:when test="${LIST_VENDOR.size() > 0}">
+						<c:forEach items="${LIST_VENDOR}" var="obj">
+							<tr class="info">
+								<td>${obj.unitNo}</td>							
+								<td>${obj.name}</td>
+								<td>${obj.email}</td>
+								<td>${obj.city}</td>
+								<td>${obj.stateName}</td>
+								<td>${obj.phone}</td>
+								<td>${obj.fax}</td>
+								<td>${obj.afterHours}</td>
+								<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.vendorId}')">Update</a> / <a href="#" onclick="deleteVendor('${obj.vendorId}')">Delete</a></td>
+							</tr>
+						</c:forEach>
+					</c:when>
+					<c:otherwise>
+						<tr><td colspan="9">No records found.</td></tr>
+					</c:otherwise>
+				</c:choose>
 				</tbody>
 			</table>
 		</div>

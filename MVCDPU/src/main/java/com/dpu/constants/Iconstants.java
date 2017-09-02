@@ -18,4 +18,6 @@ public class Iconstants {
 	public static final String ADD_PO = "add";
 	public static final String UPDATE_PO = "update";
 	
+	public static final String SESSION_TIME_OUT_MESSAGE = "Session time out, Please login again";
+	
 }

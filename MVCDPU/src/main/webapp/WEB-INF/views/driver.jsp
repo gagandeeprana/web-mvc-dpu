@@ -990,37 +990,44 @@ function check() {
 					</tr>
 				</thead>
 				<tbody id="driverData">
-					<c:forEach items="${LIST_DRIVER}" var="obj">
-						<tr class="info">
-							<c:if test = "${obj.firstName.length() <= 20}">
-								<c:set var = "firstName" value="${obj.firstName}"/>
-							</c:if>
-							<c:if test = "${obj.lastName.length() > 20}">
-								<c:set var = "firstName" value="${fn:substring(obj.firstName, 0, 19)}..."/>
-							</c:if>
-
-							<td>${obj.driverCode}</td>							
-							<td>${firstName}</td>
-							
-							<c:if test = "${obj.lastName.length() <= 20}">
-								<c:set var = "lastName" value="${obj.lastName}"/>
-							</c:if>
-							<c:if test = "${obj.lastName.length() > 20}">
-								<c:set var = "lastName" value="${fn:substring(obj.lastName, 0, 19)}..."/>
-							</c:if>
-							<td>${lastName}</td>
-							<td>${obj.address}</td>
-							<td>${obj.unit}</td>
-							<td>${obj.city}</td>
-							<td>${obj.stateName}</td>
-							
-							<td>${obj.faxNo}</td>
-							<td>${obj.cellular}</td>
-							<td>${obj.pager}</td>
-							<td>${obj.email}</td>
-							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.driverId}')">Update</a> / <a href="#" onclick="deleteDriver('${obj.driverId}')">Delete</a></td>
-						</tr>
-					</c:forEach>
+				<c:choose>
+					<c:when test="${LIST_DRIVER.size() > 0}">
+						<c:forEach items="${LIST_DRIVER}" var="obj">
+							<tr class="info">
+								<c:if test = "${obj.firstName.length() <= 20}">
+									<c:set var = "firstName" value="${obj.firstName}"/>
+								</c:if>
+								<c:if test = "${obj.lastName.length() > 20}">
+									<c:set var = "firstName" value="${fn:substring(obj.firstName, 0, 19)}..."/>
+								</c:if>
+	
+								<td>${obj.driverCode}</td>							
+								<td>${firstName}</td>
+								
+								<c:if test = "${obj.lastName.length() <= 20}">
+									<c:set var = "lastName" value="${obj.lastName}"/>
+								</c:if>
+								<c:if test = "${obj.lastName.length() > 20}">
+									<c:set var = "lastName" value="${fn:substring(obj.lastName, 0, 19)}..."/>
+								</c:if>
+								<td>${lastName}</td>
+								<td>${obj.address}</td>
+								<td>${obj.unit}</td>
+								<td>${obj.city}</td>
+								<td>${obj.stateName}</td>
+								
+								<td>${obj.faxNo}</td>
+								<td>${obj.cellular}</td>
+								<td>${obj.pager}</td>
+								<td>${obj.email}</td>
+								<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.driverId}')">Update</a> / <a href="#" onclick="deleteDriver('${obj.driverId}')">Delete</a></td>
+							</tr>
+						</c:forEach>
+					</c:when>
+					<c:otherwise>
+						<tr><td colspan="12">No records found.</td></tr>
+					</c:otherwise>
+				</c:choose>
 				</tbody>
 			</table>
 		</div>

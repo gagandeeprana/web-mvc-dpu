@@ -545,15 +545,22 @@ function checkFlag(field) {
 					</tr>
 				</thead>
 				<tbody id="divisionData">
-					<c:forEach items="${LIST_DIVISION}" var="obj">
-						<tr class="info">
-							<td>${obj.divisionCode}</td>							
-							<td>${obj.divisionName}</td>
-							<td>${obj.fedral}</td>
-							<td>${obj.provincial}</td>
-							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.divisionId}')">Update</a> / <a href="#" onclick="deleteDivision('${obj.divisionId}')">Delete</a></td>
-						</tr>
-					</c:forEach>
+						<c:choose>
+						<c:when test="${LIST_DIVISION.size() > 0}">
+							<c:forEach items="${LIST_DIVISION}" var="obj">
+								<tr class="info">
+									<td>${obj.divisionCode}</td>							
+									<td>${obj.divisionName}</td>
+									<td>${obj.fedral}</td>
+									<td>${obj.provincial}</td>
+									<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.divisionId}')">Update</a> / <a href="#" onclick="deleteDivision('${obj.divisionId}')">Delete</a></td>
+								</tr>
+							</c:forEach>
+						</c:when>
+						<c:otherwise>
+							<tr><td colspan="5">No records found.</td></tr>
+						</c:otherwise>
+						</c:choose>
 				</tbody>
 			</table>
 		</div>

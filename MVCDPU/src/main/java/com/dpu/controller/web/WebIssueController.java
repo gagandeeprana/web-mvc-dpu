@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.dpu.constants.Iconstants;
 import com.dpu.model.Failed;
 import com.dpu.model.IssueModel;
 import com.dpu.service.IssueService;
@@ -39,6 +40,12 @@ public class WebIssueController {
 		return modelAndView;
 	}
 	
+	
+	private Object createFailedObject(String errorMessage) {
+		Failed failed = new Failed();
+		failed.setMessage(errorMessage);
+		return failed;
+	}
 	@RequestMapping(value = "/issue/getopenadd" , method = RequestMethod.GET)
 	@ResponseBody public IssueModel getOpenAdd() {
 		IssueModel issueModel = null;
@@ -64,18 +71,18 @@ public class WebIssueController {
 	@RequestMapping(value = "/saveissue" , method = RequestMethod.POST)
 	@ResponseBody public Object saveIssue(@ModelAttribute("issue") IssueModel issueModel, HttpServletRequest request) {
 		HttpSession session = request.getSession();
-		String createdBy = "";
+
 		if(session != null) {
-			createdBy = session.getAttribute("un").toString();
+			if(session.getAttribute("un") != null) {
+				Object response = issueService.addIssue(issueModel);
+				if(response instanceof Failed) {
+					return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
+				} else {
+					return new ResponseEntity<Object>(response, HttpStatus.OK);
+				}
+			}
 		}
-//		divisionReq.setCreatedBy(createdBy);
-//		divisionReq.setCreatedOn(new Date());
-		Object response = issueService.addIssue(issueModel);
-		if(response instanceof Failed) {
-			return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
-		} else {
-			return new ResponseEntity<Object>(response, HttpStatus.OK);
-		}
+		return new ResponseEntity<Object>(createFailedObject(Iconstants.SESSION_TIME_OUT_MESSAGE), HttpStatus.BAD_REQUEST);
 	}
 	
 	@RequestMapping(value = "/getissue/issueId" , method = RequestMethod.GET)
@@ -91,13 +98,21 @@ public class WebIssueController {
 	}
 	
 	@RequestMapping(value = "/updateissue" , method = RequestMethod.POST)
-	@ResponseBody public Object updateIssue(@ModelAttribute("issue") IssueModel issueModel, @RequestParam("issueid") Long issueId) {
-		Object response = issueService.update(issueId, issueModel);
-		if(response instanceof Failed) {
-			return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
-		} else {
-			return new ResponseEntity<Object>(response, HttpStatus.OK);
+	@ResponseBody public Object updateIssue(@ModelAttribute("issue") IssueModel issueModel, @RequestParam("issueid") Long issueId, HttpServletRequest request) {
+		
+		HttpSession session = request.getSession();
+
+		if(session != null) {
+			if(session.getAttribute("un") != null) {
+				Object response = issueService.update(issueId, issueModel);
+				if(response instanceof Failed) {
+					return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
+				} else {
+					return new ResponseEntity<Object>(response, HttpStatus.OK);
+				}
+			}
 		}
+		return new ResponseEntity<Object>(createFailedObject(Iconstants.SESSION_TIME_OUT_MESSAGE), HttpStatus.BAD_REQUEST);
 	}
 	
 	@RequestMapping(value = "/deleteissue/{issueid}" , method = RequestMethod.GET)

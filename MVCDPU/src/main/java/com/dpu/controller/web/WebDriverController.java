@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.dpu.constants.Iconstants;
 import com.dpu.model.DriverModel;
 import com.dpu.model.Failed;
 import com.dpu.service.DriverService;
@@ -39,6 +40,12 @@ public class WebDriverController {
 		return modelAndView;
 	}
 	
+	
+	private Object createFailedObject(String errorMessage) {
+		Failed failed = new Failed();
+		failed.setMessage(errorMessage);
+		return failed;
+	}
 	@RequestMapping(value = "/driver/getopenadd" , method = RequestMethod.GET)
 	@ResponseBody public DriverModel getOpenAdd() {
 		DriverModel DriverModel = null;
@@ -53,18 +60,18 @@ public class WebDriverController {
 	@RequestMapping(value = "/savedriver" , method = RequestMethod.POST)
 	public @ResponseBody Object saveTruck(@ModelAttribute("driver") DriverModel DriverModel, HttpServletRequest request) {
 		HttpSession session = request.getSession();
-		String createdBy = "";
+
 		if(session != null) {
-			createdBy = session.getAttribute("un").toString();
+			if(session.getAttribute("un") != null) {
+				Object response = driverService.addDriver(DriverModel);
+				if(response instanceof Failed) {
+					return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
+				} else {
+					return new ResponseEntity<Object>(response, HttpStatus.OK);
+				}
+			}
 		}
-//		divisionReq.setCreatedBy(createdBy);
-//		divisionReq.setCreatedOn(new Date());
-		Object response = driverService.addDriver(DriverModel);
-		if(response instanceof Failed) {
-			return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
-		} else {
-			return new ResponseEntity<Object>(response, HttpStatus.OK);
-		}
+		return new ResponseEntity<Object>(createFailedObject(Iconstants.SESSION_TIME_OUT_MESSAGE), HttpStatus.BAD_REQUEST);
 	}
 	
 	@RequestMapping(value = "/getdriver/driverId" , method = RequestMethod.GET)
@@ -80,13 +87,21 @@ public class WebDriverController {
 	}
 	
 	@RequestMapping(value = "/updatedriver" , method = RequestMethod.POST)
-	@ResponseBody public Object updateDriver(@ModelAttribute("driver") DriverModel DriverModel, @RequestParam("driverid") Long driverId) {
-		Object response = driverService.updateDriver(driverId, DriverModel);
-		if(response instanceof Failed) {
-			return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
-		} else {
-			return new ResponseEntity<Object>(response, HttpStatus.OK);
+	@ResponseBody public Object updateDriver(@ModelAttribute("driver") DriverModel DriverModel, @RequestParam("driverid") Long driverId,  HttpServletRequest request) {
+		
+		HttpSession session = request.getSession();
+
+		if(session != null) {
+			if(session.getAttribute("un") != null) {
+				Object response = driverService.updateDriver(driverId, DriverModel);
+				if(response instanceof Failed) {
+					return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
+				} else {
+					return new ResponseEntity<Object>(response, HttpStatus.OK);
+				}
+			}
 		}
+		return new ResponseEntity<Object>(createFailedObject(Iconstants.SESSION_TIME_OUT_MESSAGE), HttpStatus.BAD_REQUEST);
 	}
 	
 	@RequestMapping(value = "/deletedriver/{driverid}" , method = RequestMethod.GET)

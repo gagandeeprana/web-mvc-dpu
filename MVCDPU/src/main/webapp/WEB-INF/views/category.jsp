@@ -400,13 +400,20 @@ function checkFlag(field) {
 					</tr>
 				</thead>
 				<tbody id="categoryData">
-					<c:forEach items="${LIST_CATEGORY}" var="obj">
-						<tr class="info">
-							<td>${obj.typeName}</td>							
-							<td>${obj.name}</td>
-							<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.categoryId}')">Update</a> / <a href="#" onclick="deleteCategory('${obj.categoryId}')">Delete</a></td>
-						</tr>
-					</c:forEach>
+				<c:choose>
+					<c:when test="${LIST_CATEGORY.size() > 0}">
+						<c:forEach items="${LIST_CATEGORY}" var="obj">
+							<tr class="info">
+								<td>${obj.typeName}</td>							
+								<td>${obj.name}</td>
+								<td><a href = "#" data-toggle="modal" data-target="#myModal" onclick="checkFlag('update');onClickMethodQuestion('${obj.categoryId}')">Update</a> / <a href="#" onclick="deleteCategory('${obj.categoryId}')">Delete</a></td>
+							</tr>
+						</c:forEach>
+					</c:when>
+					<c:otherwise>
+						<tr><td colspan="3">No records found.</td></tr>
+					</c:otherwise>
+				</c:choose>
 				</tbody>
 			</table>
 		</div>

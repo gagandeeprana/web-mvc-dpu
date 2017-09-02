@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.dpu.constants.Iconstants;
 import com.dpu.entity.Status;
 import com.dpu.model.DivisionReq;
 import com.dpu.model.Failed;
@@ -59,21 +60,27 @@ public class WebDivisionController {
 		return status;
 	}
 	
+	
+	private Object createFailedObject(String errorMessage) {
+		Failed failed = new Failed();
+		failed.setMessage(errorMessage);
+		return failed;
+	}
 	@RequestMapping(value = "/savedivision" , method = RequestMethod.POST)
 	@ResponseBody public Object saveDivision(@ModelAttribute("division") DivisionReq divisionReq, HttpServletRequest request) {
 		HttpSession session = request.getSession();
-		String createdBy = "";
+
 		if(session != null) {
-			createdBy = session.getAttribute("un").toString();
+			if(session.getAttribute("un") != null) {
+				Object response = divisionService.add(divisionReq);
+				if(response instanceof Failed) {
+					return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
+				} else {
+					return new ResponseEntity<Object>(response, HttpStatus.OK);
+				}
+			}
 		}
-//		divisionReq.setCreatedBy(createdBy);
-//		divisionReq.setCreatedOn(new Date());
-		Object response = divisionService.add(divisionReq);
-		if(response instanceof Failed) {
-			return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
-		} else {
-			return new ResponseEntity<Object>(response, HttpStatus.OK);
-		}
+		return new ResponseEntity<Object>(createFailedObject(Iconstants.SESSION_TIME_OUT_MESSAGE), HttpStatus.BAD_REQUEST);
 	}
 	
 	@RequestMapping(value = "/getdivision/divisionId" , method = RequestMethod.GET)
@@ -89,13 +96,21 @@ public class WebDivisionController {
 	}
 	
 	@RequestMapping(value = "/updatedivision" , method = RequestMethod.POST)
-	@ResponseBody public Object updateDivision(@ModelAttribute("division") DivisionReq divisionReq, @RequestParam("divisionid") Long divisionId) {
-		Object response = divisionService.update(divisionId, divisionReq);
-		if(response instanceof Failed) {
-			return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
-		} else {
-			return new ResponseEntity<Object>(response, HttpStatus.OK);
+	@ResponseBody public Object updateDivision(@ModelAttribute("division") DivisionReq divisionReq, @RequestParam("divisionid") Long divisionId, HttpServletRequest request) {
+		
+		HttpSession session = request.getSession();
+
+		if(session != null) {
+			if(session.getAttribute("un") != null) {
+				Object response = divisionService.update(divisionId, divisionReq);
+				if(response instanceof Failed) {
+					return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
+				} else {
+					return new ResponseEntity<Object>(response, HttpStatus.OK);
+				}
+			}
 		}
+		return new ResponseEntity<Object>(createFailedObject(Iconstants.SESSION_TIME_OUT_MESSAGE), HttpStatus.BAD_REQUEST);
 	}
 
 	@RequestMapping(value = "/deletedivision/{divisionid}" , method = RequestMethod.GET)
