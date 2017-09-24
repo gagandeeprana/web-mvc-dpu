@@ -91,7 +91,13 @@ function createIssue(urlToHit,methodType){
 			      },
 			      success: function(result){
 		        try{
-		        	$('#myModal').modal('toggle');
+		        	$("#btnClose").click(function() {
+			        	$('#myModal').modal('toggle');
+		        	});
+		        	$("#btnNew").click(function() {
+		        		
+		        		onClickMethodQuestion('0');
+		        	});
 		        	var list = result.resultList;
 					fillIssueData(list);
 
@@ -101,6 +107,13 @@ function createIssue(urlToHit,methodType){
 				}
 		  },error:function(result){
 			  try{
+				  $("#btnClose").click(function() {
+			        	$('#myModal').modal('toggle');
+		        	});
+		        	$("#btnNew").click(function() {
+		        		
+		        		onClickMethodQuestion('0');
+		        	});
 				  	var obj = JSON.parse(result.responseText);
 				  	toastr.error(obj.message, 'Error!')
 				  }catch(e){
@@ -387,6 +400,13 @@ function emptyMessageDiv(){
 <body>
 	<jsp:include page="header.jsp"></jsp:include>
 	<div class="container">
+	<div class="form-group">
+				<div class="row">
+					<div class="col-sm-12" align="center">
+						<b class = "pageHeading">Issues</b>
+					</div>
+				</div>
+			</div>
 		<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="checkFlag('add'); onClickMethodQuestion('0'); emptyMessageDiv();" >Add New</button>
 		<div class="form-group">
 		<div class="row">
@@ -522,6 +542,7 @@ function emptyMessageDiv(){
 					        </div>
 					        <div class="modal-footer">
 					          <input type="button" class="btn btn-primary" id= "btnNew" value="Save&New" onclick="navigate()"/>
+					          <input type="button" class="btn btn-primary" id= "btnClose" value="Save&Close" onclick="navigate()"/>
 					    	  <!-- <input type="button" class="btn btn-primary" id= "btnExit" value="Save&Exit" /> -->
 					    	  <input type="reset" class="btn btn-primary" id= "btnReset" value="Reset" />
 							  <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>

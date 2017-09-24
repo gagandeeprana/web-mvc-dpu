@@ -11,7 +11,18 @@
 <body>
 <script type="text/javascript">
 		//var BASE_URL = "http://35.166.16.104:8080/MVCDPU/"
-		var BASE_URL = "http://localhost:8083/MVCDPU/"
+		var BASE_URL = "http://localhost:8081/MVCDPU/"
 </script>
 </body>
+<style type="text/css">
+.input-group-addon {
+    min-width:150px;
+    text-align:left;
+}
+.pageHeading {
+	font-size: 20px;
+	font-style : italic;
+	font-family: cursive;
+}
+</style>
 </html>

@@ -400,6 +400,13 @@ function emptyMessageDiv(){
 <body>
 	<jsp:include page="header.jsp"></jsp:include>
 	<div class="container">
+	<div class="form-group">
+				<div class="row">
+					<div class="col-sm-12" align="center">
+						<b class = "pageHeading">Trucks</b>
+					</div>
+				</div>
+			</div>
 		<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="checkFlag('add'); onClickMethodQuestion('0'); emptyMessageDiv();" >Add New</button>
 		<div class="form-group">
 		<div class="row">

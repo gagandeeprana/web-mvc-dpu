@@ -10,13 +10,44 @@
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@page isELIgnored="false"%>
 <link rel="stylesheet"
-	href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+ <script src="//code.jquery.com/jquery-1.12.4.js"></script>
+<script src="//code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script
-	src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-<script
-	src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-		<link rel = "stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.0/css/bootstrap-datepicker.css"/>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.0/js/bootstrap-datepicker.js"></script>
+	src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+<script type="text/javascript" >
+ function searchUnitNos() {
+	 
+   	 var arrList = new Array();
+	/* arrList.push({label:"blue",value:"b"});
+	arrList.push({label:"green",value:"b"});
+	arrList.push({label:"pink",value:"b"});
+	arrList.push({label:"red",value:"b"});
+	arrList.push({label:"yellow",value:"b"}); */
+	arrList.push("blue");
+	arrList.push("green");
+	arrList.push("pink");
+	arrList.push("red");
+	arrList.push("yellow");
+
+   	$("#searchedUnitNos").autocomplete({
+  	      source: arrList,
+  	   	  minLength: 0,
+        	
+  	      select: function (event, ui) {
+  	    	   $( "#searchedUnitNos" ).val( ui.item );
+  	    		return false;
+  	           
+  	        }
+  	    }).autocomplete("instance")._renderItem = function(ul, item) {
+  	      return $( "<li>" )
+  	        .append("<div>" + item + "</div>")
+  	        .appendTo(ul);
+ 	    };
+ }
+</script>
 <style type="text/css">
 .modal-dialog {
   width: 98%;
@@ -790,12 +821,17 @@ return true;
 <body>
 	<jsp:include page="header.jsp"></jsp:include>
 	<div class="container">
-		<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="checkFlag('add'); onClickMethodQuestion('0'); emptyMessageDiv();" >Add New</button>
+	<div class="form-group">
+				<div class="row">
+					<div class="col-sm-12" align="center">
+						<b class = "pageHeading">Purchase Order (PO)</b>
+					</div>
+				</div>
+			</div>
+		<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="checkFlag('add'); onClickMethodQuestion('0'); emptyMessageDiv();searchUnitNos();" >Add New</button>
 		<div class="form-group">
 		<div class="row">
-			<div class="col-sm-4">
-			</div>
-			<div class="col-sm-8" align= "right">
+			<div class="col-sm-12" align= "center">
 			<input type="hidden" id="statusFlag" value="Active"/>
 	          <input type="button" class="btn btn-default" id= "btnActive" value="Active" />
 	          <input type="button" class="btn btn-default" id= "btnComplete" value="Complete" />
@@ -858,6 +894,19 @@ return true;
 													</span>
 													<select class="form-control" name="categoryId" id="categoryId" onchange="getUnitNo()">
 													</select>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="row">
+											<div class="col-sm-12">
+												<div class="input-group">
+													<span class="input-group-addon">
+														 <b>Unit No.</b>												
+													</span>
+													<input type="text" id="searchedUnitNos" name="searchedUnitNos" />
+													<input type="hidden" id="searchedUnitNoshidden" />
 												</div>
 											</div>
 										</div>
