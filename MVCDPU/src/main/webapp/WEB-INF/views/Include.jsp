@@ -11,7 +11,7 @@
 <body>
 <script type="text/javascript">
 		//var BASE_URL = "http://35.166.16.104:8080/MVCDPU/"
-		var BASE_URL = "http://localhost:8081/MVCDPU/"
+		var BASE_URL = "http://localhost:8084/MVCDPU/"
 </script>
 </body>
 <style type="text/css">

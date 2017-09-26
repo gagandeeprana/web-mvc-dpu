@@ -89,7 +89,7 @@ public class CompanyResponse implements Serializable {
 
 	private Long categoryId;
 
-	private List<CategoryReq> categoryList;
+	private List<CategoryModel> categoryList;
 
 	private Long divisionId;
 
@@ -101,10 +101,11 @@ public class CompanyResponse implements Serializable {
 
 	private Long countryId;
 
-	private List<TypeResponse> countryList;
+	/*private List<TypeResponse> countryList;*/
 
 	private String countryName;
 
+	private List<CountryStateCityModel> countryList;
 	public Long getCountryId() {
 
 		return countryId;
@@ -137,7 +138,7 @@ public class CompanyResponse implements Serializable {
 		this.functionList = functionList;
 	}
 
-	public List<TypeResponse> getCountryList() {
+/*	public List<TypeResponse> getCountryList() {
 
 		return countryList;
 	}
@@ -145,7 +146,7 @@ public class CompanyResponse implements Serializable {
 	public void setCountryList(List<TypeResponse> countryList) {
 
 		this.countryList = countryList;
-	}
+	}*/
 
 	public String getCategoryName() {
 
@@ -207,12 +208,12 @@ public class CompanyResponse implements Serializable {
 		this.saleId = saleId;
 	}
 
-	public List<CategoryReq> getCategoryList() {
+	public List<CategoryModel> getCategoryList() {
 
 		return categoryList;
 	}
 
-	public void setCategoryList(List<CategoryReq> categoryList) {
+	public void setCategoryList(List<CategoryModel> categoryList) {
 
 		this.categoryList = categoryList;
 	}

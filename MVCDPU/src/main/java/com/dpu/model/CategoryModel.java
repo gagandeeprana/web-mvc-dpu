@@ -17,7 +17,7 @@ import com.dpu.entity.Status;
  */
 @JsonIgnoreProperties(ignoreUnknown = true) 
 @JsonSerialize(include = Inclusion.NON_NULL)
-public class CategoryReq {
+public class CategoryModel {
 
  
 	//@JsonProperty(value = "category_id")

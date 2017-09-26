@@ -24,7 +24,7 @@ public class IssueModel implements Serializable{
 	
 	private String categoryName;
 	private Long categoryId;
-	private List<CategoryReq> categoryList;
+	private List<CategoryModel> categoryList;
 	
 	private String unitTypeName;
 	private Long unitTypeId;
@@ -180,11 +180,11 @@ public class IssueModel implements Serializable{
 		this.categoryId = categoryId;
 	}
 
-	public List<CategoryReq> getCategoryList() {
+	public List<CategoryModel> getCategoryList() {
 		return categoryList;
 	}
 
-	public void setCategoryList(List<CategoryReq> categoryList) {
+	public void setCategoryList(List<CategoryModel> categoryList) {
 		this.categoryList = categoryList;
 	}
 

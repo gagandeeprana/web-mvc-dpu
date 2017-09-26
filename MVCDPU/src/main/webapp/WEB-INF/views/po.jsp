@@ -9,43 +9,53 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@page isELIgnored="false"%>
-<link rel="stylesheet"
-	href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
- <script src="//code.jquery.com/jquery-1.12.4.js"></script>
-<script src="//code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-<script
-	src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	 <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+ 	 <script src="//code.jquery.com/jquery-1.12.4.js"></script>
+	 <script src="//code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 	 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+	 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.min.js"></script>
+	 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/css/bootstrap-multiselect.css" />
+<style type="text/css">
+	.ui-front {
+	    z-index: 9999;
+	}
+	.multiselect-container>li>a>label {
+  padding: 4px 30px 3px 20px;
+  margin-left:5px;
+}
 
-<script type="text/javascript" >
+.multiselect-container>li{
+margin-left: 10px;
+}
+</style>
+<script type="text/javascript">
  function searchUnitNos() {
 	 
-   	 var arrList = new Array();
-	/* arrList.push({label:"blue",value:"b"});
-	arrList.push({label:"green",value:"b"});
-	arrList.push({label:"pink",value:"b"});
-	arrList.push({label:"red",value:"b"});
-	arrList.push({label:"yellow",value:"b"}); */
-	arrList.push("blue");
-	arrList.push("green");
-	arrList.push("pink");
-	arrList.push("red");
-	arrList.push("yellow");
-
-   	$("#searchedUnitNos").autocomplete({
+   	var arrList = new Array();
+	arrList.push({label:"blue"});
+	arrList.push({label:"green"});
+	arrList.push({label:"pink"});
+	arrList.push({label:"red"});
+	arrList.push({label:"yellow"});
+	
+   	/* $("#searchedUnitNos").autocomplete({
   	      source: arrList,
   	   	  minLength: 0,
         	
   	      select: function (event, ui) {
-  	    	   $( "#searchedUnitNos" ).val( ui.item );
+  	    	   $("#searchedUnitNos").val( ui.item );
   	    		return false;
-  	           
   	        }
   	    }).autocomplete("instance")._renderItem = function(ul, item) {
   	      return $( "<li>" )
-  	        .append("<div>" + item + "</div>")
+  	        .append("<div>" + item.label + "</div>")
   	        .appendTo(ul);
- 	    };
+ 	    }; */
+ 	    
+ 	   $('#chkveg').multiselect({
+	 		  includeSelectAllOption: true
+ 		  });
  }
 </script>
 <style type="text/css">
@@ -55,7 +65,7 @@
   padding: 0;
 }
 
-.modal-content {
+.modal-content { 
   height: auto;
   min-height: 100%;
   border-radius: 5;
@@ -443,6 +453,15 @@ function showIssueDetail(quesId) {
 			}
 		}
 		
+		//To-Do
+		function getOnlyUnitNos(categoryId, unitTypeId) {
+			
+			$.get("<%=request.getContextPath()%>"+"/getonlyunitnos/category/" + categoryId + "/unitType/" + unitTypeId, function(data) {
+ 	           
+	            
+	        });
+		}
+		
 		var editIssueIds = new Array();
         function onClickMethodQuestion(quesId){
         	emptyMessageDiv();
@@ -460,16 +479,16 @@ function showIssueDetail(quesId) {
     	            	vendor.options[i].value = data.vendorList[i].vendorId;
     	            }
 
-    	            var category = document.getElementById("categoryId");
+    	           /*  var category = document.getElementById("categoryId");
     	            for(var i = 0;i < data.categoryList.length;i++) {
     	            	category.options[category.options.length] = new Option(data.categoryList[i].name);
     	            	category.options[i].value = data.categoryList[i].categoryId;
-    	            }
+    	            } */
 
     	            var unitType = document.getElementById("unitTypeId");
     	            for(var i = 0;i < data.unitTypeList.length;i++) {
     	            	unitType.options[unitType.options.length] = new Option(data.unitTypeList[i].typeName);
-    	            	unitType.options[i].value = data.unitTypeList[i].typeId;
+    	            	unitType.options[i+1].value = data.unitTypeList[i].typeId;
     	            }
     	            
     	            getUnitNo();
@@ -596,8 +615,8 @@ function showIssueDetail(quesId) {
         
         function clearAll() {
         	document.getElementById("vendorId").innerHTML = "";
-        	document.getElementById("unitTypeId").innerHTML = "";
-        	document.getElementById("categoryId").innerHTML = "";
+        	/* document.getElementById("unitTypeId").innerHTML = ""; */
+        	/* document.getElementById("categoryId").innerHTML = ""; */
         	/* document.getElementById("statusId").innerHTML = ""; */
             $("#invoiceNo").val("");
             $("#message").val("");
@@ -815,6 +834,35 @@ return true;
 		});
 	}
  
+ function getCategories() {
+	 var unitTypeName = $('#unitTypeId :selected').text();
+
+	 if(unitTypeName != "Please Select") {
+		 $.get("getcategories/unittype/"+unitTypeName, function(data) {
+	      
+		      var category = document.getElementById("categoryId");
+		      $("#categoryId").empty();
+		      category.options[0] = new Option("Please Select");		      
+		      
+		      if(data != null && data.length > 0) {
+		    	  for(var i = 0;i < data.length;i++) {
+			    	  category.options[category.options.length] = new Option(data[i].name);
+			    	  category.options[i+1].value = data[i].categoryId;
+			      }
+		      } else {
+		    	  var category = document.getElementById("categoryId");
+			      $("#categoryId").empty();
+			      category.options[0] = new Option("Please Select");
+				  toastr.error("No such Category exist for this Unit Type", 'Error!');
+		      }
+		 });
+	 } else {
+		 var category = document.getElementById("categoryId");
+	      $("#categoryId").empty();
+	      category.options[0] = new Option("Please Select");
+	 }
+ }
+ 
 </script>
 
 </head>
@@ -879,7 +927,8 @@ return true;
 													<span class="input-group-addon">
 														 <b>UnitType</b>												
 													</span>
-													<select id="unitTypeId" class="form-control" name="unitTypeId" onchange="getUnitNo()">
+													<select id="unitTypeId" class="form-control" name="unitTypeId" onchange="getCategories()">
+														<option>Please Select</option>
 													</select>
 												</div>
 											</div>
@@ -893,6 +942,7 @@ return true;
 														 <b>Category</b>												
 													</span>
 													<select class="form-control" name="categoryId" id="categoryId" onchange="getUnitNo()">
+														<option>Please Select</option>
 													</select>
 												</div>
 											</div>
@@ -905,8 +955,16 @@ return true;
 													<span class="input-group-addon">
 														 <b>Unit No.</b>												
 													</span>
-													<input type="text" id="searchedUnitNos" name="searchedUnitNos" />
-													<input type="hidden" id="searchedUnitNoshidden" />
+													<!-- <input type="text" id="searchedUnitNos" name="searchedUnitNos" />
+													<input type="hidden" id="searchedUnitNoshidden" /> -->
+													<select id="chkveg" multiple="multiple">
+														<option value="cheese">121</option>
+														<option value="tomatoes">432</option>
+														<option value="mozarella">5454</option>
+														<option value="mushrooms">8678</option>
+														<option value="pepperoni">56765</option>
+														<option value="onions">768976</option>
+														</select>
 												</div>
 											</div>
 										</div>

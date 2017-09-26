@@ -30,7 +30,7 @@ import com.dpu.entity.Status;
 import com.dpu.entity.Type;
 import com.dpu.model.AdditionalContacts;
 import com.dpu.model.BillingLocation;
-import com.dpu.model.CategoryReq;
+import com.dpu.model.CategoryModel;
 import com.dpu.model.CompanyResponse;
 import com.dpu.model.DivisionReq;
 import com.dpu.model.Failed;
@@ -350,7 +350,7 @@ public class CompanyServiceImpl implements CompanyService {
 
 		try {
 			List<Company> companies = companyDao.findAll();
-
+			
 			if (companies != null && !companies.isEmpty()) {
 				for (Company company : companies) {
 					CompanyResponse response = new CompanyResponse();
@@ -422,7 +422,7 @@ public class CompanyServiceImpl implements CompanyService {
 				List<Status> statusList = AllList.getStatusList(session);
 				response.setStatusList(statusList);
 
-				List<CategoryReq> categoryList = AllList.getCategoryList(session,  "Category", "categoryId", "name");
+				List<CategoryModel> categoryList = AllList.getCategoryList(session,  "Category", "categoryId", "name");
 				response.setCategoryList(categoryList);
   
 				List<DivisionReq> divisionList = AllList.getDivisionList(session,"Division", "divisionId", "divisionId");
@@ -431,8 +431,8 @@ public class CompanyServiceImpl implements CompanyService {
 				List<SaleReq> saleList = AllList.getSaleList(session,"Sale", "saleId", "name");
 				response.setSaleList(saleList);
 
-				List<TypeResponse> countryList = AllList.getTypeResponse(session, 21l);
-				response.setCountryList(countryList);
+			/*	List<TypeResponse> countryList = AllList.getTypeResponse(session, 21l);
+				response.setCountryList(countryList);*/
 			}
 		} finally {
 			if (session != null) {
@@ -579,13 +579,12 @@ public class CompanyServiceImpl implements CompanyService {
 
 		try{
 		List<Object[]> categoryListObj = categoryDao.getSpecificData(session, "Category", "categoryId", "name");
-		List<CategoryReq> categoryList = new ArrayList<CategoryReq>();
+		List<CategoryModel> categoryList = new ArrayList<CategoryModel>();
 		Iterator<Object[]> categoryItr = categoryListObj.iterator();
 	
-		while(categoryItr.hasNext())
-		{
+		while(categoryItr.hasNext()){
 			Object o[] = (Object[])categoryItr.next();
-			CategoryReq type = new CategoryReq();
+			CategoryModel type = new CategoryModel();
 			type.setCategoryId(Long.parseLong(String.valueOf(o[0])));
 			type.setName(String.valueOf(o[1]));
 			categoryList.add(type);
@@ -623,8 +622,8 @@ public class CompanyServiceImpl implements CompanyService {
 		}
 		companyResponse.setSaleList(saleList);
 
-		List<TypeResponse> countryList = AllList.getTypeResponse(session, 21l);
-		companyResponse.setCountryList(countryList);
+		/*List<TypeResponse> countryList = AllList.getTypeResponse(session, 21l);
+		companyResponse.setCountryList(countryList);*/
 		
 		}catch(Exception e){
 			

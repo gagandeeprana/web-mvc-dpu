@@ -10,7 +10,7 @@ import org.hibernate.Session;
 import com.dpu.entity.Status;
 import com.dpu.model.ArrangedWithModel;
 import com.dpu.model.CarrierModel;
-import com.dpu.model.CategoryReq;
+import com.dpu.model.CategoryModel;
 import com.dpu.model.CompanyResponse;
 import com.dpu.model.DispatcherModel;
 import com.dpu.model.DivisionReq;
@@ -32,10 +32,10 @@ public class AllList {
 	 * @return categoryList
 	 */
 	@SuppressWarnings({ "unchecked" })
-	public static List<CategoryReq> getCategoryList(Session session,
+	public static List<CategoryModel> getCategoryList(Session session,
 			String tableName, String firstColumn, String secondColumn) {
 
-		List<CategoryReq> categoryList = new ArrayList<CategoryReq>();
+		List<CategoryModel> categoryList = new ArrayList<CategoryModel>();
 
 		try {
 			Query query = session.createQuery(" select " + firstColumn + " , "
@@ -46,7 +46,7 @@ public class AllList {
 
 				while (operationIt.hasNext()) {
 					Object o[] = (Object[]) operationIt.next();
-					CategoryReq type = new CategoryReq();
+					CategoryModel type = new CategoryModel();
 					type.setCategoryId(Long.parseLong(String.valueOf(o[0])));
 					type.setName(String.valueOf(o[1]));
 					categoryList.add(type);

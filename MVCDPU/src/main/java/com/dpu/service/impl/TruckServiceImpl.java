@@ -32,7 +32,7 @@ import com.dpu.entity.Status;
 import com.dpu.entity.Terminal;
 import com.dpu.entity.Truck;
 import com.dpu.entity.Type;
-import com.dpu.model.CategoryReq;
+import com.dpu.model.CategoryModel;
 import com.dpu.model.DivisionReq;
 import com.dpu.model.Failed;
 import com.dpu.model.Success;
@@ -234,7 +234,7 @@ public class TruckServiceImpl implements TruckService {
 				List<Status> lstStatus = AllList.getStatusList(session);
 				truckResponse.setStatusList(lstStatus);
 
-				List<CategoryReq> lstCategories = AllList.getCategoryList(session, "Category", "categoryId", "name");
+				List<CategoryModel> lstCategories = AllList.getCategoryList(session, "Category", "categoryId", "name");
 				truckResponse.setCategoryList(lstCategories);
 
 				List<TerminalResponse> lstTerminalResponses = AllList.getTerminalList(session, "Terminal", "terminalId", "terminalName");
@@ -360,13 +360,13 @@ public class TruckServiceImpl implements TruckService {
 			truckResponse.setStatusList(lstStatus);
 
 			List<Object[]> categoryListObj = categoryDao.getSpecificData(session,"Category", "categoryId", "name");
-			List<CategoryReq> operationList = new ArrayList<CategoryReq>();
+			List<CategoryModel> operationList = new ArrayList<CategoryModel>();
 			Iterator<Object[]> operationIt = categoryListObj.iterator();
 		
 			while(operationIt.hasNext())
 			{
 				Object o[] = (Object[])operationIt.next();
-				CategoryReq type = new CategoryReq();
+				CategoryModel type = new CategoryModel();
 				type.setCategoryId(Long.parseLong(String.valueOf(o[0])));
 				type.setName(String.valueOf(o[1]));
 				operationList.add(type);

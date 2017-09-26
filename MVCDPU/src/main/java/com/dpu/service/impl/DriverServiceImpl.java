@@ -29,7 +29,7 @@ import com.dpu.entity.State;
 import com.dpu.entity.Status;
 import com.dpu.entity.Terminal;
 import com.dpu.entity.Type;
-import com.dpu.model.CategoryReq;
+import com.dpu.model.CategoryModel;
 import com.dpu.model.CountryStateCityModel;
 import com.dpu.model.DivisionReq;
 import com.dpu.model.DriverModel;
@@ -386,7 +386,7 @@ public class DriverServiceImpl implements DriverService {
 				List<TypeResponse> driverClassList = AllList.getTypeResponse(session, 5l);
 				driverModel.setDriverClassList(driverClassList);
 
-				List<CategoryReq> categoryList = AllList.getCategoryList(session, "Category", "categoryId", "name");
+				List<CategoryModel> categoryList = AllList.getCategoryList(session, "Category", "categoryId", "name");
 				driverModel.setCategoryList(categoryList);
 
 				List<DivisionReq> divisionList = AllList.getDivisionList(session, "Division", "divisionId", "divisionName");
@@ -452,7 +452,7 @@ public class DriverServiceImpl implements DriverService {
 			List<TypeResponse> driverClassList = AllList.getTypeResponse(session, 5l);
 			driver.setDriverClassList(driverClassList);
 
-			List<CategoryReq> categoryList = AllList.getCategoryList(session,"Category", "categoryId", "name");
+			List<CategoryModel> categoryList = AllList.getCategoryList(session,"Category", "categoryId", "name");
 			driver.setCategoryList(categoryList);
 	
 	 

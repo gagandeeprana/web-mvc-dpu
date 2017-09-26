@@ -42,4 +42,14 @@ public class CategoryDaoImpl extends GenericDaoImpl<Category> implements Categor
 		return query.list();
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Category> getCategoriesBasedOnType(String unitTypeName, Session session) {
+		StringBuilder sb = new StringBuilder(
+				"select c from Category c join fetch c.status join fetch c.highLight join fetch c.type where c.type.typeName =:unitTypeName ");
+		Query query = session.createQuery(sb.toString());
+		query.setParameter("unitTypeName", unitTypeName);
+		return query.list();
+	}
+
 }

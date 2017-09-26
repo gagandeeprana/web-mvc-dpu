@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.websocket.server.PathParam;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +21,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.dpu.constants.Iconstants;
+import com.dpu.model.CategoryModel;
 import com.dpu.model.Failed;
 import com.dpu.model.IssueModel;
 import com.dpu.model.PurchaseOrderModel;
 import com.dpu.model.TypeResponse;
+import com.dpu.service.CategoryService;
 import com.dpu.service.PurchaseOrderService;
 import com.dpu.util.DateUtil;
 
@@ -32,6 +35,9 @@ public class WebPOController {
 
 	@Autowired
 	PurchaseOrderService purchaseOrderService;
+	
+	@Autowired
+	CategoryService categoryService;
 
 	Logger logger = Logger.getLogger(WebPOController.class);
 
@@ -236,5 +242,12 @@ public class WebPOController {
 		} else {
 			return new ResponseEntity<Object>(response, HttpStatus.OK);
 		}
+	}
+	
+	@RequestMapping(value = "/getcategories/unittype/{unittype}", method = RequestMethod.GET)
+	@ResponseBody
+	public List<CategoryModel> getCategories(@PathVariable("unittype") String unitType) {
+		List<CategoryModel> categories = categoryService.getCategoriesBasedOnType(unitType);
+		return categories;
 	}
 }

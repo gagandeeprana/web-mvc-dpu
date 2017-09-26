@@ -28,7 +28,7 @@ import com.dpu.entity.CarrierContract;
 import com.dpu.model.ArrangedWithModel;
 import com.dpu.model.CarrierContractModel;
 import com.dpu.model.CarrierModel;
-import com.dpu.model.CategoryReq;
+import com.dpu.model.CategoryModel;
 import com.dpu.model.DispatcherModel;
 import com.dpu.model.DivisionReq;
 import com.dpu.model.DriverModel;
@@ -265,7 +265,7 @@ public class CarrierContractServiceImpl implements CarrierContractService {
 			List<CarrierModel> carrierList = AllList.getCarrierList(session, "Carrier", "carrierId", "name");
 			response.setCarrierList(carrierList);
 
-			List<CategoryReq> categoryList = AllList.getCategoryList(session, "Category", "categoryId", "name");
+			List<CategoryModel> categoryList = AllList.getCategoryList(session, "Category", "categoryId", "name");
 			response.setCategoryList(categoryList);
 
 			List<TypeResponse> commodityList = AllList.getTypeResponse(session, 17l);
@@ -396,7 +396,7 @@ public class CarrierContractServiceImpl implements CarrierContractService {
 			List<TypeResponse> currencyList = AllList.getTypeResponse(session, 9l);
 			carrierContractModel.setCurrencyList(currencyList);
  
-			List<CategoryReq> categoryList = AllList.getCategoryList(session, "Category", "categoryId", "categoryId");
+			List<CategoryModel> categoryList = AllList.getCategoryList(session, "Category", "categoryId", "categoryId");
 			carrierContractModel.setCategoryList(categoryList);
 
 			List<TypeResponse> roleList = AllList.getTypeResponse(session, 6l);

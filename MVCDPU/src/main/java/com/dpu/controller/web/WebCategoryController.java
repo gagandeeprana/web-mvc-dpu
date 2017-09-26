@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.dpu.constants.Iconstants;
-import com.dpu.model.CategoryReq;
+import com.dpu.model.CategoryModel;
 import com.dpu.model.Failed;
 import com.dpu.service.CategoryService;
 
@@ -34,30 +34,30 @@ public class WebCategoryController {
 	@RequestMapping(value = "/showcategory", method = RequestMethod.GET)
 	public ModelAndView showCategoryScreen() {
 		ModelAndView modelAndView = new ModelAndView();
-		List<CategoryReq> lstCategories = categoryService.getAll();
+		List<CategoryModel> lstCategories = categoryService.getAll();
 		modelAndView.addObject("LIST_CATEGORY", lstCategories);
 		modelAndView.setViewName("category");
 		return modelAndView;
 	}
 	
 	@RequestMapping(value = "/getopenadd" , method = RequestMethod.GET)
-	@ResponseBody public CategoryReq getOpenAdd() {
-		CategoryReq categoryReq = null;
+	@ResponseBody public CategoryModel getOpenAdd() {
+		CategoryModel CategoryModel = null;
 		try {
-			categoryReq = categoryService.getOpenAdd();
+			CategoryModel = categoryService.getOpenAdd();
 		} catch (Exception e) {
 			System.out.println(e);
 		}
-		return categoryReq;
+		return CategoryModel;
 	}
 	
 	@RequestMapping(value = "/savecategory" , method = RequestMethod.POST)
-	@ResponseBody public Object saveCategory(@ModelAttribute("cat") CategoryReq categoryReq, HttpServletRequest request) {
+	@ResponseBody public Object saveCategory(@ModelAttribute("cat") CategoryModel CategoryModel, HttpServletRequest request) {
 		HttpSession session = request.getSession();
 
 		if(session != null) {
 			if(session.getAttribute("un") != null) {
-				Object response = categoryService.addCategory(categoryReq);
+				Object response = categoryService.addCategory(CategoryModel);
 				if(response instanceof Failed) {
 					return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
 				} else {
@@ -75,24 +75,24 @@ public class WebCategoryController {
 	}
 	
 	@RequestMapping(value = "/getcategory/categoryId" , method = RequestMethod.GET)
-	@ResponseBody  public CategoryReq getCategory(@RequestParam("categoryId") Long categoryId) {
-		CategoryReq categoryReq = null;
+	@ResponseBody  public CategoryModel getCategory(@RequestParam("categoryId") Long categoryId) {
+		CategoryModel CategoryModel = null;
 		try {
-			categoryReq = categoryService.get(categoryId);
+			CategoryModel = categoryService.get(categoryId);
 		} catch (Exception e) {
 			System.out.println(e);
 			logger.info("Exception in getCategory is: " + e);
 		}
-		return categoryReq;
+		return CategoryModel;
 	}
 	
 	@RequestMapping(value = "/updatecategory" , method = RequestMethod.POST)
-	@ResponseBody public Object updateCategory(@ModelAttribute("cat") CategoryReq categoryReq, @RequestParam("categoryid") Long categoryId, HttpServletRequest request) {
+	@ResponseBody public Object updateCategory(@ModelAttribute("cat") CategoryModel CategoryModel, @RequestParam("categoryid") Long categoryId, HttpServletRequest request) {
 		HttpSession session = request.getSession();
 
 		if(session != null) {
 			if(session.getAttribute("un") != null) {
-				Object response = categoryService.update(categoryId, categoryReq);
+				Object response = categoryService.update(categoryId, CategoryModel);
 				if(response instanceof Failed) {
 					return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
 				} else {

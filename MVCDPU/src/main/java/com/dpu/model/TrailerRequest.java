@@ -29,7 +29,7 @@ public class TrailerRequest {
 
 	private String category;
 	private Long categoryId;
-	private List<CategoryReq> categoryList;
+	private List<CategoryModel> categoryList;
 
 	private String trailerType;
 	private Long trailerTypeId;
@@ -92,11 +92,11 @@ public class TrailerRequest {
 		this.categoryId = categoryId;
 	}
 
-	public List<CategoryReq> getCategoryList() {
+	public List<CategoryModel> getCategoryList() {
 		return categoryList;
 	}
 
-	public void setCategoryList(List<CategoryReq> categoryList) {
+	public void setCategoryList(List<CategoryModel> categoryList) {
 		this.categoryList = categoryList;
 	}
 

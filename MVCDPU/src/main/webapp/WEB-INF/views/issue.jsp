@@ -261,31 +261,31 @@ function checkFlag(field) {
     	            var vmc = document.getElementById("vmcId");
     	            for(var i = 0;i < data.vmcList.length;i++) {
     	            	vmc.options[vmc.options.length] = new Option(data.vmcList[i].name);
-    	            	vmc.options[i].value = data.vmcList[i].id;
+    	            	vmc.options[i+1].value = data.vmcList[i].id;
     	            }
             	
     	            var unitType = document.getElementById("unitType");
     	            for(var i = 0;i < data.unitTypeList.length;i++) {
     	            	unitType.options[unitType.options.length] = new Option(data.unitTypeList[i].typeName);
-    	            	unitType.options[i].value = data.unitTypeList[i].typeId;
+    	            	unitType.options[i+1].value = data.unitTypeList[i].typeId;
     	            }
     	            
     	            var reportedBy = document.getElementById("reportedBy");
     	            for(var i = 0;i < data.reportedByList.length;i++) {
     	            	reportedBy.options[reportedBy.options.length] = new Option(data.reportedByList[i].fullName);
-    	            	reportedBy.options[i].value = data.reportedByList[i].driverId;
+    	            	reportedBy.options[i+1].value = data.reportedByList[i].driverId;
     	            }
     	            
-    	            var category = document.getElementById("issueCategory");
+    	           /*  var category = document.getElementById("issueCategory");
     	            for(var i = 0;i < data.categoryList.length;i++) {
     	            	category.options[category.options.length] = new Option(data.categoryList[i].name);
     	            	category.options[i].value = data.categoryList[i].categoryId;
-    	            }
+    	            } */
     	            
     	            var status = document.getElementById("status");
     	            for(var i = 0;i < data.statusList.length;i++) {
     	            	status.options[status.options.length] = new Option(data.statusList[i].typeName);
-    	            	status.options[i].value = data.statusList[i].typeId;
+    	            	status.options[i+1].value = data.statusList[i].typeId;
     	            }
     	            
     	            getUnitNo();
@@ -362,12 +362,12 @@ function checkFlag(field) {
         function clearAll() {
             $("#title").val("");
             $("#description").val("");
-        	document.getElementById("vmcId").innerHTML = "";
-        	document.getElementById("unitType").innerHTML = "";
-        	document.getElementById("issueCategory").innerHTML = "";
-        	document.getElementById("unitNo").innerHTML = "";
-        	document.getElementById("reportedBy").innerHTML = "";
-        	document.getElementById("status").innerHTML = "";
+        	/* document.getElementById("vmcId").innerHTML = ""; */
+        	/* document.getElementById("unitType").innerHTML = ""; */
+        	/* document.getElementById("issueCategory").innerHTML = ""; */
+        	/* document.getElementById("unitNo").innerHTML = ""; */
+        	/* document.getElementById("reportedBy").innerHTML = "";
+        	document.getElementById("status").innerHTML = ""; */
         }
 </script>
 
@@ -394,6 +394,43 @@ function emptyMessageDiv(){
 	msgvalue.val("");
 }
 
+function getCategories() {
+	 var unitTypeName = $('#unitType :selected').text();
+
+	 if(unitTypeName != "Please Select") {
+		 $.get("getcategories/unittype/"+unitTypeName, function(data) {
+	      
+		      var category = document.getElementById("issueCategory");
+		      $("#issueCategory").empty();
+		      category.options[0] = new Option("Please Select");		      
+		      
+		      if(data != null && data.length > 0) {
+		    	  for(var i = 0;i < data.length;i++) {
+			    	  category.options[category.options.length] = new Option(data[i].name);
+			    	  category.options[i+1].value = data[i].categoryId;
+			      }
+		      } else {
+		    	  var category = document.getElementById("issueCategory");
+			      $("#issueCategory").empty();
+			      category.options[0] = new Option("Please Select");
+				  toastr.error("No such Category exist for this Unit Type", 'Error!');
+		      }
+		 });
+	 } else {
+		 var category = document.getElementById("issueCategory");
+	      $("#issueCategory").empty();
+	      category.options[0] = new Option("Please Select");
+	 }
+}
+
+//To-Do
+function getOnlyUnitNos(categoryId, unitTypeId) {
+	
+	$.get("<%=request.getContextPath()%>"+"/getonlyunitnos/category/" + categoryId + "/unitType/" + unitTypeId, function(data) {
+        
+        
+    });
+}
 </script>
 
 </head>
@@ -455,6 +492,7 @@ function emptyMessageDiv(){
 														 <b>VMC</b>												
 													</span>
 													<select class="form-control" name="vmcId" id="vmcId">
+														<option>Please Select</option>
 													</select>
 												</div>
 											</div>
@@ -467,7 +505,8 @@ function emptyMessageDiv(){
 													<span class="input-group-addon">
 														 <b>UnitType</b>												
 													</span>
-													<select id="unitType" class="form-control" name="unitTypeId" onchange="getUnitNo()">
+													<select id="unitType" class="form-control" name="unitTypeId" onchange="getCategories()">
+														<option>Please Select</option>
 													</select>
 												</div>
 											</div>
@@ -481,6 +520,7 @@ function emptyMessageDiv(){
 														 <b>Category</b>												
 													</span>
 													<select id="issueCategory" class="form-control" name="categoryId" onchange="getUnitNo()">
+														<option>Please Select</option>
 													</select>
 												</div>
 											</div>
@@ -507,6 +547,7 @@ function emptyMessageDiv(){
 														 <b>ReportedBy</b>												
 													</span>
 													<select id="reportedBy" class="form-control" name="reportedById">
+														<option>Please Select</option>
 													</select>
 												</div>
 											</div>
@@ -520,6 +561,7 @@ function emptyMessageDiv(){
 														 <b>Status</b>												
 													</span>
 													<select id="status" class="form-control" name="statusId">
+														<option>Please Select</option>
 													</select>
 												</div>
 											</div>

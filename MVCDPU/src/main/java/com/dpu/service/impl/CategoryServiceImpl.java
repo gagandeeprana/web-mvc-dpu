@@ -16,7 +16,7 @@ import com.dpu.dao.CategoryDao;
 import com.dpu.entity.Category;
 import com.dpu.entity.Status;
 import com.dpu.entity.Type;
-import com.dpu.model.CategoryReq;
+import com.dpu.model.CategoryModel;
 import com.dpu.model.Failed;
 import com.dpu.model.Success;
 import com.dpu.model.TypeResponse;
@@ -66,7 +66,7 @@ public class CategoryServiceImpl implements CategoryService {
 	}
 
 	@Override
-	public Object addCategory(CategoryReq categoryReq) {
+	public Object addCategory(CategoryModel categoryReq) {
 
 		logger.info("CategoryServiceImpl addCategory() starts");
 		Category category = null;
@@ -85,7 +85,7 @@ public class CategoryServiceImpl implements CategoryService {
 		return createSuccessObject(CommonProperties.category_added_message,Long.parseLong(CommonProperties.category_added_code));
 	}
 
-	private Category setCategoryValues(CategoryReq categoryReq) {
+	private Category setCategoryValues(CategoryModel categoryReq) {
 		
 		logger.info("CategoryServiceImpl setCategoryValues() starts");
 		
@@ -103,7 +103,7 @@ public class CategoryServiceImpl implements CategoryService {
 	}
 
 	@Override
-	public Object update(Long id, CategoryReq categoryReq) {
+	public Object update(Long id, CategoryModel categoryReq) {
 		
 		logger.info("CategoryServiceImpl update() starts, categoryId :"+id);
 		Category category = null;
@@ -126,7 +126,7 @@ public class CategoryServiceImpl implements CategoryService {
 		return createSuccessObject(CommonProperties.category_updated_message,Long.parseLong(CommonProperties.category_updated_code));
 	}
 
-	private Category setCategoryData(Category category, CategoryReq categoryReq) {
+	private Category setCategoryData(Category category, CategoryModel categoryReq) {
 	
 		category.setName(categoryReq.getName());
 
@@ -183,11 +183,11 @@ public class CategoryServiceImpl implements CategoryService {
 	}
 
 	@Override
-	public List<CategoryReq> getAll( ) {
+	public List<CategoryModel> getAll( ) {
 	
 		logger.info("CategoryServiceImpl getAll() starts");
 		Session session = null;
-		List<CategoryReq> categoriesList = new ArrayList<CategoryReq>();
+		List<CategoryModel> categoriesList = new ArrayList<CategoryModel>();
 
 		try {
 
@@ -196,7 +196,7 @@ public class CategoryServiceImpl implements CategoryService {
 
 			if (categories != null && !categories.isEmpty()) {
 				for (Category category : categories) {
-					CategoryReq categoryReq = new CategoryReq();
+					CategoryModel categoryReq = new CategoryModel();
 					categoryReq.setCategoryId(category.getCategoryId());
 					categoryReq.setName(category.getName());
 					categoryReq.setHighlightName(category.getHighLight().getTypeName());
@@ -216,11 +216,11 @@ public class CategoryServiceImpl implements CategoryService {
 	}
 
 	@Override
-	public CategoryReq get(Long id) {
+	public CategoryModel get(Long id) {
 		
 		logger.info("CategoryServiceImpl get() starts, categoryId :"+id);
 		Session session = null;
-		CategoryReq categoryReq = new CategoryReq();
+		CategoryModel categoryReq = new CategoryModel();
 
 		try {
 
@@ -255,10 +255,10 @@ public class CategoryServiceImpl implements CategoryService {
 	}
 
 	@Override
-	public CategoryReq getOpenAdd() {
+	public CategoryModel getOpenAdd() {
 		
 		logger.info("CategoryServiceImpl getOpenAdd() starts");
-		CategoryReq categoryReq = new CategoryReq();
+		CategoryModel categoryReq = new CategoryModel();
 
 		List<Status> statusList = statusService.getAll();
 		categoryReq.setStatusList(statusList);
@@ -274,11 +274,11 @@ public class CategoryServiceImpl implements CategoryService {
 	}
 
 	@Override
-	public List<CategoryReq> getCategoryByCategoryName(String categoryName) {
+	public List<CategoryModel> getCategoryByCategoryName(String categoryName) {
 		
 		logger.info("CategoryServiceImpl getCategoryByCategoryName() starts, categoryName :"+categoryName);
 		Session session = null;
-		List<CategoryReq> categories = new ArrayList<CategoryReq>();
+		List<CategoryModel> categories = new ArrayList<CategoryModel>();
 
 		try {
 			session = sessionFactory.openSession();
@@ -286,7 +286,7 @@ public class CategoryServiceImpl implements CategoryService {
 			
 			if (categoryList != null && !categoryList.isEmpty()) {
 				for (Category category : categoryList) {
-					CategoryReq categoryObj = new CategoryReq();
+					CategoryModel categoryObj = new CategoryModel();
 					categoryObj.setCategoryId(category.getCategoryId());
 					categoryObj.setName(category.getName());
 					categoryObj.setHighlightName(category.getHighLight().getTypeName());
@@ -312,18 +312,57 @@ public class CategoryServiceImpl implements CategoryService {
 	}
 
 	@Override
-	public List<CategoryReq> getSpecificData() {
+	public List<CategoryModel> getSpecificData() {
 		
-		Session session = sessionFactory.openSession();
-		List<Object[]> categoryData = categoryDao.getSpecificData(session,"Category","categoryId", "name");
+		Session session = null;
+		List<CategoryModel> categories = null;
+		try{
+			session = sessionFactory.openSession();
+			List<Object[]> categoryData = categoryDao.getSpecificData(session,"Category","categoryId", "name");
 
-		List<CategoryReq> categories = new ArrayList<CategoryReq>();
-		if (categoryData != null && !categoryData.isEmpty()) {
-			for (Object[] row : categoryData) {
-				CategoryReq categoryObj = new CategoryReq();
-				categoryObj.setCategoryId((Long) row[0]);
-				categoryObj.setName(String.valueOf(row[1]));
-				categories.add(categoryObj);
+			categories = new ArrayList<CategoryModel>();
+			if (categoryData != null && !categoryData.isEmpty()) {
+				for (Object[] row : categoryData) {
+					CategoryModel categoryObj = new CategoryModel();
+					categoryObj.setCategoryId((Long) row[0]);
+					categoryObj.setName(String.valueOf(row[1]));
+					categories.add(categoryObj);
+				}
+			}
+		} finally {
+			if (session != null) {
+				session.close();
+			}
+		}
+		
+
+		return categories;
+	}
+
+	@Override
+	public List<CategoryModel> getCategoriesBasedOnType(String unitTypeName) {
+
+		Session session = null;
+		List<CategoryModel> categories = null;
+		try {
+			session = sessionFactory.openSession();
+			List<Category> categoryList = categoryDao.getCategoriesBasedOnType(unitTypeName, session);
+
+			categories = new ArrayList<CategoryModel>();
+			if (categoryList != null && !categoryList.isEmpty()) {
+				for (Category category : categoryList) {
+					CategoryModel categoryObj = new CategoryModel();
+					categoryObj.setCategoryId(category.getCategoryId());
+					categoryObj.setName(category.getName());
+					categoryObj.setHighlightName(category.getHighLight().getTypeName());
+					categoryObj.setTypeName(category.getType().getTypeName());
+					categoryObj.setStatusName(category.getStatus().getStatus());
+					categories.add(categoryObj);
+				}
+			}
+		} finally {
+			if (session != null) {
+				session.close();
 			}
 		}
 

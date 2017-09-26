@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.hibernate.Session;
 
+import com.dpu.model.CategoryModel;
 import com.dpu.model.IssueModel;
 
 public interface IssueService {
@@ -30,5 +31,7 @@ public interface IssueService {
 	List<IssueModel> getIssueforCategoryAndUnitType(Long categoryId, Long unitTypeId, Session session);
 
 	Object updateStatus(Long issueId, Long statusId);
+
+	List<CategoryModel> getUnitCategories(String unitTypeName);
 
 }

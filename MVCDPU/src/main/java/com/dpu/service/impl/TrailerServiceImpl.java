@@ -26,7 +26,7 @@ import com.dpu.entity.Status;
 import com.dpu.entity.Terminal;
 import com.dpu.entity.Trailer;
 import com.dpu.entity.Type;
-import com.dpu.model.CategoryReq;
+import com.dpu.model.CategoryModel;
 import com.dpu.model.DivisionReq;
 import com.dpu.model.Failed;
 import com.dpu.model.Success;
@@ -315,7 +315,7 @@ public class TrailerServiceImpl implements TrailerService{
 				List<TypeResponse> trailerTypeList = AllList.getTypeResponse(session, 7l);
 				response.setTrailerTypeList(trailerTypeList);
 				
-				List<CategoryReq> categoryList = AllList.getCategoryList(session, "Category", "categoryId", "name");
+				List<CategoryModel> categoryList = AllList.getCategoryList(session, "Category", "categoryId", "name");
 				response.setCategoryList(categoryList);
 				
 				List<DivisionReq> divisionList = AllList.getDivisionList(session, "Division", "divisionId", "divisionName");
@@ -349,13 +349,13 @@ public class TrailerServiceImpl implements TrailerService{
 			trailer.setTrailerTypeList(trailerTypeList);
 				
 			List<Object[]> categoryListObj = categoryDao.getSpecificData(session,"Category", "categoryId", "name");
-			List<CategoryReq> categoryList = new ArrayList<CategoryReq>();
+			List<CategoryModel> categoryList = new ArrayList<CategoryModel>();
 			Iterator<Object[]> operationIt = categoryListObj.iterator();
 	
 			while(operationIt.hasNext())
 			{
 				Object o[] = (Object[])operationIt.next();
-				CategoryReq type = new CategoryReq();
+				CategoryModel type = new CategoryModel();
 				type.setCategoryId(Long.parseLong(String.valueOf(o[0])));
 				type.setName(String.valueOf(o[1]));
 				categoryList.add(type);

@@ -6,29 +6,31 @@ package com.dpu.service;
 import java.util.List;
 
 import com.dpu.entity.Category;
-import com.dpu.model.CategoryReq;
+import com.dpu.model.CategoryModel;
 
 /**
  * @author jagvir
  *
  */
 public interface CategoryService {
-	Object addCategory(CategoryReq categoryReq);
+	Object addCategory(CategoryModel categoryReq);
 
-	Object update(Long id, CategoryReq categoryReq);
+	Object update(Long id, CategoryModel categoryReq);
 
 	Object delete(Long id);
 
-	List<CategoryReq> getAll( );
+	List<CategoryModel> getAll( );
 
-	CategoryReq getOpenAdd();
+	CategoryModel getOpenAdd();
 
-	CategoryReq get(Long id);
+	CategoryModel get(Long id);
 
-	List<CategoryReq> getCategoryByCategoryName(String categoryName);
+	List<CategoryModel> getCategoryByCategoryName(String categoryName);
 	
 	Category getCategory(Long categoryId);
 
-	List<CategoryReq> getSpecificData();
+	List<CategoryModel> getSpecificData();
+
+	List<CategoryModel> getCategoriesBasedOnType(String unitTypeName);
 
 }

@@ -18,4 +18,6 @@ public interface CategoryDao extends GenericDao<Category> {
 	List<Category> getCategoryByCategoryName(Session session,
 			String categoryName);
 
+	List<Category> getCategoriesBasedOnType(String unitTypeName, Session session);
+
 }

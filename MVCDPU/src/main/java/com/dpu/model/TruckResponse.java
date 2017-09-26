@@ -36,7 +36,7 @@ public class TruckResponse implements Serializable {
 
 	private String catogoryName;
 	private Long categoryId;
-	private List<CategoryReq> categoryList;
+	private List<CategoryModel> categoryList;
 
 	private String statusName;
 	private Long statusId;
@@ -78,11 +78,11 @@ public class TruckResponse implements Serializable {
 		this.terminalList = terminalList;
 	}
 
-	public List<CategoryReq> getCategoryList() {
+	public List<CategoryModel> getCategoryList() {
 		return categoryList;
 	}
 
-	public void setCategoryList(List<CategoryReq> categoryList) {
+	public void setCategoryList(List<CategoryModel> categoryList) {
 		this.categoryList = categoryList;
 	}
 

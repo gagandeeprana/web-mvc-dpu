@@ -59,7 +59,7 @@ public class CarrierContractModel {
 
 	private String categoryName;
 	private Long categoryId;
-	private List<CategoryReq> categoryList;
+	private List<CategoryModel> categoryList;
 
 	private String roleName;
 	private Long roleId;
@@ -381,13 +381,13 @@ public class CarrierContractModel {
 	}
 
 	
-	public List<CategoryReq> getCategoryList() {
+	public List<CategoryModel> getCategoryList() {
 	
 		return categoryList;
 	}
 
 	
-	public void setCategoryList(List<CategoryReq> categoryList) {
+	public void setCategoryList(List<CategoryModel> categoryList) {
 	
 		this.categoryList = categoryList;
 	}
