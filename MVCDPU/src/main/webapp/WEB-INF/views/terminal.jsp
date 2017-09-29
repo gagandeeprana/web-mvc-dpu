@@ -58,7 +58,8 @@ function createTerminal(urlToHit,methodType){
 	   	var locationId = $('#locationId :selected').val();
 	   	//var serviceIds = $('select#serviceIds').val();
 	   	var e = document.getElementById("serviceIds");
-	    var result = new Array()
+	    var result = new Array();
+	    alert(e.options[e.selectedIndex].value);
         result.push(e.options[e.selectedIndex].value)
 
 	   	var terminalId;

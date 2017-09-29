@@ -31,7 +31,7 @@ import com.dpu.model.DivisionReq;
 import com.dpu.model.Failed;
 import com.dpu.model.Success;
 import com.dpu.model.TerminalResponse;
-import com.dpu.model.TrailerRequest;
+import com.dpu.model.TrailerModel;
 import com.dpu.model.TypeResponse;
 import com.dpu.service.CategoryService;
 import com.dpu.service.DivisionService;
@@ -97,7 +97,7 @@ public class TrailerServiceImpl implements TrailerService{
 	private String trailer_unit_no_already_exists;
 	
 	@Override
-	public Object add(TrailerRequest trailerRequest) {
+	public Object add(TrailerModel trailerRequest) {
 		
 		logger.info("Inside TrailerServiceImpl add() starts");
 		Session session = null;
@@ -163,7 +163,7 @@ public class TrailerServiceImpl implements TrailerService{
 	}
 	
 	@Override
-	public Object update(Long trailerId, TrailerRequest trailerRequest) {
+	public Object update(Long trailerId, TrailerModel trailerRequest) {
 		
 		logger.info("Inside TrailerServiceImpl update() Starts, trailerId :"+ trailerId);
 		Session session =null;
@@ -256,11 +256,11 @@ public class TrailerServiceImpl implements TrailerService{
 	}
 
 	@Override
-	public List<TrailerRequest> getAll() {
+	public List<TrailerModel> getAll() {
 		
 		logger.info("Inside TrailerServiceImpl getAll() starts "); 
 		Session session = null;
-		List<TrailerRequest> returnResponse = new ArrayList<TrailerRequest>();
+		List<TrailerModel> returnResponse = new ArrayList<TrailerModel>();
 		
 		try{
 			session = sessionFactory.openSession();
@@ -268,7 +268,7 @@ public class TrailerServiceImpl implements TrailerService{
 			if(trailerList !=  null && !trailerList.isEmpty()){
 				
 				for (Trailer trailer : trailerList) {
-					TrailerRequest response = new TrailerRequest();
+					TrailerModel response = new TrailerModel();
 					BeanUtils.copyProperties(trailer, response);
 					response.setCategory(trailer.getCategory().getName());
 					response.setDivision(trailer.getDivision().getDivisionName());
@@ -292,11 +292,11 @@ public class TrailerServiceImpl implements TrailerService{
 	}
 
 	@Override
-	public TrailerRequest get(Long trailerId) {
+	public TrailerModel get(Long trailerId) {
 		
 		logger.info("Inside TrailerServiceImpl get() starts "); 
 		Session session = null;
-		TrailerRequest response = new TrailerRequest();
+		TrailerModel response = new TrailerModel();
 		
 		try{
 			session = sessionFactory.openSession();
@@ -315,7 +315,7 @@ public class TrailerServiceImpl implements TrailerService{
 				List<TypeResponse> trailerTypeList = AllList.getTypeResponse(session, 7l);
 				response.setTrailerTypeList(trailerTypeList);
 				
-				List<CategoryModel> categoryList = AllList.getCategoryList(session, "Category", "categoryId", "name");
+				List<CategoryModel> categoryList = categoryService.getCategoriesBasedOnType("Trailer");
 				response.setCategoryList(categoryList);
 				
 				List<DivisionReq> divisionList = AllList.getDivisionList(session, "Division", "divisionId", "divisionName");
@@ -336,10 +336,10 @@ public class TrailerServiceImpl implements TrailerService{
 	}
 
 	@Override
-	public TrailerRequest getOpenAdd() {
+	public TrailerModel getOpenAdd() {
 
 		Session session = sessionFactory.openSession();
-		TrailerRequest trailer = new TrailerRequest();
+		TrailerModel trailer = new TrailerModel();
 		
 		try{
 			List<Status> statusList = AllList.getStatusList(session);
@@ -348,20 +348,8 @@ public class TrailerServiceImpl implements TrailerService{
 			List<TypeResponse> trailerTypeList = AllList.getTypeResponse(session, 7l);
 			trailer.setTrailerTypeList(trailerTypeList);
 				
-			List<Object[]> categoryListObj = categoryDao.getSpecificData(session,"Category", "categoryId", "name");
-			List<CategoryModel> categoryList = new ArrayList<CategoryModel>();
-			Iterator<Object[]> operationIt = categoryListObj.iterator();
-	
-			while(operationIt.hasNext())
-			{
-				Object o[] = (Object[])operationIt.next();
-				CategoryModel type = new CategoryModel();
-				type.setCategoryId(Long.parseLong(String.valueOf(o[0])));
-				type.setName(String.valueOf(o[1]));
-				categoryList.add(type);
-			}
+			List<CategoryModel> categoryList = categoryService.getCategoriesBasedOnType("Trailer");
 			trailer.setCategoryList(categoryList);
-		
 		
 			List<Object[]> divisionListObj =  divisionDao.getSpecificData(session,"Division", "divisionId", "divisionName");
 		
@@ -404,17 +392,17 @@ public class TrailerServiceImpl implements TrailerService{
 	}
 
 	@Override
-	public List<TrailerRequest> getSpecificData() {
+	public List<TrailerModel> getSpecificData() {
 		
 		Session session = sessionFactory.openSession();
-		List<TrailerRequest> trailerData = new ArrayList<TrailerRequest>();
+		List<TrailerModel> trailerData = new ArrayList<TrailerModel>();
 		
 		try{
 			List<Object[]> trailerIdAndNameList = trailerdao.getSpecificData(session,"Trailer", "trailerId", "owner");
 		
 			if(trailerIdAndNameList != null && !trailerIdAndNameList.isEmpty()){
 				for (Object[] row : trailerIdAndNameList) {
-					TrailerRequest trailerRequest =  new TrailerRequest();
+					TrailerModel trailerRequest =  new TrailerModel();
 					trailerRequest.setTrailerId(Long.parseLong(String.valueOf(row[0])));
 					trailerRequest.setOwner(String.valueOf(row[1]));
 					trailerData.add(trailerRequest);

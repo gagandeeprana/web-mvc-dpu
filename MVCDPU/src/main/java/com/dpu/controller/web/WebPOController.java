@@ -5,7 +5,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.websocket.server.PathParam;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -249,5 +248,15 @@ public class WebPOController {
 	public List<CategoryModel> getCategories(@PathVariable("unittype") String unitType) {
 		List<CategoryModel> categories = categoryService.getCategoriesBasedOnType(unitType);
 		return categories;
+	}
+	
+	@RequestMapping(value = "/getissuesbasedonunitnoandunittype/unittypeid/{unittypeid}/unitno/{unitno}", method = RequestMethod.GET)
+	@ResponseBody
+	public List<IssueModel> getIssuesByUnitNo(@PathVariable("unittypeid") String unitTypeId, @PathVariable("unitno") String unitNo) {
+		Long unitTId = Long.parseLong(unitTypeId);
+		Long unitN = Long.parseLong(unitNo);
+		
+		List<IssueModel> issues = purchaseOrderService.getUnitNoIssues(unitTId, unitN);
+		return issues;
 	}
 }

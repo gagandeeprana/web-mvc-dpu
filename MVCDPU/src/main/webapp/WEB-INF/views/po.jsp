@@ -28,36 +28,11 @@
 .multiselect-container>li{
 margin-left: 10px;
 }
+#unitNo{
+    max-height: 33px;
+    max-width: 130px
+}
 </style>
-<script type="text/javascript">
- function searchUnitNos() {
-	 
-   	var arrList = new Array();
-	arrList.push({label:"blue"});
-	arrList.push({label:"green"});
-	arrList.push({label:"pink"});
-	arrList.push({label:"red"});
-	arrList.push({label:"yellow"});
-	
-   	/* $("#searchedUnitNos").autocomplete({
-  	      source: arrList,
-  	   	  minLength: 0,
-        	
-  	      select: function (event, ui) {
-  	    	   $("#searchedUnitNos").val( ui.item );
-  	    		return false;
-  	        }
-  	    }).autocomplete("instance")._renderItem = function(ul, item) {
-  	      return $( "<li>" )
-  	        .append("<div>" + item.label + "</div>")
-  	        .appendTo(ul);
- 	    }; */
- 	    
- 	   $('#chkveg').multiselect({
-	 		  includeSelectAllOption: true
- 		  });
- }
-</script>
 <style type="text/css">
 .modal-dialog {
   width: 98%;
@@ -614,10 +589,11 @@ function showIssueDetail(quesId) {
         }
         
         function clearAll() {
-        	document.getElementById("vendorId").innerHTML = "";
-        	/* document.getElementById("unitTypeId").innerHTML = ""; */
-        	/* document.getElementById("categoryId").innerHTML = ""; */
-        	/* document.getElementById("statusId").innerHTML = ""; */
+        	document.getElementById("vendorId").innerHTML = "<option>Please Select</option>";
+        	document.getElementById("unitTypeId").innerHTML = "<option>Please Select</option>";        	
+        	document.getElementById("categoryId").innerHTML = "<option>Please Select</option>";
+        	$('#unitNo').multiselect('destroy');
+       	    $("#unitNo").html("<option>Please Select</option>");
             $("#invoiceNo").val("");
             $("#message").val("");
         }
@@ -863,6 +839,70 @@ return true;
 	 }
  }
  
+//To-Do
+ function getOnlyUnitNos() {
+ 	
+ 	 var unitTypeId = $('#unitTypeId :selected').val();
+ 	 var categoryId = $('#categoryId :selected').val();
+ 	 
+ 	if(categoryId == "Please Select") {
+ 		categoryId = 0;
+ 	}
+ 	if(unitTypeId != "Please Select") {
+
+ 		$.get("<%=request.getContextPath()%>"+"/issue/getunitno/category/" + categoryId + "/unittype/" + unitTypeId, function(data) {
+ 	        
+ 			 var unitNo = document.getElementById("unitNo");
+ 	         $("#unitNo").empty();
+ 	         var opt = "";
+ 	         if(data.unitNos != null && data.unitNos.length > 0) {
+ 		         if(data.unitNos != null && data.unitNos.length > 0) {
+ 			         for(var i = 0;i < data.unitNos.length;i++) {
+ 			         	opt += "<option value='"+data.unitNos[i]+"' id='chk"+data.unitNos[i]+"'>"+data.unitNos[i]+"</option>"
+ 			         }
+ 		         } else {
+ 					toastr.error('No such UnitNo. exists for selected UnitType and Category', 'Error!')
+ 		         }
+ 		         
+ 		         $("#unitNo").html(opt);
+ 		         $('#unitNo').multiselect({
+ 			 		  	includeSelectAllOption: true
+ 				 });
+ 		         
+ 		         var issuesFroDropDown;
+ 		         var selectedUnitNos = [];
+ 		         
+ 		         var allUnitNos = data.unitNos;
+ 		         
+ 		         $("#btnGo").click(function() {
+ 		        	 alert("GOOO");
+				 	 var unitNo1 = document.getElementById("unitNo");
+				 	 alert("1");
+			         alert(unitNo1.options[unitNo1.selectedIndex].value);
+				 	 alert("2");
+					/* for(var i=0;i<uNo.length;i++) {
+						if(uNo[i].selected == true) {
+							alert(uNo[i].option.value);
+						}
+					}
+ 		        	 var unitNo = JSON.stringify($(this).val());
+ 		       		alert("UNITNOS: " + unitNo);
+ 		       	
+	 		       	unitNo = unitNo.substring(2,unitNo.length-2);
+	 		       	selectedUnitNos.push(unitNo); */
+ 		       	
+ 		         });
+ 	         } else {
+ 	        	$('#unitNo').multiselect('destroy');
+ 				$("#unitNo").html("<option>Please Select</option>");
+ 	         }
+ 	    });
+ 	} else {
+ 		$('#unitNo').multiselect('destroy');
+		$("#unitNo").html("<option>Please Select</option>");
+ 	}
+ }
+ 
 </script>
 
 </head>
@@ -876,7 +916,7 @@ return true;
 					</div>
 				</div>
 			</div>
-		<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="checkFlag('add'); onClickMethodQuestion('0'); emptyMessageDiv();searchUnitNos();" >Add New</button>
+		<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="checkFlag('add'); onClickMethodQuestion('0'); emptyMessageDiv();" >Add New</button>
 		<div class="form-group">
 		<div class="row">
 			<div class="col-sm-12" align= "center">
@@ -915,6 +955,7 @@ return true;
 													<b>Vendor</b>												
 												</span>
 												<select class="form-control" name="vendorId" id="vendorId">
+													<option>Please Select</option>
 												</select>
 											</div>
 											</div>
@@ -927,7 +968,7 @@ return true;
 													<span class="input-group-addon">
 														 <b>UnitType</b>												
 													</span>
-													<select id="unitTypeId" class="form-control" name="unitTypeId" onchange="getCategories()">
+													<select id="unitTypeId" class="form-control" name="unitTypeId" onchange="getCategories();getOnlyUnitNos();">
 														<option>Please Select</option>
 													</select>
 												</div>
@@ -941,7 +982,7 @@ return true;
 													<span class="input-group-addon">
 														 <b>Category</b>												
 													</span>
-													<select class="form-control" name="categoryId" id="categoryId" onchange="getUnitNo()">
+													<select class="form-control" name="categoryId" id="categoryId" onchange="getOnlyUnitNos();">
 														<option>Please Select</option>
 													</select>
 												</div>
@@ -957,14 +998,10 @@ return true;
 													</span>
 													<!-- <input type="text" id="searchedUnitNos" name="searchedUnitNos" />
 													<input type="hidden" id="searchedUnitNoshidden" /> -->
-													<select id="chkveg" multiple="multiple">
-														<option value="cheese">121</option>
-														<option value="tomatoes">432</option>
-														<option value="mozarella">5454</option>
-														<option value="mushrooms">8678</option>
-														<option value="pepperoni">56765</option>
-														<option value="onions">768976</option>
-														</select>
+													<select id="unitNo" class="form-control" name="unitNo" multiple="multiple">
+														<option>Please select</option>
+													</select>
+													<button type="button" class="btn btn-danger" id = "btnGo">Go</button>
 												</div>
 											</div>
 										</div>
@@ -1244,7 +1281,7 @@ return true;
 				        	</div>
 					        </div>
 					        <div class="modal-footer">
-					    	  <input type="reset" class="btn btn-primary" id= "btnIssueReset" value="Reset" />
+					    	  <input type="button" class="btn btn-primary" id= "btnIssueReset" value="Reset" onclick="clearAll()" />
 							  <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
 					        </div>
 					      </div>

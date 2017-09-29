@@ -26,4 +26,6 @@ public interface IssueDao extends GenericDao<Issue> {
 	List<Issue> issueforCategoryAndUnitType(Long categoryId, Long unitTypeId, Session session);
 
 	void updateStatus(Issue issue, Type status, Session session);
+
+	List<Issue> issuesforUnitTypeAndNo(Long unitTypeId, Long unitNo, Session session);
 }

@@ -20,7 +20,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.dpu.constants.Iconstants;
 import com.dpu.model.Failed;
-import com.dpu.model.TrailerRequest;
+import com.dpu.model.TrailerModel;
 import com.dpu.service.TrailerService;
 
 @Controller
@@ -34,7 +34,7 @@ public class WebTrailerController {
 	@RequestMapping(value = "/showtrailer", method = RequestMethod.GET)
 	public ModelAndView showTrailerScreen() {
 		ModelAndView modelAndView = new ModelAndView();
-		List<TrailerRequest> lstTrailers = trailerService.getAll();
+		List<TrailerModel> lstTrailers = trailerService.getAll();
 		modelAndView.addObject("LIST_TRAILER", lstTrailers);
 		modelAndView.setViewName("trailer");
 		return modelAndView;
@@ -42,14 +42,14 @@ public class WebTrailerController {
 
 	@RequestMapping(value = "/trailer/getopenadd", method = RequestMethod.GET)
 	@ResponseBody
-	public TrailerRequest getOpenAdd() {
-		TrailerRequest trailerRequest = null;
+	public TrailerModel getOpenAdd() {
+		TrailerModel TrailerModel = null;
 		try {
-			trailerRequest = trailerService.getOpenAdd();
+			TrailerModel = trailerService.getOpenAdd();
 		} catch (Exception e) {
 			System.out.println(e);
 		}
-		return trailerRequest;
+		return TrailerModel;
 	}
 
 	private Object createFailedObject(String errorMessage) {
@@ -60,12 +60,12 @@ public class WebTrailerController {
 
 	@RequestMapping(value = "/savetrailer", method = RequestMethod.POST)
 	@ResponseBody
-	public Object saveTrailer(@ModelAttribute("trailer") TrailerRequest trailerRequest, HttpServletRequest request) {
+	public Object saveTrailer(@ModelAttribute("trailer") TrailerModel TrailerModel, HttpServletRequest request) {
 		HttpSession session = request.getSession();
 
 		if (session != null) {
 			if (session.getAttribute("un") != null) {
-				Object response = trailerService.add(trailerRequest);
+				Object response = trailerService.add(TrailerModel);
 				if (response instanceof Failed) {
 					return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
 				} else {
@@ -79,27 +79,27 @@ public class WebTrailerController {
 
 	@RequestMapping(value = "/gettrailer/trailerId", method = RequestMethod.GET)
 	@ResponseBody
-	public TrailerRequest getTrailer(@RequestParam("trailerId") Long trailerId) {
-		TrailerRequest trailerRequest = null;
+	public TrailerModel getTrailer(@RequestParam("trailerId") Long trailerId) {
+		TrailerModel TrailerModel = null;
 		try {
-			trailerRequest = trailerService.get(trailerId);
+			TrailerModel = trailerService.get(trailerId);
 		} catch (Exception e) {
 			System.out.println(e);
 			logger.info("Exception in getCategory is: " + e);
 		}
-		return trailerRequest;
+		return TrailerModel;
 	}
 
 	@RequestMapping(value = "/updatetrailer", method = RequestMethod.POST)
 	@ResponseBody
-	public Object updateTrailer(@ModelAttribute("trailer") TrailerRequest trailerRequest,
+	public Object updateTrailer(@ModelAttribute("trailer") TrailerModel TrailerModel,
 			@RequestParam("trailerid") Long trailerId, HttpServletRequest request) {
 
 		HttpSession session = request.getSession();
 
 		if (session != null) {
 			if (session.getAttribute("un") != null) {
-				Object response = trailerService.update(trailerId, trailerRequest);
+				Object response = trailerService.update(trailerId, TrailerModel);
 				if (response instanceof Failed) {
 					return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
 				} else {

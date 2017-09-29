@@ -16,6 +16,8 @@
 <script
 	src=" //maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 	 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+	 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.min.js"></script>
+	 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/css/bootstrap-multiselect.css" />
  	<!--  <script type="text/javascript" src="/WEB-INF/bootstrap-typeahead.js">
  	</script>-->
   
@@ -43,19 +45,46 @@ textarea{
 .ui-autocomplete{
 z-index: 99999!important;
 }
+.multiselect-container>li>a>label {
+  padding: 4px 30px 3px 20px;
+  margin-left:5px;
+}
 
+.multiselect-container>li{
+margin-left: 10px;
+}
+
+#unitNo{
+    max-height: 33px;
+    max-width: 130px
+}
 </style>
 	<jsp:include page="Include.jsp"></jsp:include>
  <script src="<c:url value="/resources/validations.js" />"></script>
 <script type="text/javascript">
-function navigate() {
+function navigate(isSaveAndNew) {
 	var flag = $("#addUpdateFlag").val();
 	if(flag == 'add') {
 		createIssue('saveissue','POST');
+
+		if(isSaveAndNew){
+    		$("#title").val("");
+            $("#description").val("");
+           	document.getElementById("vmcId").options[0].selected = true;
+        	document.getElementById("unitType").options[0].selected = true;
+        	document.getElementById("issueCategory").options[0].selected = true;
+        	$('#unitNo').multiselect('destroy');
+			$("#unitNo").html("<option>Please Select</option>");
+        	document.getElementById("reportedBy").options[0].selected = true;
+        	document.getElementById("status").options[0].selected = true;
+    	}else{
+    		$('#myModal').modal('toggle');
+    	}
 	} else if(flag == 'update') {
 		createIssue('updateissue','PUT');			
 	}
 }
+
 function createIssue(urlToHit,methodType){
 	 
 	 if(!check()){
@@ -91,13 +120,7 @@ function createIssue(urlToHit,methodType){
 			      },
 			      success: function(result){
 		        try{
-		        	$("#btnClose").click(function() {
-			        	$('#myModal').modal('toggle');
-		        	});
-		        	$("#btnNew").click(function() {
-		        		
-		        		onClickMethodQuestion('0');
-		        	});
+		        	
 		        	var list = result.resultList;
 					fillIssueData(list);
 
@@ -111,7 +134,6 @@ function createIssue(urlToHit,methodType){
 			        	$('#myModal').modal('toggle');
 		        	});
 		        	$("#btnNew").click(function() {
-		        		
 		        		onClickMethodQuestion('0');
 		        	});
 				  	var obj = JSON.parse(result.responseText);
@@ -362,12 +384,13 @@ function checkFlag(field) {
         function clearAll() {
             $("#title").val("");
             $("#description").val("");
-        	/* document.getElementById("vmcId").innerHTML = ""; */
-        	/* document.getElementById("unitType").innerHTML = ""; */
-        	/* document.getElementById("issueCategory").innerHTML = ""; */
-        	/* document.getElementById("unitNo").innerHTML = ""; */
-        	/* document.getElementById("reportedBy").innerHTML = "";
-        	document.getElementById("status").innerHTML = ""; */
+           	document.getElementById("vmcId").innerHTML = "<option>Please Select</option>";
+        	document.getElementById("unitType").innerHTML = "<option>Please Select</option>";
+        	document.getElementById("issueCategory").innerHTML = "<option>Please Select</option>";
+        	$('#unitNo').multiselect('destroy');
+       	    $("#unitNo").html("<option>Please Select</option>");
+        	document.getElementById("reportedBy").innerHTML = "<option>Please Select</option>";
+        	document.getElementById("status").innerHTML = "<option>Please Select</option>";
         }
 </script>
 
@@ -424,12 +447,44 @@ function getCategories() {
 }
 
 //To-Do
-function getOnlyUnitNos(categoryId, unitTypeId) {
+function getOnlyUnitNos() {
 	
-	$.get("<%=request.getContextPath()%>"+"/getonlyunitnos/category/" + categoryId + "/unitType/" + unitTypeId, function(data) {
-        
-        
-    });
+	 var unitTypeId = $('#unitType :selected').val();
+	 var categoryId = $('#issueCategory :selected').val();
+	 
+	if(categoryId == "Please Select") {
+		categoryId = 0;
+	}
+	if(unitTypeId != "Please Select") {
+
+		$.get("<%=request.getContextPath()%>"+"/issue/getunitno/category/" + categoryId + "/unittype/" + unitTypeId, function(data) {
+	        
+			 var unitNo = document.getElementById("unitNo");
+	         $("#unitNo").empty();
+	         var opt = "";
+	         if(data.unitNos != null && data.unitNos.length > 0) {
+		         if(data.unitNos != null && data.unitNos.length > 0) {
+			         for(var i = 0;i < data.unitNos.length;i++) {
+			         	opt += "<option value='"+data.unitNos[i]+"' >"+data.unitNos[i]+"</option>"
+			         }
+		         } else {
+					toastr.error('No such UnitNo. exists for selected UnitType and Category', 'Error!')
+		         }
+		         
+		         
+		         $("#unitNo").html(opt);
+		         $('#unitNo').multiselect({
+			 		  	includeSelectAllOption: true
+				 });
+	         } else {
+	 			$('#unitNo').multiselect('destroy');
+	        	 $("#unitNo").html("<option>Please Select</option>");
+	         }
+	    });
+	} else {
+			$('#unitNo').multiselect('destroy');
+			$("#unitNo").html("<option>Please Select</option>");
+   		}
 }
 </script>
 
@@ -492,7 +547,7 @@ function getOnlyUnitNos(categoryId, unitTypeId) {
 														 <b>VMC</b>												
 													</span>
 													<select class="form-control" name="vmcId" id="vmcId">
-														<option>Please Select</option>
+														<option value="0">Please Select</option>
 													</select>
 												</div>
 											</div>
@@ -505,7 +560,7 @@ function getOnlyUnitNos(categoryId, unitTypeId) {
 													<span class="input-group-addon">
 														 <b>UnitType</b>												
 													</span>
-													<select id="unitType" class="form-control" name="unitTypeId" onchange="getCategories()">
+													<select id="unitType" class="form-control" name="unitTypeId" onchange="getCategories();getOnlyUnitNos();">
 														<option>Please Select</option>
 													</select>
 												</div>
@@ -519,7 +574,7 @@ function getOnlyUnitNos(categoryId, unitTypeId) {
 													<span class="input-group-addon">
 														 <b>Category</b>												
 													</span>
-													<select id="issueCategory" class="form-control" name="categoryId" onchange="getUnitNo()">
+													<select id="issueCategory" class="form-control" name="categoryId" onchange="getOnlyUnitNos();">
 														<option>Please Select</option>
 													</select>
 												</div>
@@ -534,6 +589,7 @@ function getOnlyUnitNos(categoryId, unitTypeId) {
 														 <b>UnitNo</b>												
 													</span>
 													<select id="unitNo" class="form-control" name="unitNo">
+														<option>Please select</option>
 													</select>
 												</div>
 											</div>
@@ -583,7 +639,7 @@ function getOnlyUnitNos(categoryId, unitTypeId) {
 				        	</div>
 					        </div>
 					        <div class="modal-footer">
-					          <input type="button" class="btn btn-primary" id= "btnNew" value="Save&New" onclick="navigate()"/>
+					          <input type="button" class="btn btn-primary" id= "btnNew" value="Save&New" onclick="navigate(true)"/>
 					          <input type="button" class="btn btn-primary" id= "btnClose" value="Save&Close" onclick="navigate()"/>
 					    	  <!-- <input type="button" class="btn btn-primary" id= "btnExit" value="Save&Exit" /> -->
 					    	  <input type="reset" class="btn btn-primary" id= "btnReset" value="Reset" />

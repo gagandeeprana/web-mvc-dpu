@@ -27,4 +27,6 @@ public interface PurchaseOrderService {
 
 	List<PurchaseOrderModel> getStatusPOs(String statusVal);
 
+	List<IssueModel> getUnitNoIssues(Long unitTypeId, Long unitNo);
+
 }

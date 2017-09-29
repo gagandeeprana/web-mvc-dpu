@@ -12,7 +12,6 @@ import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.ConstraintViolationException;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -27,7 +26,6 @@ import com.dpu.dao.TruckDao;
 import com.dpu.dao.TypeDao;
 import com.dpu.entity.Category;
 import com.dpu.entity.Division;
-import com.dpu.entity.Handling;
 import com.dpu.entity.Status;
 import com.dpu.entity.Terminal;
 import com.dpu.entity.Truck;
@@ -37,7 +35,7 @@ import com.dpu.model.DivisionReq;
 import com.dpu.model.Failed;
 import com.dpu.model.Success;
 import com.dpu.model.TerminalResponse;
-import com.dpu.model.TruckResponse;
+import com.dpu.model.TruckModel;
 import com.dpu.model.TypeResponse;
 import com.dpu.service.CategoryService;
 import com.dpu.service.DivisionService;
@@ -106,7 +104,7 @@ public class TruckServiceImpl implements TruckService {
 	}
 
 	@Override
-	public Object update(Long id, TruckResponse truckResponse) {
+	public Object update(Long id, TruckModel truckResponse) {
 	
 		logger.info("TruckServiceImpl update() starts, truckId :"+id);
 		Truck truck = null;
@@ -208,11 +206,11 @@ public class TruckServiceImpl implements TruckService {
 	}
 
 	@Override
-	public TruckResponse get(Long id) {
+	public TruckModel get(Long id) {
 		logger.info("[TruckServiceImpl] [get] : Enter ");
 		
 		Session session = sessionFactory.openSession();
-		TruckResponse truckResponse = new TruckResponse();
+		TruckModel truckResponse = new TruckModel();
 		
 		try{
 			Truck truck = truckDao.findById(session, id);
@@ -234,8 +232,8 @@ public class TruckServiceImpl implements TruckService {
 				List<Status> lstStatus = AllList.getStatusList(session);
 				truckResponse.setStatusList(lstStatus);
 
-				List<CategoryModel> lstCategories = AllList.getCategoryList(session, "Category", "categoryId", "name");
-				truckResponse.setCategoryList(lstCategories);
+				List<CategoryModel> categoryList = categoryService.getCategoriesBasedOnType("Truck");
+				truckResponse.setCategoryList(categoryList);
 
 				List<TerminalResponse> lstTerminalResponses = AllList.getTerminalList(session, "Terminal", "terminalId", "terminalName");
 				truckResponse.setTerminalList(lstTerminalResponses);
@@ -259,11 +257,11 @@ public class TruckServiceImpl implements TruckService {
 	}
 
 	@Override
-	public List<TruckResponse> getAllTrucks(String owner) {
+	public List<TruckModel> getAllTrucks(String owner) {
 		
 		logger.info("[TruckServiceImpl] [getAllTrucks] : Enter ");
 		List<Truck> lstTruck = null;
-		List<TruckResponse> lstTruckResponse = new ArrayList<TruckResponse>();
+		List<TruckModel> lstTruckResponse = new ArrayList<TruckModel>();
 		try {
 
 			if (owner != null && owner.length() > 0) {
@@ -275,7 +273,7 @@ public class TruckServiceImpl implements TruckService {
 			}
 			if (lstTruck != null && lstTruck.size() > 0) {
 				for (Truck truck : lstTruck) {
-					TruckResponse truckResponse = new TruckResponse();
+					TruckModel truckResponse = new TruckModel();
 					truckResponse.setTruckId(truck.getTruckId());
 					truckResponse.setUnitNo(truck.getUnitNo());
 					truckResponse.setOwner(truck.getOwner());
@@ -309,7 +307,7 @@ public class TruckServiceImpl implements TruckService {
 	}
 
 	@Override
-	public Object add(TruckResponse truckResponse) {
+	public Object add(TruckModel truckResponse) {
 		logger.info("TruckServiceImpl: add():  STARTS");
 		Session session = null;
 		Transaction tx = null;
@@ -350,29 +348,17 @@ public class TruckServiceImpl implements TruckService {
 	}
 
 	@Override
-	public TruckResponse getOpenAdd() {
+	public TruckModel getOpenAdd() {
 		
-		TruckResponse truckResponse = new TruckResponse();
+		TruckModel truckResponse = new TruckModel();
 		Session session = sessionFactory.openSession();
 		
 		try{
 			List<Status> lstStatus = AllList.getStatusList(session);
 			truckResponse.setStatusList(lstStatus);
 
-			List<Object[]> categoryListObj = categoryDao.getSpecificData(session,"Category", "categoryId", "name");
-			List<CategoryModel> operationList = new ArrayList<CategoryModel>();
-			Iterator<Object[]> operationIt = categoryListObj.iterator();
-		
-			while(operationIt.hasNext())
-			{
-				Object o[] = (Object[])operationIt.next();
-				CategoryModel type = new CategoryModel();
-				type.setCategoryId(Long.parseLong(String.valueOf(o[0])));
-				type.setName(String.valueOf(o[1]));
-				operationList.add(type);
-			}
-		
-			truckResponse.setCategoryList(operationList);
+			List<CategoryModel> categoryList = categoryService.getCategoriesBasedOnType("Truck");
+			truckResponse.setCategoryList(categoryList);
 
 			List<Object[]> divisionListObj =  divisionDao.getSpecificData(session,"Division", "divisionId", "divisionName");
 		
@@ -419,16 +405,16 @@ public class TruckServiceImpl implements TruckService {
 	}
 
 	@Override
-	public List<TruckResponse> getSpecificData() {
+	public List<TruckModel> getSpecificData() {
 
 		Session session = sessionFactory.openSession();
-		List<TruckResponse> truckData = new ArrayList<TruckResponse>();
+		List<TruckModel> truckData = new ArrayList<TruckModel>();
 		
 		try{
 			List<Object[]> truckIdAndNameList = truckDao.getSpecificData(session,"Truck", "truckId", "owner");
 			if(truckIdAndNameList != null && !truckIdAndNameList.isEmpty()){
 				for (Object[] row : truckIdAndNameList) {
-					TruckResponse truckResponse =  new TruckResponse();
+					TruckModel truckResponse =  new TruckModel();
 					truckResponse.setTruckId(Long.parseLong(String.valueOf(row[0])));
 					truckResponse.setOwner(String.valueOf(row[1]));
 					truckData.add(truckResponse);

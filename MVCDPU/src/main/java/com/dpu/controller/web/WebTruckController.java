@@ -20,7 +20,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.dpu.constants.Iconstants;
 import com.dpu.model.Failed;
-import com.dpu.model.TruckResponse;
+import com.dpu.model.TruckModel;
 import com.dpu.service.TruckService;
 
 @Controller
@@ -34,7 +34,7 @@ public class WebTruckController {
 	@RequestMapping(value = "/showtruck", method = RequestMethod.GET)
 	public ModelAndView showTruckScreen() {
 		ModelAndView modelAndView = new ModelAndView();
-		List<TruckResponse> lstTrucks = truckService.getAllTrucks("");
+		List<TruckModel> lstTrucks = truckService.getAllTrucks("");
 		modelAndView.addObject("LIST_TRUCK", lstTrucks);
 		modelAndView.setViewName("truck");
 		return modelAndView;
@@ -42,14 +42,14 @@ public class WebTruckController {
 
 	@RequestMapping(value = "/truck/getopenadd", method = RequestMethod.GET)
 	@ResponseBody
-	public TruckResponse getOpenAdd() {
-		TruckResponse truckResponse = null;
+	public TruckModel getOpenAdd() {
+		TruckModel TruckModel = null;
 		try {
-			truckResponse = truckService.getOpenAdd();
+			TruckModel = truckService.getOpenAdd();
 		} catch (Exception e) {
 			System.out.println(e);
 		}
-		return truckResponse;
+		return TruckModel;
 	}
 
 	private Object createFailedObject(String errorMessage) {
@@ -60,12 +60,12 @@ public class WebTruckController {
 
 	@RequestMapping(value = "/savetruck", method = RequestMethod.POST)
 	@ResponseBody
-	public Object saveTruck(@ModelAttribute("truck") TruckResponse truckResponse, HttpServletRequest request) {
+	public Object saveTruck(@ModelAttribute("truck") TruckModel TruckModel, HttpServletRequest request) {
 		HttpSession session = request.getSession();
 
 		if (session != null) {
 			if (session.getAttribute("un") != null) {
-				Object response = truckService.add(truckResponse);
+				Object response = truckService.add(TruckModel);
 				if (response instanceof Failed) {
 					return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
 				} else {
@@ -79,8 +79,8 @@ public class WebTruckController {
 
 	@RequestMapping(value = "/gettruck/truckId", method = RequestMethod.GET)
 	@ResponseBody
-	public TruckResponse getTruck(@RequestParam("truckId") Long truckId) {
-		TruckResponse truckRequest = null;
+	public TruckModel getTruck(@RequestParam("truckId") Long truckId) {
+		TruckModel truckRequest = null;
 		try {
 			truckRequest = truckService.get(truckId);
 		} catch (Exception e) {
@@ -92,14 +92,14 @@ public class WebTruckController {
 
 	@RequestMapping(value = "/updatetruck", method = RequestMethod.POST)
 	@ResponseBody
-	public Object updateTruck(@ModelAttribute("truck") TruckResponse truckResponse,
+	public Object updateTruck(@ModelAttribute("truck") TruckModel TruckModel,
 			@RequestParam("truckid") Long truckId, HttpServletRequest request) {
 
 		HttpSession session = request.getSession();
 
 		if (session != null) {
 			if (session.getAttribute("un") != null) {
-				Object response = truckService.update(truckId, truckResponse);
+				Object response = truckService.update(truckId, TruckModel);
 				if (response instanceof Failed) {
 					return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
 				} else {

@@ -16,7 +16,7 @@ import com.dpu.entity.Status;
 import com.dpu.entity.Terminal;
 import com.dpu.entity.Truck;
 import com.dpu.entity.Type;
-import com.dpu.model.TruckResponse;
+import com.dpu.model.TruckModel;
 import com.dpu.service.StatusService;
 
 @Repository
@@ -27,7 +27,7 @@ public class TruckDaoImpl extends GenericDaoImpl<Truck> implements TruckDao {
 	StatusService statusService;
 
 	@Override
-	public Truck add(Session session, TruckResponse truckResponse) {
+	public Truck add(Session session, TruckModel truckResponse) {
 		logger.info("TruckDaoImpl: add(): STARTS");
 		Truck truck = null;
 
@@ -57,7 +57,7 @@ public class TruckDaoImpl extends GenericDaoImpl<Truck> implements TruckDao {
 
 	}
 
-	private Truck setTruckValues(TruckResponse truckResponse) {
+	private Truck setTruckValues(TruckModel truckResponse) {
 
 		logger.info("TruckDaoImpl: setTruckValues(): STARTS");
 

@@ -34,4 +34,6 @@ public interface IssueService {
 
 	List<CategoryModel> getUnitCategories(String unitTypeName);
 
+	List<IssueModel> getIssuesBasedOnUnitTypeAndNo(Long unitTypeId, Long unitNo, Session session);
+
 }

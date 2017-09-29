@@ -21,7 +21,6 @@ import com.dpu.entity.PurchaseOrderInvoice;
 import com.dpu.entity.PurchaseOrderIssue;
 import com.dpu.entity.Type;
 import com.dpu.entity.Vendor;
-import com.dpu.model.CategoryModel;
 import com.dpu.model.Failed;
 import com.dpu.model.IssueModel;
 import com.dpu.model.PurchaseOrderModel;
@@ -488,6 +487,23 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService  {
 	}
 
 	@Override
+	public List<IssueModel> getUnitNoIssues(Long unitTypeId, Long unitNo) {
+		
+		Session session = null;
+		List<IssueModel> issues = new ArrayList<IssueModel>();
+		try {
+			session = sessionFactory.openSession();
+			issues = issueService.getIssuesBasedOnUnitTypeAndNo(unitTypeId, unitNo, session);
+		} finally {
+			if(session != null){
+				session.close();
+			}
+		}
+		
+		return issues;
+	}
+
+	@Override
 	public Object updateStatus(Long poId, Long statusId, PurchaseOrderModel poModel) {
 	
 		logger.info("PurchaseOrderServiceImpl updateStatus() starts.");
@@ -536,9 +552,5 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService  {
 		invoice.setPurchaseOrder(po);
 		return invoice;
 	}
-
-
-
-	
 
 }

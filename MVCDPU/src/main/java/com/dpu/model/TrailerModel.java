@@ -7,7 +7,7 @@ import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 
 import com.dpu.entity.Status;
 @JsonSerialize(include = Inclusion.NON_NULL)
-public class TrailerRequest {
+public class TrailerModel {
 
 	private Long trailerId;
 

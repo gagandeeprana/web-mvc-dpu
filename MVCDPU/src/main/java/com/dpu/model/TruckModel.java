@@ -10,7 +10,7 @@ import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 import com.dpu.entity.Status;
 
 @JsonSerialize(include = Inclusion.NON_NULL)
-public class TruckResponse implements Serializable {
+public class TruckModel implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 

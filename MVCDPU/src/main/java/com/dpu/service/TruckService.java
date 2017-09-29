@@ -2,22 +2,22 @@ package com.dpu.service;
 
 import java.util.List;
 
-import com.dpu.model.TruckResponse;
+import com.dpu.model.TruckModel;
 
 public interface TruckService {
 
-	Object update(Long id, TruckResponse truckResponse);
+	Object update(Long id, TruckModel truckResponse);
 
 	Object delete(Long id);
 
-	TruckResponse get(Long id);
+	TruckModel get(Long id);
 
-	List<TruckResponse> getAllTrucks(String owner);
+	List<TruckModel> getAllTrucks(String owner);
 
-	Object add(TruckResponse truckResponse);
+	Object add(TruckModel truckResponse);
 	
-	TruckResponse getOpenAdd();
+	TruckModel getOpenAdd();
 	
-	List<TruckResponse> getSpecificData();
+	List<TruckModel> getSpecificData();
 
 }

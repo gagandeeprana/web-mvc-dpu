@@ -38,12 +38,17 @@ public class IssueDaoImpl extends GenericDaoImpl<Issue> implements IssueDao{
 		Type unitType = (Type) session.get(Type.class, unitTypeId);
 		StringBuilder sb = new StringBuilder(" ");
 		if(unitType.getTypeName().equals("Truck")){
-			sb.append(" SELECT unit_no FROM `truck` truck WHERE category_id = :categoryId ");
+			sb.append(" SELECT unit_no FROM `truck` truck ");
 		} else{
-			sb.append("  SELECT unit_no FROM `trailer` WHERE category_id = :categoryId ");
+			sb.append("  SELECT unit_no FROM `trailer` ");
+		}
+		if (categoryId != 0) {
+			sb.append(" WHERE category_id = :categoryId ");
 		}
 		Query query = session.createSQLQuery(sb.toString());
-		query.setParameter("categoryId", categoryId);
+		if (categoryId != 0) {
+			query.setParameter("categoryId", categoryId);
+		}
 		return query.list();
 		
 	}
@@ -99,6 +104,22 @@ public class IssueDaoImpl extends GenericDaoImpl<Issue> implements IssueDao{
 		issue.setStatus(status);
 		session.update(issue);
 		
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Issue> issuesforUnitTypeAndNo(Long unitTypeId, Long unitNo, Session session) {
+
+		Type unitType = (Type) session.get(Type.class, unitTypeId);
+
+		StringBuilder sb = new StringBuilder(" ");
+		sb.append(" from Issue i join fetch i.vmc join fetch i.unitType join fetch i.reportedBy join fetch i.status ")
+				.append("  where i.unitType =:unitType and i.unitNo =:unitNo and i.status.typeId in (103, 105, 107) ");
+
+		Query query = session.createQuery(sb.toString());
+		query.setParameter("unitType", unitType);
+		query.setParameter("unitNo", String.valueOf(unitNo));
+		return query.list();
 	}
 
 }

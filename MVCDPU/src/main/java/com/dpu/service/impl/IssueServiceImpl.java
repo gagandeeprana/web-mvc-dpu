@@ -463,6 +463,19 @@ public class IssueServiceImpl implements IssueService  {
 	}
 
 	@Override
+	public List<IssueModel> getIssuesBasedOnUnitTypeAndNo(Long unitTypeId, Long unitNo, Session session) {
+
+		logger.info("IssueServiceImpl getIssueforCategoryAndUnitType() starts ");
+		List<IssueModel> issueList = new ArrayList<IssueModel>();
+
+		List<Issue> issues = issueDao.issuesforUnitTypeAndNo(unitTypeId, unitNo, session);
+		issueList = setIssueData(issues, issueList);
+
+		logger.info("IssueServiceImpl getIssueforCategoryAndUnitType() ends ");
+		return issueList;
+	}
+
+	@Override
 	public Object updateStatus(Long issueId, Long statusId) {
 
 		logger.info("IssueServiceImpl updateStatus() starts.");
