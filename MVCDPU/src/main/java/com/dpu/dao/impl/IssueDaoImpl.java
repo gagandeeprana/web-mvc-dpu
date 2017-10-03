@@ -122,4 +122,20 @@ public class IssueDaoImpl extends GenericDaoImpl<Issue> implements IssueDao{
 		return query.list();
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Issue> issuesforUnitTypeAndUnitNos(Long unitTypeId, List<String> unitNos, Session session) {
+
+		Type unitType = (Type) session.get(Type.class, unitTypeId);
+
+		StringBuilder sb = new StringBuilder(" ");
+		sb.append(" from Issue i join fetch i.vmc join fetch i.unitType join fetch i.reportedBy join fetch i.status ")
+				.append("  where i.unitType =:unitType and i.unitNo in (:unitNos) and i.status.typeId in (103, 105, 107) ");
+
+		Query query = session.createQuery(sb.toString());
+		query.setParameter("unitType", unitType);
+		query.setParameterList("unitNos", unitNos);
+		return query.list();
+	}
+
 }

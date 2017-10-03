@@ -504,6 +504,22 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService  {
 	}
 
 	@Override
+	public List<IssueModel> getUnitNoIssues(Long unitTypeId, PurchaseOrderModel poModel) {
+		Session session = null;
+		List<IssueModel> issues = new ArrayList<IssueModel>();
+		try {
+			session = sessionFactory.openSession();
+			issues = issueService.getIssuesBasedOnUnitTypeAndUnitNos(unitTypeId, poModel.getUnitNos(), session);
+		} finally {
+			if (session != null) {
+				session.close();
+			}
+		}
+
+		return issues;
+	}
+
+	@Override
 	public Object updateStatus(Long poId, Long statusId, PurchaseOrderModel poModel) {
 	
 		logger.info("PurchaseOrderServiceImpl updateStatus() starts.");

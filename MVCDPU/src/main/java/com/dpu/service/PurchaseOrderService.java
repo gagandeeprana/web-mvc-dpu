@@ -29,4 +29,6 @@ public interface PurchaseOrderService {
 
 	List<IssueModel> getUnitNoIssues(Long unitTypeId, Long unitNo);
 
+	List<IssueModel> getUnitNoIssues(Long unitTypeId, PurchaseOrderModel poModel);
+
 }

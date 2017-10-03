@@ -451,7 +451,7 @@ function showIssueDetail(quesId) {
     	            var vendor = document.getElementById("vendorId");
     	            for(var i = 0;i < data.vendorList.length;i++) {
     	            	vendor.options[vendor.options.length] = new Option(data.vendorList[i].name);
-    	            	vendor.options[i].value = data.vendorList[i].vendorId;
+    	            	vendor.options[i+1].value = data.vendorList[i].vendorId;
     	            }
 
     	           /*  var category = document.getElementById("categoryId");
@@ -481,7 +481,7 @@ function showIssueDetail(quesId) {
                     var vendorList = data.vendorList;
     	            for(var i = 0;i < data.vendorList.length;i++) {
     	            	vendor.options[vendor.options.length] = new Option(data.vendorList[i].name);
-    	            	vendor.options[i].value = data.vendorList[i].vendorId;
+    	            	vendor.options[i+1].value = data.vendorList[i].vendorId;
                     	if(vendorList[i].vendorId == data.vendorId) {
                     		document.getElementById("vendorId").selectedIndex = i;
                     	}
@@ -491,7 +491,7 @@ function showIssueDetail(quesId) {
                     var unitTypeList = data.unitTypeList;
                     for(var i = 0;i < unitTypeList.length;i++) {
                     	unitType.options[unitType.options.length] = new Option(unitTypeList[i].typeName);
-                    	unitType.options[i].value = unitTypeList[i].typeId;
+                    	unitType.options[i+1].value = unitTypeList[i].typeId;
                     	if(unitTypeList[i].typeId == data.unitTypeId) {
                     		document.getElementById("unitTypeId").selectedIndex = i;
                     	}
@@ -501,7 +501,7 @@ function showIssueDetail(quesId) {
                     var categoryList = data.categoryList;
                     for(var i = 0;i < categoryList.length;i++) {
                     	category.options[category.options.length] = new Option(categoryList[i].name);
-                    	category.options[i].value = categoryList[i].categoryId;
+                    	category.options[i+1].value = categoryList[i].categoryId;
                     	if(categoryList[i].categoryId == data.categoryId) {
                     		document.getElementById("categoryId").selectedIndex = i;
                     	}
@@ -873,25 +873,7 @@ return true;
  		         var selectedUnitNos = [];
  		         
  		         var allUnitNos = data.unitNos;
- 		         
- 		         $("#btnGo").click(function() {
- 		        	 alert("GOOO");
-				 	 var unitNo1 = document.getElementById("unitNo");
-				 	 alert("1");
-			         alert(unitNo1.options[unitNo1.selectedIndex].value);
-				 	 alert("2");
-					/* for(var i=0;i<uNo.length;i++) {
-						if(uNo[i].selected == true) {
-							alert(uNo[i].option.value);
-						}
-					}
- 		        	 var unitNo = JSON.stringify($(this).val());
- 		       		alert("UNITNOS: " + unitNo);
- 		       	
-	 		       	unitNo = unitNo.substring(2,unitNo.length-2);
-	 		       	selectedUnitNos.push(unitNo); */
- 		       	
- 		         });
+ 		        
  	         } else {
  	        	$('#unitNo').multiselect('destroy');
  				$("#unitNo").html("<option>Please Select</option>");
@@ -901,6 +883,84 @@ return true;
  		$('#unitNo').multiselect('destroy');
 		$("#unitNo").html("<option>Please Select</option>");
  	}
+ 	
+ 	 $("#btnGo").click(function() {
+     	 var unitNo1 = $('#unitNo').val();
+         
+         var issuesFroDropDown;
+         $.ajax({url: BASE_URL + "/getissuesbasedonunitnoandunittype/unittypeid/" + unitTypeId,
+		      async:false,
+		      type:"POST",
+		      data:{
+		    	  unitNos:unitNo1.toString(),
+		      },
+		      success: function(issuesResponse){
+	        try{
+	        	issuesFroDropDown = issuesResponse;
+	     		if(issuesResponse.length > 0) {
+	     			var tableValue = "";
+	     			$("#mainDiv").show();
+	     			for(var i=0;i<issuesResponse.length;i++) {
+	     				var obj = issuesResponse[i];
+	     				if($("#addUpdateFlag").val() == 'update') {
+	     					if(!editIssueIds.includes(obj.id)) {
+	     						tableValue = tableValue + ("<tr class='info " + unitNo + "'>");
+	     						tableValue = tableValue + ("<td><div class='form-group'><input type='checkbox' class='form-control poIssueIds' value='"+(obj.id)+"' id='issueId" + (obj.id) + "' name='issueIds' /></div></td>");
+	     						tableValue = tableValue + ("<td><a href='#' onclick=showIssueDetail('"+(obj.id) + "') data-toggle='modal' data-target='#issueModal'>" + (obj.title)+"</a></td>");
+	     						tableValue = tableValue + ("<td>"+(obj.vmcName)+"</td>");
+	     						tableValue = tableValue + ("<td>"+(obj.categoryName)+"</td>");
+	     						tableValue = tableValue + ("<td>"+(obj.unitTypeName)+"</td>");
+	     						tableValue = tableValue + ("<td>"+(obj.unitNo)+"</td>");
+	     						tableValue = tableValue + ("<td>"+(obj.reportedByName)+"</td>");
+	     						tableValue = tableValue + ("<td><select class='form-control issueStatusClass' id='issueStatusId" + (obj.id)+"'><option value='-1'>Please Select</option><option value='104'>Complete</option><option value='105'>Incomplete</option><option value='106'>Assigned</option></select></td>");
+	     						tableValue = tableValue + ("</tr>");
+	     					}
+	     				}
+	     				else {
+	     					tableValue = tableValue + ("<tr class='info " + unitNo + "'>");
+	     					tableValue = tableValue + ("<td><div class='form-group'><input type='checkbox' class='form-control poIssueIds' value='"+(obj.id) + "' id='issueId" + (obj.id) + "' name='issueIds' /></div></td>");
+	     					tableValue = tableValue + ("<td><a href='#' onclick=showIssueDetail('"+(obj.id) + "') data-toggle='modal' data-target='#issueModal'>"+(obj.title)+"</a></td>");
+	     					tableValue = tableValue + ("<td>"+(obj.vmcName)+"</td>");
+	     					tableValue = tableValue + ("<td>"+(obj.categoryName)+"</td>");
+	     					tableValue = tableValue + ("<td>"+(obj.unitTypeName)+"</td>");
+	     					tableValue = tableValue + ("<td>"+(obj.unitNo)+"</td>");
+	     					tableValue = tableValue + ("<td>"+(obj.reportedByName)+"</td>");
+	     					tableValue = tableValue + ("<td><select class='form-control issueStatusClass' id='issueStatusId" + (obj.id)+"'><option value='-1'>Please Select</option><option value='104'>Complete</option><option value='105'>Incomplete</option><option value='106'>Assigned</option></select></td>");
+	     					tableValue = tableValue + ("</tr>");
+	     				}
+	     			}
+	     			if($("#addUpdateFlag").val() == 'update') {
+	     				$("#issuesTable").html($("#issuesTable").html() + tableValue);
+	     			} else {
+	     				$("#mainDiv").show();
+	     				$("#issuesTable").html(""+tableValue);	            		
+	     			}
+	     			
+	     		} else {
+	     			toastr.error("No Issues related to unittype and category exist.", 'Message!');
+	     			$("#issuesTable").html(editInitialValue);
+	     		}
+	     		
+	     		for(var k=0;k<issuesFroDropDown.length;k++) {
+	     			var obj = issuesFroDropDown[k];
+	     			$("#issueId" + obj.id).click(function (){
+	     				if ($(this).is(':checked') )
+	     					document.getElementById("issueStatusId" + $(this).val()).selectedIndex = 3;
+	     			});
+	     		}
+	        	
+			} catch(e){
+				toastr.error('Something went wrong', 'Error!')
+			}
+	  },error:function(result){
+		  try{
+			  	var obj = JSON.parse(result.responseText);
+			  	toastr.error(obj.message, 'Error!')
+			  }catch(e){
+				  toastr.error('Something went wrong', 'Error!')
+			  }
+	  }});
+      });
  }
  
 </script>

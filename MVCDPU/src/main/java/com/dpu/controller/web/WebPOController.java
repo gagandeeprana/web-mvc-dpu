@@ -250,13 +250,22 @@ public class WebPOController {
 		return categories;
 	}
 	
-	@RequestMapping(value = "/getissuesbasedonunitnoandunittype/unittypeid/{unittypeid}/unitno/{unitno}", method = RequestMethod.GET)
+	/*@RequestMapping(value = "/getissuesbasedonunitnoandunittype/unittypeid/{unittypeid}/unitno/{unitno}", method = RequestMethod.GET)
 	@ResponseBody
 	public List<IssueModel> getIssuesByUnitNo(@PathVariable("unittypeid") String unitTypeId, @PathVariable("unitno") String unitNo) {
 		Long unitTId = Long.parseLong(unitTypeId);
 		Long unitN = Long.parseLong(unitNo);
 		
 		List<IssueModel> issues = purchaseOrderService.getUnitNoIssues(unitTId, unitN);
+		return issues;
+	}*/
+	
+	@RequestMapping(value = "/getissuesbasedonunitnoandunittype/unittypeid/{unittypeid}", method = RequestMethod.POST)
+	@ResponseBody
+	public List<IssueModel> getIssuesByUnitNoAndUnitTypeId(@PathVariable("unittypeid") String unitTypeId, @ModelAttribute PurchaseOrderModel purchaseOrderModel) {
+		Long unitTId = Long.parseLong(unitTypeId);
+		
+		List<IssueModel> issues = purchaseOrderService.getUnitNoIssues(unitTId, purchaseOrderModel);
 		return issues;
 	}
 }
