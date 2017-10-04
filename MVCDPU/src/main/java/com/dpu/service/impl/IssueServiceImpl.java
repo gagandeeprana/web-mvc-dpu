@@ -239,8 +239,14 @@ public class IssueServiceImpl implements IssueService  {
 				List<DriverModel> driverList = driverService.getSpecificData();
 				issueModel.setReportedByList(driverList);
 				
+				List<TypeResponse> statusListResponse = new ArrayList<TypeResponse>();
 				List<TypeResponse> statusList = typeService.getAll(23l);
-				issueModel.setStatusList(statusList);
+				for(TypeResponse typeResponse : statusList) {
+					if(typeResponse.getTypeName().equals("Open") || typeResponse.getTypeName().equals("Deferred")) {
+						statusListResponse.add(typeResponse);
+					}
+				}
+				issueModel.setStatusList(statusListResponse);
 				
 				issueModel.setCategoryId(issue.getCategory().getCategoryId());
 				List<CategoryModel> categoryList = categoryService.getSpecificData();
@@ -274,8 +280,14 @@ public class IssueServiceImpl implements IssueService  {
 		List<DriverModel> driverList = driverService.getSpecificData();
 		issueModel.setReportedByList(driverList);
 		
+		List<TypeResponse> statusListResponse = new ArrayList<TypeResponse>();
 		List<TypeResponse> statusList = typeService.getAll(23l);
-		issueModel.setStatusList(statusList);
+		for(TypeResponse typeResponse : statusList) {
+			if(typeResponse.getTypeName().equals("Open") || typeResponse.getTypeName().equals("Deferred")) {
+				statusListResponse.add(typeResponse);
+			}
+		}
+		issueModel.setStatusList(statusListResponse);
 		
 		/*List<CategoryReq> categoryList = categoryService.getSpecificData();
 		issueModel.setCategoryList(categoryList);*/

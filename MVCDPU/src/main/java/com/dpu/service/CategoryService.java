@@ -6,6 +6,7 @@ package com.dpu.service;
 import java.util.List;
 
 import com.dpu.entity.Category;
+import com.dpu.entity.Type;
 import com.dpu.model.CategoryModel;
 
 /**
@@ -32,5 +33,7 @@ public interface CategoryService {
 	List<CategoryModel> getSpecificData();
 
 	List<CategoryModel> getCategoriesBasedOnType(String unitTypeName);
+
+	List<CategoryModel> getCategoriesBasedOnType(Type unitType);
 
 }

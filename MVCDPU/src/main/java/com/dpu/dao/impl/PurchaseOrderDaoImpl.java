@@ -11,6 +11,7 @@ import com.dpu.entity.Issue;
 import com.dpu.entity.PurchaseOrder;
 import com.dpu.entity.PurchaseOrderInvoice;
 import com.dpu.entity.PurchaseOrderIssue;
+import com.dpu.entity.PurchaseOrderUnitNos;
 import com.dpu.entity.Type;
 
 @Repository
@@ -36,7 +37,7 @@ public class PurchaseOrderDaoImpl extends GenericDaoImpl<PurchaseOrder> implemen
 
 	@Override
 	public void addPurchaseOrder(PurchaseOrder po, List<PurchaseOrderIssue> poIssues, List<Issue> issues,
-			Type assignStatus, Session session) {
+			Type assignStatus, List<PurchaseOrderUnitNos> poUnitNos, Session session) {
 
 		session.save(po);
 
@@ -48,6 +49,10 @@ public class PurchaseOrderDaoImpl extends GenericDaoImpl<PurchaseOrder> implemen
 			session.save(purchaseOrderIssue);
 		}
 
+		for (PurchaseOrderUnitNos purchaseOrderUnitNos : poUnitNos) {
+			purchaseOrderUnitNos.setPurchaseOrder(po);
+			session.save(purchaseOrderUnitNos);
+		}
 		for (Issue issue : issues) {
 			session.update(issue);
 		}

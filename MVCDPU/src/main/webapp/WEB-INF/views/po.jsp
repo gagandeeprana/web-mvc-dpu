@@ -77,6 +77,7 @@ function createPO(urlToHit,methodType){
 	   	var categoryId = $('#categoryId :selected').val();
 	   	var message = $("#message").val();
 	   	var poIssues = $('.poIssueIds:checkbox:checked');
+	   	var unitNo = $('#unitNo').val();
 	    var issueIds = new Array();
 	    var issueStatusIds = new Array();
 	    for(var i=0;i<poIssues.length;i++) {
@@ -100,6 +101,7 @@ function createPO(urlToHit,methodType){
 			    	message:message,
 			    	issueIds:issueIds.toString(),
 			    	issueStatusIds:issueStatusIds.toString(),
+			    	selectedUnitNos:unitNo.toString(),
 			    	poid:poId
 			      },
 			      success: function(result){
@@ -295,8 +297,10 @@ function showIssueDetail(quesId) {
 	document.getElementById("reportedBy").innerHTML = "";
 	document.getElementById("status").innerHTML = "";
 	$.get("getissue/issueId",{"issueId" : quesId}, function(data) {
-        $("#title").val(data.title);
-        $("#description").val(data.description);                    
+        
+		$("#title").val(data.title);
+        $("#description").val(data.description);
+        
         var vmc = document.getElementById("vmcId");
         var vmcList = data.vmcList;
         for(var i = 0;i < vmcList.length;i++) {
@@ -483,7 +487,7 @@ function showIssueDetail(quesId) {
     	            	vendor.options[vendor.options.length] = new Option(data.vendorList[i].name);
     	            	vendor.options[i+1].value = data.vendorList[i].vendorId;
                     	if(vendorList[i].vendorId == data.vendorId) {
-                    		document.getElementById("vendorId").selectedIndex = i;
+                    		document.getElementById("vendorId").selectedIndex = i+1;
                     	}
     	            }
                     
@@ -493,7 +497,7 @@ function showIssueDetail(quesId) {
                     	unitType.options[unitType.options.length] = new Option(unitTypeList[i].typeName);
                     	unitType.options[i+1].value = unitTypeList[i].typeId;
                     	if(unitTypeList[i].typeId == data.unitTypeId) {
-                    		document.getElementById("unitTypeId").selectedIndex = i;
+                    		document.getElementById("unitTypeId").selectedIndex = i+1;
                     	}
                     }
                     
@@ -503,21 +507,28 @@ function showIssueDetail(quesId) {
                     	category.options[category.options.length] = new Option(categoryList[i].name);
                     	category.options[i+1].value = categoryList[i].categoryId;
                     	if(categoryList[i].categoryId == data.categoryId) {
-                    		document.getElementById("categoryId").selectedIndex = i;
+                    		document.getElementById("categoryId").selectedIndex = i+1;
                     	}
                     }
                     
-                   /*  var status = document.getElementById("statusId");
-                    var statusList = data.statusList;
-    	            for(var i = 0;i < data.statusList.length;i++) {
-    	            	status.options[status.options.length] = new Option(data.statusList[i].typeName);
-    	            	status.options[i].value = data.statusList[i].typeId;
-    	            	if(statusList[i].typeId == data.statusId) {
-                    		document.getElementById("statusId").selectedIndex = i;
-                    	}
-    	            } */
-    	            
-    	           /*  var status = document.getElementById("statusId"); */
+                    
+                    var unitNo = document.getElementById("unitNo");
+                    var unitNos = data.allUnitNos;
+                    var opt = "";
+                    for(var i = 0;i < unitNos.length;i++) {
+ 			         	opt += "<option value='"+unitNos[i]+"' id='chk" + unitNos[i]+"'>" + unitNos[i]+"</option>"
+                    }
+                    
+
+                    var selectedUnitNos = data.selectedUnitNos;
+
+                    $("#unitNo").html(opt);
+   		      		$("#unitNo").val(selectedUnitNos);
+   		      		setTimeout(function(){
+			         	$('#unitNo').multiselect({
+				 			includeSelectAllOption: true
+					 	});
+   		      		})
                     var issueList = data.issueList;
 	            	var tableValue = "";
 					$("#issuesTable").html("");
@@ -586,6 +597,18 @@ function showIssueDetail(quesId) {
 
                	}); 
         	}
+        	
+        	$("#unitNo").change(function() {
+        		var msg = $("#msg");
+        		msg.show();
+        		var msgvalue = $("#msgvalue");
+        		msgvalue.show();
+        		msgvalue.text("Click on Go to fetch latest issues.");
+        	});
+        	
+        	$("#btnGo").click(function() {
+        		
+        	});
         }
         
         function clearAll() {
@@ -892,7 +915,7 @@ return true;
 		      async:false,
 		      type:"POST",
 		      data:{
-		    	  unitNos:unitNo1.toString(),
+		    	  selectedUnitNos:unitNo1.toString(),
 		      },
 		      success: function(issuesResponse){
 	        try{

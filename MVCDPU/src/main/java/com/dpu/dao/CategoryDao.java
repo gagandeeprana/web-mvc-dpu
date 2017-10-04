@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.dpu.dao;
 
 import java.util.List;
@@ -8,6 +5,7 @@ import java.util.List;
 import org.hibernate.Session;
 
 import com.dpu.entity.Category;
+import com.dpu.entity.Type;
 
 public interface CategoryDao extends GenericDao<Category> {
 
@@ -19,5 +17,7 @@ public interface CategoryDao extends GenericDao<Category> {
 			String categoryName);
 
 	List<Category> getCategoriesBasedOnType(String unitTypeName, Session session);
+
+	List<Category> getCategoriesBasedOnType(Type unitType, Session session);
 
 }

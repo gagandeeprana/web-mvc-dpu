@@ -62,6 +62,10 @@ public class PurchaseOrder implements Serializable {
 	@JoinColumn(name = "po_id", referencedColumnName = "purchase_order_id")
 	private List<PurchaseOrderIssue> poIssues;
 	
+	@OneToMany(fetch = FetchType.LAZY, targetEntity = PurchaseOrderUnitNos.class)
+	@JoinColumn(name = "po_id", referencedColumnName = "purchase_order_id")
+	private List<PurchaseOrderUnitNos> poUnitNos;
+
 	public Long getId() {
 		return id;
 	}
@@ -140,6 +144,14 @@ public class PurchaseOrder implements Serializable {
 
 	public void setPoNo(Long poNo) {
 		this.poNo = poNo;
+	}
+
+	public List<PurchaseOrderUnitNos> getPoUnitNos() {
+		return poUnitNos;
+	}
+
+	public void setPoUnitNos(List<PurchaseOrderUnitNos> poUnitNos) {
+		this.poUnitNos = poUnitNos;
 	}
 
 }

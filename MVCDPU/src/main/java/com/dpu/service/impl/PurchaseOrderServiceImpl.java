@@ -19,8 +19,10 @@ import com.dpu.entity.Issue;
 import com.dpu.entity.PurchaseOrder;
 import com.dpu.entity.PurchaseOrderInvoice;
 import com.dpu.entity.PurchaseOrderIssue;
+import com.dpu.entity.PurchaseOrderUnitNos;
 import com.dpu.entity.Type;
 import com.dpu.entity.Vendor;
+import com.dpu.model.CategoryModel;
 import com.dpu.model.Failed;
 import com.dpu.model.IssueModel;
 import com.dpu.model.PurchaseOrderModel;
@@ -207,7 +209,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService  {
 			List<PurchaseOrderIssue> poIssues = new ArrayList<PurchaseOrderIssue>();
 			List<Issue> issues = new ArrayList<Issue>();
 			if (po != null) {
-				setPoValues(poModel, po, poIssues, issues, session, Iconstants.UPDATE_PO);
+				setPoValues(poModel, po, poIssues, issues, session, Iconstants.UPDATE_PO, null);
 				poDao.update(po, poIssues, issues, session);
 				tx.commit();
 			} else {
@@ -244,9 +246,22 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService  {
 			
 			if (purchaseOrder != null) {
 				
+				List<PurchaseOrderUnitNos> poUnitNos = purchaseOrder.getPoUnitNos();
+				if (poUnitNos != null && !poUnitNos.isEmpty()) {
+					for (PurchaseOrderUnitNos purchaseOrderUnitNos : poUnitNos) {
+						session.delete(purchaseOrderUnitNos);
+					}
+				}
+
 				List<PurchaseOrderIssue> poIssues = purchaseOrder.getPoIssues();
 				if(poIssues != null && ! poIssues.isEmpty()) {
+					Type status = (Type) session.get(Type.class, 103l);
 					for (PurchaseOrderIssue purchaseOrderIssue : poIssues) {
+
+						/*
+						 * Issue issue = purchaseOrderIssue.getIssue(); issue.setStatus(status); session.update(issue);
+						 */
+
 						session.delete(purchaseOrderIssue);
 					}
 				}
@@ -324,7 +339,30 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService  {
 					poModel.setIssueList(issueModels);
 				}
 				
+				List<PurchaseOrderUnitNos> PurchaseOrderUnitNos = po.getPoUnitNos();
+				if (PurchaseOrderUnitNos != null && !PurchaseOrderUnitNos.isEmpty()) {
+					List<String> poUnitNos = new ArrayList<String>();
+					for (PurchaseOrderUnitNos purchaseOrderUnitNos : PurchaseOrderUnitNos) {
+						poUnitNos.add(purchaseOrderUnitNos.getUnitNo());
+					}
+
+					poModel.setSelectedUnitNos(poUnitNos);
+				}
+
 				getOpenAddData(poModel);
+
+				Long categoryId = 0l;
+				if (po.getCategory() != null) {
+					categoryId = po.getCategory().getCategoryId();
+				}
+				IssueModel issueModel = issueService.getUnitNo(categoryId, po.getUnitType().getTypeId());
+				if (issueModel != null) {
+					poModel.setAllUnitNos(issueModel.getUnitNos());
+				}
+				List<CategoryModel> categoriesBasedOnUnitType = categoryService.getCategoriesBasedOnType(po
+						.getUnitType().getTypeName());
+
+				poModel.setCategoryList(categoriesBasedOnUnitType);
 			}
 		} finally {
 			if (session != null) {
@@ -396,10 +434,11 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService  {
 			tx = session.beginTransaction();
 			PurchaseOrder po = new PurchaseOrder();
 			List<PurchaseOrderIssue> poIssues = new ArrayList<PurchaseOrderIssue>();
+			List<PurchaseOrderUnitNos> poUnitNos = new ArrayList<PurchaseOrderUnitNos>();
 			List<Issue> issues = new ArrayList<Issue>();
-			setPoValues(poModel, po, poIssues, issues, session, Iconstants.ADD_PO);
+			setPoValues(poModel, po, poIssues, issues, session, Iconstants.ADD_PO, poUnitNos);
 			Type assignStatus = typeService.get(106l);
-			poDao.addPurchaseOrder(po, poIssues, issues, assignStatus, session);
+			poDao.addPurchaseOrder(po, poIssues, issues, assignStatus, poUnitNos, session);
 			tx.commit();
 		} catch (Exception e) {
 			if(tx != null){
@@ -419,12 +458,13 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService  {
 	}
 
 	private void setPoValues(PurchaseOrderModel poModel, PurchaseOrder po, List<PurchaseOrderIssue> poIssues,
-			List<Issue> issues, Session session, String type) {
+			List<Issue> issues, Session session, String type, List<PurchaseOrderUnitNos> poUnitNos) {
 		
 		List<IssueModel> issueData = poModel.getIssue();
 		Type unitType = (Type) session.get(Type.class, poModel.getUnitTypeId());
 		Category category = (Category) session.get(Category.class, poModel.getCategoryId());
 		Vendor vendor = (Vendor) session.get(Vendor.class, poModel.getVendorId());
+		List<String> unitNos = poModel.getSelectedUnitNos();
 		
 		if(Iconstants.ADD_PO.equals(type)) {
 			Long poNo = poDao.getMaxPoNO(session);
@@ -467,6 +507,14 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService  {
 			}
 		}
 		
+		if (unitNos != null) {
+			for (String unitNo : unitNos) {
+				PurchaseOrderUnitNos poUnitNo = new PurchaseOrderUnitNos();
+				poUnitNo.setUnitNo(unitNo);
+				poUnitNos.add(poUnitNo);
+			}
+		}
+
 	}
 
 	@Override
@@ -509,7 +557,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService  {
 		List<IssueModel> issues = new ArrayList<IssueModel>();
 		try {
 			session = sessionFactory.openSession();
-			issues = issueService.getIssuesBasedOnUnitTypeAndUnitNos(unitTypeId, poModel.getUnitNos(), session);
+			issues = issueService.getIssuesBasedOnUnitTypeAndUnitNos(unitTypeId, poModel.getSelectedUnitNos(), session);
 		} finally {
 			if (session != null) {
 				session.close();

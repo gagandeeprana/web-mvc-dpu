@@ -58,7 +58,8 @@ public class PurchaseOrderModel implements Serializable{
 	private String currentStatusVal;
 	List<String> issueIds;
 	List<String> issueStatusIds;
-	private List<String> unitNos;
+	private List<String> selectedUnitNos;
+	private List<String> allUnitNos;
 
 	public List<IssueModel> getIssues() {
 		return issues;
@@ -325,14 +326,21 @@ public class PurchaseOrderModel implements Serializable{
 		this.issues = issue;
 	}
 
-	public List<String> getUnitNos() {
-		return unitNos;
+	public List<String> getSelectedUnitNos() {
+		return selectedUnitNos;
 	}
 
-	public void setUnitNos(List<String> unitNos) {
-		this.unitNos = unitNos;
+	public void setSelectedUnitNos(List<String> selectedUnitNos) {
+		this.selectedUnitNos = selectedUnitNos;
 	}
-	/*public List<Long> getIssueIds() {
+
+	public List<String> getAllUnitNos() {
+		return allUnitNos;
+	}
+
+	public void setAllUnitNos(List<String> allUnitNos) {
+		this.allUnitNos = allUnitNos;
+	}	/*public List<Long> getIssueIds() {
 		return issueIds;
 	}
 

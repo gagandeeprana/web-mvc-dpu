@@ -278,6 +278,7 @@ function checkFlag(field) {
         	emptyMessageDiv();
         	clearAll();
         	if(quesId == 0) {
+        		$("#btnClose").show();
             	$.get("issue/getopenadd", function(data) {
             		
     	            var vmc = document.getElementById("vmcId");
@@ -314,6 +315,10 @@ function checkFlag(field) {
     	            
     	        });
         	} else {
+        		$("#btnNew").click(function() { 
+	        		$('#myModal').modal('toggle');
+        		});
+        		$("#btnClose").hide();
         		 $.get("getissue/issueId",{"issueId" : quesId}, function(data) {
         			document.getElementById("issueid").value = data.id;
                     $("#title").val(data.title);
@@ -322,9 +327,9 @@ function checkFlag(field) {
                     var vmcList = data.vmcList;
                     for(var i = 0;i < vmcList.length;i++) {
                     	vmc.options[vmc.options.length] = new Option(vmcList[i].name);
-                    	vmc.options[i].value = vmcList[i].id;
+                    	vmc.options[i+1].value = vmcList[i].id;
                     	if(vmcList[i].id == data.vmcId) {
-                    		document.getElementById("vmcId").selectedIndex = i;
+                    		document.getElementById("vmcId").selectedIndex = i+1;
                     	}
                     }
                     
@@ -332,9 +337,9 @@ function checkFlag(field) {
                     var unitTypeList = data.unitTypeList;
                     for(var i = 0;i < unitTypeList.length;i++) {
                     	unitType.options[unitType.options.length] = new Option(unitTypeList[i].typeName);
-                    	unitType.options[i].value = unitTypeList[i].typeId;
+                    	unitType.options[i+1].value = unitTypeList[i].typeId;
                     	if(unitTypeList[i].typeId == data.unitTypeId) {
-                    		document.getElementById("unitType").selectedIndex = i;
+                    		document.getElementById("unitType").selectedIndex = i+1;
                     	}
                     }
                     
@@ -342,9 +347,9 @@ function checkFlag(field) {
                     var categoryList = data.categoryList;
                     for(var i = 0;i < categoryList.length;i++) {
                     	category.options[category.options.length] = new Option(categoryList[i].name);
-                    	category.options[i].value = categoryList[i].categoryId;
+                    	category.options[i+1].value = categoryList[i].categoryId;
                     	if(categoryList[i].categoryId == data.categoryId) {
-                    		document.getElementById("issueCategory").selectedIndex = i;
+                    		document.getElementById("issueCategory").selectedIndex = i+1;
                     	}
                     }
                     
@@ -352,9 +357,9 @@ function checkFlag(field) {
                     var unitNos = data.unitNos;
                     for(var i = 0;i < unitNos.length;i++) {
                     	unitNo.options[unitNo.options.length] = new Option(unitNos[i]);
-                    	unitNo.options[i].value = unitNos[i];
+                    	unitNo.options[i+1].value = unitNos[i];
                     	if(unitNos[i] == data.unitNo) {
-                    		document.getElementById("unitNo").selectedIndex = i;
+                    		document.getElementById("unitNo").selectedIndex = i+1;
                     	}
                     }
                     
@@ -362,9 +367,9 @@ function checkFlag(field) {
                     var reportedByList = data.reportedByList;
                     for(var i = 0;i < reportedByList.length;i++) {
                     	reportedBy.options[reportedBy.options.length] = new Option(reportedByList[i].fullName);
-                    	reportedBy.options[i].value = reportedByList[i].driverId;
+                    	reportedBy.options[i+1].value = reportedByList[i].driverId;
                     	if(reportedByList[i].driverId == data.reportedById) {
-                    		document.getElementById("reportedBy").selectedIndex = i;
+                    		document.getElementById("reportedBy").selectedIndex = i+1;
                     	}
                     }
                     
@@ -372,9 +377,9 @@ function checkFlag(field) {
                     var statusList = data.statusList;
     	            for(var i = 0;i < data.statusList.length;i++) {
     	            	status.options[status.options.length] = new Option(data.statusList[i].typeName);
-    	            	status.options[i].value = data.statusList[i].typeId;
+    	            	status.options[i+1].value = data.statusList[i].typeId;
     	            	if(statusList[i].typeId == data.statusId) {
-                    		document.getElementById("status").selectedIndex = i;
+                    		document.getElementById("status").selectedIndex = i+1;
                     	}
     	            }
                	}); 

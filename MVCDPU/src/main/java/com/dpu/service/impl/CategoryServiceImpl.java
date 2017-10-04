@@ -369,4 +369,34 @@ public class CategoryServiceImpl implements CategoryService {
 		return categories;
 	}
 
+	@Override
+	public List<CategoryModel> getCategoriesBasedOnType(Type unitType) {
+
+		Session session = null;
+		List<CategoryModel> categories = null;
+		try {
+			session = sessionFactory.openSession();
+			List<Category> categoryList = categoryDao.getCategoriesBasedOnType(unitType, session);
+
+			categories = new ArrayList<CategoryModel>();
+			if (categoryList != null && !categoryList.isEmpty()) {
+				for (Category category : categoryList) {
+					CategoryModel categoryObj = new CategoryModel();
+					categoryObj.setCategoryId(category.getCategoryId());
+					categoryObj.setName(category.getName());
+					categoryObj.setHighlightName(category.getHighLight().getTypeName());
+					categoryObj.setTypeName(category.getType().getTypeName());
+					categoryObj.setStatusName(category.getStatus().getStatus());
+					categories.add(categoryObj);
+				}
+			}
+		} finally {
+			if (session != null) {
+				session.close();
+			}
+		}
+
+		return categories;
+	}
+
 }

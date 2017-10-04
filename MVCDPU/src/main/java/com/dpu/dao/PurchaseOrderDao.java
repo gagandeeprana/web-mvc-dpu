@@ -8,6 +8,7 @@ import com.dpu.entity.Issue;
 import com.dpu.entity.PurchaseOrder;
 import com.dpu.entity.PurchaseOrderInvoice;
 import com.dpu.entity.PurchaseOrderIssue;
+import com.dpu.entity.PurchaseOrderUnitNos;
 import com.dpu.entity.Type;
 
 public interface PurchaseOrderDao extends GenericDao<PurchaseOrder> {
@@ -17,7 +18,7 @@ public interface PurchaseOrderDao extends GenericDao<PurchaseOrder> {
 	PurchaseOrder findById(Long id, Session session);
 
 	void addPurchaseOrder(PurchaseOrder po, List<PurchaseOrderIssue> poIssues, List<Issue> issues, Type assignStatus,
-			Session session);
+			List<PurchaseOrderUnitNos> poUnitNos, Session session);
 
 	Long getMaxPoNO(Session session);
 
