@@ -69,7 +69,8 @@ public class PurchaseOrderDaoImpl extends GenericDaoImpl<PurchaseOrder> implemen
 	}
 
 	@Override
-	public void update(PurchaseOrder po, List<PurchaseOrderIssue> poIssues, List<Issue> issues, Session session) {
+	public void update(PurchaseOrder po, List<PurchaseOrderIssue> poIssues, List<Issue> issues,
+			List<PurchaseOrderUnitNos> poUnitNos, Session session) {
 
 		session.update(po);
 
@@ -82,6 +83,11 @@ public class PurchaseOrderDaoImpl extends GenericDaoImpl<PurchaseOrder> implemen
 			session.save(purchaseOrderIssue);
 		}
 
+		for (PurchaseOrderUnitNos purchaseOrderUnitNos : poUnitNos) {
+			purchaseOrderUnitNos.setPurchaseOrder(po);
+			session.save(purchaseOrderUnitNos);
+
+		}
 		for (Issue issue : issues) {
 			session.update(issue);
 		}

@@ -58,12 +58,10 @@ public class PurchaseOrder implements Serializable {
 	@Column(name = "po_no")
 	private Long poNo;
 	
-	@OneToMany(fetch = FetchType.LAZY, targetEntity = PurchaseOrderIssue.class)
-	@JoinColumn(name = "po_id", referencedColumnName = "purchase_order_id")
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "purchaseOrder")
 	private List<PurchaseOrderIssue> poIssues;
 	
-	@OneToMany(fetch = FetchType.LAZY, targetEntity = PurchaseOrderUnitNos.class)
-	@JoinColumn(name = "po_id", referencedColumnName = "purchase_order_id")
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "purchaseOrder")
 	private List<PurchaseOrderUnitNos> poUnitNos;
 
 	public Long getId() {
