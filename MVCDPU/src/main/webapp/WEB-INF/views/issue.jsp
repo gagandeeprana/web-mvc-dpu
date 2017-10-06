@@ -81,7 +81,8 @@ function navigate(isSaveAndNew) {
     		$('#myModal').modal('toggle');
     	}
 	} else if(flag == 'update') {
-		createIssue('updateissue','PUT');			
+		createIssue('updateissue','PUT');	
+		$('#myModal').modal("toggle")
 	}
 }
 
@@ -316,7 +317,7 @@ function checkFlag(field) {
     	        });
         	} else {
         		$("#btnNew").click(function() { 
-	        		$('#myModal').modal('toggle');
+	        		//$('#myModal').modal('toggle');
         		});
         		$("#btnClose").hide();
         		 $.get("getissue/issueId",{"issueId" : quesId}, function(data) {
@@ -476,8 +477,9 @@ function getOnlyUnitNos() {
 					toastr.error('No such UnitNo. exists for selected UnitType and Category', 'Error!')
 		         }
 		         
-		         
+		 		 $('#unitNo').multiselect('destroy');
 		         $("#unitNo").html(opt);
+		         
 		         $('#unitNo').multiselect({
 			 		  	includeSelectAllOption: true
 				 });
@@ -487,9 +489,51 @@ function getOnlyUnitNos() {
 	         }
 	    });
 	} else {
-			$('#unitNo').multiselect('destroy');
-			$("#unitNo").html("<option>Please Select</option>");
-   		}
+		$('#unitNo').multiselect('destroy');
+		$("#unitNo").html("<option>Please Select</option>");
+   	}
+}
+
+function getOnlyUnitNosOnUnitTypeChange() {
+ 	
+	 var unitTypeId = $('#unitType :selected').val();
+	 var categoryId = 0;
+	 
+	if(unitTypeId != "Please Select") {
+
+		$.get("<%=request.getContextPath()%>"+"/issue/getunitno/category/" + categoryId + "/unittype/" + unitTypeId, function(data) {
+	        
+			 var unitNo = document.getElementById("unitNo");
+	         $("#unitNo").empty();
+	         var opt = "";
+	         if(data.unitNos != null && data.unitNos.length > 0) {
+		         if(data.unitNos != null && data.unitNos.length > 0) {
+			         for(var i = 0;i < data.unitNos.length;i++) {
+			         	opt += "<option value='"+data.unitNos[i]+"' id='chk"+data.unitNos[i]+"'>"+data.unitNos[i]+"</option>"
+			         }
+		         } else {
+					toastr.error('No such UnitNo. exists for selected UnitType and Category', 'Error!')
+		         }
+		 		 $('#unitNo').multiselect('destroy');
+		         $("#unitNo").html(opt);
+		         $('#unitNo').multiselect({
+			 		  	includeSelectAllOption: true
+				 });
+		         
+		         var issuesFroDropDown;
+		         var selectedUnitNos = [];
+		         
+		         var allUnitNos = data.unitNos;
+		        
+	         } else {
+	        	$('#unitNo').multiselect('destroy');
+				$("#unitNo").html("<option>Please Select</option>");
+	         }
+	    });
+	} else {
+		$('#unitNo').multiselect('destroy');
+		$("#unitNo").html("<option>Please Select</option>");
+	}
 }
 </script>
 
@@ -565,7 +609,7 @@ function getOnlyUnitNos() {
 													<span class="input-group-addon">
 														 <b>UnitType</b>												
 													</span>
-													<select id="unitType" class="form-control" name="unitTypeId" onchange="getCategories();getOnlyUnitNos();">
+													<select id="unitType" class="form-control" name="unitTypeId" onchange="getCategories();getOnlyUnitNosOnUnitTypeChange();">
 														<option>Please Select</option>
 													</select>
 												</div>

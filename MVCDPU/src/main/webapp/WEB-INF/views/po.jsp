@@ -379,7 +379,7 @@ function showIssueDetail(quesId) {
 		            		if($("#addUpdateFlag").val() == 'update') {
 			            		if(!editIssueIds.includes(obj.id)) {
 				            		tableValue = tableValue + ("<tr class='info'>");
-				            		tableValue = tableValue + ("<td><div class='form-group'><input type='checkbox' class='form-control poIssueIds' value='"+(obj.id)+"' id='issueId" + (obj.id) + "' name='issueIds' /></div></td>");
+				            		tableValue = tableValue + ("<td><div style='margin-top: -11px;'><input type='checkbox' class='form-control poIssueIds' value='"+(obj.id)+"' id='issueId" + (obj.id) + "' name='issueIds' /></div></td>");
 				            		tableValue = tableValue + ("<td><a href='#' onclick=showIssueDetail('"+(obj.id) + "') data-toggle='modal' data-target='#issueModal'>" + (obj.title)+"</a></td>");
 				            		tableValue = tableValue + ("<td>"+(obj.vmcName)+"</td>");
 				            		tableValue = tableValue + ("<td>"+(obj.categoryName)+"</td>");
@@ -392,7 +392,7 @@ function showIssueDetail(quesId) {
 		            		}
 		            		else {
 			            		tableValue = tableValue + ("<tr class='info'>");
-			            		tableValue = tableValue + ("<td><div class='form-group'><input type='checkbox' class='form-control poIssueIds' value='"+(obj.id) + "' id='issueId" + (obj.id) + "' name='issueIds' /></div></td>");
+			            		tableValue = tableValue + ("<td><div style='margin-top: -11px;'><input type='checkbox' class='form-control poIssueIds' value='"+(obj.id) + "' id='issueId" + (obj.id) + "' name='issueIds' /></div></td>");
 			            		tableValue = tableValue + ("<td><a href='#' onclick=showIssueDetail('"+(obj.id) + "') data-toggle='modal' data-target='#issueModal'>"+(obj.title)+"</a></td>");
 			            		tableValue = tableValue + ("<td>"+(obj.vmcName)+"</td>");
 			            		tableValue = tableValue + ("<td>"+(obj.categoryName)+"</td>");
@@ -545,9 +545,9 @@ function showIssueDetail(quesId) {
 		            			incomplete = "";
 		            		}
 		            		if((obj.statusName == "Assigned") || (obj.statusName == "Complete") || (obj.statusName == "Incomplete")) {
-			            		tableValue = tableValue + ("<td><div class='form-group'><input type='checkbox' on class='form-control poIssueIds' value='"+(obj.id) + "' id='issueId" + (obj.id) + "' name='issueIds' checked /></div></td>");
+			            		tableValue = tableValue + ("<td><div style='margin-top: -11px;'><input type='checkbox' on class='form-control poIssueIds' value='"+(obj.id) + "' id='issueId" + (obj.id) + "' name='issueIds' checked /></div></td>");
 		            		} else {
-			            		tableValue = tableValue + ("<td><div class='form-group'><input type='checkbox' class='form-control poIssueIds' value='"+(obj.id) + "' id='issueId" + (obj.id) + "' name='issueIds' /></div></td>");		            			
+			            		tableValue = tableValue + ("<td><div style='margin-top: -11px;'><input type='checkbox' class='form-control poIssueIds' value='"+(obj.id) + "' id='issueId" + (obj.id) + "' name='issueIds' /></div></td>");		            			
 		            		}
      						tableValue = tableValue + ("<td><a href='#' onclick=showIssueDetail('"+(obj.id) + "') data-toggle='modal' data-target='#issueModal'>" + (obj.title)+"</a></td>");
 		            		tableValue = tableValue + ("<td>"+(obj.vmcName)+"</td>");
@@ -945,6 +945,49 @@ return true;
  }
  
 //To-Do
+function getOnlyUnitNosOnUnitTypeChange() {
+ 	
+ 	 var unitTypeId = $('#unitTypeId :selected').val();
+ 	 var categoryId = 0;
+ 	 
+ 	if(unitTypeId != "Please Select") {
+
+ 		$.get("<%=request.getContextPath()%>"+"/issue/getunitno/category/" + categoryId + "/unittype/" + unitTypeId, function(data) {
+ 	        
+ 			 var unitNo = document.getElementById("unitNo");
+ 	         $("#unitNo").empty();
+ 	         var opt = "";
+ 	         if(data.unitNos != null && data.unitNos.length > 0) {
+ 		         if(data.unitNos != null && data.unitNos.length > 0) {
+ 			         for(var i = 0;i < data.unitNos.length;i++) {
+ 			         	opt += "<option value='"+data.unitNos[i]+"' id='chk"+data.unitNos[i]+"'>"+data.unitNos[i]+"</option>"
+ 			         }
+ 		         } else {
+ 					toastr.error('No such UnitNo. exists for selected UnitType and Category', 'Error!')
+ 		         }
+ 		         
+		 		 $('#unitNo').multiselect('destroy');
+ 		         $("#unitNo").html(opt);
+ 		         $('#unitNo').multiselect({
+ 			 		  	includeSelectAllOption: true
+ 				 });
+ 		         
+ 		         var issuesFroDropDown;
+ 		         var selectedUnitNos = [];
+ 		         
+ 		         var allUnitNos = data.unitNos;
+ 		        
+ 	         } else {
+ 	        	$('#unitNo').multiselect('destroy');
+ 				$("#unitNo").html("<option>Please Select</option>");
+ 	         }
+ 	    });
+ 	} else {
+ 		$('#unitNo').multiselect('destroy');
+		$("#unitNo").html("<option>Please Select</option>");
+ 	}
+ }
+
  function getOnlyUnitNos() {
  	
  	 var unitTypeId = $('#unitTypeId :selected').val();
@@ -969,6 +1012,7 @@ return true;
  					toastr.error('No such UnitNo. exists for selected UnitType and Category', 'Error!')
  		         }
  		         
+		 		 $('#unitNo').multiselect('destroy');
  		         $("#unitNo").html(opt);
  		         $('#unitNo').multiselect({
  			 		  	includeSelectAllOption: true
@@ -1095,7 +1139,7 @@ function functionToBeCalledOnGo() {
 	     				if($("#addUpdateFlag").val() == 'update') {
 	     					if(!editIssueIds.includes(obj.id)) {
 	     						tableValue = tableValue + ("<tr class='info " + unitNo + "'>");
-	     						tableValue = tableValue + ("<td><div class='form-group'><input type='checkbox' class='form-control poIssueIds' value='"+(obj.id)+"' id='issueId" + (obj.id) + "' name='issueIds' /></div></td>");
+	     						tableValue = tableValue + ("<td><div style='margin-top: -11px;'><input type='checkbox' class='form-control poIssueIds' value='"+(obj.id)+"' id='issueId" + (obj.id) + "' name='issueIds' /></div></td>");
 	     						tableValue = tableValue + ("<td><a href='#' onclick=showIssueDetail('"+(obj.id) + "') data-toggle='modal' data-target='#issueModal'>" + (obj.title)+"</a></td>");
 	     						tableValue = tableValue + ("<td>"+(obj.vmcName)+"</td>");
 	     						tableValue = tableValue + ("<td>"+(obj.categoryName)+"</td>");
@@ -1108,7 +1152,7 @@ function functionToBeCalledOnGo() {
 	     				}
 	     				else {
 	     					tableValue = tableValue + ("<tr class='info " + unitNo + "'>");
-	     					tableValue = tableValue + ("<td><div class='form-group'><input type='checkbox' class='form-control poIssueIds' value='"+(obj.id) + "' id='issueId" + (obj.id) + "' name='issueIds' /></div></td>");
+	     					tableValue = tableValue + ("<td><div style='margin-top: -11px;'><input type='checkbox' class='form-control poIssueIds' value='"+(obj.id) + "' id='issueId" + (obj.id) + "' name='issueIds' /></div></td>");
 	     					tableValue = tableValue + ("<td><a href='#' onclick=showIssueDetail('"+(obj.id) + "') data-toggle='modal' data-target='#issueModal'>"+(obj.title)+"</a></td>");
 	     					tableValue = tableValue + ("<td>"+(obj.vmcName)+"</td>");
 	     					tableValue = tableValue + ("<td>"+(obj.categoryName)+"</td>");
@@ -1217,7 +1261,7 @@ function functionToBeCalledOnGo() {
 													<span class="input-group-addon">
 														 <b>UnitType</b>												
 													</span>
-													<select id="unitTypeId" class="form-control" name="unitTypeId" onchange="getCategories();getOnlyUnitNos();">
+													<select id="unitTypeId" class="form-control" name="unitTypeId" onchange="getCategories();getOnlyUnitNosOnUnitTypeChange();">
 														<option>Please Select</option>
 													</select>
 												</div>
@@ -1264,7 +1308,7 @@ function functionToBeCalledOnGo() {
 															<table class="table table-striped table-hover table-condensed">
 																<thead>
 																	<tr>
-																		<th></th>
+																		<th>&nbsp;</th>
 																		<th>Title</th>
 																		<th>VMC</th>
 																		<th>Category</th>
