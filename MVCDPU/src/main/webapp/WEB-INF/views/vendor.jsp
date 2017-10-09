@@ -412,6 +412,18 @@ function check() {
 		$("#ext").focus();
 		return false;
 	}
+	if(!isNumeric(ext)) {
+		msg.show();
+		msgvalue.text("Only numerics allowed in ext");
+		$("#ext").focus();
+		return false;
+	}
+	if(ext.length != 10) {
+		msg.show();
+		msgvalue.text("Length 10 allowed in ext");
+		$("#ext").focus();
+		return false;
+	}
 	if(prefix == "") {
 		msg.show();
 		msgvalue.text("Prefix cannot be left blank.");

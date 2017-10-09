@@ -412,6 +412,7 @@ function check() {
 	var fax = $("#fax").val();
 	var prefix = $("#prefix").val();
 	var province = $("#province").val();
+	var zip = $("#zip").val();
 	var tollFree = $("#tollfree").val();
 	var plant = $("#plant").val();
 	var zone = $("#zone").val();
@@ -434,6 +435,18 @@ function check() {
 	if(contact == "") {
 		msg.show();
 		msgvalue.text("Contact cannot be left blank.");
+		$("#contact").focus();
+		return false;
+	}
+	if(!isNumeric(contact)) {
+		msg.show();
+		msgvalue.text("Only numerics allowed in contact");
+		$("#contact").focus();
+		return false;
+	}
+	if(contact.length != 10) {
+		msg.show();
+		msgvalue.text("Length 10 allowed in contact");
 		$("#contact").focus();
 		return false;
 	}
@@ -461,9 +474,33 @@ function check() {
 		$("#phone").focus();
 		return false;
 	}
+	if(!isNumeric(phone)) {
+		msg.show();
+		msgvalue.text("Only numerics allowed in phone");
+		$("#phone").focus();
+		return false;
+	}
+	if(phone.length != 10) {
+		msg.show();
+		msgvalue.text("Length 10 allowed in phone");
+		$("#phone").focus();
+		return false;
+	}
 	if(ext == "") {
 		msg.show();
 		msgvalue.text("Ext cannot be left blank.");
+		$("#ext").focus();
+		return false;
+	}
+	if(!isNumeric(ext)) {
+		msg.show();
+		msgvalue.text("Only numerics allowed in ext");
+		$("#ext").focus();
+		return false;
+	}
+	if(ext.length != 10) {
+		msg.show();
+		msgvalue.text("Length 10 allowed in ext");
 		$("#ext").focus();
 		return false;
 	}
@@ -479,6 +516,18 @@ function check() {
 		$("#fax").focus();
 		return false;
 	}
+	if(!isNumeric(fax)) {
+		msg.show();
+		msgvalue.text("Only numerics allowed in fax");
+		$("#fax").focus();
+		return false;
+	}
+	if(fax.length != 10) {
+		msg.show();
+		msgvalue.text("Length 10 allowed in fax");
+		$("#fax").focus();
+		return false;
+	}
 	if(prefix == "") {
 		msg.show();
 		msgvalue.text("Prefix cannot be left blank.");
@@ -491,9 +540,69 @@ function check() {
 		$("#province").focus();
 		return false;
 	}
+	var country = $('#countryId :selected').text();
+	if(country == 'USA') {
+		if(zip == "") {
+			msg.show();
+			msgvalue.text("Zip cannot be left blank.");
+			$("#zip").focus();
+			return false;
+		}
+		if(!isNumeric(zip)) {
+			msg.show();
+			msgvalue.text("Only numerics allowed in Zip");
+			$("#zip").focus();
+			return false;
+		}
+		if(zip.length != 5) {
+			msg.show();
+			msgvalue.text("Length 5 allowed in Zip");
+			$("#zip").focus();
+			return false;
+		}
+	}
+	var country = $('#countryId :selected').text();
+	if(country == 'Canada') {
+		if(zip == "") {
+			msg.show();
+			msgvalue.text("PostalCode cannot be left blank.");
+			$("#zip").focus();
+			return false;
+		}
+		if(!isAlphaNumeric(zip)) {
+			msg.show();
+			msgvalue.text("Only alphanumerics allowed in PostalCode");
+			$("#zip").focus();
+			return false;
+		}
+		if(zip.length != 6) {
+			msg.show();
+			msgvalue.text("Length 6 allowed in PostalCode");
+			$("#zip").focus();
+			return false;
+		}
+		if((!isNameWithoutSpace(zip[0])) || (!isNumeric(zip[1])) || (!isNameWithoutSpace(zip[2])) || (!isNumeric(zip[3])) || (!isNameWithoutSpace(zip[4])) || (!isNumeric(zip[5]))) {
+			msg.show();
+			msgvalue.text("Invalid pattern PostalCode");
+			$("#zip").focus();
+			return false;
+		}
+	}
 	if(tollFree == "") {
 		msg.show();
 		msgvalue.text("TollFree cannot be left blank.");
+		$("#tollfree").focus();
+		return false;
+	}
+	if(!isNumeric(tollFree)) {
+		msg.show();
+		msgvalue.text("Only numerics allowed in tollFree");
+		$("#tollfree").focus();
+		return false;
+	}
+	if(tollFree.length != 10) {
+		msg.show();
+		msgvalue.text("Length 10 allowed in tollFree");
 		$("#tollfree").focus();
 		return false;
 	}
@@ -518,6 +627,12 @@ function check() {
 	if(email == "") {
 		msg.show();
 		msgvalue.text("Email cannot be left blank.");
+		$("#email").focus();
+		return false;
+	}
+	if(!isEmail(email)) {
+		msg.show();
+		msgvalue.text("Email should contain dot, @, anydomainname");
 		$("#email").focus();
 		return false;
 	}

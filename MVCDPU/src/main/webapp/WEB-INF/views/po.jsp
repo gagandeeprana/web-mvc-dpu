@@ -253,9 +253,6 @@ function deletePO(terminalId){
 			$("#btnInvoiced").addClass("btn btn-default"); 
 		}
 		
-	/* 	$("#btnNew").click(function(){
-			$("#frm1").submit();
-		}); */
 		$('#btnSearch').click(function(){
 			$("#frmSearch").change(function() {
 			  $("#frmSearch").attr("action", "showques");
@@ -456,7 +453,7 @@ function showIssueDetail(quesId) {
     	            	unitType.options[i+1].value = data.unitTypeList[i].typeId;
     	            }
     	            
-    	            getUnitNo();
+    	            //getUnitNo();
     	             
     	        });
         	} else {
@@ -578,8 +575,11 @@ function showIssueDetail(quesId) {
                     for(var i=0;i<issueList.length;i++) {
 		            	var obj = issueList[i];
 		     			$("#issueId" + obj.id).on('click',function (){
-		     				if ($(this).is(':checked') )
+		     				if ($(this).is(':checked')) {
 		     					document.getElementById("issueStatusId" + obj.id).selectedIndex = 3;
+		     				} else {
+		     					document.getElementById("issueStatusId" + obj.id).selectedIndex = 0;		     					
+		     				}
 		     			});
 	            	}
 
@@ -1178,8 +1178,11 @@ function functionToBeCalledOnGo() {
 	     		for(var k=0;k<issuesFroDropDown.length;k++) {
 	     			var obj = issuesFroDropDown[k];
 	     			$("#issueId" + obj.id).click(function (){
-	     				if ($(this).is(':checked') )
+	     				if ($(this).is(':checked')) {
 	     					document.getElementById("issueStatusId" + $(this).val()).selectedIndex = 3;
+	     				} else {
+	     					document.getElementById("issueStatusId" + $(this).val()).selectedIndex = 0;	     					
+	     				}
 	     			});
 	     		}
 	        	

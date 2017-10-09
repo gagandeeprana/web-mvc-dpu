@@ -393,7 +393,6 @@ function checkFlag(field) {
            	document.getElementById("vmcId").innerHTML = "<option>Please Select</option>";
         	document.getElementById("unitType").innerHTML = "<option>Please Select</option>";
         	document.getElementById("issueCategory").innerHTML = "<option>Please Select</option>";
-        	$('#unitNo').multiselect('destroy');
        	    $("#unitNo").html("<option>Please Select</option>");
         	document.getElementById("reportedBy").innerHTML = "<option>Please Select</option>";
         	document.getElementById("status").innerHTML = "<option>Please Select</option>";
@@ -466,30 +465,18 @@ function getOnlyUnitNos() {
 		$.get("<%=request.getContextPath()%>"+"/issue/getunitno/category/" + categoryId + "/unittype/" + unitTypeId, function(data) {
 	        
 			 var unitNo = document.getElementById("unitNo");
-	         $("#unitNo").empty();
-	         var opt = "";
+	       	    $("#unitNo").html("<option>Please Select</option>");
 	         if(data.unitNos != null && data.unitNos.length > 0) {
-		         if(data.unitNos != null && data.unitNos.length > 0) {
-			         for(var i = 0;i < data.unitNos.length;i++) {
-			         	opt += "<option value='"+data.unitNos[i]+"' >"+data.unitNos[i]+"</option>"
-			         }
-		         } else {
-					toastr.error('No such UnitNo. exists for selected UnitType and Category', 'Error!')
-		         }
-		         
-		 		 $('#unitNo').multiselect('destroy');
-		         $("#unitNo").html(opt);
-		         
-		         $('#unitNo').multiselect({
-			 		  	includeSelectAllOption: true
-				 });
+	        	 for(var i = 0;i < data.unitNos.length;i++) {
+                   	unitNo.options[unitNo.options.length] = new Option(data.unitNos[i]);
+                   	unitNo.options[i+1].value = data.unitNos[i];
+                 }
 	         } else {
-	 			$('#unitNo').multiselect('destroy');
+				toastr.error('No such UnitNo. exists for selected UnitType and Category', 'Error!')
 	        	 $("#unitNo").html("<option>Please Select</option>");
 	         }
 	    });
 	} else {
-		$('#unitNo').multiselect('destroy');
 		$("#unitNo").html("<option>Please Select</option>");
    	}
 }
@@ -504,34 +491,18 @@ function getOnlyUnitNosOnUnitTypeChange() {
 		$.get("<%=request.getContextPath()%>"+"/issue/getunitno/category/" + categoryId + "/unittype/" + unitTypeId, function(data) {
 	        
 			 var unitNo = document.getElementById("unitNo");
-	         $("#unitNo").empty();
-	         var opt = "";
+	       	    $("#unitNo").html("<option>Please Select</option>");
 	         if(data.unitNos != null && data.unitNos.length > 0) {
-		         if(data.unitNos != null && data.unitNos.length > 0) {
-			         for(var i = 0;i < data.unitNos.length;i++) {
-			         	opt += "<option value='"+data.unitNos[i]+"' id='chk"+data.unitNos[i]+"'>"+data.unitNos[i]+"</option>"
-			         }
-		         } else {
-					toastr.error('No such UnitNo. exists for selected UnitType and Category', 'Error!')
-		         }
-		 		 $('#unitNo').multiselect('destroy');
-		         $("#unitNo").html(opt);
-		         $('#unitNo').multiselect({
-			 		  	includeSelectAllOption: true
-				 });
-		         
-		         var issuesFroDropDown;
-		         var selectedUnitNos = [];
-		         
-		         var allUnitNos = data.unitNos;
-		        
+	        	 for(var i = 0;i < data.unitNos.length;i++) {
+                   	unitNo.options[unitNo.options.length] = new Option(data.unitNos[i]);
+                   	unitNo.options[i+1].value = data.unitNos[i];
+                 }
 	         } else {
-	        	$('#unitNo').multiselect('destroy');
+				toastr.error('No such UnitNo. exists for selected UnitType and Category', 'Error!')
 				$("#unitNo").html("<option>Please Select</option>");
 	         }
 	    });
 	} else {
-		$('#unitNo').multiselect('destroy');
 		$("#unitNo").html("<option>Please Select</option>");
 	}
 }

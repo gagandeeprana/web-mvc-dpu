@@ -15,6 +15,8 @@
 	src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script
 	src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.min.js"></script>
+	 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/css/bootstrap-multiselect.css" />
 <style type="text/css">
 .modal-dialog {
   width: 98%;
@@ -56,11 +58,7 @@ function createTerminal(urlToHit,methodType){
 	 
 	 	var terminalName = $("#terminalName").val();
 	   	var locationId = $('#locationId :selected').val();
-	   	//var serviceIds = $('select#serviceIds').val();
-	   	var e = document.getElementById("serviceIds");
-	    var result = new Array();
-	    alert(e.options[e.selectedIndex].value);
-        result.push(e.options[e.selectedIndex].value)
+	   	var serviceIds = $('#serviceIds').val();
 
 	   	var terminalId;
 	   	if(methodType == 'PUT') {
@@ -73,11 +71,11 @@ function createTerminal(urlToHit,methodType){
 			      data:{
 			    	terminalName:terminalName,
 			    	shipperId:loc,
-			    	stringServiceIds:result.toString(),
+			    	stringServiceIds:serviceIds.toString(),
+			    	terminalid:terminalId
 			      },
 			      success: function(result){
 		        try{
-		        	alert("cc " + result);
 		        	$('#myModal').modal('toggle');
 		        	var list = result.resultList;
 					fillTerminalData(list);
@@ -194,11 +192,16 @@ function checkFlag(field) {
     	            	shipperLocation.options[i].value = data.shipperList[i].shipperId;
     	            } 
     	            
-    	            var shipperService = document.getElementById("serviceIds");
+    	            var opt = "";
     	            for(var i = 0;i < data.serviceList.length;i++) {
-    	            	shipperService.options[shipperService.options.length] = new Option(data.serviceList[i].serviceName);
-    	            	shipperService.options[i].value = data.serviceList[i].serviceId;
-    	            }
+ 			         	opt += "<option value='"+data.serviceList[i].serviceId+"' id='chkService"+data.serviceList[i].serviceId+"'>"+data.serviceList[i].serviceName+"</option>"
+ 			         }
+    	            
+    	            $('#serviceIds').multiselect('destroy');
+    		         $("#serviceIds").html(opt);
+    		         $('#serviceIds').multiselect({
+    			 		  	includeSelectAllOption: true
+    				 });
     	        });
         	} else {
         		$.get("getterminal/terminalId",{"terminalId" : quesId}, function(data) {
@@ -215,19 +218,23 @@ function checkFlag(field) {
                     	}
                     }
                     
-                    var shipperService = document.getElementById("serviceIds");
+                    var serviceIds = document.getElementById("serviceIds");
                     var serviceList = data.serviceList;
+                    var opt = "";
                     for(var i = 0;i < serviceList.length;i++) {
-                    	shipperService.options[shipperService.options.length] = new Option(serviceList[i].serviceName);
-                    	shipperService.options[i].value = serviceList[i].serviceId;
-                    	
-                    	var sId = serviceList[i].serviceId;
-                    	for(var j=0;j<data.serviceIds.length;j++) {
-	                    	if(sId == data.serviceIds[j]) {
-	                    		$("#serviceIds > [value=" + sId + "]").attr("selected", "true");
-	                    	}
-                    	}
+ 			         	opt += "<option value='" + serviceList[i].serviceId + "' id='chkService" + serviceList[i].serviceId+"'>" + serviceList[i].serviceName+"</option>"
                     }
+                    
+                    var selectedServiceIds = data.serviceIds;
+
+                    $("#serviceIds").html(opt);
+   		      		$("#serviceIds").val(selectedServiceIds);
+   		      		setTimeout(function(){
+			         	$('#serviceIds').multiselect({
+				 			includeSelectAllOption: true
+					 	});
+   		      		})
+
                	});
         	}
         }
@@ -236,6 +243,7 @@ function checkFlag(field) {
             $("#terminalName").val("");
         	document.getElementById("locationId").innerHTML = "";
         	document.getElementById("serviceIds").innerHTML = "";
+        	$('#serviceIds').multiselect('destroy');
         }
 </script>
 

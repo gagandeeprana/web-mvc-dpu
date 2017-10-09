@@ -107,6 +107,13 @@ public class WebTerminalController {
 
 		if (session != null) {
 			if (session.getAttribute("un") != null) {
+				List<String> stringServiceIds = terminalResponse.getStringServiceIds();
+				List<Long> serviceIds = new ArrayList<Long>();
+				for (int i = 0; i < stringServiceIds.size(); i++) {
+					serviceIds.add(Long.parseLong(stringServiceIds.get(i)));
+				}
+				terminalResponse.setServiceIds(serviceIds);
+				terminalResponse.setStatusId(1l);
 				Object response = terminalService.updateTerminal(terminalId, terminalResponse);
 				if (response instanceof Failed) {
 					return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);

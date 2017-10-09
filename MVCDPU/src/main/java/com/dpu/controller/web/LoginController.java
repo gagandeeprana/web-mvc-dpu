@@ -3,14 +3,18 @@ package com.dpu.controller.web;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.dpu.model.EmployeeModel;
+import com.dpu.model.Failed;
 import com.dpu.model.Success;
 import com.dpu.service.EmployeeService;
 
@@ -40,6 +44,36 @@ public class LoginController {
 			}
 		}
 		return modelAndView;
+	}
+
+	ObjectMapper mapper = new ObjectMapper();
+	
+	@RequestMapping(value = "/loginuser", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.PUT)
+	public Object loginUser(@RequestHeader("username") String username, @RequestHeader("password") String password) {
+
+		Object obj = null;
+		try {
+
+
+			EmployeeModel employeeModel = new EmployeeModel();
+			employeeModel.setUsername(username);
+			employeeModel.setPassword(password);
+			Object result = employeeService
+					.getUserByLoginCredentials(employeeModel);
+			if (result instanceof Success) {
+				Success s = (Success) result;
+				return mapper.writeValueAsString(s);
+				// obj = new ResponseEntity<Object>(result, HttpStatus.OK);
+			} else {
+				Failed f = (Failed) result;
+				return mapper.writeValueAsString(f);
+				// obj = new ResponseEntity<Object>(result,
+				// HttpStatus.BAD_REQUEST);
+			}
+		} catch (Exception e) {
+		}
+
+		return obj;
 	}
 	
 	@RequestMapping(value = {"/login" , "/"})
