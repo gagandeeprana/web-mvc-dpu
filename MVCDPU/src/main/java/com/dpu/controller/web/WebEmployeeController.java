@@ -23,6 +23,7 @@ import com.dpu.model.EmployeeModel;
 import com.dpu.model.Failed;
 import com.dpu.service.EmployeeService;
 import com.dpu.util.DateUtil;
+import com.dpu.util.HelperUtil;
 
 @Controller
 public class WebEmployeeController {
@@ -53,10 +54,16 @@ public class WebEmployeeController {
 
 		if(session != null) {
 			if(session.getAttribute("un") != null) {
-				String hiring = DateUtil.rearrangeDate(employeeModel.getHiringdate());
-				String termination = DateUtil.rearrangeDate(employeeModel.getTerminationdate());
-				employeeModel.setHiringdate(hiring);
-				employeeModel.setTerminationdate(termination);
+				String hiringDt = employeeModel.getHiringdate();
+				String terminationDt = employeeModel.getTerminationdate();
+				if(HelperUtil.chkStringIsNotEmpty(hiringDt)) {
+					String hiring = DateUtil.rearrangeDate(hiringDt);
+					employeeModel.setHiringdate(hiring);
+				}
+				if(HelperUtil.chkStringIsNotEmpty(terminationDt)) {
+					String termination = DateUtil.rearrangeDate(employeeModel.getTerminationdate());
+					employeeModel.setTerminationdate(termination);
+				}
 				Object response = employeeService.add(employeeModel);
 				if(response instanceof Failed) {
 					return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);

@@ -40,6 +40,8 @@ textarea{
 }
 </style>
 <jsp:include page="Include.jsp"></jsp:include>
+ <script src="<c:url value="/resources/validations.js" />"></script>
+
 <script type="text/javascript">
 function navigate() {
 	var flag = $("#addUpdateFlag").val();
@@ -293,12 +295,12 @@ function check() {
 		$("#lastName").focus();
 		return false;
 	}
-	if(jobTitle == "") {
+	/* if(jobTitle == "") {
 		msg.show();
 		msgvalue.text("JobTitle cannot be left blank.");
 		$("#jobTitle").focus();
 		return false;
-	}
+	} */
 	if(username == "") {
 		msg.show();
 		msgvalue.text("Username cannot be left blank.");
@@ -311,30 +313,50 @@ function check() {
 		$("#password").focus();
 		return false;
 	}
-	if(email == "") {
+	if(email != "" && !isEmail(email)) {
+		msg.show();
+		msgvalue.text("Email should contain dot, @, anydomainname");
+		$("#email").focus();
+		return false;
+	}
+	/* if(email == "") {
 		msg.show();
 		msgvalue.text("Email cannot be left blank.");
 		$("#email").focus();
 		return false;
-	}
-	if(phone == "") {
+	} */
+	/* if(phone == "") {
 		msg.show();
 		msgvalue.text("Phone cannot be left blank.");
 		$("#phone").focus();
 		return false;
+	} */
+	if(phone != "") {
+		if(!isNumeric(phone)) {
+			msg.show();
+			msgvalue.text("Only numerics allowed in phone");
+			$("#phone").focus();
+			return false;
+		}
+		if(phone.length != 10) {
+			msg.show();
+			msgvalue.text("Length 10 allowed in phone");
+			$("#phone").focus();
+			return false;
+		}
 	}
-	if(hiringDate == "") {
+	/* if(hiringDate == "") {
 		msg.show();
 		msgvalue.text("HiringDate cannot be left blank.");
 		$("#hiringDate").focus();
 		return false;
-	}
-	if(terminationDate == "") {
+	} */
+	/* if(terminationDate == "") {
 		msg.show();
 		msgvalue.text("TerminationDate cannot be left blank.");
 		$("#terminationDate").focus();
 		return false;
-	}
+	} */
 	$('#modal').modal('toggle');
 	return true;
 }
