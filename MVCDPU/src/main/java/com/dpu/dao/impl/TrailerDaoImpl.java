@@ -15,16 +15,18 @@ public class TrailerDaoImpl extends GenericDaoImpl<Trailer> implements TrailerDa
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Trailer> findAll(Session session) {
-		StringBuilder sb = new StringBuilder(" select t from Trailer t join fetch t.division join fetch t.terminal join fetch t.category join fetch t.type " )
-		.append(" join fetch t.status ");
+		StringBuilder sb = new StringBuilder(
+				" select t from Trailer t left join fetch t.division left join fetch t.terminal left join fetch t.category left join fetch t.type ")
+				.append(" left join fetch t.status ");
 		Query query = session.createQuery(sb.toString());
 		return query.list();
 	}
 
 	@Override
 	public Trailer findById(Long trailerId, Session session) {
-		StringBuilder sb = new StringBuilder(" select t from Trailer t join fetch t.division join fetch t.terminal join fetch t.category join fetch t.type " )
-		.append(" join fetch t.status where t.trailerId =:trailerId");
+		StringBuilder sb = new StringBuilder(
+				" select t from Trailer t left join fetch t.division left join fetch t.terminal left join fetch t.category left join fetch t.type ")
+				.append("left join fetch t.status where t.trailerId =:trailerId");
 		Query query = session.createQuery(sb.toString());
 		query.setParameter("trailerId", trailerId);
 		return (Trailer) query.uniqueResult();

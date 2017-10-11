@@ -16,6 +16,8 @@
 	 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 	 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.min.js"></script>
 	 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/css/bootstrap-multiselect.css" />
+<link rel = "stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.0/css/bootstrap-datepicker.css"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.0/js/bootstrap-datepicker.js"></script>
 <style type="text/css">
 	.ui-front {
 	    z-index: 9999;
@@ -162,9 +164,15 @@ function fillPOData(list) {
     		tableValue = tableValue + ("<td>"+(statusName)+"</td>");
     		tableValue = tableValue + ("<td>"+(unitTypeName)+"</td>");
     		tableValue = tableValue + ("<td>"+(vendorName)+"</td>");
-    		tableValue = tableValue + "<td><a href = '#' data-toggle='modal' data-target='#myModal'  onclick=checkFlag('update');onClickMethodQuestion('"+(obj.id)+"')>Update</a> / <a href='#' onclick=deletePO('"+(obj.id)+"')>Delete</a>";
+    		tableValue = tableValue + "<td>";
+    		if($("#statusFlag").val() == 'Active') {
+	    		tableValue = tableValue + "<a href = '#' data-toggle='modal' data-target='#myModal'  onclick=checkFlag('update');onClickMethodQuestion('"+(obj.id)+"')>Update</a> / <a href='#' onclick=deletePO('"+(obj.id)+"')>Delete</a>";
+    		}
     		if($("#statusFlag").val() == 'Complete') {
-	    		tableValue = tableValue + " / <a href='#' data-toggle='modal' data-target='#invoiceModal' onclick=pastePoNo('"+(poNo)+"');pastePoIdAndStatusId('"+(obj.id)+"','"+(obj.invoiceStatusId)+"')>Change to Invoice</a>";	    			
+	    		tableValue = tableValue + "<a href = '#' data-toggle='modal' data-target='#myModal'  onclick=checkFlag('view');onClickMethodQuestion('"+(obj.id)+"')>View</a> / <a href='#' data-toggle='modal' data-target='#invoiceModal' onclick=pastePoNo('"+(poNo)+"');pastePoIdAndStatusId('"+(obj.id)+"','"+(obj.invoiceStatusId)+"')>Change to Invoice</a>";	    			
+    		}
+    		if($("#statusFlag").val() == 'Invoiced') {
+	    		tableValue = tableValue + "<a href = '#' data-toggle='modal' data-target='#myModal'  onclick=checkFlag('view');onClickMethodQuestion('"+(obj.id)+"')>View</a>";	    			
     		}
     		if(obj.isComplete == true) {
     			tableValue = tableValue + " / <a href='#' onclick=changeStatusToComplete('"+ (obj.id) + "','" + (obj.completeStatusId) + "') id='changeStatus'>Change to Complete</a>";
@@ -173,7 +181,7 @@ function fillPOData(list) {
 		}
 		$("#poData").html(tableValue);
 	} else {
-		$("#poData").html("No records found.");		
+		$("#poData").html("No records found.");
 	}
 }
 
@@ -262,6 +270,7 @@ function deletePO(terminalId){
 	});
 function checkFlag(field) {
 	document.getElementById("addUpdateFlag").value = field;
+	$("#btnNew").show();
 	if(field == 'update') {
 		document.getElementById("btnNew").value = "Update";
 		//$("#btnExit").hide();
@@ -279,6 +288,9 @@ function checkFlag(field) {
 		/* document.getElementById("frm1").method = "GET";
 		document.getElementById("frm1").action = "showques";
 		document.getElementById("frm1").submit(); */
+	} else if(field == 'view') {
+		$("#modelTitle").html("Edit PO");
+		$("#btnNew").hide();
 	}
 }
 
@@ -704,6 +716,9 @@ function emptyMessageDiv(){
  
  function pastePoNo(poNo) {
 	 $("#invoicePoNo").val(poNo);
+	 $("#invoiceAmount").val("");
+	 $("#invoiceNo").val("");
+	 $("#invoiceDate").val("");
  }
  
  var invoicePoId;

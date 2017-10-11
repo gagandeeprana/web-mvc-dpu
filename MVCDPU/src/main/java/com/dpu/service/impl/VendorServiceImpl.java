@@ -34,6 +34,7 @@ import com.dpu.service.CompanyBillingLocationService;
 import com.dpu.service.CountryStateCityService;
 import com.dpu.service.StatusService;
 import com.dpu.service.VendorService;
+import com.dpu.util.ValidationUtil;
 
 @Component
 public class VendorServiceImpl implements VendorService {
@@ -273,7 +274,10 @@ public class VendorServiceImpl implements VendorService {
 		vendorBillingLocation.setPosition(billingLocation.getPosition());
 		vendorBillingLocation.setPrefix(billingLocation.getPrefix());
 		vendorBillingLocation.setProvinceState(billingLocation.getProvinceState());
-		vendorBillingLocation.setStatus(statusService.get(billingLocation.getStatusId()));
+
+		if (!ValidationUtil.isNull(billingLocation.getStatusId())) {
+			vendorBillingLocation.setStatus(statusService.get(billingLocation.getStatusId()));
+		}
 		vendorBillingLocation.setTollfree(billingLocation.getTollfree());
 		vendorBillingLocation.setUnitNo(billingLocation.getUnitNo());
 		vendorBillingLocation.setZip(billingLocation.getZip());
@@ -302,12 +306,12 @@ public class VendorServiceImpl implements VendorService {
 		vendor.setCellular(vendorModel.getCellular());
 		vendor.setPager(vendorModel.getPager());
 		
-		if(vendorModel.getCountryId() != null) {
+		if (!ValidationUtil.isNull(vendorModel.getCountryId())) {
 			Country country = (Country) session.get(Country.class, vendorModel.getCountryId());
 			vendor.setCountry(country);
 		}
 		
-		if(vendorModel.getStateId() != null) {
+		if (!ValidationUtil.isNull(vendorModel.getStateId())) {
 			State state = (State) session.get(State.class, vendorModel.getStateId());
 			vendor.setState(state);
 		}
@@ -416,7 +420,7 @@ public class VendorServiceImpl implements VendorService {
 						VendorBillingLocationModel location = new VendorBillingLocationModel();
 						org.springframework.beans.BeanUtils.copyProperties(vendorBillingLocation, location);
 						
-						if(vendorBillingLocation.getStatus() != null) {
+						if (!ValidationUtil.isNull(vendorBillingLocation.getStatus())) {
 							location.setStatusId(vendorBillingLocation.getStatus().getId());
 						}
 						billingLocations.add(location);
@@ -466,12 +470,12 @@ public class VendorServiceImpl implements VendorService {
 		response.setUnitNo(vendor.getUnitNo());
 		response.setWebsite(vendor.getWebsite());
 		
-		if( vendor.getCountry() != null){
+		if (!ValidationUtil.isNull(vendor.getCountry())) {
 			response.setCountryName(vendor.getCountry().getCountryName());
 			response.setCountryId(vendor.getCountry().getCountryId());
 		}
 		
-		if( vendor.getState() != null){
+		if (!ValidationUtil.isNull(vendor.getState())) {
 			response.setStateName(vendor.getState().getStateName());
 			response.setStateId(vendor.getState().getStateId());
 		}

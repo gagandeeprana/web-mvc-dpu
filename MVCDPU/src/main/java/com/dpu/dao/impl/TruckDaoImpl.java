@@ -18,6 +18,7 @@ import com.dpu.entity.Truck;
 import com.dpu.entity.Type;
 import com.dpu.model.TruckModel;
 import com.dpu.service.StatusService;
+import com.dpu.util.ValidationUtil;
 
 @Repository
 @Transactional
@@ -27,25 +28,35 @@ public class TruckDaoImpl extends GenericDaoImpl<Truck> implements TruckDao {
 	StatusService statusService;
 
 	@Override
-	public Truck add(Session session, TruckModel truckResponse) {
+	public Truck add(Session session, TruckModel truckModel) {
 		logger.info("TruckDaoImpl: add(): STARTS");
-		Truck truck = null;
 
-		truck = setTruckValues(truckResponse);
-		Status status = (Status) session.get(Status.class, truckResponse.getStatusId());
-		truck.setStatus(status);
+		Truck truck = setTruckValues(truckModel);
 
-		Division division = (Division) session.get(Division.class, truckResponse.getDivisionId());
-		truck.setDivision(division);
+		if (!ValidationUtil.isNull(truckModel.getStatusId())) {
+			Status status = (Status) session.get(Status.class, truckModel.getStatusId());
+			truck.setStatus(status);
+		}
 
-		Category category = (Category) session.get(Category.class, truckResponse.getCategoryId());
-		truck.setCategory(category);
+		if (!ValidationUtil.isNull(truckModel.getDivisionId())) {
+			Division division = (Division) session.get(Division.class, truckModel.getDivisionId());
+			truck.setDivision(division);
+		}
 
-		Terminal terminal = (Terminal) session.get(Terminal.class, truckResponse.getTerminalId());
-		truck.setTerminal(terminal);
+		if (!ValidationUtil.isNull(truckModel.getCategoryId())) {
+			Category category = (Category) session.get(Category.class, truckModel.getCategoryId());
+			truck.setCategory(category);
+		}
 
-		Type type = (Type) session.get(Type.class, truckResponse.getTruckTypeId());
-		truck.setType(type);
+		if (!ValidationUtil.isNull(truckModel.getTerminalId())) {
+			Terminal terminal = (Terminal) session.get(Terminal.class, truckModel.getTerminalId());
+			truck.setTerminal(terminal);
+		}
+
+		if (!ValidationUtil.isNull(truckModel.getTruckTypeId())) {
+			Type type = (Type) session.get(Type.class, truckModel.getTruckTypeId());
+			truck.setType(type);
+		}
 
 		Long truckId = (Long) session.save(truck);
 
@@ -57,16 +68,16 @@ public class TruckDaoImpl extends GenericDaoImpl<Truck> implements TruckDao {
 
 	}
 
-	private Truck setTruckValues(TruckModel truckResponse) {
+	private Truck setTruckValues(TruckModel truckModel) {
 
 		logger.info("TruckDaoImpl: setTruckValues(): STARTS");
 
 		Truck truck = new Truck();
-		truck.setUnitNo(truckResponse.getUnitNo());
-		truck.setOwner(truckResponse.getOwner());
-		truck.setoOName(truckResponse.getoOName());
-		truck.setUsage(truckResponse.getTruchUsage());
-		truck.setFinance(truckResponse.getFinance());
+		truck.setUnitNo(truckModel.getUnitNo());
+		truck.setOwner(truckModel.getOwner());
+		truck.setoOName(truckModel.getoOName());
+		truck.setUsage(truckModel.getTruchUsage());
+		truck.setFinance(truckModel.getFinance());
 		truck.setCreatedBy("jagvir");
 		truck.setCreatedOn(new Date());
 		truck.setModifiedBy("jagvir");

@@ -43,6 +43,7 @@ import com.dpu.service.StatusService;
 import com.dpu.service.TerminalService;
 import com.dpu.service.TruckService;
 import com.dpu.service.TypeService;
+import com.dpu.util.ValidationUtil;
 
 @Component
 public class TruckServiceImpl implements TruckService {
@@ -104,7 +105,7 @@ public class TruckServiceImpl implements TruckService {
 	}
 
 	@Override
-	public Object update(Long id, TruckModel truckResponse) {
+	public Object update(Long id, TruckModel truckModel) {
 	
 		logger.info("TruckServiceImpl update() starts, truckId :"+id);
 		Truck truck = null;
@@ -118,26 +119,36 @@ public class TruckServiceImpl implements TruckService {
 			
 			if (truck != null) {
 				tx = session.beginTransaction();
-				truck.setUnitNo(truckResponse.getUnitNo());
-				truck.setOwner(truckResponse.getOwner());
-				truck.setoOName(truckResponse.getoOName());
-				truck.setUsage(truckResponse.getTruchUsage());
-				truck.setFinance(truckResponse.getFinance());
+				truck.setUnitNo(truckModel.getUnitNo());
+				truck.setOwner(truckModel.getOwner());
+				truck.setoOName(truckModel.getoOName());
+				truck.setUsage(truckModel.getTruchUsage());
+				truck.setFinance(truckModel.getFinance());
 				
-				Category category = (Category) session.get(Category.class, truckResponse.getCategoryId());
-				truck.setCategory(category);
+				if (!ValidationUtil.isNull(truckModel.getCategoryId())) {
+					Category category = (Category) session.get(Category.class, truckModel.getCategoryId());
+					truck.setCategory(category);
+				}
 				
-				Division division = (Division) session.get(Division.class, truckResponse.getDivisionId());
-				truck.setDivision(division);
+				if (!ValidationUtil.isNull(truckModel.getDivisionId())) {
+					Division division = (Division) session.get(Division.class, truckModel.getDivisionId());
+					truck.setDivision(division);
+				}
 				
-				Terminal terminal = (Terminal) session.get(Terminal.class, truckResponse.getTerminalId());
-				truck.setTerminal(terminal);
+				if (!ValidationUtil.isNull(truckModel.getTerminalId())) {
+					Terminal terminal = (Terminal) session.get(Terminal.class, truckModel.getTerminalId());
+					truck.setTerminal(terminal);
+				}
 				
-				Status status = (Status) session.get(Status.class, truckResponse.getStatusId());
-				truck.setStatus(status);
+				if (!ValidationUtil.isNull(truckModel.getStatusId())) {
+					Status status = (Status) session.get(Status.class, truckModel.getStatusId());
+					truck.setStatus(status);
+				}
 				
-				Type type = (Type) session.get(Type.class, truckResponse.getTruckTypeId());
-				truck.setType(type);
+				if (!ValidationUtil.isNull(truckModel.getTruckTypeId())) {
+					Type type = (Type) session.get(Type.class, truckModel.getTruckTypeId());
+					truck.setType(type);
+				}
 				
 				truckDao.update(truck, session);
 				tx.commit();
@@ -219,15 +230,30 @@ public class TruckServiceImpl implements TruckService {
 				truckResponse.setUnitNo(truck.getUnitNo());
 				truckResponse.setOwner(truck.getOwner());
 				truckResponse.setoOName(truck.getoOName());
-				truckResponse.setStatusName(truck.getStatus().getStatus());
+
+				if (!ValidationUtil.isNull(truck.getStatus())) {
+					truckResponse.setStatusName(truck.getStatus().getStatus());
+					truckResponse.setStatusId(truck.getStatus().getId());
+				}
 				truckResponse.setTruchUsage(truck.getUsage());
-				truckResponse.setDivisionId(truck.getDivision().getDivisionId());
-				truckResponse.setCategoryId(truck.getCategory().getCategoryId());
-				truckResponse.setTerminalId(truck.getTerminal().getTerminalId());
-				truckResponse.setStatusId(truck.getStatus().getId());
-				truckResponse.setTruckTypeId(truck.getType().getTypeId());
-				//truckResponse.setTypeName(truck.getType().getTypeName());
-				truckResponse.setTruckType(truck.getType().getTypeName());
+
+				if (!ValidationUtil.isNull(truck.getDivision())) {
+					truckResponse.setDivisionId(truck.getDivision().getDivisionId());
+				}
+
+				if (!ValidationUtil.isNull(truck.getCategory())) {
+					truckResponse.setCategoryId(truck.getCategory().getCategoryId());
+				}
+
+				if (!ValidationUtil.isNull(truck.getTerminal())) {
+					truckResponse.setTerminalId(truck.getTerminal().getTerminalId());
+				}
+
+				if (!ValidationUtil.isNull(truck.getType())) {
+					truckResponse.setTruckTypeId(truck.getType().getTypeId());
+					truckResponse.setTruckType(truck.getType().getTypeName());
+				}
+
 				truckResponse.setFinance(truck.getFinance());
 				List<Status> lstStatus = AllList.getStatusList(session);
 				truckResponse.setStatusList(lstStatus);
@@ -278,24 +304,29 @@ public class TruckServiceImpl implements TruckService {
 					truckResponse.setUnitNo(truck.getUnitNo());
 					truckResponse.setOwner(truck.getOwner());
 					truckResponse.setoOName(truck.getoOName());
-					truckResponse
-							.setCatogoryName(truck.getCategory().getName());
+
+					if (!ValidationUtil.isNull(truck.getCategory())) {
+						truckResponse.setCatogoryName(truck.getCategory().getName());
+					}
 					truckResponse.setTruchUsage(truck.getUsage());
 
-					truckResponse.setDivisionName(truck.getDivision()
-							.getDivisionName());
-					truckResponse.setTerminalName(truck.getTerminal()
-							.getTerminalName());
-					//truckResponse.setTypeName(truck.getType().getTypeName());
+					if (!ValidationUtil.isNull(truck.getDivision())) {
+						truckResponse.setDivisionName(truck.getDivision().getDivisionName());
+					}
 
-					truckResponse.setDivisionName(truck.getDivision()
-							.getDivisionName());
-					truckResponse.setTerminalName(truck.getTerminal()
-							.getTerminalName());
-					truckResponse.setTruckType(truck.getType().getTypeName());
+					if (!ValidationUtil.isNull(truck.getTerminal())) {
+						truckResponse.setTerminalName(truck.getTerminal().getTerminalName());
+					}
+
+					if (!ValidationUtil.isNull(truck.getType())) {
+						truckResponse.setTruckType(truck.getType().getTypeName());
+					}
 
 					truckResponse.setFinance(truck.getFinance());
-					truckResponse.setStatusName(truck.getStatus().getStatus());
+
+					if (!ValidationUtil.isNull(truck.getStatus())) {
+						truckResponse.setStatusName(truck.getStatus().getStatus());
+					}
 					lstTruckResponse.add(truckResponse);
 				}
 			}
@@ -307,14 +338,14 @@ public class TruckServiceImpl implements TruckService {
 	}
 
 	@Override
-	public Object add(TruckModel truckResponse) {
+	public Object add(TruckModel truckModel) {
 		logger.info("TruckServiceImpl: add():  STARTS");
 		Session session = null;
 		Transaction tx = null;
 		try {
 			session = sessionFactory.openSession();
 			tx = session.beginTransaction();
-			truckDao.add(session, truckResponse);
+			truckDao.add(session, truckModel);
 			if (tx != null) {
 				tx.commit();
 			}

@@ -39,6 +39,7 @@ import com.dpu.service.StatusService;
 import com.dpu.service.TerminalService;
 import com.dpu.service.TrailerService;
 import com.dpu.service.TypeService;
+import com.dpu.util.ValidationUtil;
 
 @Component
 public class TrailerServiceImpl implements TrailerService{
@@ -110,20 +111,30 @@ public class TrailerServiceImpl implements TrailerService{
 			Trailer trailer = new Trailer();
 			BeanUtils.copyProperties(trailerRequest, trailer);
 			
-			Status status = (Status) session.get(Status.class, trailerRequest.getStatusId());
-			trailer.setStatus(status);
+			if (!ValidationUtil.isNull(trailerRequest.getStatusId())) {
+				Status status = (Status) session.get(Status.class, trailerRequest.getStatusId());
+				trailer.setStatus(status);
+			}
 
-			Division division = (Division) session.get(Division.class, trailerRequest.getDivisionId());
-			trailer.setDivision(division);
+			if (!ValidationUtil.isNull(trailerRequest.getDivisionId())) {
+				Division division = (Division) session.get(Division.class, trailerRequest.getDivisionId());
+				trailer.setDivision(division);
+			}
 
-			Category category = (Category) session.get(Category.class, trailerRequest.getCategoryId());
-			trailer.setCategory(category);
+			if (!ValidationUtil.isNull(trailerRequest.getCategoryId())) {
+				Category category = (Category) session.get(Category.class, trailerRequest.getCategoryId());
+				trailer.setCategory(category);
+			}
 
-			Terminal terminal = (Terminal) session.get(Terminal.class, trailerRequest.getTerminalId());
-			trailer.setTerminal(terminal);
+			if (!ValidationUtil.isNull(trailerRequest.getTerminalId())) {
+				Terminal terminal = (Terminal) session.get(Terminal.class, trailerRequest.getTerminalId());
+				trailer.setTerminal(terminal);
+			}
 
-			Type type = (Type) session.get(Type.class, trailerRequest.getTrailerTypeId());
-			trailer.setType(type);
+			if (!ValidationUtil.isNull(trailerRequest.getTrailerTypeId())) {
+				Type type = (Type) session.get(Type.class, trailerRequest.getTrailerTypeId());
+				trailer.setType(type);
+			}
 
 			trailerdao.save(trailer, session);
 			tx.commit();
@@ -180,20 +191,31 @@ public class TrailerServiceImpl implements TrailerService{
 				String[] ignoreProp = new String[1];
 				ignoreProp[0] = "trailerId";
 				BeanUtils.copyProperties(trailerRequest, trailer, ignoreProp);
-				Status status = (Status) session.get(Status.class, trailerRequest.getStatusId());
-				trailer.setStatus(status);
 
-				Division division = (Division) session.get(Division.class, trailerRequest.getDivisionId());
-				trailer.setDivision(division);
+				if (!ValidationUtil.isNull(trailerRequest.getStatusId())) {
+					Status status = (Status) session.get(Status.class, trailerRequest.getStatusId());
+					trailer.setStatus(status);
+				}
 
-				Category category = (Category) session.get(Category.class, trailerRequest.getCategoryId());
-				trailer.setCategory(category);
+				if (!ValidationUtil.isNull(trailerRequest.getDivisionId())) {
+					Division division = (Division) session.get(Division.class, trailerRequest.getDivisionId());
+					trailer.setDivision(division);
+				}
 
-				Terminal terminal = (Terminal) session.get(Terminal.class, trailerRequest.getTerminalId());
-				trailer.setTerminal(terminal);
+				if (!ValidationUtil.isNull(trailerRequest.getCategoryId())) {
+					Category category = (Category) session.get(Category.class, trailerRequest.getCategoryId());
+					trailer.setCategory(category);
+				}
 
-				Type type = (Type) session.get(Type.class, trailerRequest.getTrailerTypeId());
-				trailer.setType(type);
+				if (!ValidationUtil.isNull(trailerRequest.getTerminalId())) {
+					Terminal terminal = (Terminal) session.get(Terminal.class, trailerRequest.getTerminalId());
+					trailer.setTerminal(terminal);
+				}
+
+				if (!ValidationUtil.isNull(trailerRequest.getTrailerTypeId())) {
+					Type type = (Type) session.get(Type.class, trailerRequest.getTrailerTypeId());
+					trailer.setType(type);
+				}
 				
 				trailerdao.update(trailer, session);
 				tx.commit();
@@ -270,11 +292,22 @@ public class TrailerServiceImpl implements TrailerService{
 				for (Trailer trailer : trailerList) {
 					TrailerModel response = new TrailerModel();
 					BeanUtils.copyProperties(trailer, response);
-					response.setCategory(trailer.getCategory().getName());
-					response.setDivision(trailer.getDivision().getDivisionName());
-					response.setTerminal(trailer.getTerminal().getTerminalName());
-					response.setStatus(trailer.getStatus().getStatus());
-					response.setTrailerType(trailer.getType().getTypeName());
+
+					if (!ValidationUtil.isNull(trailer.getCategory())) {
+						response.setCategory(trailer.getCategory().getName());
+					}
+					if (!ValidationUtil.isNull(trailer.getDivision())) {
+						response.setDivision(trailer.getDivision().getDivisionName());
+					}
+					if (!ValidationUtil.isNull(trailer.getTerminal())) {
+						response.setTerminal(trailer.getTerminal().getTerminalName());
+					}
+					if (!ValidationUtil.isNull(trailer.getStatus())) {
+						response.setStatus(trailer.getStatus().getStatus());
+					}
+					if (!ValidationUtil.isNull(trailer.getType())) {
+						response.setTrailerType(trailer.getType().getTypeName());
+					}
 					
 					returnResponse.add(response);
 				}
@@ -303,11 +336,25 @@ public class TrailerServiceImpl implements TrailerService{
 			Trailer trailer = trailerdao.findById(trailerId, session);
 			if(trailer != null){
 				BeanUtils.copyProperties(trailer, response);
-				response.setCategoryId(trailer.getCategory().getCategoryId());
-				response.setDivisionId(trailer.getDivision().getDivisionId());
-				response.setTerminalId(trailer.getTerminal().getTerminalId());
-				response.setStatusId(trailer.getStatus().getId());
-				response.setTrailerTypeId(trailer.getType().getTypeId());
+
+				if (!ValidationUtil.isNull(trailer.getCategory())) {
+					response.setCategoryId(trailer.getCategory().getCategoryId());
+				}
+
+				if (!ValidationUtil.isNull(trailer.getDivision())) {
+					response.setDivisionId(trailer.getDivision().getDivisionId());
+				}
+
+				if (!ValidationUtil.isNull(trailer.getTerminal())) {
+					response.setTerminalId(trailer.getTerminal().getTerminalId());
+				}
+
+				if (!ValidationUtil.isNull(trailer.getStatus())) {
+					response.setStatusId(trailer.getStatus().getId());
+				}
+				if (!ValidationUtil.isNull(trailer.getType())) {
+					response.setTrailerTypeId(trailer.getType().getTypeId());
+				}
 				
 				List<Status> statusList = AllList.getStatusList(session);
 				response.setStatusList(statusList);

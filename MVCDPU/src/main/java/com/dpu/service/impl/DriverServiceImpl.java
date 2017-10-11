@@ -44,6 +44,7 @@ import com.dpu.service.DriverService;
 import com.dpu.service.StatusService;
 import com.dpu.service.TerminalService;
 import com.dpu.service.TypeService;
+import com.dpu.util.ValidationUtil;
 
 @Component
 public class DriverServiceImpl implements DriverService {
@@ -160,29 +161,45 @@ public class DriverServiceImpl implements DriverService {
 
 	private void setDriverValues(Driver driver, DriverModel driverModel, Session session) {
 		
-		Category category = (Category) session.get(Category.class, driverModel.getCategoryId());
-		driver.setCategory(category);
+		if (!ValidationUtil.isNull(driverModel.getCategoryId())) {
+			Category category = (Category) session.get(Category.class, driverModel.getCategoryId());
+			driver.setCategory(category);
+		}
 		
-		Division division = (Division) session.get(Division.class, driverModel.getDivisionId());
-		driver.setDivision(division);
+		if (!ValidationUtil.isNull(driverModel.getDivisionId())) {
+			Division division = (Division) session.get(Division.class, driverModel.getDivisionId());
+			driver.setDivision(division);
+		}
 		
-		Terminal terminal = (Terminal) session.get(Terminal.class, driverModel.getTerminalId());
-		driver.setTerminal(terminal);
+		if (!ValidationUtil.isNull(driverModel.getTerminalId())) {
+			Terminal terminal = (Terminal) session.get(Terminal.class, driverModel.getTerminalId());
+			driver.setTerminal(terminal);
+		}
 		
-		Status status = (Status) session.get(Status.class, driverModel.getStatusId());
-		driver.setStatus(status);
+		if (!ValidationUtil.isNull(driverModel.getStatusId())) {
+			Status status = (Status) session.get(Status.class, driverModel.getStatusId());
+			driver.setStatus(status);
+		}
 		
-		Type role = (Type) session.get(Type.class, driverModel.getRoleId());
-		driver.setRole(role);
+		if (!ValidationUtil.isNull(driverModel.getRoleId())) {
+			Type role = (Type) session.get(Type.class, driverModel.getRoleId());
+			driver.setRole(role);
+		}
 		
-		Type driverClass = (Type) session.get(Type.class, driverModel.getDriverClassId());
-		driver.setDriverClass(driverClass);
+		if (!ValidationUtil.isNull(driverModel.getDriverClassId())) {
+			Type driverClass = (Type) session.get(Type.class, driverModel.getDriverClassId());
+			driver.setDriverClass(driverClass);
+		}
 		
-		Country country = (Country) session.get(Country.class, driverModel.getCountryId());
-		driver.setCountry(country);
+		if (!ValidationUtil.isNull(driverModel.getCountryId())) {
+			Country country = (Country) session.get(Country.class, driverModel.getCountryId());
+			driver.setCountry(country);
+		}
 		
-		State state = (State) session.get(State.class, driverModel.getStateId());
-		driver.setState(state);
+		if (!ValidationUtil.isNull(driverModel.getStateId())) {
+			State state = (State) session.get(State.class, driverModel.getStateId());
+			driver.setState(state);
+		}
 		
 	}
 

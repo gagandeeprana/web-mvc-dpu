@@ -41,7 +41,7 @@ textarea{
 </style>
 <jsp:include page="Include.jsp"></jsp:include>
  <script src="<c:url value="/resources/validations.js" />"></script>
-
+ 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.blockUI/2.70/jquery.blockUI.min.js"></script>
 <script type="text/javascript">
 function navigate() {
 	var flag = $("#addUpdateFlag").val();
@@ -71,7 +71,8 @@ function createUser(urlToHit, methodType){
 	 if(methodType == 'PUT') {
 		 employeeId = $("#employeeid").val();
 	 } 
-	 
+	  
+	 blockUI();
 	  $.ajax({url: BASE_URL + urlToHit,
 		      type:"POST",
 		      data:{
@@ -87,6 +88,7 @@ function createUser(urlToHit, methodType){
 		    	employeeid:employeeId
 		      },
 		      success: function(result){
+		     
 	        try{
 	        	$('#myModal').modal('toggle');
 	        	var list = result.resultList;
@@ -102,7 +104,9 @@ function createUser(urlToHit, methodType){
 			  }catch(e){
 				  toastr.error('Something went wrong', 'Error!')
 			  }
-	  }});
+	  }}).done(function(){
+		  unblockUI();
+	  });
 	  return true;
 }
 
@@ -220,13 +224,21 @@ function checkFlag(field) {
 }
 </script>
 <script type="text/javascript">
+	
+	
+
         function onClickMethodQuestion(quesId){
+   		 // unblock when ajax activity stops 
+    	   
         	emptyMessageDiv();
         	clearAll();
+        	
         	if(quesId == 0) {
 				// nothing to do on openadd.. may to be added later on..
         	} else {
+        		blockUI()
         		$.get("getuser/userId",{"userId" : quesId}, function(data) {
+        			unblockUI()
         			document.getElementById("employeeid").value = data.employeeId;
                    	$("#firstName").val(data.firstName);
                    	$("#lastName").val(data.lastName);
@@ -238,11 +250,15 @@ function checkFlag(field) {
                    	$("#email").val(data.email);
                    	$("#phone").val(data.phone);
                    	var hrDt = data.hiringdate;
-                   	var hrArr = hrDt.split("-");
-                   	$("#hiringDate").val(hrArr[1]+"/"+hrArr[2]+"/"+hrArr[0]);
                    	var trDt = data.terminationdate;
-                   	var trArr = trDt.split("-");
-                   	$("#terminationDate").val(trArr[1]+"/"+trArr[2]+"/"+trArr[0]);
+                   	if(hrDt != null) {
+	                   	var hrArr = hrDt.split("-");
+	                   	$("#hiringDate").val(hrArr[1]+"/"+hrArr[2]+"/"+hrArr[0]);
+                   	}
+                   	if(trDt != null) {
+	                   	var trArr = trDt.split("-");
+	                   	$("#terminationDate").val(trArr[1]+"/"+trArr[2]+"/"+trArr[0]);
+                   	}
                	});
         	}
         }
@@ -313,18 +329,18 @@ function check() {
 		$("#password").focus();
 		return false;
 	}
-	if(email != "" && !isEmail(email)) {
+	if(email == "") {
+		msg.show();
+		msgvalue.text("Email cannot be left blank.");
+		$("#email").focus();
+		return false;
+	}
+	if(!isEmail(email)) {
 		msg.show();
 		msgvalue.text("Email should contain dot, @, anydomainname");
 		$("#email").focus();
 		return false;
 	}
-	/* if(email == "") {
-		msg.show();
-		msgvalue.text("Email cannot be left blank.");
-		$("#email").focus();
-		return false;
-	} */
 	/* if(phone == "") {
 		msg.show();
 		msgvalue.text("Phone cannot be left blank.");

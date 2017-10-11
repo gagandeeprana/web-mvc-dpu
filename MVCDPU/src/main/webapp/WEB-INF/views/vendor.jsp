@@ -245,7 +245,7 @@ function checkFlag(field) {
 	    		var country = document.getElementById("countryId");
 	            for(var i = 0;i < data.countryList.length;i++) {
 	            	country.options[country.options.length] = new Option(data.countryList[i].countryName);
-	            	country.options[i].value = data.countryList[i].countryId;
+	            	country.options[i+1].value = data.countryList[i].countryId;
 	            }
 
 	            getStates();
@@ -275,9 +275,9 @@ function checkFlag(field) {
 	            var countryList = data.countryList;
 	            for(var i = 0;i < data.countryList.length;i++) {
 	            	country.options[country.options.length] = new Option(data.countryList[i].countryName);
-	            	country.options[i].value = data.countryList[i].countryId;
+	            	country.options[i+1].value = data.countryList[i].countryId;
 	            	if(countryList[i].countryId == data.countryId) {
-	            		document.getElementById("countryId").selectedIndex = i;		            		
+	            		document.getElementById("countryId").selectedIndex = i+1;		            		
 	            	}
 	            }
 	            
@@ -285,9 +285,9 @@ function checkFlag(field) {
 	            var stateList = data.stateList;
 	            for(var i = 0;i < data.stateList.length;i++) {
 	            	driverState.options[driverState.options.length] = new Option(data.stateList[i].stateCode);
-	            	driverState.options[i].value = data.stateList[i].stateId;
+	            	driverState.options[i+1].value = data.stateList[i].stateId;
 	            	if(stateList[i].stateId == data.stateId) {
-	            		document.getElementById("stateId").selectedIndex = i;		            		
+	            		document.getElementById("stateId").selectedIndex = i+1;		            		
 	            	}
 	            }
 	            
@@ -313,8 +313,8 @@ function checkFlag(field) {
     	$("#website").val("");
     	$("#cellular").val("");
     	$("#pager").val("");
-    	document.getElementById("countryId").innerHTML = ""; 
-    	document.getElementById("stateId").innerHTML = ""; 
+    	document.getElementById("countryId").innerHTML = "<option value='0'>Please Select</option>"; 
+    	document.getElementById("stateId").innerHTML = "<option value='0'>Please Select</option>"; 
     }
 </script>
 <script type="text/javascript">
@@ -335,15 +335,17 @@ function changeStateLabel() {
 function getStates() {
 	
 	var countryId = $('#countryId :selected').val();
-	document.getElementById("stateId").innerHTML = "";
 	$.get("states/" + countryId, function(response) {
            
+    	document.getElementById("stateId").innerHTML = "<option value='0'>Please Select</option>";
         if(response.length > 0) {
             var state = document.getElementById("stateId");
         	for(var i = 0;i < response.length;i++) {
         		state.options[state.options.length] = new Option(response[i].stateCode);
-        		state.options[i].value = response[i].stateId;
+        		state.options[i+1].value = response[i].stateId;
             }
+        } else {
+	    	document.getElementById("stateId").innerHTML = "<option value='0'>Please Select</option>";
         }
 	});
 }
@@ -376,25 +378,27 @@ function check() {
 		$("#vendorName").focus();
 		return false;
 	}
-	if(contact == "") {
+	/* if(contact == "") {
 		msg.show();
 		msgvalue.text("Contact cannot be left blank.");
 		$("#contact").focus();
 		return false;
+	} */
+	if(contact != "") {
+		if(!isNumeric(contact)) {
+			msg.show();
+			msgvalue.text("Only numerics allowed in contact");
+			$("#contact").focus();
+			return false;
+		}
+		if(contact.length != 10) {
+			msg.show();
+			msgvalue.text("Length 10 allowed in contact");
+			$("#contact").focus();
+			return false;
+		}
 	}
-	if(!isNumeric(contact)) {
-		msg.show();
-		msgvalue.text("Only numerics allowed in contact");
-		$("#contact").focus();
-		return false;
-	}
-	if(contact.length != 10) {
-		msg.show();
-		msgvalue.text("Length 10 allowed in contact");
-		$("#contact").focus();
-		return false;
-	}
-	if(address == "") {
+	/* if(address == "") {
 		msg.show();
 		msgvalue.text("Address cannot be left blank.");
 		$("#address").focus();
@@ -411,20 +415,22 @@ function check() {
 		msgvalue.text("Ext cannot be left blank.");
 		$("#ext").focus();
 		return false;
+	} */
+	if(ext != "") {
+		if(!isNumeric(ext)) {
+			msg.show();
+			msgvalue.text("Only numerics allowed in ext");
+			$("#ext").focus();
+			return false;
+		}
+		if(ext.length != 10) {
+			msg.show();
+			msgvalue.text("Length 10 allowed in ext");
+			$("#ext").focus();
+			return false;
+		}
 	}
-	if(!isNumeric(ext)) {
-		msg.show();
-		msgvalue.text("Only numerics allowed in ext");
-		$("#ext").focus();
-		return false;
-	}
-	if(ext.length != 10) {
-		msg.show();
-		msgvalue.text("Length 10 allowed in ext");
-		$("#ext").focus();
-		return false;
-	}
-	if(prefix == "") {
+	/* if(prefix == "") {
 		msg.show();
 		msgvalue.text("Prefix cannot be left blank.");
 		$("#prefix").focus();
@@ -441,18 +447,20 @@ function check() {
 		msgvalue.text("Phone cannot be left blank.");
 		$("#phone").focus();
 		return false;
-	}
-	if(!isNumeric(phone)) {
-		msg.show();
-		msgvalue.text("Only numerics allowed in phone");
-		$("#phone").focus();
-		return false;
-	}
-	if(phone.length != 10) {
-		msg.show();
-		msgvalue.text("Length 10 allowed in phone");
-		$("#phone").focus();
-		return false;
+	} */
+	if(phone != "") {
+		if(!isNumeric(phone)) {
+			msg.show();
+			msgvalue.text("Only numerics allowed in phone");
+			$("#phone").focus();
+			return false;
+		}
+		if(phone.length != 10) {
+			msg.show();
+			msgvalue.text("Length 10 allowed in phone");
+			$("#phone").focus();
+			return false;
+		}
 	}
 	if(city == "") {
 		msg.show();
@@ -460,29 +468,37 @@ function check() {
 		$("#city").focus();
 		return false;
 	}
-	if(fax == "") {
+	/* if(fax == "") {
 		msg.show();
 		msgvalue.text("Fax cannot be left blank.");
 		$("#fax").focus();
 		return false;
-	}
-	if(!isNumeric(fax)) {
-		msg.show();
-		msgvalue.text("Only numerics allowed in fax");
-		$("#fax").focus();
-		return false;
-	}
-	if(fax.length != 10) {
-		msg.show();
-		msgvalue.text("Length 10 allowed in fax");
-		$("#fax").focus();
-		return false;
+	} */
+	if(fax != "") {
+		if(!isNumeric(fax)) {
+			msg.show();
+			msgvalue.text("Only numerics allowed in fax");
+			$("#fax").focus();
+			return false;
+		}
+		if(fax.length != 10) {
+			msg.show();
+			msgvalue.text("Length 10 allowed in fax");
+			$("#fax").focus();
+			return false;
+		}
 	}
 	if(province == "") {
 		msg.show();
 		msgvalue.text("Province cannot be left blank.");
 		$("#province").focus();
 		return false;
+	}
+	if($('#countryId :selected').val() == 0) {
+		msg.show();
+		msgvalue.text("Country cannot be left blank.");
+		$("#countryId").focus();
+		return false;		
 	}
 	var country = $('#countryId :selected').text();
 	if(country == 'USA') {
@@ -503,6 +519,12 @@ function check() {
 			msgvalue.text("Length 5 allowed in Zip");
 			$("#zip").focus();
 			return false;
+		}
+		if($('#stateId :selected').val() == 0) {
+			msg.show();
+			msgvalue.text("State cannot be left blank.");
+			$("#stateId").focus();
+			return false;			
 		}
 	}
 	var country = $('#countryId :selected').text();
@@ -531,56 +553,68 @@ function check() {
 			$("#zip").focus();
 			return false;
 		}
+		if($('#stateId :selected').val() == 0) {
+			msg.show();
+			msgvalue.text("State cannot be left blank.");
+			$("#stateId").focus();
+			return false;			
+		}
 	}
-	if(afterHours == "") {
+	/* if(afterHours == "") {
 		msg.show();
 		msgvalue.text("AfterHours cannot be left blank.");
 		$("#afterHours").focus();
 		return false;
+	} */
+	if(afterHours != "") {
+		if(!isNumeric(afterHours)) {
+			msg.show();
+			msgvalue.text("Only numerics allowed in afterHours");
+			$("#afterHours").focus();
+			return false;
+		}
+		if(afterHours.length != 10) {
+			msg.show();
+			msgvalue.text("Length 10 allowed in afterHours");
+			$("#afterHours").focus();
+			return false;
+		}
 	}
-	if(!isNumeric(afterHours)) {
-		msg.show();
-		msgvalue.text("Only numerics allowed in afterHours");
-		$("#afterHours").focus();
-		return false;
-	}
-	if(afterHours.length != 10) {
-		msg.show();
-		msgvalue.text("Length 10 allowed in afterHours");
-		$("#afterHours").focus();
-		return false;
-	}
-	if(email == "") {
+	/* if(email == "") {
 		msg.show();
 		msgvalue.text("Email cannot be left blank.");
 		$("#email").focus();
 		return false;
+	} */
+	if(email != "") {
+		if(!isEmail(email)) {
+			msg.show();
+			msgvalue.text("Email should contain dot, @, anydomainname");
+			$("#email").focus();
+			return false;
+		}
 	}
-	if(!isEmail(email)) {
-		msg.show();
-		msgvalue.text("Email should contain dot, @, anydomainname");
-		$("#email").focus();
-		return false;
-	}
-	if(tollFree == "") {
+	/* if(tollFree == "") {
 		msg.show();
 		msgvalue.text("TollFree cannot be left blank.");
 		$("#tollfree").focus();
 		return false;
+	} */
+	if(tollFree != "") {
+		if(!isNumeric(tollFree)) {
+			msg.show();
+			msgvalue.text("Only numerics allowed in tollFree");
+			$("#tollfree").focus();
+			return false;
+		}
+		if(tollFree.length != 10) {
+			msg.show();
+			msgvalue.text("Length 10 allowed in tollFree");
+			$("#tollfree").focus();
+			return false;
+		}
 	}
-	if(!isNumeric(tollFree)) {
-		msg.show();
-		msgvalue.text("Only numerics allowed in tollFree");
-		$("#tollfree").focus();
-		return false;
-	}
-	if(tollFree.length != 10) {
-		msg.show();
-		msgvalue.text("Length 10 allowed in tollFree");
-		$("#tollfree").focus();
-		return false;
-	}
-	if(website == "") {
+	/* if(website == "") {
 		msg.show();
 		msgvalue.text("Website cannot be left blank.");
 		$("#website").focus();
@@ -591,36 +625,40 @@ function check() {
 		msgvalue.text("Cellular cannot be left blank.");
 		$("#cellular").focus();
 		return false;
+	} */
+	if(cellular != "") {
+		if(!isNumeric(cellular)) {
+			msg.show();
+			msgvalue.text("Only numerics allowed in cellular");
+			$("#cellular").focus();
+			return false;
+		}
+		if(cellular.length != 10) {
+			msg.show();
+			msgvalue.text("Length 10 allowed in cellular");
+			$("#cellular").focus();
+			return false;
+		}
 	}
-	if(!isNumeric(cellular)) {
-		msg.show();
-		msgvalue.text("Only numerics allowed in cellular");
-		$("#cellular").focus();
-		return false;
-	}
-	if(cellular.length != 10) {
-		msg.show();
-		msgvalue.text("Length 10 allowed in cellular");
-		$("#cellular").focus();
-		return false;
-	}
-	if(pager == "") {
+	/* if(pager == "") {
 		msg.show();
 		msgvalue.text("Pager cannot be left blank.");
 		$("#pager").focus();
 		return false;
-	}
-	if(!isNumeric(pager)) {
-		msg.show();
-		msgvalue.text("Only numerics allowed in pager");
-		$("#pager").focus();
-		return false;
-	}
-	if(pager.length != 10) {
-		msg.show();
-		msgvalue.text("Length 10 allowed in pager");
-		$("#pager").focus();
-		return false;
+	} */
+	if(pager != "") {
+		if(!isNumeric(pager)) {
+			msg.show();
+			msgvalue.text("Only numerics allowed in pager");
+			$("#pager").focus();
+			return false;
+		}
+		if(pager.length != 10) {
+			msg.show();
+			msgvalue.text("Length 10 allowed in pager");
+			$("#pager").focus();
+			return false;
+		}
 	}
 	$('#modal').modal('toggle');
 	return true;
@@ -695,6 +733,7 @@ function emptyMessageDiv(){
 																 <b>Country</b>												
 															</span>
 															<select class="form-control" name="countryId" id="countryId" onchange="getStates();changeStateLabel()">
+																<option value="0">Please Select</option>
 															</select>
 														</div>
 													</div>
@@ -763,6 +802,7 @@ function emptyMessageDiv(){
 																 <b id="stateLabel">Province</b>												
 															</span>
 															<select class="form-control" name="stateId" id="stateId">
+																<option value="0">Please Select</option>
 															</select>
 														</div>
 													</div>

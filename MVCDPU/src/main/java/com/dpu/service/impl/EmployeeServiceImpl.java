@@ -2,6 +2,7 @@ package com.dpu.service.impl;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -12,6 +13,7 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import com.dpu.constants.Iconstants;
 import com.dpu.dao.EmployeeDao;
@@ -141,8 +143,13 @@ private void setEmployeeValues(EmployeeModel employeeModel, Employee employee) {
 		employee.setPhone(employeeModel.getPhone());
 		String hiringDate = employeeModel.getHiringdate();
 		String terminationDate = employeeModel.getTerminationdate();
-		employee.setHiringDate(DateUtil.changeStringToDate(hiringDate));
-		employee.setTerminationDate(DateUtil.changeStringToDate(terminationDate));
+
+		if (!StringUtils.isEmpty(hiringDate)) {
+			employee.setHiringDate(DateUtil.changeStringToDate(hiringDate));
+		}
+		if (!StringUtils.isEmpty(terminationDate)) {
+			employee.setTerminationDate(DateUtil.changeStringToDate(terminationDate));
+		}
 		employee.setCreatedBy(employeeModel.getCreatedBy());
 		employee.setModifiedBy(employeeModel.getModifiedBy());
 		logger.info("EmployeeDaoImpl: setEmployeeValues(): ENDS");
@@ -175,8 +182,15 @@ private void setEmployeeValues(EmployeeModel employeeModel, Employee employee) {
 		employeeModel.setEmail(employee.getEmail());
 		employeeModel.setPhone(employee.getPhone());
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		employeeModel.setHiringdate(sdf.format(employee.getHiringDate()));
-		employeeModel.setTerminationdate(sdf.format(employee.getTerminationDate()));
+		Date hiringDate = employee.getHiringDate();
+		Date terminationDate = employee.getTerminationDate();
+		if (!StringUtils.isEmpty(hiringDate)) {
+			employeeModel.setHiringdate(sdf.format(hiringDate));
+		}
+
+		if (!StringUtils.isEmpty(terminationDate)) {
+			employeeModel.setTerminationdate(sdf.format(terminationDate));
+		}
 		
 		return employeeModel;
 	}

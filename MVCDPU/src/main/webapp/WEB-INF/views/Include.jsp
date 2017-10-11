@@ -12,6 +12,13 @@
 <script type="text/javascript">
 		//var BASE_URL = "http://35.166.16.104:8080/MVCDPU/"
 		var BASE_URL = "http://localhost:8084/MVCDPU/"
+		
+		function unblockUI(){
+			$.unblockUI();
+		}
+		function blockUI(){
+			 $.blockUI({ css: {background: 'none', left:'45%', width: '120px',height: '120px',animation: 'spin 2s linear infinite',border: '16px solid #f3f3f3','border-top': '16px solid #3498db','border-radius': '50%'},baseZ: 999999 }); 
+		}
 </script>
 </body>
 <style type="text/css">
@@ -23,6 +30,14 @@
 	font-size: 20px;
 	font-style : italic;
 	font-family: cursive;
+	
+}
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+.blockUI > h1{
+display: none;
 }
 </style>
 </html>

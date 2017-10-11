@@ -241,15 +241,17 @@ function fillDriverData(list) {
 	function getStates() {
 		
 		var countryId = $('#countryId :selected').val();
-    	document.getElementById("stateId").innerHTML = "";
 		$.get("states/" + countryId, function(response) {
 	           
+	    	document.getElementById("stateId").innerHTML = "<option value='0'>Please Select</option>";
             if(response.length > 0) {
 	            var state = document.getElementById("stateId");
             	for(var i = 0;i < response.length;i++) {
             		state.options[state.options.length] = new Option(response[i].stateCode);
-            		state.options[i].value = response[i].stateId;
+            		state.options[i+1].value = response[i].stateId;
 	            }
+            } else {
+            	document.getElementById("stateId").innerHTML = "<option value='0'>Please Select</option>";
             }
 		});
 	}
@@ -298,43 +300,43 @@ function fillDriverData(list) {
 		            var status = document.getElementById("statusId");
 		            for(var i = 0;i < data.statusList.length;i++) {
 		            	status.options[status.options.length] = new Option(data.statusList[i].status);
-		            	status.options[i].value = data.statusList[i].id;
+		            	status.options[i+1].value = data.statusList[i].id;
 		            } 
 		            
 		            var division = document.getElementById("divisionId");
 		            for(var i = 0;i < data.divisionList.length;i++) {
 		            	division.options[division.options.length] = new Option(data.divisionList[i].divisionName);
-		            	division.options[i].value = data.divisionList[i].divisionId;
+		            	division.options[i+1].value = data.divisionList[i].divisionId;
 		            }
 		            
 		            var terminal = document.getElementById("terminalId");
 		            for(var i = 0;i < data.terminalList.length;i++) {
 		            	terminal.options[terminal.options.length] = new Option(data.terminalList[i].terminalName);
-		            	terminal.options[i].value = data.terminalList[i].terminalId;
+		            	terminal.options[i+1].value = data.terminalList[i].terminalId;
 		            }
 		            
 		            var category = document.getElementById("categoryId");
 		            for(var i = 0;i < data.categoryList.length;i++) {
 		            	category.options[category.options.length] = new Option(data.categoryList[i].name);
-		            	category.options[i].value = data.categoryList[i].categoryId;
+		            	category.options[i+1].value = data.categoryList[i].categoryId;
 		            }
 		            
 		            var role = document.getElementById("roleId");
 		            for(var i = 0;i < data.roleList.length;i++) {
 		            	role.options[role.options.length] = new Option(data.roleList[i].typeName);
-		            	role.options[i].value = data.roleList[i].typeId;
+		            	role.options[i+1].value = data.roleList[i].typeId;
 		            }
 		            
 		            var driverClass = document.getElementById("classId");
 		            for(var i = 0;i < data.driverClassList.length;i++) {
 		            	driverClass.options[driverClass.options.length] = new Option(data.driverClassList[i].typeName);
-		            	driverClass.options[i].value = data.driverClassList[i].typeId;
+		            	driverClass.options[i+1].value = data.driverClassList[i].typeId;
 		            }
 		            
 		            var country = document.getElementById("countryId");
 		            for(var i = 0;i < data.countryList.length;i++) {
 		            	country.options[country.options.length] = new Option(data.countryList[i].countryName);
-		            	country.options[i].value = data.countryList[i].countryId;
+		            	country.options[i+1].value = data.countryList[i].countryId;
 		            }
 		            
 		            changeStateLabel();
@@ -361,82 +363,105 @@ function fillDriverData(list) {
 	            	
 		            var division = document.getElementById("divisionId");
 		            var divisionList = data.divisionList;
-		            for(var i = 0;i < divisionList.length;i++) {
-		            	division.options[division.options.length] = new Option(divisionList[i].divisionName);
-		            	division.options[i].value = divisionList[i].divisionId;
-		            	if(divisionList[i].divisionId == data.divisionId) {
-		            		document.getElementById("divisionId").selectedIndex = i;
-		            	}
+		            if(divisionList != null && divisionList.length > 0) {
+			            for(var i = 0;i < divisionList.length;i++) {
+			            	division.options[division.options.length] = new Option(divisionList[i].divisionName);
+			            	division.options[i+1].value = divisionList[i].divisionId;
+			            	if(divisionList[i].divisionId == data.divisionId) {
+			            		document.getElementById("divisionId").selectedIndex = i+1;
+			            	}
+			            }
 		            }
 		            
 		            var terminal = document.getElementById("terminalId");
 		            var terminalList = data.terminalList;
-		            for(var i = 0;i < terminalList.length;i++) {
-		            	terminal.options[terminal.options.length] = new Option(terminalList[i].terminalName);
-		            	terminal.options[i].value = terminalList[i].terminalId;
-		            	if(terminalList[i].terminalId == data.terminalId) {
-		            		document.getElementById("terminalId").selectedIndex = i;
-		            	}
+
+		            if(terminalList != null && terminalList.length > 0) {
+			            for(var i = 0;i < terminalList.length;i++) {
+			            	terminal.options[terminal.options.length] = new Option(terminalList[i].terminalName);
+			            	terminal.options[i+1].value = terminalList[i].terminalId;
+			            	if(terminalList[i].terminalId == data.terminalId) {
+			            		document.getElementById("terminalId").selectedIndex = i+1;
+			            	}
+			            }
 		            }
 		            
 		            var category = document.getElementById("categoryId");
 		            var categoryList = data.categoryList;
-		            for(var i = 0;i < categoryList.length;i++) {
-		            	category.options[category.options.length] = new Option(categoryList[i].name);
-		            	category.options[i].value = categoryList[i].categoryId;
-		            	if(categoryList[i].categoryId == data.categoryId) {
-		            		document.getElementById("categoryId").selectedIndex = i;
-		            	}
+		            
+		            if(categoryList != null && categoryList.length > 0) {
+			            for(var i = 0;i < categoryList.length;i++) {
+			            	category.options[category.options.length] = new Option(categoryList[i].name);
+			            	category.options[i+1].value = categoryList[i].categoryId;
+			            	if(categoryList[i].categoryId == data.categoryId) {
+			            		document.getElementById("categoryId").selectedIndex = i+1;
+			            	}
+			            }
 		            }
 		            
 		            var role = document.getElementById("roleId");
 		            var roleList = data.roleList;
-		            for(var i = 0;i < roleList.length;i++) {
-		            	role.options[role.options.length] = new Option(roleList[i].typeName);
-		            	role.options[i].value = roleList[i].typeId;
-		            	if(roleList[i].typeId == data.roleId) {
-		            		document.getElementById("roleId").selectedIndex = i;
-		            	}
+		            
+		            if(roleList != null && roleList.length > 0) {
+			            for(var i = 0;i < roleList.length;i++) {
+			            	role.options[role.options.length] = new Option(roleList[i].typeName);
+			            	role.options[i+1].value = roleList[i].typeId;
+			            	if(roleList[i].typeId == data.roleId) {
+			            		document.getElementById("roleId").selectedIndex = i+1;
+			            	}
+			            }
 		            }
 		            
 		            var status = document.getElementById("statusId");
 		            var statusList = data.statusList;
-		            for(var i = 0;i < statusList.length;i++) {
-		            	status.options[status.options.length] = new Option(statusList[i].status);
-		            	status.options[i].value = statusList[i].id;
-		            	if(statusList[i].id == data.statusId) {
-		            		document.getElementById("statusId").selectedIndex = i;
-		            	}
+		            
+		            if(statusList != null && statusList.length > 0) {
+			            for(var i = 0;i < statusList.length;i++) {
+			            	status.options[status.options.length] = new Option(statusList[i].status);
+			            	status.options[i+1].value = statusList[i].id;
+			            	if(statusList[i].id == data.statusId) {
+			            		document.getElementById("statusId").selectedIndex = i+1;
+			            	}
+			            }
 		            }
 		            
 		            var driverClass = document.getElementById("classId");
 		            var driverClassList = data.driverClassList;
-		            for(var i = 0;i < driverClassList.length;i++) {
-		            	driverClass.options[driverClass.options.length] = new Option(driverClassList[i].typeName);
-		            	driverClass.options[i].value = driverClassList[i].typeId;
-		            	if(driverClassList[i].typeId == data.driverClassId) {
-		            		document.getElementById("classId").selectedIndex = i;
-		            	}
+		            
+		            if(driverClassList != null && driverClassList.length > 0) {
+			            for(var i = 0;i < driverClassList.length;i++) {
+			            	driverClass.options[driverClass.options.length] = new Option(driverClassList[i].typeName);
+			            	driverClass.options[i+1].value = driverClassList[i].typeId;
+			            	if(driverClassList[i].typeId == data.driverClassId) {
+			            		document.getElementById("classId").selectedIndex = i+1;
+			            	}
+			            }
 		            }
 		            
 		            var country = document.getElementById("countryId");
 		            var countryList = data.countryList;
-		            for(var i = 0;i < data.countryList.length;i++) {
-		            	country.options[country.options.length] = new Option(data.countryList[i].countryName);
-		            	country.options[i].value = data.countryList[i].countryId;
-		            	if(countryList[i].countryId == data.countryId) {
-		            		document.getElementById("countryId").selectedIndex = i;		            		
-		            	}
+		            
+		            if(countryList != null && countryList.length > 0) {
+			            for(var i = 0;i < data.countryList.length;i++) {
+			            	country.options[country.options.length] = new Option(data.countryList[i].countryName);
+			            	country.options[i+1].value = data.countryList[i].countryId;
+			            	if(countryList[i].countryId == data.countryId) {
+			            		document.getElementById("countryId").selectedIndex = i+1;		            		
+			            	}
+			            }
 		            }
 		            
 		            var driverState = document.getElementById("stateId");
 		            var stateList = data.stateList;
-		            for(var i = 0;i < data.stateList.length;i++) {
-		            	driverState.options[driverState.options.length] = new Option(data.stateList[i].stateCode);
-		            	driverState.options[i].value = data.stateList[i].stateId;
-		            	if(stateList[i].stateId == data.stateId) {
-		            		document.getElementById("stateId").selectedIndex = i;		            		
-		            	}
+		            
+		            if(stateList != null && stateList.length > 0) {
+			            for(var i = 0;i < data.stateList.length;i++) {
+			            	driverState.options[driverState.options.length] = new Option(data.stateList[i].stateCode);
+			            	driverState.options[i+1].value = data.stateList[i].stateId;
+			            	if(stateList[i].stateId == data.stateId) {
+			            		document.getElementById("stateId").selectedIndex = i+1;		            		
+			            	}
+			            }
 		            }
 		            
 		            changeStateLabel();
@@ -459,14 +484,14 @@ function fillDriverData(list) {
         	$("#province").val("");
         	$("#unit").val("");
         	$("#zip").val("");
-        	document.getElementById("statusId").innerHTML = "";
-        	document.getElementById("divisionId").innerHTML = "";
-        	document.getElementById("terminalId").innerHTML = "";
-        	document.getElementById("categoryId").innerHTML = "";
-        	document.getElementById("roleId").innerHTML = "";
-        	document.getElementById("classId").innerHTML = ""; 
-        	document.getElementById("countryId").innerHTML = ""; 
-        	document.getElementById("stateId").innerHTML = ""; 
+        	document.getElementById("statusId").innerHTML = "<option value='0'>Please Select</option>";
+        	document.getElementById("divisionId").innerHTML = "<option value='0'>Please Select</option>";
+        	document.getElementById("terminalId").innerHTML = "<option value='0'>Please Select</option>";
+        	document.getElementById("categoryId").innerHTML = "<option value='0'>Please Select</option>";
+        	document.getElementById("roleId").innerHTML = "<option value='0'>Please Select</option>";
+        	document.getElementById("classId").innerHTML = "<option value='0'>Please Select</option>"; 
+        	document.getElementById("countryId").innerHTML = "<option value='0'>Please Select</option>"; 
+        	document.getElementById("stateId").innerHTML = "<option value='0'>Please Select</option>"; 
         }
         function emptyMessageDiv(){
         	var msg = $("#msg");
@@ -501,17 +526,19 @@ function check() {
 		$("#driverCode").focus();
 		return false;
 	}
-	if(email == "") {
+	/*if(email == "") {
 		msg.show();
 		msgvalue.text("Email cannot be left blank.");
 		$("#email").focus();
 		return false;
-	}
-	if(!isEmail(email)) {
-		msg.show();
-		msgvalue.text("Email should contain dot, @, anydomainname");
-		$("#email").focus();
-		return false;
+	} */
+	if(email != "") {
+		if(!isEmail(email)) {
+			msg.show();
+			msgvalue.text("Email should contain dot, @, anydomainname");
+			$("#email").focus();
+			return false;
+		}
 	}
 	if(firstName == "") {
 		msg.show();
@@ -519,41 +546,45 @@ function check() {
 		$("#firstName").focus();
 		return false;
 	}
-	if(home == "") {
+	/* if(home == "") {
 		msg.show();
 		msgvalue.text("Home cannot be left blank.");
 		$("#home").focus();
 		return false;
+	} */
+	if(home != "") {
+		if(!isNumeric(home)) {
+			msg.show();
+			msgvalue.text("Only numerics allowed in Home");
+			$("#home").focus();
+			return false;
+		}
+		if(home.length != 10) {
+			msg.show();
+			msgvalue.text("Length 10 allowed in Home");
+			$("#home").focus();
+			return false;
+		}
 	}
-	if(!isNumeric(home)) {
-		msg.show();
-		msgvalue.text("Only numerics allowed in Home");
-		$("#home").focus();
-		return false;
-	}
-	if(home.length != 10) {
-		msg.show();
-		msgvalue.text("Length 10 allowed in Home");
-		$("#home").focus();
-		return false;
-	}
-	if(fax == "") {
+/* 	if(fax == "") {
 		msg.show();
 		msgvalue.text("Fax cannot be left blank.");
 		$("#fax").focus();
 		return false;
-	}
-	if(!isNumeric(fax)) {
-		msg.show();
-		msgvalue.text("Only numerics allowed in fax");
-		$("#home").focus();
-		return false;
-	}
-	if(fax.length != 10) {
-		msg.show();
-		msgvalue.text("Length 10 allowed in fax");
-		$("#fax").focus();
-		return false;
+	} */
+	if(fax != "") {
+		if(!isNumeric(fax)) {
+			msg.show();
+			msgvalue.text("Only numerics allowed in fax");
+			$("#home").focus();
+			return false;
+		}
+		if(fax.length != 10) {
+			msg.show();
+			msgvalue.text("Length 10 allowed in fax");
+			$("#fax").focus();
+			return false;
+		}
 	}
 	if(lastName == "") {
 		msg.show();
@@ -561,43 +592,47 @@ function check() {
 		$("#lastName").focus();
 		return false;
 	}
-	if(cellular == "") {
+	/* if(cellular == "") {
 		msg.show();
 		msgvalue.text("Cellular cannot be left blank.");
 		$("#cellular").focus();
 		return false;
+	} */
+	if(cellular != "") {
+		if(!isNumeric(cellular)) {
+			msg.show();
+			msgvalue.text("Only numerics allowed in cellular");
+			$("#cellular").focus();
+			return false;
+		}
+		if(cellular.length != 10) {
+			msg.show();
+			msgvalue.text("Length 10 allowed in cellular");
+			$("#cellular").focus();
+			return false;
+		}
 	}
-	if(!isNumeric(cellular)) {
-		msg.show();
-		msgvalue.text("Only numerics allowed in cellular");
-		$("#cellular").focus();
-		return false;
-	}
-	if(cellular.length != 10) {
-		msg.show();
-		msgvalue.text("Length 10 allowed in cellular");
-		$("#cellular").focus();
-		return false;
-	}
-	if(pager == "") {
+	/* if(pager == "") {
 		msg.show();
 		msgvalue.text("Pager cannot be left blank.");
 		$("#pager").focus();
 		return false;
+	} */
+	if(pager != "") {
+		if(!isNumeric(pager)) {
+			msg.show();
+			msgvalue.text("Only numerics allowed in pager");
+			$("#pager").focus();
+			return false;
+		}
+		if(pager.length != 10) {
+			msg.show();
+			msgvalue.text("Length 10 allowed in pager");
+			$("#pager").focus();
+			return false;
+		}
 	}
-	if(!isNumeric(pager)) {
-		msg.show();
-		msgvalue.text("Only numerics allowed in pager");
-		$("#pager").focus();
-		return false;
-	}
-	if(pager.length != 10) {
-		msg.show();
-		msgvalue.text("Length 10 allowed in pager");
-		$("#pager").focus();
-		return false;
-	}
-	if(address == "") {
+	/* if(address == "") {
 		msg.show();
 		msgvalue.text("Address cannot be left blank.");
 		$("#address").focus();
@@ -608,7 +643,7 @@ function check() {
 		msgvalue.text("City cannot be left blank.");
 		$("#city").focus();
 		return false;
-	}
+	} */
 	var country = $('#countryId :selected').text();
 	if(country == 'USA') {
 		if(zip == "") {
@@ -657,7 +692,24 @@ function check() {
 			return false;
 		}
 	}
-	if(unit == "") {
+	var division = $('#divisionId :selected').val();
+	var terminal = $('#terminalId :selected').val();
+	
+	if(division == 0) {
+		msg.show();
+		msgvalue.text("Division cannot be left blank.");
+		$("#divisionId").focus();
+		return false;
+	}
+	
+	if(terminal == 0) {
+		msg.show();
+		msgvalue.text("Terminal cannot be left blank.");
+		$("#terminalId").focus();
+		return false;
+	}
+	
+	/* if(unit == "") {
 		msg.show();
 		msgvalue.text("Unit cannot be left blank.");
 		$("#unit").focus();
@@ -668,7 +720,7 @@ function check() {
 		msgvalue.text("Province cannot be left blank.");
 		$("#province").focus();
 		return false;
-	}
+	} */
 	return true;
 }
 </script>
@@ -781,6 +833,7 @@ function check() {
 																 <b>Country</b>												
 															</span>
 															<select class="form-control" name="countryId" id="countryId" onchange="getStates();changeStateLabel()">
+																<option value="0">Please Select</option>
 															</select>
 														</div>
 													</div>
@@ -898,6 +951,7 @@ function check() {
 																 <b id="stateLabel">Province</b>												
 															</span>
 															<select class="form-control" name="stateId" id="stateId">
+																<option value="0">Please Select</option>
 															</select>
 														</div>
 													</div>

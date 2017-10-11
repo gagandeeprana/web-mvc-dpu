@@ -239,31 +239,31 @@ function checkFlag(field) {
     	            var status = document.getElementById("statusId");
     	            for(var i = 0;i < data.statusList.length;i++) {
     	            	status.options[status.options.length] = new Option(data.statusList[i].status);
-    	            	status.options[i].value = data.statusList[i].id;
+    	            	status.options[i+1].value = data.statusList[i].id;
     	            } 
     	            
     	            var division = document.getElementById("divisionId");
     	            for(var i = 0;i < data.divisionList.length;i++) {
     	            	division.options[division.options.length] = new Option(data.divisionList[i].divisionName);
-    	            	division.options[i].value = data.divisionList[i].divisionId;
+    	            	division.options[i+1].value = data.divisionList[i].divisionId;
     	            }
     	            
     	            var terminal = document.getElementById("terminalId");
     	            for(var i = 0;i < data.terminalList.length;i++) {
     	            	terminal.options[terminal.options.length] = new Option(data.terminalList[i].terminalName);
-    	            	terminal.options[i].value = data.terminalList[i].terminalId;
+    	            	terminal.options[i+1].value = data.terminalList[i].terminalId;
     	            }
     	            
     	            var category = document.getElementById("categoryId");
     	            for(var i = 0;i < data.categoryList.length;i++) {
     	            	category.options[category.options.length] = new Option(data.categoryList[i].name);
-    	            	category.options[i].value = data.categoryList[i].categoryId;
+    	            	category.options[i+1].value = data.categoryList[i].categoryId;
     	            }
     	            
     	            var trailerType = document.getElementById("trailerTypeId");
     	            for(var i = 0;i < data.trailerTypeList.length;i++) {
     	            	trailerType.options[trailerType.options.length] = new Option(data.trailerTypeList[i].typeName);
-    	            	trailerType.options[i].value = data.trailerTypeList[i].typeId;
+    	            	trailerType.options[i+1].value = data.trailerTypeList[i].typeId;
     	            }
     	        });
         	} else {
@@ -279,9 +279,9 @@ function checkFlag(field) {
                     var divisionList = data.divisionList;
                     for(var i = 0;i < divisionList.length;i++) {
                     	division.options[division.options.length] = new Option(divisionList[i].divisionName);
-                    	division.options[i].value = divisionList[i].divisionId;
+                    	division.options[i+1].value = divisionList[i].divisionId;
                     	if(divisionList[i].divisionId == data.divisionId) {
-                    		document.getElementById("divisionId").selectedIndex = i;
+                    		document.getElementById("divisionId").selectedIndex = i+1;
                     	}
                     }
                     
@@ -289,9 +289,9 @@ function checkFlag(field) {
                     var terminalList = data.terminalList;
                     for(var i = 0;i < terminalList.length;i++) {
                     	terminal.options[terminal.options.length] = new Option(terminalList[i].terminalName);
-                    	terminal.options[i].value = terminalList[i].terminalId;
+                    	terminal.options[i+1].value = terminalList[i].terminalId;
                     	if(terminalList[i].terminalId == data.terminalId) {
-                    		document.getElementById("terminalId").selectedIndex = i;
+                    		document.getElementById("terminalId").selectedIndex = i+1;
                     	}
                     }
                     
@@ -299,9 +299,9 @@ function checkFlag(field) {
                     var trailerTypeList = data.trailerTypeList;
                     for(var i = 0;i < trailerTypeList.length;i++) {
                     	trailerType.options[trailerType.options.length] = new Option(trailerTypeList[i].typeName);
-                    	trailerType.options[i].value = trailerTypeList[i].typeId;
+                    	trailerType.options[i+1].value = trailerTypeList[i].typeId;
                     	if(trailerTypeList[i].typeId == data.trailerTypeId) {
-                    		document.getElementById("trailerTypeId").selectedIndex = i;
+                    		document.getElementById("trailerTypeId").selectedIndex = i+1;
                     	}
                     }
                     
@@ -309,9 +309,9 @@ function checkFlag(field) {
                     var categoryList = data.categoryList;
                     for(var i = 0;i < categoryList.length;i++) {
                     	category.options[category.options.length] = new Option(categoryList[i].name);
-                    	category.options[i].value = categoryList[i].categoryId;
+                    	category.options[i+1].value = categoryList[i].categoryId;
                     	if(categoryList[i].categoryId == data.categoryId) {
-                    		document.getElementById("categoryId").selectedIndex = i;
+                    		document.getElementById("categoryId").selectedIndex = i+1;
                     	}
                     }
                     
@@ -319,9 +319,9 @@ function checkFlag(field) {
                     var statusList = data.statusList;
                     for(var i = 0;i < statusList.length;i++) {
                     	status.options[status.options.length] = new Option(statusList[i].status);
-                    	status.options[i].value = statusList[i].id;
+                    	status.options[i+1].value = statusList[i].id;
                     	if(statusList[i].id == data.statusId) {
-                    		document.getElementById("statusId").selectedIndex = i;
+                    		document.getElementById("statusId").selectedIndex = i+1;
                     	}
                     }
                	});
@@ -334,11 +334,11 @@ function checkFlag(field) {
            	$("#owner").val("");
            	$("#oOName").val("");
            	$("#finance").val("");
-           	document.getElementById("statusId").innerHTML = "";
-        	document.getElementById("divisionId").innerHTML = "";
-        	document.getElementById("terminalId").innerHTML = "";
-        	document.getElementById("categoryId").innerHTML = "";
-        	document.getElementById("trailerTypeId").innerHTML = "";
+           	document.getElementById("statusId").innerHTML = "<option value='0'>Please Select</option>";
+        	document.getElementById("divisionId").innerHTML = "<option value='0'>Please Select</option>";
+        	document.getElementById("terminalId").innerHTML = "<option value='0'>Please Select</option>";
+        	document.getElementById("categoryId").innerHTML = "<option value='0'>Please Select</option>";
+        	document.getElementById("trailerTypeId").innerHTML = "<option value='0'>Please Select</option>";
         }
 </script>
 
@@ -359,7 +359,13 @@ function check() {
 		$("#unitNo").focus();
 		return false;
 	}
-	if(usage == "") {
+	if(!isNumeric(unitNo)) {
+		msg.show();
+		msgvalue.text("Only numerics allowed in UnitNo");
+		$("#unitNo").focus();
+		return false;
+	}
+	/* if(usage == "") {
 		msg.show();
 		msgvalue.text("Usage cannot be left blank.");
 		$("#usage").focus();
@@ -381,6 +387,22 @@ function check() {
 		msg.show();
 		msgvalue.text("Finance cannot be left blank.");
 		$("#finance").focus();
+		return false;
+	} */
+	var division = $('#divisionId :selected').val();
+	var terminal = $('#terminalId :selected').val();
+	
+	if(division == 0) {
+		msg.show();
+		msgvalue.text("Division cannot be left blank.");
+		$("#divisionId").focus();
+		return false;
+	}
+	
+	if(terminal == 0) {
+		msg.show();
+		msgvalue.text("Terminal cannot be left blank.");
+		$("#terminalId").focus();
 		return false;
 	}
 	$('#modal').modal('toggle');
@@ -464,6 +486,7 @@ function emptyMessageDiv(){
 														<b>Division</b>											
 													</span>
 													<select class="form-control" name="divisionId" id="divisionId">
+														<option value="0">Please Select</option>
 													</select>
 												</div>
 											</div>
@@ -486,6 +509,7 @@ function emptyMessageDiv(){
 														<b>Terminal</b>												
 													</span>
 													<select class="form-control" name="terminalId" id="terminalId">
+														<option value="0">Please Select</option>
 													</select>
 												</div>
 											</div>
@@ -500,6 +524,7 @@ function emptyMessageDiv(){
 														<b>Category</b>												
 													</span>
 													<select class="form-control" name="categoryId" id="categoryId">
+														<option value="0">Please Select</option>
 													</select>
 												</div>
 											</div>
@@ -509,6 +534,7 @@ function emptyMessageDiv(){
 														<b>TrailerType</b>												
 													</span>
 													<select class="form-control" name="trailerTypeId" id="trailerTypeId">
+														<option value="0">Please Select</option>
 													</select>
 												</div>
 											</div>
@@ -523,6 +549,7 @@ function emptyMessageDiv(){
 														<b>Status</b>												
 													</span>
 													<select class="form-control" name="statusId" id="statusId">
+														<option value="0">Please Select</option>
 													</select>
 												</div>
 											</div>	
