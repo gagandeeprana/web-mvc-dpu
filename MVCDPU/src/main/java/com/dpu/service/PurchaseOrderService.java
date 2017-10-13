@@ -31,4 +31,8 @@ public interface PurchaseOrderService {
 
 	List<IssueModel> getUnitNoIssues(Long unitTypeId, PurchaseOrderModel poModel);
 
+	Object updateInvoice(Long poId, PurchaseOrderModel poModel);
+
+	Object getInvoiceData(Long poId);
+
 }

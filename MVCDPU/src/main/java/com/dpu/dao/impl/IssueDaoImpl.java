@@ -18,14 +18,16 @@ public class IssueDaoImpl extends GenericDaoImpl<Issue> implements IssueDao{
 	@Override
 	public List<Issue> findAll(Session session) {
 		
-		StringBuilder sb = new StringBuilder(" select i from Issue i join fetch i.vmc join fetch i.unitType join fetch i.reportedBy join fetch i.status join fetch i.category ");
+		StringBuilder sb = new StringBuilder(
+				" select i from Issue i left join fetch i.vmc left join fetch i.unitType left join fetch i.reportedBy left join fetch i.status left join fetch i.category ");
 		Query query = session.createQuery(sb.toString());
 		return query.list();
 	}
 
 	@Override
 	public Issue findById(Long id, Session session) {
-		StringBuilder sb = new StringBuilder(" select i from Issue i join fetch i.vmc join fetch i.unitType join fetch i.reportedBy join fetch i.status join fetch i.category where i.id = :issueId ");
+		StringBuilder sb = new StringBuilder(
+				" select i from Issue i left join fetch i.vmc left join fetch i.unitType left join fetch i.reportedBy left join fetch i.status left join fetch i.category where i.id = :issueId ");
 		Query query = session.createQuery(sb.toString());
 		query.setParameter("issueId", id);
 		return (Issue) query.uniqueResult();
@@ -56,7 +58,8 @@ public class IssueDaoImpl extends GenericDaoImpl<Issue> implements IssueDao{
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Issue> getIssueByIssueName(Session session, String issueName) {
-		StringBuilder sb = new StringBuilder(" select i from Issue i join fetch i.vmc join fetch i.unitType join fetch i.reportedBy join fetch i.status join fetch i.category where i.issueName like :issueName ");
+		StringBuilder sb = new StringBuilder(
+				" select i from Issue i left join fetch i.vmc left join fetch i.unitType left join fetch i.reportedBy left join fetch i.status left join fetch i.category where i.issueName like :issueName ");
 		Query query = session.createQuery(sb.toString());
 		query.setParameter("issueName", "%"+issueName+"%");
 		return query.list();
@@ -76,7 +79,8 @@ public class IssueDaoImpl extends GenericDaoImpl<Issue> implements IssueDao{
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Issue> findAllActiveAndIncompleteIssues(Session session) {
-		StringBuilder sb = new StringBuilder(" select i from Issue i join fetch i.vmc join fetch i.unitType join fetch i.reportedBy join fetch i.status where i.status.typeId = 103 or i.status.typeId = 105");
+		StringBuilder sb = new StringBuilder(
+				" select i from Issue i left join fetch i.vmc left join fetch i.unitType left join fetch i.reportedBy left join fetch i.status where i.status.typeId = 103 or i.status.typeId = 105");
 		Query query = session.createQuery(sb.toString());
 		return query.list();
 	}
@@ -87,8 +91,9 @@ public class IssueDaoImpl extends GenericDaoImpl<Issue> implements IssueDao{
 		Type unitType = (Type) session.get(Type.class, unitTypeId);
 		Category category = (Category) session.get(Category.class, categoryId);
 		StringBuilder sb = new StringBuilder(" ");
-		sb.append(" from Issue i join fetch i.vmc join fetch i.unitType join fetch i.reportedBy join fetch i.status ")
-		.append(" join fetch i.category ")
+		sb.append(
+				" from Issue i left join fetch i.vmc left join fetch i.unitType left join fetch i.reportedBy left join fetch i.status ")
+				.append(" left join fetch i.category ")
 		.append("  where i.category =:category and i.unitType =:unitType and i.status.typeId in (103, 105, 107) ");
 		
 		Query query = session.createQuery(sb.toString());

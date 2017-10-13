@@ -30,6 +30,7 @@ import com.dpu.service.DriverService;
 import com.dpu.service.IssueService;
 import com.dpu.service.TypeService;
 import com.dpu.service.VehicleMaintainanceCategoryService;
+import com.dpu.util.ValidationUtil;
 
 @Component
 public class IssueServiceImpl implements IssueService  {
@@ -109,12 +110,28 @@ public class IssueServiceImpl implements IssueService  {
 				issueObj.setId(issue.getId());
 				issueObj.setTitle(issue.getIssueName());
 				issueObj.setDescription(issue.getDescription());
-				issueObj.setVmcName(issue.getVmc().getName());
-				issueObj.setReportedByName(issue.getReportedBy().getFirstName());
-				issueObj.setUnitTypeName(issue.getUnitType().getTypeName());
-				issueObj.setCategoryName(issue.getCategory().getName());
 				issueObj.setUnitNo(issue.getUnitNo());
-				issueObj.setStatusName(issue.getStatus().getTypeName());
+
+				if (!ValidationUtil.isNull(issue.getVmc())) {
+					issueObj.setVmcName(issue.getVmc().getName());
+				}
+
+				if (!ValidationUtil.isNull(issue.getReportedBy())) {
+					issueObj.setReportedByName(issue.getReportedBy().getFirstName());
+				}
+
+				if (!ValidationUtil.isNull(issue.getUnitType())) {
+					issueObj.setUnitTypeName(issue.getUnitType().getTypeName());
+				}
+
+				if (!ValidationUtil.isNull(issue.getCategory())) {
+					issueObj.setCategoryName(issue.getCategory().getName());
+				}
+
+				if (!ValidationUtil.isNull(issue.getStatus())) {
+					issueObj.setStatusName(issue.getStatus().getTypeName());
+				}
+
 				issueList.add(issueObj);
 			}
 		}
@@ -227,12 +244,31 @@ public class IssueServiceImpl implements IssueService  {
 				issueModel.setId(issue.getId());
 				issueModel.setTitle(issue.getIssueName());
 				issueModel.setDescription(issue.getDescription());
-				issueModel.setVmcId(issue.getVmc().getId());
-				issueModel.setReportedById(issue.getReportedBy().getDriverId());
-				issueModel.setUnitTypeId(issue.getUnitType().getTypeId());
 				issueModel.setUnitNo(issue.getUnitNo());
-				issueModel.setStatusId(issue.getStatus().getTypeId());
+
+				if (!ValidationUtil.isNull(issue.getVmc())) {
+					issueModel.setVmcId(issue.getVmc().getId());
+				}
+
+				if (!ValidationUtil.isNull(issue.getReportedBy())) {
+					issueModel.setReportedById(issue.getReportedBy().getDriverId());
+				}
+
+				if (!ValidationUtil.isNull(issue.getUnitType())) {
+					issueModel.setUnitTypeId(issue.getUnitType().getTypeId());
+					List<CategoryModel> categoryList = getUnitCategories(issue.getUnitType().getTypeName());
+					issueModel.setCategoryList(categoryList);
+
+				}
+
+				if (!ValidationUtil.isNull(issue.getStatus())) {
+					issueModel.setStatusId(issue.getStatus().getTypeId());
+				}
 				
+				if (!ValidationUtil.isNull(issue.getCategory())) {
+					issueModel.setCategoryId(issue.getCategory().getCategoryId());
+				}
+
 				List<VehicleMaintainanceCategoryModel> vmcList = vehicleMaintainanceCategoryService.getSpecificData();
 				issueModel.setVmcList(vmcList);
 				
@@ -241,22 +277,26 @@ public class IssueServiceImpl implements IssueService  {
 				
 				List<TypeResponse> statusListResponse = new ArrayList<TypeResponse>();
 				List<TypeResponse> statusList = typeService.getAll(23l);
-				for(TypeResponse typeResponse : statusList) {
-					if(typeResponse.getTypeName().equals("Open") || typeResponse.getTypeName().equals("Deferred")) {
+				for (TypeResponse typeResponse : statusList) {
+					if (typeResponse.getTypeName().equals("Open") || typeResponse.getTypeName().equals("Deferred")) {
 						statusListResponse.add(typeResponse);
 					}
 				}
 				issueModel.setStatusList(statusListResponse);
-				
-				issueModel.setCategoryId(issue.getCategory().getCategoryId());
-				List<CategoryModel> categoryList = categoryService.getSpecificData();
-				issueModel.setCategoryList(categoryList);
-				
 				List<TypeResponse> unitTypeList = typeService.getAll(25l);
 				issueModel.setUnitTypeList(unitTypeList);
-				
-				List<String> unitNos = getUnitNosForCategory(issue.getCategory().getCategoryId(), issue.getUnitType().getTypeId(), session);
-				issueModel.setUnitNos(unitNos);
+
+				if (!ValidationUtil.isNull(issue.getUnitType())) {
+					List<String> unitNos = null;
+					if (!ValidationUtil.isNull(issue.getCategory())) {
+						unitNos = getUnitNosForCategory(issue.getCategory().getCategoryId(), issue
+								.getUnitType().getTypeId(), session);
+					} else {
+						unitNos = getUnitNosForCategory(0l, issue.getUnitType().getTypeId(), session);
+					}
+
+					issueModel.setUnitNos(unitNos);
+				}
 			}
 		} finally {
 			if (session != null) {
@@ -282,16 +322,13 @@ public class IssueServiceImpl implements IssueService  {
 		
 		List<TypeResponse> statusListResponse = new ArrayList<TypeResponse>();
 		List<TypeResponse> statusList = typeService.getAll(23l);
-		for(TypeResponse typeResponse : statusList) {
-			if(typeResponse.getTypeName().equals("Open") || typeResponse.getTypeName().equals("Deferred")) {
+		for (TypeResponse typeResponse : statusList) {
+			if (typeResponse.getTypeName().equals("Open") || typeResponse.getTypeName().equals("Deferred")) {
 				statusListResponse.add(typeResponse);
 			}
 		}
 		issueModel.setStatusList(statusListResponse);
-		
-		/*List<CategoryReq> categoryList = categoryService.getSpecificData();
-		issueModel.setCategoryList(categoryList);*/
-		
+
 		List<TypeResponse> unitTypeList = typeService.getAll(25l);
 		issueModel.setUnitTypeList(unitTypeList);
 		logger.info("IssueServiceImpl getOpenAdd() ends ");
@@ -423,17 +460,32 @@ public class IssueServiceImpl implements IssueService  {
 
 	private Issue setIssueValues(IssueModel issueModel, Session session, Issue issue) {
 
-		Driver reportedBy = (Driver) session.get(Driver.class, issueModel.getReportedById());
-		VehicleMaintainanceCategory vmc = (VehicleMaintainanceCategory) session.get(VehicleMaintainanceCategory.class, issueModel.getVmcId());
-		Category category = (Category) session.get(Category.class, issueModel.getCategoryId());
-		Type status = (Type) session.get(Type.class, issueModel.getStatusId());
-		Type unitType = (Type) session.get(Type.class, issueModel.getUnitTypeId());
-		
-		issue.setReportedBy(reportedBy);
-		issue.setVmc(vmc);
-		issue.setCategory(category);
-		issue.setUnitType(unitType);
-		issue.setStatus(status);
+		if (!ValidationUtil.isNull(issueModel.getReportedById())) {
+			Driver reportedBy = (Driver) session.get(Driver.class, issueModel.getReportedById());
+			issue.setReportedBy(reportedBy);
+		}
+
+		if (!ValidationUtil.isNull(issueModel.getVmcId())) {
+			VehicleMaintainanceCategory vmc = (VehicleMaintainanceCategory) session.get(
+					VehicleMaintainanceCategory.class, issueModel.getVmcId());
+			issue.setVmc(vmc);
+		}
+
+		if (!ValidationUtil.isNull(issueModel.getCategoryId())) {
+			Category category = (Category) session.get(Category.class, issueModel.getCategoryId());
+			issue.setCategory(category);
+		}
+
+		if (!ValidationUtil.isNull(issueModel.getStatusId())) {
+			Type status = (Type) session.get(Type.class, issueModel.getStatusId());
+			issue.setStatus(status);
+		}
+
+		if (!ValidationUtil.isNull(issueModel.getUnitTypeId())) {
+			Type unitType = (Type) session.get(Type.class, issueModel.getUnitTypeId());
+			issue.setUnitType(unitType);
+		}
+
 		issue.setIssueName(issueModel.getTitle());
 		issue.setUnitNo(issueModel.getUnitNo());
 		issue.setDescription(issueModel.getDescription());

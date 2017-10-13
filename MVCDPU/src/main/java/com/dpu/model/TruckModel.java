@@ -20,7 +20,7 @@ public class TruckModel implements Serializable {
 	private String oOName;
 
 	private String finance;
-	private Integer unitNo;
+	private String unitNo;
 	private Date createdOn;
 	private String createdBy;
 	private String modifiedBy;
@@ -246,11 +246,11 @@ public class TruckModel implements Serializable {
 		this.truckId = truckId;
 	}
 
-	public Integer getUnitNo() {
+	public String getUnitNo() {
 		return unitNo;
 	}
 
-	public void setUnitNo(Integer unitNo) {
+	public void setUnitNo(String unitNo) {
 		this.unitNo = unitNo;
 	}
 

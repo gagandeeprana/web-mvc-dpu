@@ -21,7 +21,7 @@ public class PurchaseOrderDaoImpl extends GenericDaoImpl<PurchaseOrder> implemen
 	@Override
 	public List<PurchaseOrder> findAll(Session session) {
 		StringBuilder sb = new StringBuilder(
-				" select i from PurchaseOrder i join fetch i.vendor join fetch i.category join fetch i.unitType join fetch i.status ");
+				" select i from PurchaseOrder i left join fetch i.vendor left join fetch i.category left join fetch i.unitType left join fetch i.status ");
 		Query query = session.createQuery(sb.toString());
 		return query.list();
 	}
@@ -29,7 +29,7 @@ public class PurchaseOrderDaoImpl extends GenericDaoImpl<PurchaseOrder> implemen
 	@Override
 	public PurchaseOrder findById(Long id, Session session) {
 		StringBuilder sb = new StringBuilder(
-				" select i from PurchaseOrder i join fetch i.vendor join fetch i.category join fetch i.unitType join fetch i.status where i.id =:poId ");
+				" select i from PurchaseOrder i left join fetch i.vendor left join fetch i.category left join fetch i.unitType left join fetch i.status where i.id =:poId ");
 		Query query = session.createQuery(sb.toString());
 		query.setParameter("poId", id);
 		return (PurchaseOrder) query.uniqueResult();
@@ -105,7 +105,7 @@ public class PurchaseOrderDaoImpl extends GenericDaoImpl<PurchaseOrder> implemen
 	@Override
 	public List<PurchaseOrder> getStatusPOs(Session session, String statusVal) {
 		StringBuilder sb = new StringBuilder(
-				" select i from PurchaseOrder i left join fetch i.vendor left join fetch i.category left join fetch i.unitType join fetch i.status ")
+				" select i from PurchaseOrder i left join fetch i.vendor left join fetch i.category left join fetch i.unitType left join fetch i.status ")
 				.append(" where i.status.typeName = :statusVal ");
 		Query query = session.createQuery(sb.toString());
 		query.setParameter("statusVal", statusVal);
@@ -115,6 +115,14 @@ public class PurchaseOrderDaoImpl extends GenericDaoImpl<PurchaseOrder> implemen
 	@Override
 	public void createInvoice(PurchaseOrderInvoice invoice, Session session) {
 		session.save(invoice);
+	}
+
+	@Override
+	public PurchaseOrderInvoice getPOInvoice(Session session, Long poId) {
+		StringBuilder sb = new StringBuilder(" select p from PurchaseOrderInvoice p where p.purchaseOrder.id =:poId ");
+		Query query = session.createQuery(sb.toString());
+		query.setParameter("poId", poId);
+		return (PurchaseOrderInvoice) query.list();
 	}
 
 }

@@ -31,4 +31,6 @@ public interface PurchaseOrderDao extends GenericDao<PurchaseOrder> {
 
 	void createInvoice(PurchaseOrderInvoice invoice, Session session);
 
+	PurchaseOrderInvoice getPOInvoice(Session session, Long poId);
+
 }

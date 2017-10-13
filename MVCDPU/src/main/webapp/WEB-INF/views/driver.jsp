@@ -693,7 +693,7 @@ function check() {
 		}
 	}
 	var division = $('#divisionId :selected').val();
-	var terminal = $('#terminalId :selected').val();
+	//var terminal = $('#terminalId :selected').val();
 	
 	if(division == 0) {
 		msg.show();
@@ -702,12 +702,12 @@ function check() {
 		return false;
 	}
 	
-	if(terminal == 0) {
+	/* if(terminal == 0) {
 		msg.show();
 		msgvalue.text("Terminal cannot be left blank.");
 		$("#terminalId").focus();
 		return false;
-	}
+	} */
 	
 	/* if(unit == "") {
 		msg.show();

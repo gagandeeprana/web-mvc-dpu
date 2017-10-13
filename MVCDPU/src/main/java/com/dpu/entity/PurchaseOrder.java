@@ -42,10 +42,6 @@ public class PurchaseOrder implements Serializable {
 	private Type unitType;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "issue_id")
-	private Issue issue;
-
-	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "status_id")
 	private Type status;
 	
@@ -63,6 +59,9 @@ public class PurchaseOrder implements Serializable {
 	
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "purchaseOrder")
 	private List<PurchaseOrderUnitNos> poUnitNos;
+
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "purchaseOrder")
+	private List<PurchaseOrderInvoice> poInvoices;
 
 	public Long getId() {
 		return id;
@@ -86,14 +85,6 @@ public class PurchaseOrder implements Serializable {
 
 	public void setVendor(Vendor vendor) {
 		this.vendor = vendor;
-	}
-
-	public Issue getIssue() {
-		return issue;
-	}
-
-	public void setIssue(Issue issue) {
-		this.issue = issue;
 	}
 
 	public String getInvoiceNo() {
@@ -150,6 +141,14 @@ public class PurchaseOrder implements Serializable {
 
 	public void setPoUnitNos(List<PurchaseOrderUnitNos> poUnitNos) {
 		this.poUnitNos = poUnitNos;
+	}
+
+	public List<PurchaseOrderInvoice> getPoInvoices() {
+		return poInvoices;
+	}
+
+	public void setPoInvoices(List<PurchaseOrderInvoice> poInvoices) {
+		this.poInvoices = poInvoices;
 	}
 
 }

@@ -19,42 +19,44 @@
 <link rel = "stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.0/css/bootstrap-datepicker.css"/>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.0/js/bootstrap-datepicker.js"></script>
 <style type="text/css">
-	.ui-front {
-	    z-index: 9999;
-	}
-	.multiselect-container>li>a>label {
-  padding: 4px 30px 3px 20px;
-  margin-left:5px;
+.ui-front {
+    z-index: 9999;
 }
-
-.multiselect-container>li{
-margin-left: 10px;
+.multiselect-container>li>a>label {
+	padding: 4px 30px 3px 20px;
+	margin-left:5px;
 }
-#unitNo{
+.multiselect-container>li {
+	margin-left: 10px;
+}
+#unitNoIssue {
+    max-height: 33px;
+    max-width: 130px
+}
+#unitNo {
     max-height: 33px;
     max-width: 130px
 }
 </style>
 <style type="text/css">
 .modal-dialog {
-  width: 98%;
-  height: 100%;
-  padding: 0;
+	width: 98%;
+	height: 100%;
+	padding: 0;
 }
 
-.modal-content { 
-  height: auto;
-  min-height: 100%;
-  border-radius: 5;
+.modal-content {
+	height: auto;
+	min-height: 100%;
+	border-radius: 5;
 }
-textarea{ 
-  width: 100%; 
-  min-width:100%; 
-  max-width:100%; 
-
-  height:100px; 
-  min-height:100px;  
-  max-height:100px;
+textarea { 
+	width: 100%; 
+	min-width:100%; 
+	max-width:100%; 
+	height:100px; 
+	min-height:100px;  
+	max-height:100px;
 }
 </style>
 	<jsp:include page="Include.jsp"></jsp:include>
@@ -67,6 +69,102 @@ function navigate() {
 	} else if(flag == 'update') {
 		createPO('updatepo','PUT');			
 	}
+	$.confirm({
+	    title: 'Confirm!',
+	    content: 'Do you want to make this PO as complete ?',
+	    buttons: {
+	        cancel: {
+	            text: 'Not Now',
+	        },
+	        confirm: {
+	            text: 'Yes',
+	            btnClass: 'btn-blue',
+	            keys: ['enter', 'shift'],
+	            action: function(){
+	                $.alert('Something else?');
+	            }
+	        }
+	    }
+	});
+}
+function navigateUpdateIssue() {
+	if(!checkUpdateIssue()){
+		 return false;
+	 }
+	updateIssue('updateissue','PUT');	
+	$('#issueModal').modal("toggle")
+}
+function updateIssue(urlToHit,methodType){
+	 
+ 	var title = $("#title").val();
+   	var vmcId = $('#vmcId :selected').val();
+   	var unitType = $('#unitType :selected').val();
+   	var issueCategory = $('#issueCategory :selected').val();
+   	var unitNo = $('#unitNoIssue :selected').val();
+   	var reportedBy = $('#reportedBy :selected').val();
+   	var status = $('#status :selected').val();
+ 	var description = $("#description").val();
+   	
+ 	var issueId;
+   	if(methodType == 'PUT') {
+   		issueId = $('#issueid').val();
+   	}
+   	
+	  $.ajax({url: BASE_URL + urlToHit,
+	      type:"POST",
+	      data:{
+	    	title:title,
+	    	vmcId:vmcId,
+	    	unitTypeId:unitType,
+	    	categoryId:issueCategory,
+	    	unitNo:unitNo,
+	    	reportedById:reportedBy,
+	    	statusId:status,
+	    	description:description,
+	    	issueid:issueId
+	      },
+	      success: function(result){
+        try{
+        	
+        	//var list = result.resultList;
+			//fillIssueData(list);
+
+	        toastr.success(result.message, 'Success!')
+		} catch(e){
+			toastr.error('Something went wrong' + e, 'Error!')
+		}
+	  },error:function(result){
+		  try{
+	        	$("#btnNew").click(function() {
+	        		onClickMethodQuestion('0');
+	        	});
+			  	var obj = JSON.parse(result.responseText);
+			  	toastr.error(obj.message, 'Error!')
+			  }catch(e){
+				  toastr.error('Something went wrong', 'Error!')
+			  }
+	  }});
+	  return true;
+}
+function checkUpdateIssue() {
+	var title = $("#title").val();
+	var description = $("#description").val();
+	var msg = $("#msg");
+	var msgvalue = $("#msgvalue");
+	msg.hide();
+	msgvalue.val("");
+	if(title == "") {
+		msg.show();
+		msgvalue.text("Title cannot be left blank.");
+		$("#title").focus();
+		return false;
+	} else if(description == "") {
+		msg.show();
+		msgvalue.text("Description cannot be left blank.");
+		$("#description").focus();
+		return false;
+	}
+	return true;
 }
 function createPO(urlToHit,methodType){
 	 
@@ -75,13 +173,27 @@ function createPO(urlToHit,methodType){
 		 }
 
 	 	var vendorId = $('#vendorId :selected').val();
+	 	if(vendorId == "Please Select") {
+	 		vendorId = 0;
+	 	}
 	   	var unitTypeId = $('#unitTypeId :selected').val();
+	   	if(unitTypeId == "Please Select") {
+	   		unitTypeId = 0;
+	   	}
 	   	var categoryId = $('#categoryId :selected').val();
+	   	if(categoryId == "Please Select") {
+	   		categoryId = 0;
+	   	}
 	   	var message = $("#message").val();
 	   	var poIssues = $('.poIssueIds:checkbox:checked');
 	   	var unitNo = $('#unitNo').val();
 	    var issueIds = new Array();
 	    var issueStatusIds = new Array();
+	    
+	    if(unitNo == null) {
+	    	unitNo = "";
+	    }
+
 	    for(var i=0;i<poIssues.length;i++) {
 	    	var valIssue = poIssues[i].value;
 		   	var issueStatusId = $("#issueStatusId" + valIssue + " :selected").val();
@@ -93,11 +205,12 @@ function createPO(urlToHit,methodType){
 	   	if(methodType == 'PUT') {
 	   		poId = $('#poid').val();
 	   	}
-		  $.ajax({url: BASE_URL + urlToHit,
+	   	
+	   	$.ajax({url: BASE_URL + urlToHit,
 			      async:false,
 			      type:"POST",
 			      data:{
-			    	vendorId:vendorId,
+			        vendorId:vendorId,
 			    	unitTypeId:unitTypeId,
 			    	categoryId:categoryId,
 			    	message:message,
@@ -172,7 +285,7 @@ function fillPOData(list) {
 	    		tableValue = tableValue + "<a href = '#' data-toggle='modal' data-target='#myModal'  onclick=checkFlag('view');onClickMethodQuestion('"+(obj.id)+"')>View</a> / <a href='#' data-toggle='modal' data-target='#invoiceModal' onclick=pastePoNo('"+(poNo)+"');pastePoIdAndStatusId('"+(obj.id)+"','"+(obj.invoiceStatusId)+"')>Change to Invoice</a>";	    			
     		}
     		if($("#statusFlag").val() == 'Invoiced') {
-	    		tableValue = tableValue + "<a href = '#' data-toggle='modal' data-target='#myModal'  onclick=checkFlag('view');onClickMethodQuestion('"+(obj.id)+"')>View</a>";	    			
+	    		tableValue = tableValue + "<a href = '#' data-toggle='modal' data-target='#myModal'  onclick=checkFlag('view');onClickMethodQuestion('"+(obj.id)+"')>View</a> / <a href = '#' data-toggle='modal' data-target='#invoiceModal'  onclick=getInvoice('" + poNo + "')>Edit Invoice</a>";	    			
     		}
     		if(obj.isComplete == true) {
     			tableValue = tableValue + " / <a href='#' onclick=changeStatusToComplete('"+ (obj.id) + "','" + (obj.completeStatusId) + "') id='changeStatus'>Change to Complete</a>";
@@ -183,6 +296,16 @@ function fillPOData(list) {
 	} else {
 		$("#poData").html("No records found.");
 	}
+}
+
+function getInvoice(poId) {
+	
+	pastePoNo(poId);
+	$.get("getinvoice/poId",{"poId" : poId}, function(data) {
+		$("#invoiceNo").val(data.invoiceNo);
+		$("#invoiceAmount").val(data.invoiceAmount);
+		$("#invoiceDate").val(data.invoiceDate);
+   	}); 
 }
 
 function deletePO(terminalId){
@@ -297,14 +420,14 @@ function checkFlag(field) {
 function showIssueDetail(quesId) {
 	$("#title").val("");
     $("#description").val("");
-	document.getElementById("vmcId").innerHTML = "";
-	document.getElementById("unitType").innerHTML = "";
-	document.getElementById("issueCategory").innerHTML = "";
-	document.getElementById("unitNo").innerHTML = "";
-	document.getElementById("reportedBy").innerHTML = "";
-	document.getElementById("status").innerHTML = "";
+    document.getElementById("vmcId").innerHTML = "<option value='0'>Please Select</option>";
+	document.getElementById("unitType").innerHTML = "<option value='0'>Please Select</option>";
+	document.getElementById("issueCategory").innerHTML = "<option value='0'>Please Select</option>";
+    $("#unitNoIssue").html("<option value='0'>Please Select</option>");
+	document.getElementById("reportedBy").innerHTML = "<option value='0'>Please Select</option>";
+	document.getElementById("status").innerHTML = "<option value='0'>Please Select</option>";
 	$.get("getissue/issueId",{"issueId" : quesId}, function(data) {
-        
+		document.getElementById("issueid").value = data.id;
 		$("#title").val(data.title);
         $("#description").val(data.description);
         
@@ -312,9 +435,9 @@ function showIssueDetail(quesId) {
         var vmcList = data.vmcList;
         for(var i = 0;i < vmcList.length;i++) {
         	vmc.options[vmc.options.length] = new Option(vmcList[i].name);
-        	vmc.options[i].value = vmcList[i].id;
+        	vmc.options[i+1].value = vmcList[i].id;
         	if(vmcList[i].id == data.vmcId) {
-        		document.getElementById("vmcId").selectedIndex = i;
+        		document.getElementById("vmcId").selectedIndex = i+1;
         	}
         }
         
@@ -322,9 +445,9 @@ function showIssueDetail(quesId) {
         var unitTypeList = data.unitTypeList;
         for(var i = 0;i < unitTypeList.length;i++) {
         	unitType.options[unitType.options.length] = new Option(unitTypeList[i].typeName);
-        	unitType.options[i].value = unitTypeList[i].typeId;
+        	unitType.options[i+1].value = unitTypeList[i].typeId;
         	if(unitTypeList[i].typeId == data.unitTypeId) {
-        		document.getElementById("unitType").selectedIndex = i;
+        		document.getElementById("unitType").selectedIndex = i+1;
         	}
         }
         
@@ -332,19 +455,19 @@ function showIssueDetail(quesId) {
         var categoryList = data.categoryList;
         for(var i = 0;i < categoryList.length;i++) {
         	category.options[category.options.length] = new Option(categoryList[i].name);
-        	category.options[i].value = categoryList[i].categoryId;
+        	category.options[i+1].value = categoryList[i].categoryId;
         	if(categoryList[i].categoryId == data.categoryId) {
-        		document.getElementById("issueCategory").selectedIndex = i;
+        		document.getElementById("issueCategory").selectedIndex = i+1;
         	}
         }
         
-        var unitNo = document.getElementById("unitNo");
+        var unitNo = document.getElementById("unitNoIssue");
         var unitNos = data.unitNos;
         for(var i = 0;i < unitNos.length;i++) {
         	unitNo.options[unitNo.options.length] = new Option(unitNos[i]);
-        	unitNo.options[i].value = unitNos[i];
+        	unitNo.options[i+1].value = unitNos[i];
         	if(unitNos[i] == data.unitNo) {
-        		document.getElementById("unitNo").selectedIndex = i;
+        		document.getElementById("unitNoIssue").selectedIndex = i+1;
         	}
         }
         
@@ -352,9 +475,9 @@ function showIssueDetail(quesId) {
         var reportedByList = data.reportedByList;
         for(var i = 0;i < reportedByList.length;i++) {
         	reportedBy.options[reportedBy.options.length] = new Option(reportedByList[i].fullName);
-        	reportedBy.options[i].value = reportedByList[i].driverId;
+        	reportedBy.options[i+1].value = reportedByList[i].driverId;
         	if(reportedByList[i].driverId == data.reportedById) {
-        		document.getElementById("reportedBy").selectedIndex = i;
+        		document.getElementById("reportedBy").selectedIndex = i+1;
         	}
         }
         
@@ -362,9 +485,9 @@ function showIssueDetail(quesId) {
         var statusList = data.statusList;
         for(var i = 0;i < data.statusList.length;i++) {
         	status.options[status.options.length] = new Option(data.statusList[i].typeName);
-        	status.options[i].value = data.statusList[i].typeId;
+        	status.options[i+1].value = data.statusList[i].typeId;
         	if(statusList[i].typeId == data.statusId) {
-        		document.getElementById("status").selectedIndex = i;
+        		document.getElementById("status").selectedIndex = i+1;
         	}
         }
    	}); 
@@ -372,7 +495,7 @@ function showIssueDetail(quesId) {
 		var editInitialValue = "";
 		
 		var issuesFroDropDown;
-		function getUnitNo() {
+		<%-- function getUnitNo() {
 			var unitTypeId = $('#unitTypeId :selected').val();
 			var categoryId = $('#categoryId :selected').val();
 			if(unitTypeId > 0 && categoryId > 0 ) {
@@ -434,6 +557,61 @@ function showIssueDetail(quesId) {
 					}
 				});
 			}
+		} --%>
+		
+		function getOnlyUnitNosOnUnitTypeChangeUpdateIssue() {
+		 	
+			 var unitTypeId = $('#unitType :selected').val();
+			 var categoryId = 0;
+			 
+			if(unitTypeId != "Please Select") {
+
+				$.get("<%=request.getContextPath()%>"+"/issue/getunitno/category/" + categoryId + "/unittype/" + unitTypeId, function(data) {
+			        
+					 var unitNo = document.getElementById("unitNoIssue");
+			       	    $("#unitNoIssue").html("<option value='0'>Please Select</option>");
+			         if(data.unitNos != null && data.unitNos.length > 0) {
+			        	 for(var i = 0;i < data.unitNos.length;i++) {
+		                   	unitNo.options[unitNo.options.length] = new Option(data.unitNos[i]);
+		                   	unitNo.options[i+1].value = data.unitNos[i];
+		                 }
+			         } else {
+						toastr.error('No such UnitNo. exists for selected UnitType and Category', 'Error!')
+						$("#unitNoIssue").html("<option value='0'>Please Select</option>");
+			         }
+			    });
+			} else {
+				$("#unitNoIssue").html("<option value='0'>Please Select</option>");
+			}
+		}
+		
+		function getCategoriesUpdateIssue() {
+			 var unitTypeName = $('#unitType :selected').text();
+
+			 if(unitTypeName != "Please Select") {
+				 $.get("getcategories/unittype/"+unitTypeName, function(data) {
+			      
+				      var category = document.getElementById("issueCategory");
+				      $("#issueCategory").empty();
+				      category.options[0] = new Option("Please Select");		      
+				      
+				      if(data != null && data.length > 0) {
+				    	  for(var i = 0;i < data.length;i++) {
+					    	  category.options[category.options.length] = new Option(data[i].name);
+					    	  category.options[i+1].value = data[i].categoryId;
+					      }
+				      } else {
+				    	  var category = document.getElementById("issueCategory");
+					      $("#issueCategory").empty();
+					      category.options[0] = new Option("Please Select");
+						  toastr.error("No such Category exist for this Unit Type", 'Error!');
+				      }
+				 });
+			 } else {
+				 var category = document.getElementById("issueCategory");
+			      $("#issueCategory").empty();
+			      category.options[0] = new Option("Please Select");
+			 }
 		}
 		
 		var editIssueIds = new Array();
@@ -479,40 +657,53 @@ function showIssueDetail(quesId) {
                     
         			var vendor = document.getElementById("vendorId");
                     var vendorList = data.vendorList;
-    	            for(var i = 0;i < data.vendorList.length;i++) {
-    	            	vendor.options[vendor.options.length] = new Option(data.vendorList[i].name);
-    	            	vendor.options[i+1].value = data.vendorList[i].vendorId;
-                    	if(vendorList[i].vendorId == data.vendorId) {
-                    		document.getElementById("vendorId").selectedIndex = i+1;
-                    	}
-    	            }
+                  
+                    if(vendorList != null) {
+	    	            for(var i = 0;i < vendorList.length;i++) {
+	    	            	vendor.options[vendor.options.length] = new Option(vendorList[i].name);
+	    	            	vendor.options[i+1].value = vendorList[i].vendorId;
+	                    	if(vendorList[i].vendorId == data.vendorId) {
+	                    		document.getElementById("vendorId").selectedIndex = i+1;
+	                    	}
+	    	            }
+                    }
                     
                     var unitType = document.getElementById("unitTypeId");
                     var unitTypeList = data.unitTypeList;
-                    for(var i = 0;i < unitTypeList.length;i++) {
-                    	unitType.options[unitType.options.length] = new Option(unitTypeList[i].typeName);
-                    	unitType.options[i+1].value = unitTypeList[i].typeId;
-                    	if(unitTypeList[i].typeId == data.unitTypeId) {
-                    		document.getElementById("unitTypeId").selectedIndex = i+1;
-                    	}
+                    
+                    if(unitTypeList != null) {
+	                    for(var i = 0;i < unitTypeList.length;i++) {
+	                    	unitType.options[unitType.options.length] = new Option(unitTypeList[i].typeName);
+	                    	unitType.options[i+1].value = unitTypeList[i].typeId;
+	                    	if(unitTypeList[i].typeId == data.unitTypeId) {
+	                    		document.getElementById("unitTypeId").selectedIndex = i+1;
+	                    	}
+	                    }
                     }
+                    
                     
                     var category = document.getElementById("categoryId");
                     var categoryList = data.categoryList;
-                    for(var i = 0;i < categoryList.length;i++) {
-                    	category.options[category.options.length] = new Option(categoryList[i].name);
-                    	category.options[i+1].value = categoryList[i].categoryId;
-                    	if(categoryList[i].categoryId == data.categoryId) {
-                    		document.getElementById("categoryId").selectedIndex = i+1;
-                    	}
+                    
+                    if(categoryList != null) {
+	                    for(var i = 0;i < categoryList.length;i++) {
+	                    	category.options[category.options.length] = new Option(categoryList[i].name);
+	                    	category.options[i+1].value = categoryList[i].categoryId;
+	                    	if(categoryList[i].categoryId == data.categoryId) {
+	                    		document.getElementById("categoryId").selectedIndex = i+1;
+	                    	}
+	                    }
                     }
                     
                     
                     var unitNo = document.getElementById("unitNo");
                     var unitNos = data.allUnitNos;
                     var opt = "";
-                    for(var i = 0;i < unitNos.length;i++) {
- 			         	opt += "<option value='"+unitNos[i]+"' id='chk" + unitNos[i]+"'>" + unitNos[i]+"</option>"
+
+                    if(unitNos != null) {
+	                    for(var i = 0;i < unitNos.length;i++) {
+	 			         	opt += "<option value='"+unitNos[i]+"' id='chk" + unitNos[i]+"'>" + unitNos[i]+"</option>"
+	                    }
                     }
                     
 
@@ -528,50 +719,53 @@ function showIssueDetail(quesId) {
                     var issueList = data.issueList;
 	            	var tableValue = "";
 					$("#issuesTable").html("");
-					if(data.issueList.length > 0) {
-						$("#mainDiv").show();
-	    	            for(var i = 0;i < data.issueList.length;i++) {
-	    	            	var obj = data.issueList[i];
-	    	            	editIssueIds.push(obj.id);
-		            		tableValue = tableValue + ("<tr class='info " + unitNo + "'>");
-		            		var assigned,complete,incomplete;
-		            		if(obj.statusName == "Assigned") {
-		            			assigned = "selected";
-		            			complete = "";
-		            			incomplete = "";
-		            		}
-		            		else if(obj.statusName == "Complete") {
-		            			assigned = "";
-		            			complete = "selected";
-		            			incomplete = "";
-		            		}
-		            		else if(obj.statusName == "Incomplete") {
-		            			assigned = "";
-		            			complete = "";
-		            			incomplete = "selected";
-		            		} else {
-		            			assigned = "";
-		            			complete = "";
-		            			incomplete = "";
-		            		}
-		            		if((obj.statusName == "Assigned") || (obj.statusName == "Complete") || (obj.statusName == "Incomplete")) {
-			            		tableValue = tableValue + ("<td><div style='margin-top: -11px;'><input type='checkbox' on class='form-control poIssueIds' value='"+(obj.id) + "' id='issueId" + (obj.id) + "' name='issueIds' checked /></div></td>");
-		            		} else {
-			            		tableValue = tableValue + ("<td><div style='margin-top: -11px;'><input type='checkbox' class='form-control poIssueIds' value='"+(obj.id) + "' id='issueId" + (obj.id) + "' name='issueIds' /></div></td>");		            			
-		            		}
-     						tableValue = tableValue + ("<td><a href='#' onclick=showIssueDetail('"+(obj.id) + "') data-toggle='modal' data-target='#issueModal'>" + (obj.title)+"</a></td>");
-		            		tableValue = tableValue + ("<td>"+(obj.vmcName)+"</td>");
-		            		tableValue = tableValue + ("<td>"+(obj.categoryName)+"</td>");
-		            		tableValue = tableValue + ("<td>"+(obj.unitTypeName)+"</td>");
-		            		tableValue = tableValue + ("<td>"+(obj.unitNo)+"</td>");
-		            		tableValue = tableValue + ("<td>"+(obj.reportedByName)+"</td>");
-		            		tableValue = tableValue + ("<td><select class='form-control issueStatusClass' id='issueStatusId" + (obj.id)+"'><option value='-1'>Please Select</option><option value='104' " + complete + ">Complete</option><option value='105' " + incomplete +">Incomplete</option><option value='106' " + assigned +">Assigned</option></select></td>");
-		            		tableValue = tableValue + ("</tr>");
-		            		
-	    	            }
-	    	            editIssueHtml = tableValue;
-					} else {
-						toastr.error("No Open/ Deferred/ Incomplete Issue related to unittype and category exists.", 'Message!');
+					
+					if(issueList != null) {
+						if(issueList.length > 0) {
+							$("#mainDiv").show();
+		    	            for(var i = 0;i < issueList.length;i++) {
+		    	            	var obj = issueList[i];
+		    	            	editIssueIds.push(obj.id);
+			            		tableValue = tableValue + ("<tr class='info " + unitNo + "'>");
+			            		var assigned,complete,incomplete;
+			            		if(obj.statusName == "Assigned") {
+			            			assigned = "selected";
+			            			complete = "";
+			            			incomplete = "";
+			            		}
+			            		else if(obj.statusName == "Complete") {
+			            			assigned = "";
+			            			complete = "selected";
+			            			incomplete = "";
+			            		}
+			            		else if(obj.statusName == "Incomplete") {
+			            			assigned = "";
+			            			complete = "";
+			            			incomplete = "selected";
+			            		} else {
+			            			assigned = "";
+			            			complete = "";
+			            			incomplete = "";
+			            		}
+			            		if((obj.statusName == "Assigned") || (obj.statusName == "Complete") || (obj.statusName == "Incomplete")) {
+				            		tableValue = tableValue + ("<td><div style='margin-top: -11px;'><input type='checkbox' on class='form-control poIssueIds' value='"+(obj.id) + "' id='issueId" + (obj.id) + "' name='issueIds' checked /></div></td>");
+			            		} else {
+				            		tableValue = tableValue + ("<td><div style='margin-top: -11px;'><input type='checkbox' class='form-control poIssueIds' value='"+(obj.id) + "' id='issueId" + (obj.id) + "' name='issueIds' /></div></td>");		            			
+			            		}
+	     						tableValue = tableValue + ("<td><a href='#' onclick=showIssueDetail('"+(obj.id) + "') data-toggle='modal' data-target='#issueModal'>" + (obj.title)+"</a></td>");
+			            		tableValue = tableValue + ("<td>"+(obj.vmcName)+"</td>");
+			            		tableValue = tableValue + ("<td>"+(obj.categoryName)+"</td>");
+			            		tableValue = tableValue + ("<td>"+(obj.unitTypeName)+"</td>");
+			            		tableValue = tableValue + ("<td>"+(obj.unitNo)+"</td>");
+			            		tableValue = tableValue + ("<td>"+(obj.reportedByName)+"</td>");
+			            		tableValue = tableValue + ("<td><select class='form-control issueStatusClass' id='issueStatusId" + (obj.id)+"'><option value='-1'>Please Select</option><option value='104' " + complete + ">Complete</option><option value='105' " + incomplete +">Incomplete</option><option value='106' " + assigned +">Assigned</option></select></td>");
+			            		tableValue = tableValue + ("</tr>");
+			            		
+		    	            }
+		    	            editIssueHtml = tableValue;
+						} else {
+							toastr.error("No Open/ Deferred/ Incomplete Issue related to unittype and category exists.", 'Message!');
+						}
 					}
 
 					editInitialValue = tableValue;
@@ -586,20 +780,22 @@ function showIssueDetail(quesId) {
 
                     $("#message").val(data.message);
                     
-                    for(var i=0;i<issueList.length;i++) {
-		            	var obj = issueList[i];
-		     			$("#issueId" + obj.id).on('click',function (){
-		     				if ($(this).is(':checked')) {
-		     					document.getElementById("issueStatusId" + obj.id).selectedIndex = 3;
-		     				} else {
-		     					document.getElementById("issueStatusId" + obj.id).selectedIndex = 0;		     					
-		     				}
-		     			});
-	            	}
+                    if(issueList != null) {
+	                    for(var i=0;i<issueList.length;i++) {
+			            	var obj = issueList[i];
+			     			$("#issueId" + obj.id).on('click',function (){
+			     				if ($(this).is(':checked')) {
+			     					document.getElementById("issueStatusId" + obj.id).selectedIndex = 3;
+			     				} else {
+			     					document.getElementById("issueStatusId" + obj.id).selectedIndex = 0;		     					
+			     				}
+			     			});
+		            	}
+                    }
                	}); 
         	}
         	
-        	$("#unitNo").change(function() {
+        	/* $("#unitNo").change(function() {
 	        	if($("#unitNo").val() != "Please Select") {
 	        		var msg = $("#msg");
 	        		msg.show();
@@ -617,7 +813,7 @@ function showIssueDetail(quesId) {
 	        		$("#mainDiv").hide();
 	            	$("#issuesTable").html("");
 	        	}
-        	});
+        	}); */
         	$("#btnGo").click(function() {
         		var msg = $("#msg");
         		msg.hide();
@@ -662,6 +858,13 @@ function check() {
 			return false;
 		}
 	}  */
+	if($('#message').val() == "") {
+		msg.show();
+		$("#message").focus();
+		msgvalue.text("Message cannot be left blank.");
+		return false;
+
+    }
 	if($('#message').val().length > 200) {
 		msg.show();
 		$("#message").focus();
@@ -670,7 +873,7 @@ function check() {
 
     }
 	
-	var invoiceNo = $("#invoiceNo");
+	/* var invoiceNo = $("#invoiceNo");
 	var invoceNoDiv = $("#invoceNoDiv");
 	if(invoceNoDiv.is(':visible') && invoiceNo.length != 0) {
 		if(invoiceNo.val() == "") {
@@ -679,7 +882,7 @@ function check() {
 			msgvalue.text("Invoice no is mandatory");
 			return false;			
 		}
-	}
+	} */
 	/* $('#modal').modal('toggle'); */
 	return true;
 }
@@ -878,6 +1081,35 @@ return true;
 	 }
  }
  
+ function getCategoriesUpdateIssue() {
+	 var unitTypeName = $('#unitType :selected').text();
+
+	 if(unitTypeName != "Please Select") {
+		 $.get("getcategories/unittype/"+unitTypeName, function(data) {
+	      
+		      var category = document.getElementById("issueCategory");
+		      $("#issueCategory").empty();
+		      category.options[0] = new Option("Please Select");		      
+		      
+		      if(data != null && data.length > 0) {
+		    	  for(var i = 0;i < data.length;i++) {
+			    	  category.options[category.options.length] = new Option(data[i].name);
+			    	  category.options[i+1].value = data[i].categoryId;
+			      }
+		      } else {
+		    	  var category = document.getElementById("categoryId");
+			      $("#issueCategory").empty();
+			      category.options[0] = new Option("Please Select");
+				  toastr.error("No such Category exist for this Unit Type", 'Error!');
+		      }
+		 });
+	 } else {
+		 var category = document.getElementById("issueCategory");
+	      $("#issueCategory").empty();
+	      category.options[0] = new Option("Please Select");
+	 }
+ }
+ 
 //To-Do
 function getOnlyUnitNosOnUnitTypeChange() {
  	
@@ -913,12 +1145,12 @@ function getOnlyUnitNosOnUnitTypeChange() {
  		        
  	         } else {
  	        	$('#unitNo').multiselect('destroy');
- 				$("#unitNo").html("<option>Please Select</option>");
+ 				$("#unitNo").html("<option value ='0'>Please Select</option>");
  	         }
  	    });
  	} else {
  		$('#unitNo').multiselect('destroy');
-		$("#unitNo").html("<option>Please Select</option>");
+		$("#unitNo").html("<option value='0'>Please Select</option>");
  	}
  }
 
@@ -959,12 +1191,58 @@ function getOnlyUnitNosOnUnitTypeChange() {
  		        
  	         } else {
  	        	$('#unitNo').multiselect('destroy');
- 				$("#unitNo").html("<option>Please Select</option>");
+ 				$("#unitNo").html("<option value='0'>Please Select</option>");
  	         }
  	    });
  	} else {
  		$('#unitNo').multiselect('destroy');
-		$("#unitNo").html("<option>Please Select</option>");
+		$("#unitNo").html("<option value='0'>Please Select</option>");
+ 	}
+ }
+ 
+ function getOnlyUnitNosUpdateIssue() {
+	 	
+ 	 var unitTypeId = $('#unitType :selected').val();
+ 	 var categoryId = $('#issueCategory :selected').val();
+ 	 
+ 	if(categoryId == "Please Select") {
+ 		categoryId = 0;
+ 	}
+ 	if(unitTypeId != "Please Select") {
+
+ 		$.get("<%=request.getContextPath()%>"+"/issue/getunitno/category/" + categoryId + "/unittype/" + unitTypeId, function(data) {
+ 	        
+ 			 var unitNo = document.getElementById("unitNo");
+ 	         $("#unitNo").empty();
+ 	         var opt = "";
+ 	         if(data.unitNos != null && data.unitNos.length > 0) {
+ 		         if(data.unitNos != null && data.unitNos.length > 0) {
+ 			         for(var i = 0;i < data.unitNos.length;i++) {
+ 			         	opt += "<option value='"+data.unitNos[i]+"' id='chk"+data.unitNos[i]+"'>"+data.unitNos[i]+"</option>"
+ 			         }
+ 		         } else {
+ 					toastr.error('No such UnitNo. exists for selected UnitType and Category', 'Error!')
+ 		         }
+ 		         
+		 		 $('#unitNo').multiselect('destroy');
+ 		         $("#unitNo").html(opt);
+ 		         $('#unitNo').multiselect({
+ 			 		  	includeSelectAllOption: true
+ 				 });
+ 		         
+ 		         var issuesFroDropDown;
+ 		         var selectedUnitNos = [];
+ 		         
+ 		         var allUnitNos = data.unitNos;
+ 		        
+ 	         } else {
+ 	        	$('#unitNo').multiselect('destroy');
+ 				$("#unitNo").html("<option value='0'>Please Select</option>");
+ 	         }
+ 	    });
+ 	} else {
+ 		$('#unitNo').multiselect('destroy');
+		$("#unitNo").html("<option value='0'>Please Select</option>");
  	}
  }
 function functionToBeCalledOnGo() {
@@ -1082,6 +1360,7 @@ function functionToBeCalledOnGo() {
 						<form id="frm1">
 						<input type="hidden" id = "poid" name= "poid" value = "" />					
 						<input type="hidden" id = "addUpdateFlag" value = "" />					
+						<input type="hidden" id = "issueid" name= "issueid" value = "" />					
 	
 					      <!-- Modal content-->
 					      <div class="modal-content">
@@ -1104,7 +1383,7 @@ function functionToBeCalledOnGo() {
 													<b>Vendor</b>												
 												</span>
 												<select class="form-control" name="vendorId" id="vendorId">
-													<option>Please Select</option>
+													<option value="0">Please Select</option>
 												</select>
 											</div>
 											</div>
@@ -1118,7 +1397,7 @@ function functionToBeCalledOnGo() {
 														 <b>UnitType</b>												
 													</span>
 													<select id="unitTypeId" class="form-control" name="unitTypeId" onchange="getCategories();getOnlyUnitNosOnUnitTypeChange();">
-														<option>Please Select</option>
+														<option value="0">Please Select</option>
 													</select>
 												</div>
 											</div>
@@ -1132,7 +1411,7 @@ function functionToBeCalledOnGo() {
 														 <b>Category</b>												
 													</span>
 													<select class="form-control" name="categoryId" id="categoryId" onchange="getOnlyUnitNos();">
-														<option>Please Select</option>
+														<option value="0">Please Select</option>
 													</select>
 												</div>
 											</div>
@@ -1148,9 +1427,9 @@ function functionToBeCalledOnGo() {
 													<!-- <input type="text" id="searchedUnitNos" name="searchedUnitNos" />
 													<input type="hidden" id="searchedUnitNoshidden" /> -->
 													<select id="unitNo" class="form-control" name="unitNo" multiple="multiple">
-														<option>Please select</option>
+														<option value="0">Please select</option>
 													</select>
-													<button type="button" class="btn btn-danger" id = "btnGo" onclick="functionToBeCalledOnGo()">Go</button>
+													<button type="button" class="btn btn-danger" id = "btnGo" onclick="functionToBeCalledOnGo()">Fetch</button>
 												</div>
 											</div>
 										</div>
@@ -1314,7 +1593,7 @@ function functionToBeCalledOnGo() {
 					      <div class="modal-content">
 					        <div class="modal-header">
 					          <button type="button" class="close" data-dismiss="modal">&times;</button>
-					          <h4 class="modal-title"><p id ="modelTitle">View Issue</p></h4>
+					          <h4 class="modal-title"><p id ="modelTitle">Edit Issue</p></h4>
 					        </div>
 					        <div class="modal-body">
 								<div class = "row">
@@ -1344,6 +1623,7 @@ function functionToBeCalledOnGo() {
 														 <b>VMC</b>												
 													</span>
 													<select class="form-control" name="vmcId" id="vmcId">
+														<option value="0">Please Select</option>
 													</select>
 												</div>
 											</div>
@@ -1356,7 +1636,8 @@ function functionToBeCalledOnGo() {
 													<span class="input-group-addon">
 														 <b>UnitType</b>												
 													</span>
-													<select id="unitType" class="form-control" name="unitTypeId">
+													<select id="unitType" class="form-control" name="unitTypeId" onchange="getCategoriesUpdateIssue();getOnlyUnitNosOnUnitTypeChangeUpdateIssue();">
+														<option value = "0">Please Select</option>
 													</select>
 												</div>
 											</div>
@@ -1369,7 +1650,8 @@ function functionToBeCalledOnGo() {
 													<span class="input-group-addon">
 														 <b>Category</b>												
 													</span>
-													<select id="issueCategory" class="form-control" name="categoryId" onchange="getUnitNos()">
+													<select id="issueCategory" class="form-control" name="categoryId" onchange="getOnlyUnitNosUpdateIssue();">
+														<option value = "0">Please Select</option>
 													</select>
 												</div>
 											</div>
@@ -1382,7 +1664,8 @@ function functionToBeCalledOnGo() {
 													<span class="input-group-addon">
 														 <b>UnitNo</b>												
 													</span>
-													<select id="unitNo" class="form-control" name="unitNo">
+													<select id="unitNoIssue" class="form-control" name="unitNo">
+														<option value = "0">Please Select</option>
 													</select>
 												</div>
 											</div>
@@ -1396,6 +1679,7 @@ function functionToBeCalledOnGo() {
 														 <b>ReportedBy</b>												
 													</span>
 													<select id="reportedBy" class="form-control" name="reportedById">
+														<option value = "0">Please Select</option>
 													</select>
 												</div>
 											</div>
@@ -1409,6 +1693,7 @@ function functionToBeCalledOnGo() {
 														 <b>Status</b>												
 													</span>
 													<select id="status" class="form-control" name="statusId">
+														<option value = "0">Please Select</option>
 													</select>
 												</div>
 											</div>
@@ -1430,7 +1715,7 @@ function functionToBeCalledOnGo() {
 				        	</div>
 					        </div>
 					        <div class="modal-footer">
-					    	  <input type="button" class="btn btn-primary" id= "btnIssueReset" value="Reset" onclick="clearAll()" />
+					          <input type="button" class="btn btn-primary" id= "btnUpdateIssue" value="Update" onclick="navigateUpdateIssue()"/>
 							  <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
 					        </div>
 					      </div>

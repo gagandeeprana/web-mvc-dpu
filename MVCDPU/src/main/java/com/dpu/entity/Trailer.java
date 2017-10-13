@@ -23,7 +23,7 @@ public class Trailer {
 	private Long trailerId;
 	
 	@Column(name = "unit_no")
-	private Long unitNo;
+	private String unitNo;
 	
 	@Column(name = "trailer_usage")
 	private String usage;
@@ -97,14 +97,6 @@ public class Trailer {
 		this.trailerId = trailerId;
 	}
 
-	public Long getUnitNo() {
-		return unitNo;
-	}
-
-	public void setUnitNo(Long unitNo) {
-		this.unitNo = unitNo;
-	}
-
 	public Division getDivision() {
 		return division;
 	}
@@ -143,6 +135,14 @@ public class Trailer {
 
 	public void setStatus(Status status) {
 		this.status = status;
+	}
+
+	public String getUnitNo() {
+		return unitNo;
+	}
+
+	public void setUnitNo(String unitNo) {
+		this.unitNo = unitNo;
 	}
 	
 	

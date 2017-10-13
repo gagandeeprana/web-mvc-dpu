@@ -355,12 +355,12 @@ function check() {
 		$("#unitNo").focus();
 		return false;
 	}
-	if(!isNumeric(unitNo)) {
+	/* if(!isNumeric(unitNo)) {
 		msg.show();
 		msgvalue.text("Only numerics allowed in UnitNo");
 		$("#unitNo").focus();
 		return false;
-	}
+	} */
 	/* if(usage == "") {
 		msg.show();
 		msgvalue.text("Usage cannot be left blank.");
@@ -387,7 +387,7 @@ function check() {
 	} */
 	
 	var division = $('#divisionId :selected').val();
-	var terminal = $('#terminalId :selected').val();
+	//var terminal = $('#terminalId :selected').val();
 	
 	if(division == 0) {
 		msg.show();
@@ -396,12 +396,12 @@ function check() {
 		return false;
 	}
 	
-	if(terminal == 0) {
+	/* if(terminal == 0) {
 		msg.show();
 		msgvalue.text("Terminal cannot be left blank.");
 		$("#terminalId").focus();
 		return false;
-	}
+	} */
 	$('#modal').modal('toggle');
 	return true;
 }

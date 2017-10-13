@@ -64,20 +64,23 @@ margin-left: 10px;
 <script type="text/javascript">
 function navigate(isSaveAndNew) {
 	var flag = $("#addUpdateFlag").val();
+	if(!check()){
+		 return false;
+	 }
 	if(flag == 'add') {
 		createIssue('saveissue','POST');
 
-		if(isSaveAndNew){
+		if(isSaveAndNew) {
     		$("#title").val("");
             $("#description").val("");
            	document.getElementById("vmcId").options[0].selected = true;
         	document.getElementById("unitType").options[0].selected = true;
         	document.getElementById("issueCategory").options[0].selected = true;
         	$('#unitNo').multiselect('destroy');
-			$("#unitNo").html("<option>Please Select</option>");
+			$("#unitNo").html("<option value='0'>Please Select</option>");
         	document.getElementById("reportedBy").options[0].selected = true;
         	document.getElementById("status").options[0].selected = true;
-    	}else{
+    	} else {
     		$('#myModal').modal('toggle');
     	}
 	} else if(flag == 'update') {
@@ -88,62 +91,55 @@ function navigate(isSaveAndNew) {
 
 function createIssue(urlToHit,methodType){
 	 
-	 if(!check()){
-		 return false;
-	 }
-	 
-	 	var title = $("#title").val();
-	   	var vmcId = $('#vmcId :selected').val();
-	   	var unitType = $('#unitType :selected').val();
-	   	var issueCategory = $('#issueCategory :selected').val();
-	   	var unitNo = $('#unitNo :selected').val();
-	   	var reportedBy = $('#reportedBy :selected').val();
-	   	var status = $('#status :selected').val();
-	 	var description = $("#description").val();
-	   	
-	 	var issueId;
-	   	if(methodType == 'PUT') {
-	   		issueId = $('#issueid').val();
-	   	}
-	   	
-		  $.ajax({url: BASE_URL + urlToHit,
-			      type:"POST",
-			      data:{
-			    	title:title,
-			    	vmcId:vmcId,
-			    	unitTypeId:unitType,
-			    	categoryId:issueCategory,
-			    	unitNo:unitNo,
-			    	reportedById:reportedBy,
-			    	statusId:status,
-			    	description:description,
-			    	issueid:issueId
-			      },
-			      success: function(result){
-		        try{
-		        	
-		        	var list = result.resultList;
-					fillIssueData(list);
+ 	var title = $("#title").val();
+   	var vmcId = $('#vmcId :selected').val();
+   	var unitType = $('#unitType :selected').val();
+   	var issueCategory = $('#issueCategory :selected').val();
+   	var unitNo = $('#unitNo :selected').val();
+   	var reportedBy = $('#reportedBy :selected').val();
+   	var status = $('#status :selected').val();
+ 	var description = $("#description").val();
+   	
+ 	var issueId;
+   	if(methodType == 'PUT') {
+   		issueId = $('#issueid').val();
+   	}
+   	
+	  $.ajax({url: BASE_URL + urlToHit,
+	      type:"POST",
+	      data:{
+	    	title:title,
+	    	vmcId:vmcId,
+	    	unitTypeId:unitType,
+	    	categoryId:issueCategory,
+	    	unitNo:unitNo,
+	    	reportedById:reportedBy,
+	    	statusId:status,
+	    	description:description,
+	    	issueid:issueId
+	      },
+	      success: function(result){
+        try{
+        	
+        	var list = result.resultList;
+			fillIssueData(list);
 
-			        toastr.success(result.message, 'Success!')
-				} catch(e){
-					toastr.error('Something went wrong', 'Error!')
-				}
-		  },error:function(result){
-			  try{
-				  $("#btnClose").click(function() {
-			        	$('#myModal').modal('toggle');
-		        	});
-		        	$("#btnNew").click(function() {
-		        		onClickMethodQuestion('0');
-		        	});
-				  	var obj = JSON.parse(result.responseText);
-				  	toastr.error(obj.message, 'Error!')
-				  }catch(e){
-					  toastr.error('Something went wrong', 'Error!')
-				  }
-		  }});
-		  return true;
+	        toastr.success(result.message, 'Success!')
+		} catch(e){
+			toastr.error('Something went wrong', 'Error!')
+		}
+	  },error:function(result){
+		  try{
+	        	$("#btnNew").click(function() {
+	        		onClickMethodQuestion('0');
+	        	});
+			  	var obj = JSON.parse(result.responseText);
+			  	toastr.error(obj.message, 'Error!')
+			  }catch(e){
+				  toastr.error('Something went wrong', 'Error!')
+			  }
+	  }});
+	  return true;
 }
 
 function fillIssueData(list) {
@@ -197,8 +193,8 @@ function deleteIssue(terminalId){
 		      type:"GET",
 		      success: function(result){
 	    	  try{	
-					var list = result.resultList;
-					fillIssueData(list);
+				  var list = result.resultList;
+				  fillIssueData(list);
 					
 	    		  toastr.success(result.message, 'Success!')
 			  }catch(e){
@@ -216,9 +212,6 @@ function deleteIssue(terminalId){
 }
 
 	$(document).ready(function(){
-		/* $("#btnNew").click(function(){
-			$("#frm1").submit();
-		}); */
 		$('#btnSearch').click(function(){
 			$("#frmSearch").change(function() {
 			  $("#frmSearch").attr("action", "showques");
@@ -316,9 +309,6 @@ function checkFlag(field) {
     	            
     	        });
         	} else {
-        		$("#btnNew").click(function() { 
-	        		//$('#myModal').modal('toggle');
-        		});
         		$("#btnClose").hide();
         		 $.get("getissue/issueId",{"issueId" : quesId}, function(data) {
         			document.getElementById("issueid").value = data.id;
@@ -390,18 +380,19 @@ function checkFlag(field) {
         function clearAll() {
             $("#title").val("");
             $("#description").val("");
-           	document.getElementById("vmcId").innerHTML = "<option>Please Select</option>";
-        	document.getElementById("unitType").innerHTML = "<option>Please Select</option>";
-        	document.getElementById("issueCategory").innerHTML = "<option>Please Select</option>";
-       	    $("#unitNo").html("<option>Please Select</option>");
-        	document.getElementById("reportedBy").innerHTML = "<option>Please Select</option>";
-        	document.getElementById("status").innerHTML = "<option>Please Select</option>";
+           	document.getElementById("vmcId").innerHTML = "<option value='0'>Please Select</option>";
+        	document.getElementById("unitType").innerHTML = "<option value='0'>Please Select</option>";
+        	document.getElementById("issueCategory").innerHTML = "<option value='0'>Please Select</option>";
+       	    $("#unitNo").html("<option value='0'>Please Select</option>");
+        	document.getElementById("reportedBy").innerHTML = "<option value='0'>Please Select</option>";
+        	document.getElementById("status").innerHTML = "<option value='0'>Please Select</option>";
         }
 </script>
 
 <script type="text/javascript">
 function check() {
 	var title = $("#title").val();
+	var description = $("#description").val();
 	var msg = $("#msg");
 	var msgvalue = $("#msgvalue");
 	msg.hide();
@@ -411,8 +402,12 @@ function check() {
 		msgvalue.text("Title cannot be left blank.");
 		$("#title").focus();
 		return false;
+	} else if(description == "") {
+		msg.show();
+		msgvalue.text("Description cannot be left blank.");
+		$("#description").focus();
+		return false;
 	}
-	/* $('#modal').modal('toggle'); */
 	return true;
 }
 function emptyMessageDiv(){
@@ -473,11 +468,11 @@ function getOnlyUnitNos() {
                  }
 	         } else {
 				toastr.error('No such UnitNo. exists for selected UnitType and Category', 'Error!')
-	        	 $("#unitNo").html("<option>Please Select</option>");
+	        	 $("#unitNo").html("<option value='0'>Please Select</option>");
 	         }
 	    });
 	} else {
-		$("#unitNo").html("<option>Please Select</option>");
+		$("#unitNo").html("<option value='0'>Please Select</option>");
    	}
 }
 
@@ -499,11 +494,11 @@ function getOnlyUnitNosOnUnitTypeChange() {
                  }
 	         } else {
 				toastr.error('No such UnitNo. exists for selected UnitType and Category', 'Error!')
-				$("#unitNo").html("<option>Please Select</option>");
+				$("#unitNo").html("<option value='0'>Please Select</option>");
 	         }
 	    });
 	} else {
-		$("#unitNo").html("<option>Please Select</option>");
+		$("#unitNo").html("<option value='0'>Please Select</option>");
 	}
 }
 </script>
@@ -581,7 +576,7 @@ function getOnlyUnitNosOnUnitTypeChange() {
 														 <b>UnitType</b>												
 													</span>
 													<select id="unitType" class="form-control" name="unitTypeId" onchange="getCategories();getOnlyUnitNosOnUnitTypeChange();">
-														<option>Please Select</option>
+														<option value = "0">Please Select</option>
 													</select>
 												</div>
 											</div>
@@ -595,7 +590,7 @@ function getOnlyUnitNosOnUnitTypeChange() {
 														 <b>Category</b>												
 													</span>
 													<select id="issueCategory" class="form-control" name="categoryId" onchange="getOnlyUnitNos();">
-														<option>Please Select</option>
+														<option value = "0">Please Select</option>
 													</select>
 												</div>
 											</div>
@@ -609,7 +604,7 @@ function getOnlyUnitNosOnUnitTypeChange() {
 														 <b>UnitNo</b>												
 													</span>
 													<select id="unitNo" class="form-control" name="unitNo">
-														<option>Please select</option>
+														<option value = "0">Please select</option>
 													</select>
 												</div>
 											</div>
@@ -623,7 +618,7 @@ function getOnlyUnitNosOnUnitTypeChange() {
 														 <b>ReportedBy</b>												
 													</span>
 													<select id="reportedBy" class="form-control" name="reportedById">
-														<option>Please Select</option>
+														<option value = "0">Please Select</option>
 													</select>
 												</div>
 											</div>
@@ -637,7 +632,7 @@ function getOnlyUnitNosOnUnitTypeChange() {
 														 <b>Status</b>												
 													</span>
 													<select id="status" class="form-control" name="statusId">
-														<option>Please Select</option>
+														<option value = "0">Please Select</option>
 													</select>
 												</div>
 											</div>
@@ -660,9 +655,7 @@ function getOnlyUnitNosOnUnitTypeChange() {
 					        </div>
 					        <div class="modal-footer">
 					          <input type="button" class="btn btn-primary" id= "btnNew" value="Save&New" onclick="navigate(true)"/>
-					          <input type="button" class="btn btn-primary" id= "btnClose" value="Save&Close" onclick="navigate()"/>
-					    	  <!-- <input type="button" class="btn btn-primary" id= "btnExit" value="Save&Exit" /> -->
-					    	  <input type="reset" class="btn btn-primary" id= "btnReset" value="Reset" />
+					          <input type="button" class="btn btn-primary" id= "btnClose" value="Save&Close" onclick="navigate(false)"/>
 							  <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
 					        </div>
 					      </div>

@@ -43,7 +43,7 @@ public class Truck implements Serializable {
 	private Type type;
 
 	@Column(name = "unit_no")
-	private Integer unitNo;
+	private String unitNo;
 
 	@Column(name = "truck_usage")
 	private String usage;
@@ -157,14 +157,6 @@ public class Truck implements Serializable {
 		this.truckId = truckId;
 	}
 
-	public Integer getUnitNo() {
-		return unitNo;
-	}
-
-	public void setUnitNo(Integer unitNo) {
-		this.unitNo = unitNo;
-	}
-
 	public Status getStatus() {
 		return status;
 	}
@@ -199,6 +191,14 @@ public class Truck implements Serializable {
 
 	public Date getModifiedOn() {
 		return modifiedOn;
+	}
+
+	public String getUnitNo() {
+		return unitNo;
+	}
+
+	public void setUnitNo(String unitNo) {
+		this.unitNo = unitNo;
 	}
 
 }

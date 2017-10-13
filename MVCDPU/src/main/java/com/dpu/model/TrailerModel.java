@@ -11,7 +11,7 @@ public class TrailerModel {
 
 	private Long trailerId;
 
-	private Long unitNo;
+	private String unitNo;
 
 	private String usage;
 
@@ -42,14 +42,6 @@ public class TrailerModel {
 
 	public void setTrailerId(Long trailerId) {
 		this.trailerId = trailerId;
-	}
-
-	public Long getUnitNo() {
-		return unitNo;
-	}
-
-	public void setUnitNo(Long unitNo) {
-		this.unitNo = unitNo;
 	}
 
 	public Long getDivisionId() {
@@ -208,5 +200,13 @@ public class TrailerModel {
 
 	public void setFinance(String finance) {
 		this.finance = finance;
+	}
+
+	public String getUnitNo() {
+		return unitNo;
+	}
+
+	public void setUnitNo(String unitNo) {
+		this.unitNo = unitNo;
 	}
 }

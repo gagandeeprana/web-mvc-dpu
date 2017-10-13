@@ -1,6 +1,8 @@
 package com.dpu.service.impl;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -11,6 +13,7 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import com.dpu.constants.Iconstants;
 import com.dpu.dao.PurchaseOrderDao;
@@ -35,6 +38,7 @@ import com.dpu.service.PurchaseOrderService;
 import com.dpu.service.TypeService;
 import com.dpu.service.VendorService;
 import com.dpu.util.DateUtil;
+import com.dpu.util.ValidationUtil;
 
 @Component
 public class PurchaseOrderServiceImpl implements PurchaseOrderService  {
@@ -86,6 +90,12 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService  {
 	@Value("${po_status_unable_to_update}")
 	private String po_status_unable_to_update;
 
+	@Value("${po_invoice_update_message}")
+	private String po_invoice_update_message;
+
+	@Value("${po_invoice_unable_update_message}")
+	private String po_invoice_unable_update_message;
+
 	@Override
 	public List<PurchaseOrderModel> getAll() {
 
@@ -128,6 +138,34 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService  {
 		return poList;
 	}
 
+	@Override
+	public Object getInvoiceData(Long poId) {
+		logger.info("PurchaseOrderServiceImpl getAll() starts ");
+		Session session = null;
+		PurchaseOrderModel poData = new PurchaseOrderModel();
+		try {
+			session = sessionFactory.openSession();
+			PurchaseOrderInvoice poInvoice = poDao.getPOInvoice(session, poId);
+			poData.setId(poId);
+			poData.setInvoiceNo(poInvoice.getInvoiceNo());
+
+			Date invoiceDate = poInvoice.getInvoiceDate();
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+			if (!StringUtils.isEmpty(invoiceDate)) {
+				poData.setInvoiceDate(sdf.format(invoiceDate));
+			}
+			poData.setAmount(poInvoice.getAmount());
+
+		} finally {
+			if (session != null) {
+				session.close();
+			}
+		}
+
+		logger.info("PurchaseOrderServiceImpl getAll() ends ");
+		return poData;
+	}
+
 	private List<PurchaseOrderModel> setPOData(List<PurchaseOrder> pos, List<PurchaseOrderModel> poList,
 			String statusVal) {
 		
@@ -137,24 +175,39 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService  {
 				poModel.setId(purchaseOrder.getId());
 				poModel.setPoNo(purchaseOrder.getPoNo());
 				poModel.setMessage(purchaseOrder.getMessage());
+				Boolean isSuccess = true;
 				
-				poModel.setCategoryName(purchaseOrder.getCategory().getName());
-				String status = purchaseOrder.getStatus().getTypeName();
-				poModel.setStatusName(status);
-				
+				if (!ValidationUtil.isNull(purchaseOrder.getCategory())) {
+					poModel.setCategoryName(purchaseOrder.getCategory().getName());
+				}
+
+				String status = null;
+				if (!ValidationUtil.isNull(purchaseOrder.getStatus())) {
+					status = purchaseOrder.getStatus().getTypeName();
+					poModel.setStatusName(status);
+				}
+
 				if(status.equals("Invoiced")){
 					poModel.setInvoiceNo(purchaseOrder.getInvoiceNo());
 				}
 				
-				poModel.setUnitTypeName(purchaseOrder.getUnitType().getTypeName());
-				poModel.setVendorName(purchaseOrder.getVendor().getName());
+				if (!ValidationUtil.isNull(purchaseOrder.getUnitType())) {
+					poModel.setUnitTypeName(purchaseOrder.getUnitType().getTypeName());
+				} else {
+					isSuccess = false;
+				}
+				if (!ValidationUtil.isNull(purchaseOrder.getVendor())) {
+					poModel.setVendorName(purchaseOrder.getVendor().getName());
+				} else {
+					isSuccess = false;
+				}
 				poList.add(poModel);
 				
 				if (statusVal.equals("Active")) {
 					List<PurchaseOrderIssue> poIssues = purchaseOrder.getPoIssues();
 
 					if (poIssues != null && !poIssues.isEmpty()) {
-						Boolean isSuccess = true;
+
 						for (PurchaseOrderIssue purchaseOrderIssue : poIssues) {
 							Issue issue = purchaseOrderIssue.getIssue();
 							if (!"Complete".equals(issue.getStatus().getTypeName())
@@ -234,6 +287,49 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService  {
 	}
 
 	@Override
+	public Object updateInvoice(Long poId, PurchaseOrderModel poModel) {
+		logger.info("PurchaseOrderServiceImpl updateInvoice() starts.");
+		Session session = null;
+		Transaction tx = null;
+
+		try {
+			session = sessionFactory.openSession();
+			tx = session.beginTransaction();
+			PurchaseOrder po = (PurchaseOrder) session.get(PurchaseOrder.class, poId);
+
+			if (po != null) {
+				List<PurchaseOrderInvoice> poInvoices = po.getPoInvoices();
+
+				if (poInvoices != null && !poInvoices.isEmpty()) {
+					for (PurchaseOrderInvoice purchaseOrderInvoice : poInvoices) {
+						purchaseOrderInvoice.setAmount(poModel.getAmount());
+						purchaseOrderInvoice.setInvoiceNo(poModel.getInvoiceNo());
+						purchaseOrderInvoice.setInvoiceDate(DateUtil.changeStringToDate(poModel.getInvoiceDate()));
+						session.update(purchaseOrderInvoice);
+					}
+				}
+				tx.commit();
+			} else {
+				return createFailedObject(po_invoice_unable_update_message);
+			}
+
+		} catch (Exception e) {
+			if (tx != null) {
+				tx.rollback();
+			}
+			logger.info("Exception inside PurchaseOrderServiceImpl updateInvoice() :" + e.getMessage());
+			return createFailedObject(po_invoice_unable_update_message);
+		} finally {
+			if (session != null) {
+				session.close();
+			}
+		}
+
+		logger.info("PurchaseOrderServiceImpl updateInvoice() ends.");
+		return createSuccessObject(po_invoice_update_message, "Invoiced");
+	}
+
+	@Override
 	public Object delete(Long id) {
 
 		logger.info("PurchaseOrderServiceImpl delete() starts.");
@@ -307,11 +403,23 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService  {
 			if (po != null) {
 
 				poModel.setId(po.getId());
-				poModel.setCategoryId(po.getCategory().getCategoryId());
+
+				if (!ValidationUtil.isNull(po.getCategory())) {
+					poModel.setCategoryId(po.getCategory().getCategoryId());
+				}
 				poModel.setMessage(po.getMessage());
-				poModel.setUnitTypeId(po.getUnitType().getTypeId());
-				poModel.setVendorId(po.getVendor().getVendorId());
-				poModel.setStatusId(po.getStatus().getTypeId());
+
+				if (!ValidationUtil.isNull(po.getUnitType())) {
+					poModel.setUnitTypeId(po.getUnitType().getTypeId());
+				}
+
+				if (!ValidationUtil.isNull(po.getVendor())) {
+					poModel.setVendorId(po.getVendor().getVendorId());
+				}
+
+				if (!ValidationUtil.isNull(po.getStatus())) {
+					poModel.setStatusId(po.getStatus().getTypeId());
+				}
 				
 				/*if(po.getStatus().getTypeName().equals("Invoiced")) {
 					poModel.setInvoiceNo(po.getInvoiceNo());
@@ -326,13 +434,29 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService  {
 						IssueModel issueObj = new IssueModel();
 						issueObj.setId(issue.getId());
 						issueObj.setTitle(issue.getIssueName());
-						issueObj.setVmcName(issue.getVmc().getName());
-						issueObj.setReportedByName(issue.getReportedBy().getFirstName());
-						issueObj.setUnitTypeName(issue.getUnitType().getTypeName());
-						issueObj.setCategoryName(issue.getCategory().getName());
 						issueObj.setUnitNo(issue.getUnitNo());
-						issueObj.setStatusName(issue.getStatus().getTypeName());
-						issueObj.setStatusId(issue.getStatus().getTypeId());
+
+						if (!ValidationUtil.isNull(issue.getVmc())) {
+							issueObj.setVmcName(issue.getVmc().getName());
+						}
+
+						if (!ValidationUtil.isNull(issue.getReportedBy())) {
+							issueObj.setReportedByName(issue.getReportedBy().getFirstName());
+						}
+
+						if (!ValidationUtil.isNull(issue.getUnitType())) {
+							issueObj.setUnitTypeName(issue.getUnitType().getTypeName());
+						}
+
+						if (!ValidationUtil.isNull(issue.getCategory())) {
+							issueObj.setCategoryName(issue.getCategory().getName());
+						}
+
+						if (!ValidationUtil.isNull(issue.getStatus())) {
+							issueObj.setStatusName(issue.getStatus().getTypeName());
+							issueObj.setStatusId(issue.getStatus().getTypeId());
+						}
+
 						issueModels.add(issueObj);
 
 					}
@@ -356,14 +480,14 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService  {
 				if (po.getCategory() != null) {
 					categoryId = po.getCategory().getCategoryId();
 				}
-				IssueModel issueModel = issueService.getUnitNo(categoryId, po.getUnitType().getTypeId());
-				if (issueModel != null) {
+				if (!ValidationUtil.isNull(po.getUnitType())) {
+					IssueModel issueModel = issueService.getUnitNo(categoryId, po.getUnitType().getTypeId());
 					poModel.setAllUnitNos(issueModel.getUnitNos());
-				}
-				List<CategoryModel> categoriesBasedOnUnitType = categoryService.getCategoriesBasedOnType(po
-						.getUnitType().getTypeName());
 
-				poModel.setCategoryList(categoriesBasedOnUnitType);
+					List<CategoryModel> categoriesBasedOnUnitType = categoryService.getCategoriesBasedOnType(po.getUnitType().getTypeName());
+					poModel.setCategoryList(categoriesBasedOnUnitType);
+				}
+
 			}
 		} finally {
 			if (session != null) {
@@ -462,9 +586,20 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService  {
 			List<Issue> issues, Session session, String type, List<PurchaseOrderUnitNos> poUnitNos) {
 		
 		List<IssueModel> issueData = poModel.getIssue();
-		Type unitType = (Type) session.get(Type.class, poModel.getUnitTypeId());
-		Category category = (Category) session.get(Category.class, poModel.getCategoryId());
-		Vendor vendor = (Vendor) session.get(Vendor.class, poModel.getVendorId());
+
+		if (!ValidationUtil.isNull(poModel.getUnitTypeId())) {
+			Type unitType = (Type) session.get(Type.class, poModel.getUnitTypeId());
+			po.setUnitType(unitType);
+		}
+
+		if (!ValidationUtil.isNull(poModel.getCategoryId())) {
+			Category category = (Category) session.get(Category.class, poModel.getCategoryId());
+			po.setCategory(category);
+		}
+		if (!ValidationUtil.isNull(poModel.getVendorId())) {
+			Vendor vendor = (Vendor) session.get(Vendor.class, poModel.getVendorId());
+			po.setVendor(vendor);
+		}
 		List<String> unitNos = poModel.getSelectedUnitNos();
 		
 		if(Iconstants.ADD_PO.equals(type)) {
@@ -496,13 +631,9 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService  {
 
 		}
 		
-		po.setCategory(category);
 		po.setMessage(poModel.getMessage());
-		
-		po.setUnitType(unitType);
-		po.setVendor(vendor);
 
-		if (issueData != null) {
+		if (issueData != null && !issueData.isEmpty()) {
 			
 			for (IssueModel issueModel : issueData) {
 				Long issueId = issueModel.getId();
@@ -511,8 +642,10 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService  {
 				poIssue.setIssue(issue);
 				poIssues.add(poIssue);
 
-				Type issueStatus = (Type) session.get(Type.class, issueModel.getStatusId());
-				issue.setStatus(issueStatus);
+				if (!ValidationUtil.isNull(issueModel.getStatusId())) {
+					Type issueStatus = (Type) session.get(Type.class, issueModel.getStatusId());
+					issue.setStatus(issueStatus);
+				}
 				issues.add(issue);
 			}
 		}

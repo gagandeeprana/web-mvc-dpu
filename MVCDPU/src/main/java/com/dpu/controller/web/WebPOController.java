@@ -28,6 +28,7 @@ import com.dpu.model.TypeResponse;
 import com.dpu.service.CategoryService;
 import com.dpu.service.PurchaseOrderService;
 import com.dpu.util.DateUtil;
+import com.dpu.util.ValidationUtil;
 
 @Controller
 public class WebPOController {
@@ -158,12 +159,15 @@ public class WebPOController {
 				List<String> issueStatusIds = purchaseOrderModel.getIssueStatusIds();
 
 				List<IssueModel> issueList = new ArrayList<IssueModel>();
-				for (int i = 0; i < issueIds.size(); i++) {
-
-					IssueModel issueModel = new IssueModel();
-					issueModel.setId(Long.parseLong(issueIds.get(i)));
-					issueModel.setStatusId(Long.parseLong(issueStatusIds.get(i)));
-					issueList.add(issueModel);
+				if(issueIds != null && issueIds.size() > 0) {
+					
+					for (int i = 0; i < issueIds.size(); i++) {
+	
+						IssueModel issueModel = new IssueModel();
+						issueModel.setId(Long.parseLong(issueIds.get(i)));
+						issueModel.setStatusId(Long.parseLong(issueStatusIds.get(i)));
+						issueList.add(issueModel);
+					}
 				}
 				purchaseOrderModel.setIssues(issueList);
 
@@ -185,13 +189,28 @@ public class WebPOController {
 		PurchaseOrderModel purchaseOrderModel = null;
 		try {
 			purchaseOrderModel = purchaseOrderService.get(poId);
-			List<IssueModel> issueModelList = purchaseOrderService.getCategoryAndUnitTypeIssues(
-					purchaseOrderModel.getCategoryId(), purchaseOrderModel.getUnitTypeId());
-			if (purchaseOrderModel.getIssueList() != null && purchaseOrderModel.getIssueList().size() > 0) {
-				purchaseOrderModel.getIssueList().addAll(issueModelList);
-			} else {
-				purchaseOrderModel.setIssueList(issueModelList);
+			if(!ValidationUtil.isNull(purchaseOrderModel.getCategoryId()) && !ValidationUtil.isNull(purchaseOrderModel.getUnitTypeId())) {
+				List<IssueModel> issueModelList = purchaseOrderService.getCategoryAndUnitTypeIssues(
+						purchaseOrderModel.getCategoryId(), purchaseOrderModel.getUnitTypeId());
+				if (purchaseOrderModel.getIssueList() != null && purchaseOrderModel.getIssueList().size() > 0) {
+					purchaseOrderModel.getIssueList().addAll(issueModelList);
+				} else {
+					purchaseOrderModel.setIssueList(issueModelList);
+				}
 			}
+		} catch (Exception e) {
+			System.out.println(e);
+			logger.info("Exception in getCategory is: " + e);
+		}
+		return purchaseOrderModel;
+	}
+	
+	@RequestMapping(value = "/getinvoice/poId", method = RequestMethod.GET)
+	@ResponseBody
+	public PurchaseOrderModel getInvoice(@RequestParam("poId") Long poId) {
+		PurchaseOrderModel purchaseOrderModel = null;
+		try {
+
 		} catch (Exception e) {
 			System.out.println(e);
 			logger.info("Exception in getCategory is: " + e);
