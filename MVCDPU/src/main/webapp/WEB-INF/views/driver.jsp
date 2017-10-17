@@ -85,6 +85,7 @@ function createDriver(urlToHit, methodType){
 	if(methodType == 'PUT') {
 		driverId = $("#driverid").val();
 	}
+	blockUI()
 	  $.ajax({url: BASE_URL+ urlToHit,
 		      type:"POST",
 		      data:{
@@ -127,7 +128,9 @@ function createDriver(urlToHit, methodType){
 			  }catch(e){
 				  toastr.error('Something went wrong', 'Error!')
 			  }
-	  }});
+	  }}).done(function(){
+		  unblockUI();
+	  });
 	  return true;
 }
 
@@ -204,6 +207,7 @@ function fillDriverData(list) {
 }
 	function deleteDriver(driverId){
 		 
+		blockUI()
 		  $.ajax({url: BASE_URL + "deletedriver/" + driverId,
 			      type:"GET",
 			      success: function(result){
@@ -213,16 +217,20 @@ function fillDriverData(list) {
 						
 		    		  toastr.success(result.message, 'Success!')
 				  }catch(e){
+					  unblockUI()
 					toastr.error('Something went wrong', 'Error!')
 				  }
 		  },error:function(result){
 			  try{
+					  unblockUI();
 				  	var obj = JSON.parse(result.responseText);
 				  	toastr.error(obj.message, 'Error!')
 				  }catch(e){
 					  toastr.error('Something went wrong', 'Error!')
 				  }
-		  }});
+		  }}).done(function(){
+			  unblockUI();
+		  });
 		  return true;
 	}
 	
@@ -241,8 +249,11 @@ function fillDriverData(list) {
 	function getStates() {
 		
 		var countryId = $('#countryId :selected').val();
+		
+		blockUI()
 		$.get("states/" + countryId, function(response) {
-	           
+	        
+			unblockUI()
 	    	document.getElementById("stateId").innerHTML = "<option value='0'>Please Select</option>";
             if(response.length > 0) {
 	            var state = document.getElementById("stateId");
@@ -296,7 +307,9 @@ function fillDriverData(list) {
         	emptyMessageDiv();
         	clearAll();
         	if(quesId == 0) {
+        		blockUI()
 	        	$.get("driver/getopenadd", function(data) {
+	        		unblockUI()
 		            var status = document.getElementById("statusId");
 		            for(var i = 0;i < data.statusList.length;i++) {
 		            	status.options[status.options.length] = new Option(data.statusList[i].status);
@@ -343,7 +356,11 @@ function fillDriverData(list) {
 		            getStates();
 		        });
         	} else {
+        		blockUI()
+
         		$.get("getdriver/driverId",{"driverId" : quesId}, function(data) {
+        			unblockUI()
+
 		            document.getElementById("driverid").value = data.driverId;
 		            $("#driverCode").val(data.driverCode);
 	            	$("#email").val(data.email);

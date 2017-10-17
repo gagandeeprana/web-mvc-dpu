@@ -211,6 +211,7 @@ public class WebPOController {
 		PurchaseOrderModel purchaseOrderModel = null;
 		try {
 
+			purchaseOrderModel = (PurchaseOrderModel) purchaseOrderService.getInvoiceData(poId);
 		} catch (Exception e) {
 			System.out.println(e);
 			logger.info("Exception in getCategory is: " + e);
@@ -286,5 +287,30 @@ public class WebPOController {
 		
 		List<IssueModel> issues = purchaseOrderService.getUnitNoIssues(unitTId, purchaseOrderModel);
 		return issues;
+	}
+	
+	@RequestMapping(value = "/updateinvoice", method = RequestMethod.POST)
+	@ResponseBody
+	public Object updateInvoice(PurchaseOrderModel purchaseOrderModel, @RequestParam("poid") Long poId,
+			HttpServletRequest request) {
+
+		HttpSession session = request.getSession();
+
+		if (session != null) {
+			if (session.getAttribute("un") != null) {
+				if(purchaseOrderModel.getInvoiceDate() != null) {
+					String invoiceDt = DateUtil.rearrangeDate(purchaseOrderModel.getInvoiceDate());
+					purchaseOrderModel.setInvoiceDate(invoiceDt);
+				}
+				Object response = purchaseOrderService.updateInvoice(poId, purchaseOrderModel);
+				if (response instanceof Failed) {
+					return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
+				} else {
+					return new ResponseEntity<Object>(response, HttpStatus.OK);
+				}
+			}
+		}
+		return new ResponseEntity<Object>(createFailedObject(Iconstants.SESSION_TIME_OUT_MESSAGE),
+				HttpStatus.BAD_REQUEST);
 	}
 }

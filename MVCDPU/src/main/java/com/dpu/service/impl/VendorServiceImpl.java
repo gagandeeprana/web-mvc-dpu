@@ -351,6 +351,9 @@ public class VendorServiceImpl implements VendorService {
 					}
 				}
 				vendorDao.deleteVendor(vendor, session);
+				if (tx != null) {
+					tx.commit();
+				}
 			} else {
 				return createFailedObject(vendor_unable_to_delete_message);
 			}
@@ -363,9 +366,6 @@ public class VendorServiceImpl implements VendorService {
 			}
 			return createFailedObject(vendor_unable_to_delete_message);
 		} finally {
-			if (tx != null) {
-				tx.commit();
-			}
 			if (session != null) {
 				session.close();
 			}

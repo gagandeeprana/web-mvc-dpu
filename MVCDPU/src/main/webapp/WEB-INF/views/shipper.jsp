@@ -82,6 +82,8 @@ function createShipper(urlToHit,methodType){
 	if(methodType == 'PUT') {
 		shipperId = $("#shipperid").val();
 	}
+	
+	blockUI()
 	  $.ajax({url: BASE_URL + urlToHit,
 		      type:"POST",
 		      data:{
@@ -127,7 +129,9 @@ function createShipper(urlToHit,methodType){
 			  }catch(e){
 				  toastr.error('Something went wrong', 'Error!')
 			  }
-	  }});
+	  }}).done(function(){
+		  unblockUI();
+	  });
 	  return true;
 }
 
@@ -204,6 +208,7 @@ function fillShipperData(list) {
 
 function deleteShipper(shipperId){
 	 
+	  blockUI();
 	  $.ajax({url: BASE_URL + "deleteshipper/" + shipperId,
 		      type:"GET",
 		      success: function(result){
@@ -213,16 +218,21 @@ function deleteShipper(shipperId){
 					
 	    		  toastr.success(result.message, 'Success!')
 			  }catch(e){
+				  unblockUI();
 				toastr.error('Something went wrong', 'Error!')
 			  }
 	  },error:function(result){
 		  try{
+			  unblockUI();
 			  	var obj = JSON.parse(result.responseText);
 			  	toastr.error(obj.message, 'Error!')
 			  }catch(e){
+				  unblockUI();
 				  toastr.error('Something went wrong', 'Error!')
 			  }
-	  }});
+	  }}).done(function(){
+		  unblockUI();
+	  });
 	  return true;
 }
 
@@ -264,7 +274,9 @@ function deleteShipper(shipperId){
     	emptyMessageDiv();
     	clearAll();
     	if(quesId == 0) {
+    		blockUI()
 	     	$.get("shipper/getopenadd", function(data) {
+	     	  unblockUI()
 	          var status = document.getElementById("statusId");
 	          for(var i = 0;i < data.statusList.length;i++) {
 	          	status.options[status.options.length] = new Option(data.statusList[i].status);
@@ -281,7 +293,9 @@ function deleteShipper(shipperId){
 				changeStateLabel();
 	      });
     	} else {
+    		blockUI()
     		$.get("getshipper/shipperId",{"shipperId" : quesId}, function(data) {
+    			unblockUI()
     			document.getElementById("shipperid").value = data.shipperId;
             	$("#location").val(data.locationName);
             	$("#importer").val(data.importer);
@@ -345,9 +359,12 @@ function deleteShipper(shipperId){
     function getStates() {
     	
     	var countryId = $('#countryId :selected').val();
+    	
+    	blockUI()
     	document.getElementById("stateId").innerHTML = "";
     	$.get("states/" + countryId, function(response) {
-               
+             
+    		unblockUI();
             if(response.length > 0) {
                 var state = document.getElementById("stateId");
             	for(var i = 0;i < response.length;i++) {

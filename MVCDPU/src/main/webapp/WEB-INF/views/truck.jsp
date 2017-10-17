@@ -59,6 +59,7 @@ function createTruck(urlToHit, methodType){
    	if(methodType == 'PUT') {
    		truckId = $('#truckid').val();
    	}
+   	blockUI()
 	  $.ajax({url: BASE_URL+ urlToHit,
 		      type:"POST",
 		      data:{
@@ -91,7 +92,9 @@ function createTruck(urlToHit, methodType){
 			  }catch(e){
 				  toastr.error('Something went wrong', 'Error!')
 			  }
-	  }});
+	  }}).done(function(){
+		  unblockUI();
+	  });
 	  return true;
 }
 
@@ -162,7 +165,8 @@ function fillTruckData(list) {
 }
 
 function deleteTruck(truckId){
-	 
+	  
+	  blockUI()
 	  $.ajax({url: BASE_URL + "deletetruck/" + truckId,
 		      type:"GET",
 		      success: function(result){
@@ -171,16 +175,21 @@ function deleteTruck(truckId){
 					fillTruckData(list);
 	    		  toastr.success(result.message, 'Success!')
 			  }catch(e){
+				  unblockUI();
 				toastr.error('Something went wrong', 'Error!')
 			  }
 	  },error:function(result){
 		  try{
+			    unblockUI();
 			  	var obj = JSON.parse(result.responseText);
 			  	toastr.error(obj.message, 'Error!')
 			  }catch(e){
+				  unblockUI();
 				  toastr.error('Something went wrong', 'Error!')
 			  }
-	  }});
+	  }}).done(function(){
+		  unblockUI();
+	  });
 	  return true;
 }
 	$(document).ready(function(){
@@ -229,8 +238,10 @@ function deleteTruck(truckId){
         	emptyMessageDiv();
         	clearAll();
         	if(quesId == 0) {
+        		blockUI()
         		$.get("truck/getopenadd", function(data) {
      	           
+        			unblockUI()
     	            var status = document.getElementById("statusId");
     	            for(var i = 0;i < data.statusList.length;i++) {
     	            	status.options[status.options.length] = new Option(data.statusList[i].status);
@@ -262,7 +273,11 @@ function deleteTruck(truckId){
     	            }
     	        });
         	} else {
+        		blockUI()
+
         		$.get("gettruck/truckId",{"truckId" : quesId}, function(data) {
+            		unblockUI()
+
     	            document.getElementById("truckid").value = data.truckId;
                    	$("#unitNo").val(data.unitNo);
                    	$("#usage").val(data.truchUsage);

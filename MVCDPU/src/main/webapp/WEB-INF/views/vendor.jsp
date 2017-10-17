@@ -78,6 +78,7 @@ function createVendor(urlToHit,methodType){
 	if(methodType == 'PUT') {
 		vendorId = $("#vendorid").val();
 	}
+	blockUI()
 	  $.ajax({url: BASE_URL+ urlToHit,
 		      type:"POST",
 		      data:{
@@ -118,7 +119,9 @@ function createVendor(urlToHit,methodType){
 			  }catch(e){
 				  toastr.error('Something went wrong', 'Error!')
 			  }
-	  }});
+	  }}).done(function(){
+		  unblockUI();
+	  });
 	  return true;
 }
 
@@ -180,6 +183,7 @@ function fillVendorData(list) {
 
 function deleteVendor(vendorId){
 	 
+	  blockUI()
 	  $.ajax({url: BASE_URL + "deletevendor/" + vendorId,
 		      type:"GET",
 		      success: function(result){
@@ -189,16 +193,21 @@ function deleteVendor(vendorId){
 					
 	    		  toastr.success(result.message, 'Success!')
 			  }catch(e){
+				unblockUI();
 				toastr.error('Something went wrong', 'Error!')
 			  }
 	  },error:function(result){
 		  try{
+			    unblockUI();
 			  	var obj = JSON.parse(result.responseText);
 			  	toastr.error(obj.message, 'Error!')
 			  }catch(e){
+				  unblockUI();
 				  toastr.error('Something went wrong', 'Error!')
 			  }
-	  }});
+	  }}).done(function(){
+		  unblockUI();
+	  });
 	  return true;
 }
 
@@ -240,8 +249,9 @@ function checkFlag(field) {
     	emptyMessageDiv();
     	clearAll();
     	if(quesId == 0) {
-
+    		blockUI()
     		$.get("vendor/getopenadd", function(data) {
+    			unblockUI()
 	    		var country = document.getElementById("countryId");
 	            for(var i = 0;i < data.countryList.length;i++) {
 	            	country.options[country.options.length] = new Option(data.countryList[i].countryName);
@@ -252,7 +262,11 @@ function checkFlag(field) {
 				changeStateLabel();
     		});
     	} else {
+    		blockUI()
+
 	   		$.get("getvendor/vendorId",{"vendorId" : quesId}, function(data) {
+        		unblockUI()
+
 	            document.getElementById("vendorid").value = data.vendorId;
 	           	$("#vendorName").val(data.name);
 	           	$("#contact").val(data.contact);
@@ -335,8 +349,11 @@ function changeStateLabel() {
 function getStates() {
 	
 	var countryId = $('#countryId :selected').val();
+	
+	blockUI()
 	$.get("states/" + countryId, function(response) {
            
+		unblockUI()
     	document.getElementById("stateId").innerHTML = "<option value='0'>Please Select</option>";
         if(response.length > 0) {
             var state = document.getElementById("stateId");

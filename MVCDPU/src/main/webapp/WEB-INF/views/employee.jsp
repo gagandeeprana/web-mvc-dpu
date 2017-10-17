@@ -41,7 +41,6 @@ textarea{
 </style>
 <jsp:include page="Include.jsp"></jsp:include>
  <script src="<c:url value="/resources/validations.js" />"></script>
- 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.blockUI/2.70/jquery.blockUI.min.js"></script>
 <script type="text/javascript">
 function navigate() {
 	var flag = $("#addUpdateFlag").val();
@@ -165,6 +164,7 @@ function fillEmployeeData(list) {
 }
 function deleteEmployee(employeeId){
 	 
+	  blockUI();
 	  $.ajax({url: BASE_URL + "deleteuser/" + employeeId,
 		      type:"GET",
 		      success: function(result){
@@ -174,16 +174,21 @@ function deleteEmployee(employeeId){
 					
 	    		  toastr.success(result.message, 'Success!')
 			  }catch(e){
+				  unblockUI();
 				toastr.error('Something went wrong', 'Error!')
 			  }
 	  },error:function(result){
 		  try{
+			  unblockUI();
 			  	var obj = JSON.parse(result.responseText);
 			  	toastr.error(obj.message, 'Error!')
 			  }catch(e){
+				  unblockUI();
 				  toastr.error('Something went wrong', 'Error!')
 			  }
-	  }});
+	  }}).done(function(){
+		  unblockUI();
+	  });
 	  return true;
 }
 	$(document).ready(function(){
@@ -236,9 +241,9 @@ function checkFlag(field) {
         	if(quesId == 0) {
 				// nothing to do on openadd.. may to be added later on..
         	} else {
-        		blockUI()
+        		blockUI();
         		$.get("getuser/userId",{"userId" : quesId}, function(data) {
-        			unblockUI()
+        			unblockUI();
         			document.getElementById("employeeid").value = data.employeeId;
                    	$("#firstName").val(data.firstName);
                    	$("#lastName").val(data.lastName);

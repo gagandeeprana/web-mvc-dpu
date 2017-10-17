@@ -9,11 +9,12 @@
 	<script  src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js" ></script>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.0/jquery-confirm.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.0/jquery-confirm.min.js"></script>
+ 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.blockUI/2.70/jquery.blockUI.min.js"></script>
 </head>
 <body>
 <script type="text/javascript">
-		//var BASE_URL = "http://35.166.16.104:8080/MVCDPU/"
-		var BASE_URL = "http://localhost:8084/MVCDPU/"
+		var BASE_URL = "http://35.166.16.104:8080/MVCDPU/"
+		//var BASE_URL = "http://localhost:8084/MVCDPU/"
 		
 		function unblockUI(){
 			$.unblockUI();

@@ -64,6 +64,7 @@ function createService(urlToHit,methodType){
 	   		serviceId = $('#serviceid').val();
 	   	}
 	   	
+	   	blockUI()
 		  $.ajax({url: BASE_URL + urlToHit,
 			      type:"POST",
 			      data:{
@@ -90,7 +91,9 @@ function createService(urlToHit,methodType){
 				  }catch(e){
 					  toastr.error('Something went wrong', 'Error!')
 				  }
-		  }});
+		  }}).done(function(){
+			  unblockUI();
+		  });
 		  return true;
 }
 
@@ -131,6 +134,7 @@ function fillServiceData(list) {
 }
 
 function deleteService(serviceId){
+	  blockUI();
 	  $.ajax({url: BASE_URL + "deleteservice/" + serviceId,
 		      type:"GET",
 		      success: function(result){
@@ -140,16 +144,21 @@ function deleteService(serviceId){
 					
 	    		  toastr.success(result.message, 'Success!')
 			  }catch(e){
+				  unblockUI();
 				toastr.error('Something went wrong', 'Error!')
 			  }
 	  },error:function(result){
 		  try{
+			    unblockUI();
 			  	var obj = JSON.parse(result.responseText);
 			  	toastr.error(obj.message, 'Error!')
 			  }catch(e){
+				  unblockUI();
 				  toastr.error('Something went wrong', 'Error!')
 			  }
-	  }});
+	  }}).done(function(){
+		  unblockUI();
+	  });
 	  return true;
 }
 
@@ -191,7 +200,9 @@ function checkFlag(field) {
         	emptyMessageDiv();
         	clearAll();
         	if(quesId == 0) {
+        		blockUI()
         		$.get("service/getopenadd", function(data) {
+        			unblockUI()
      	           
     	            var textField = document.getElementById("textFieldId");
     	            for(var i = 0;i < data.textFieldList.length;i++) {
@@ -212,7 +223,9 @@ function checkFlag(field) {
     	            }
     	        });        		
         	} else {
+        		blockUI()
         		$.get("getservice/serviceId",{"serviceId" : quesId}, function(data) {
+        			unblockUI()
         			document.getElementById("serviceid").value = data.serviceId;
                     $("#serviceName").val(data.serviceName);
 

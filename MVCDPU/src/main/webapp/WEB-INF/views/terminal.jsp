@@ -66,6 +66,8 @@ function createTerminal(urlToHit,methodType){
 	   	}
 	   	
 	   	var loc = parseInt(locationId);
+	   	
+	   	blockUI()
 		  $.ajax({url: BASE_URL + urlToHit,
 			      type:"POST",
 			      data:{
@@ -91,7 +93,9 @@ function createTerminal(urlToHit,methodType){
 				  }catch(e){
 					  toastr.error('Something went wrong', 'Error!')
 				  }
-		  }});
+		  }}).done(function(){
+			  unblockUI();
+		  });
 		  return true;
 }
 
@@ -122,6 +126,7 @@ function fillTerminalData(list) {
 }
 
 function deleteTerminal(terminalId){
+	  blockUI()
 	  $.ajax({url: BASE_URL + "deleteterminal/" + terminalId,
 		      type:"GET",
 		      success: function(result){
@@ -131,16 +136,21 @@ function deleteTerminal(terminalId){
 					
 	    		  toastr.success(result.message, 'Success!')
 			  }catch(e){
+				  unblockUI();
 				toastr.error('Something went wrong', 'Error!')
 			  }
 	  },error:function(result){
 		  try{
+			  unblockUI();
 			  	var obj = JSON.parse(result.responseText);
 			  	toastr.error(obj.message, 'Error!')
 			  }catch(e){
+				  unblockUI();
 				  toastr.error('Something went wrong', 'Error!')
 			  }
-	  }});
+	  }}).done(function(){
+		  unblockUI();
+	  });
 	  return true;
 }
 
@@ -182,9 +192,11 @@ function checkFlag(field) {
         	emptyMessageDiv();
         	clearAll();
         	if(quesId == 0) {
+        		blockUI()
         		document.getElementById("locationId").innerHTML = "";
             	document.getElementById("serviceIds").innerHTML = "";
             	$.get("terminal/getopenadd", function(data) {
+            		unblockUI()
     	           
     	            var shipperLocation = document.getElementById("locationId");
     	            for(var i = 0;i < data.shipperList.length;i++) {
@@ -204,7 +216,9 @@ function checkFlag(field) {
     				 });
     	        });
         	} else {
+        		blockUI()
         		$.get("getterminal/terminalId",{"terminalId" : quesId}, function(data) {
+        			unblockUI()
         			document.getElementById("terminalid").value = data.terminalId;
                     $("#terminalName").val(data.terminalName);
                     

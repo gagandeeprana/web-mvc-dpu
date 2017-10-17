@@ -62,6 +62,7 @@ function createVMC(urlToHit,methodType){
 	   		vmcId = $('#vmcid').val();
 	   	}
 	   	
+	   	blockUI()
 		  $.ajax({url: BASE_URL + urlToHit,
 			      type:"POST",
 			      data:{
@@ -86,7 +87,9 @@ function createVMC(urlToHit,methodType){
 				  }catch(e){
 					  toastr.error('Something went wrong', 'Error!')
 				  }
-		  }});
+		  }}).done(function(){
+			  unblockUI();
+		  });
 		  return true;
 }
 
@@ -117,6 +120,7 @@ function fillVMCData(list) {
 }
 
 function deleteVMC(terminalId){
+	  blockUI();
 	  $.ajax({url: BASE_URL + "deletevmc/" + terminalId,
 		      type:"GET",
 		      success: function(result){
@@ -126,16 +130,21 @@ function deleteVMC(terminalId){
 					
 	    		  toastr.success(result.message, 'Success!')
 			  }catch(e){
+				  unblockUI();
 				toastr.error('Something went wrong', 'Error!')
 			  }
 	  },error:function(result){
 		  try{
+			  unblockUI();
 			  	var obj = JSON.parse(result.responseText);
 			  	toastr.error(obj.message, 'Error!')
 			  }catch(e){
+				  unblockUI();
 				  toastr.error('Something went wrong', 'Error!')
 			  }
-	  }});
+	  }}).done(function(){
+		  unblockUI();
+	  });
 	  return true;
 }
 
@@ -177,7 +186,9 @@ function checkFlag(field) {
         	emptyMessageDiv();
         	clearAll();
         	if(quesId != 0) {
+        		blockUI()
         		$.get("getvmc/vmcId",{"vmcId" : quesId}, function(data) {
+        			unblockUI()
         			document.getElementById("vmcid").value = data.id;
                     $("#name").val(data.name);
                     $("#description").val(data.description);

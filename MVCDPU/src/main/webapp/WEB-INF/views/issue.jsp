@@ -105,6 +105,7 @@ function createIssue(urlToHit,methodType){
    		issueId = $('#issueid').val();
    	}
    	
+   	blockUI()
 	  $.ajax({url: BASE_URL + urlToHit,
 	      type:"POST",
 	      data:{
@@ -138,7 +139,9 @@ function createIssue(urlToHit,methodType){
 			  }catch(e){
 				  toastr.error('Something went wrong', 'Error!')
 			  }
-	  }});
+	  }}).done(function(){
+		  unblockUI();
+	  });
 	  return true;
 }
 
@@ -189,6 +192,7 @@ function fillIssueData(list) {
 }
 
 function deleteIssue(terminalId){
+	  blockUI();
 	  $.ajax({url: BASE_URL + "deleteissue/" + terminalId,
 		      type:"GET",
 		      success: function(result){
@@ -198,16 +202,21 @@ function deleteIssue(terminalId){
 					
 	    		  toastr.success(result.message, 'Success!')
 			  }catch(e){
+				  unblockUI();
 				toastr.error('Something went wrong', 'Error!')
 			  }
 	  },error:function(result){
 		  try{
+			  unblockUI();
 			  	var obj = JSON.parse(result.responseText);
 			  	toastr.error(obj.message, 'Error!')
 			  }catch(e){
+				  unblockUI();
 				  toastr.error('Something went wrong', 'Error!')
 			  }
-	  }});
+	  }}).done(function(){
+		  unblockUI();
+	  });
 	  return true;
 }
 
@@ -272,8 +281,10 @@ function checkFlag(field) {
         	emptyMessageDiv();
         	clearAll();
         	if(quesId == 0) {
+        		blockUI()
         		$("#btnClose").show();
             	$.get("issue/getopenadd", function(data) {
+            		unblockUI()
             		
     	            var vmc = document.getElementById("vmcId");
     	            for(var i = 0;i < data.vmcList.length;i++) {
@@ -309,8 +320,10 @@ function checkFlag(field) {
     	            
     	        });
         	} else {
+        		blockUI()
         		$("#btnClose").hide();
         		 $.get("getissue/issueId",{"issueId" : quesId}, function(data) {
+        			unblockUI()
         			document.getElementById("issueid").value = data.id;
                     $("#title").val(data.title);
                     $("#description").val(data.description);                    
@@ -421,8 +434,11 @@ function getCategories() {
 	 var unitTypeName = $('#unitType :selected').text();
 
 	 if(unitTypeName != "Please Select") {
+		 
+		 blockUI()
 		 $.get("getcategories/unittype/"+unitTypeName, function(data) {
 	      
+			  unblockUI()
 		      var category = document.getElementById("issueCategory");
 		      $("#issueCategory").empty();
 		      category.options[0] = new Option("Please Select");		      
@@ -457,8 +473,10 @@ function getOnlyUnitNos() {
 	}
 	if(unitTypeId != "Please Select") {
 
+		blockUI()
 		$.get("<%=request.getContextPath()%>"+"/issue/getunitno/category/" + categoryId + "/unittype/" + unitTypeId, function(data) {
 	        
+			 unblockUI()
 			 var unitNo = document.getElementById("unitNo");
 	       	    $("#unitNo").html("<option>Please Select</option>");
 	         if(data.unitNos != null && data.unitNos.length > 0) {
@@ -483,8 +501,10 @@ function getOnlyUnitNosOnUnitTypeChange() {
 	 
 	if(unitTypeId != "Please Select") {
 
+		blockUI()
 		$.get("<%=request.getContextPath()%>"+"/issue/getunitno/category/" + categoryId + "/unittype/" + unitTypeId, function(data) {
 	        
+			 unblockUI()
 			 var unitNo = document.getElementById("unitNo");
 	       	    $("#unitNo").html("<option>Please Select</option>");
 	         if(data.unitNos != null && data.unitNos.length > 0) {

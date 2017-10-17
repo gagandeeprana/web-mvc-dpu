@@ -63,6 +63,7 @@ function createCategory(urlToHit,methodType){
 	   		categoryId = $('#categoryid').val();
 	   	}
 	   	
+	   	blockUI()
 		  $.ajax({url: BASE_URL + urlToHit,
 			      type:"POST",
 			      data:{
@@ -89,7 +90,9 @@ function createCategory(urlToHit,methodType){
 				  }catch(e){
 					  toastr.error('Something went wrong', 'Error!')
 				  }
-		  }});
+		  }}).done(function(){
+			  unblockUI();
+		  });
 		  return true;
 }
 
@@ -120,6 +123,7 @@ function fillCategoryData(list) {
 }
 
 function deleteCategory(categoryId){
+	  blockUI();
 	  $.ajax({url: BASE_URL + "deletecategory/" + categoryId,
 		      type:"GET",
 		      success: function(result){
@@ -129,16 +133,21 @@ function deleteCategory(categoryId){
 					
 	    		  toastr.success(result.message, 'Success!')
 			  }catch(e){
+				  unblockUI();
 				toastr.error('Something went wrong', 'Error!')
 			  }
 	  },error:function(result){
 		  try{
+			  unblockUI();
 			  	var obj = JSON.parse(result.responseText);
 			  	toastr.error(obj.message, 'Error!')
 			  }catch(e){
+				  unblockUI();
 				  toastr.error('Something went wrong', 'Error!')
 			  }
-	  }});
+	  }}).done(function(){
+		  unblockUI();
+	  });
 	  return true;
 }
 
@@ -202,7 +211,9 @@ function checkFlag(field) {
         	emptyMessageDiv();
         	clearAll();
         	if(quesId == 0) {
+        		blockUI()
             	$.get("getopenadd", function(data) {
+            		unblockUI()
     	            var status = document.getElementById("status");
     	            for(var i = 0;i < data.statusList.length;i++) {
     	            	status.options[status.options.length] = new Option(data.statusList[i].status);
@@ -222,7 +233,9 @@ function checkFlag(field) {
     	            }
     	        });        		
         	} else {
+        		blockUI()
         		$.get("getcategory/categoryId",{"categoryId" : quesId}, function(data) {
+        			unblockUI()
         			document.getElementById("categoryid").value = data.categoryId;
                     $("#category").val(data.name);
 

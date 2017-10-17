@@ -71,8 +71,7 @@ function createDivision(urlToHit,methodType){
 	   		divisionId = $('#divisionid').val();
 	   	}
 	   
-
-	   	
+	   	blockUI()
 		  $.ajax({url: BASE_URL+ urlToHit,
 			      type:"POST",
 			      data:{
@@ -104,7 +103,9 @@ function createDivision(urlToHit,methodType){
 				  }catch(e){
 					  toastr.error('Something went wrong', 'Error!')
 				  }
-		  }});
+		  }}).done(function(){
+			  unblockUI();
+		  });
 		  return true;
 }
 
@@ -146,6 +147,7 @@ function fillDivisionData(list) {
 
 function deleteDivision(divisionId){
 	 
+	blockUI();
 	  $.ajax({url: BASE_URL + "deletedivision/" + divisionId,
 		      type:"GET",
 		      success: function(result){
@@ -155,16 +157,21 @@ function deleteDivision(divisionId){
 					
 	    		  toastr.success(result.message, 'Success!')
 			  }catch(e){
+				  unblockUI();
 				toastr.error('Something went wrong', 'Error!')
 			  }
 	  },error:function(result){
 		  try{
+			  unblockUI();
 			  	var obj = JSON.parse(result.responseText);
 			  	toastr.error(obj.message, 'Error!')
 			  }catch(e){
+				  unblockUI();
 				  toastr.error('Something went wrong', 'Error!')
 			  }
-	  }});
+	  }}).done(function(){
+		  unblockUI();
+	  });
 	  return true;
 }
 	$(document).ready(function(){
@@ -306,7 +313,9 @@ function checkFlag(field) {
     	            } 
     	        });
         	} else {
+        		blockUI()
         		$.get("getdivision/divisionId",{"divisionId" : quesId}, function(data) {
+        			unblockUI()
         			document.getElementById("divisionid").value = data.divisionId;
                     $("#divisionCode").val(data.divisionCode);
                    	$("#divisionName").val(data.divisionName);

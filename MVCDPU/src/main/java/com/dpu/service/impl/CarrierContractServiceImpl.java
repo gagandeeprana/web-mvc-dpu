@@ -456,6 +456,9 @@ public class CarrierContractServiceImpl implements CarrierContractService {
 
 			if (carrierContract != null) {
 				session.delete(carrierContract);
+				if (tx != null) {
+					tx.commit();
+				}
 			} else {
 				return createFailedObject(CarrierContract_unable_to_delete_message);
 			}
@@ -470,9 +473,7 @@ public class CarrierContractServiceImpl implements CarrierContractService {
 			}
 			return createFailedObject(CarrierContract_unable_to_delete_message);
 		} finally {
-			if (tx != null) {
-				tx.commit();
-			}
+			
 			if (session != null) {
 				session.close();
 			}

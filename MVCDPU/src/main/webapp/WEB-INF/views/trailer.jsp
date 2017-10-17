@@ -38,6 +38,7 @@ textarea{
   max-height:360px;
 }
 </style>
+		<jsp:include page="Include.jsp"></jsp:include>
  <script src="<c:url value="/resources/validations.js" />"></script>
 <script type="text/javascript">
 function navigate() {
@@ -67,6 +68,8 @@ function createTrailer(urlToHit,methodType){
 	   	if(methodType == 'PUT') {
 	   		trailerId = $('#trailerid').val();
 	   	}
+	   	
+	   	blockUI()
 		  $.ajax({url: BASE_URL+ urlToHit,
 			      type:"POST",
 			      data:{
@@ -100,7 +103,9 @@ function createTrailer(urlToHit,methodType){
 				  }catch(e){
 					  toastr.error('Something went wrong', 'Error!')
 				  }
-		  }});
+		  }}).done(function(){
+			  unblockUI();
+		  });
 		  return true;
 }
 
@@ -172,6 +177,7 @@ function fillTrailerData(list) {
 
 function deleteTrailer(trailerId){
 	 
+	  blockUI()
 	  $.ajax({url: BASE_URL + "deletetrailer/" + trailerId,
 		      type:"GET",
 		      success: function(result){
@@ -181,16 +187,21 @@ function deleteTrailer(trailerId){
 					
 	    		  toastr.success(result.message, 'Success!')
 			  }catch(e){
+				  unblockUI();
 				toastr.error('Something went wrong', 'Error!')
 			  }
 	  },error:function(result){
 		  try{
+			  unblockUI();
 			  	var obj = JSON.parse(result.responseText);
 			  	toastr.error(obj.message, 'Error!')
 			  }catch(e){
+				  unblockUI();
 				  toastr.error('Something went wrong', 'Error!')
 			  }
-	  }});
+	  }}).done(function(){
+		  unblockUI();
+	  });
 	  return true;
 }
 </script>
@@ -234,8 +245,9 @@ function checkFlag(field) {
         	emptyMessageDiv();
         	clearAll();
         	if(quesId == 0) {
+        		blockUI()
         		$.get("trailer/getopenadd", function(data) {
-     	           
+        			unblockUI()
     	            var status = document.getElementById("statusId");
     	            for(var i = 0;i < data.statusList.length;i++) {
     	            	status.options[status.options.length] = new Option(data.statusList[i].status);
@@ -267,7 +279,11 @@ function checkFlag(field) {
     	            }
     	        });
         	} else {
+        		blockUI()
+
         		$.get("gettrailer/trailerId",{"trailerId" : quesId}, function(data) {
+            		unblockUI()
+
         			document.getElementById("trailerid").value = data.trailerId;
                    	$("#unitNo").val(data.unitNo);
                    	$("#usage").val(data.usage);

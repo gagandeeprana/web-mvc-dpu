@@ -122,7 +122,7 @@ public class PurchaseOrderDaoImpl extends GenericDaoImpl<PurchaseOrder> implemen
 		StringBuilder sb = new StringBuilder(" select p from PurchaseOrderInvoice p where p.purchaseOrder.id =:poId ");
 		Query query = session.createQuery(sb.toString());
 		query.setParameter("poId", poId);
-		return (PurchaseOrderInvoice) query.list();
+		return (PurchaseOrderInvoice) query.list().get(0);
 	}
 
 }

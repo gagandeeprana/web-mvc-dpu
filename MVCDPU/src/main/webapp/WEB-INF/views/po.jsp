@@ -59,6 +59,15 @@ textarea {
 	max-height:100px;
 }
 </style>
+<script type="text/javascript">
+function isDecimal(field) {
+    var rxExp = /^[0-9]\d*(\.\d+)?$/;
+    var rx = new RegExp(rxExp);
+
+    var matches = rx.exec(field);
+    return (matches != null && field == matches[0]);
+}
+</script>
 	<jsp:include page="Include.jsp"></jsp:include>
  <script src="<c:url value="/resources/validations.js" />"></script>
 <script type="text/javascript">
@@ -69,7 +78,7 @@ function navigate() {
 	} else if(flag == 'update') {
 		createPO('updatepo','PUT');			
 	}
-	$.confirm({
+	/* $.confirm({
 	    title: 'Confirm!',
 	    content: 'Do you want to make this PO as complete ?',
 	    buttons: {
@@ -85,7 +94,7 @@ function navigate() {
 	            }
 	        }
 	    }
-	});
+	}); */
 }
 function navigateUpdateIssue() {
 	if(!checkUpdateIssue()){
@@ -110,6 +119,7 @@ function updateIssue(urlToHit,methodType){
    		issueId = $('#issueid').val();
    	}
    	
+   	blockUI()
 	  $.ajax({url: BASE_URL + urlToHit,
 	      type:"POST",
 	      data:{
@@ -131,19 +141,24 @@ function updateIssue(urlToHit,methodType){
 
 	        toastr.success(result.message, 'Success!')
 		} catch(e){
+			unblockUI();
 			toastr.error('Something went wrong' + e, 'Error!')
 		}
 	  },error:function(result){
 		  try{
+			  unblockUI();
 	        	$("#btnNew").click(function() {
 	        		onClickMethodQuestion('0');
 	        	});
 			  	var obj = JSON.parse(result.responseText);
 			  	toastr.error(obj.message, 'Error!')
 			  }catch(e){
+				  unblockUI();
 				  toastr.error('Something went wrong', 'Error!')
 			  }
-	  }});
+	  }}).done(function(){
+		  unblockUI();
+	  });
 	  return true;
 }
 function checkUpdateIssue() {
@@ -206,8 +221,8 @@ function createPO(urlToHit,methodType){
 	   		poId = $('#poid').val();
 	   	}
 	   	
+	   	blockUI()
 	   	$.ajax({url: BASE_URL + urlToHit,
-			      async:false,
 			      type:"POST",
 			      data:{
 			        vendorId:vendorId,
@@ -227,16 +242,21 @@ function createPO(urlToHit,methodType){
 
 			        toastr.success(result.message, 'Success!')
 				} catch(e){
+					unblockUI();
 					toastr.error('Something went wrong', 'Error!')
 				}
 		  },error:function(result){
 			  try{
+				  unblockUI();
 				  	var obj = JSON.parse(result.responseText);
 				  	toastr.error(obj.message, 'Error!')
 				  }catch(e){
+					  unblockUI();
 					  toastr.error('Something went wrong', 'Error!')
 				  }
-		  }});
+		  }}).done(function(){
+			  unblockUI();
+		  });
 		  return true;
 }
 
@@ -282,10 +302,10 @@ function fillPOData(list) {
 	    		tableValue = tableValue + "<a href = '#' data-toggle='modal' data-target='#myModal'  onclick=checkFlag('update');onClickMethodQuestion('"+(obj.id)+"')>Update</a> / <a href='#' onclick=deletePO('"+(obj.id)+"')>Delete</a>";
     		}
     		if($("#statusFlag").val() == 'Complete') {
-	    		tableValue = tableValue + "<a href = '#' data-toggle='modal' data-target='#myModal'  onclick=checkFlag('view');onClickMethodQuestion('"+(obj.id)+"')>View</a> / <a href='#' data-toggle='modal' data-target='#invoiceModal' onclick=pastePoNo('"+(poNo)+"');pastePoIdAndStatusId('"+(obj.id)+"','"+(obj.invoiceStatusId)+"')>Change to Invoice</a>";	    			
+	    		tableValue = tableValue + "<a href = '#' data-toggle='modal' data-target='#myModal'  onclick=checkFlag('view');onClickMethodQuestion('"+(obj.id)+"')>View</a> / <a href='#' data-toggle='modal' data-target='#invoiceModal' onclick=pastePoNo('"+(poNo)+"');pastePoIdAndStatusId('"+(obj.id)+"','"+(obj.invoiceStatusId)+"');toggleInvoice('add')>Change to Invoice</a>";	    			
     		}
     		if($("#statusFlag").val() == 'Invoiced') {
-	    		tableValue = tableValue + "<a href = '#' data-toggle='modal' data-target='#myModal'  onclick=checkFlag('view');onClickMethodQuestion('"+(obj.id)+"')>View</a> / <a href = '#' data-toggle='modal' data-target='#invoiceModal'  onclick=getInvoice('" + poNo + "')>Edit Invoice</a>";	    			
+	    		tableValue = tableValue + "<a href = '#' data-toggle='modal' data-target='#myModal'  onclick=checkFlag('view');onClickMethodQuestion('"+(obj.id)+"')>View</a> / <a href = '#' data-toggle='modal' data-target='#invoiceModal'  onclick=pastePoIdAndStatusId('"+(obj.id)+"','"+(obj.invoiceStatusId)+"');getInvoice('" + (obj.id) + "','" + (poNo) + "');toggleInvoice('update')>Edit Invoice</a>";	    			
     		}
     		if(obj.isComplete == true) {
     			tableValue = tableValue + " / <a href='#' onclick=changeStatusToComplete('"+ (obj.id) + "','" + (obj.completeStatusId) + "') id='changeStatus'>Change to Complete</a>";
@@ -298,17 +318,37 @@ function fillPOData(list) {
 	}
 }
 
-function getInvoice(poId) {
+function toggleInvoice(invoiceFlag) {
+	document.getElementById("invoiceFlag").value = invoiceFlag;
+
+	if(invoiceFlag == 'add') {
+		$("#invoiceTitle").html("Create Invoice");
+		document.getElementById("btnChangeToInvoice").value = "Create";
+	} else if(invoiceFlag == 'update') {
+		$("#invoiceTitle").html("Edit Invoice");
+		document.getElementById("btnChangeToInvoice").value = "Update";
+	}
+}
+
+function getInvoice(poId, poNo) {
 	
-	pastePoNo(poId);
+	pastePoNo(poNo);
+	blockUI()
 	$.get("getinvoice/poId",{"poId" : poId}, function(data) {
+		
+		unblockUI()
 		$("#invoiceNo").val(data.invoiceNo);
-		$("#invoiceAmount").val(data.invoiceAmount);
-		$("#invoiceDate").val(data.invoiceDate);
+		$("#invoiceAmount").val(data.amount);
+		var invoiceDate = data.invoiceDate;
+       	if(invoiceDate != null) {
+           	var invoiceDateArr = invoiceDate.split("-");
+           	$("#invoiceDate").val(invoiceDateArr[1]+"/"+invoiceDateArr[2]+"/"+invoiceDateArr[0]);
+       	}
    	}); 
 }
 
 function deletePO(terminalId){
+	  blockUI();
 	  $.ajax({url: BASE_URL + "deletepo/" + terminalId,
 		      type:"GET",
 		      success: function(result){
@@ -318,16 +358,21 @@ function deletePO(terminalId){
 					
 	    		  toastr.success(result.message, 'Success!')
 			  }catch(e){
+				  unblockUI();
 				toastr.error('Something went wrong', 'Error!')
 			  }
 	  },error:function(result){
 		  try{
+			  unblockUI();
 			  	var obj = JSON.parse(result.responseText);
 			  	toastr.error(obj.message, 'Error!')
 			  }catch(e){
+				  unblockUI();
 				  toastr.error('Something went wrong', 'Error!')
 			  }
-	  }});
+	  }}).done(function(){
+		  unblockUI();
+	  });
 	  return true;
 }
 
@@ -426,7 +471,11 @@ function showIssueDetail(quesId) {
     $("#unitNoIssue").html("<option value='0'>Please Select</option>");
 	document.getElementById("reportedBy").innerHTML = "<option value='0'>Please Select</option>";
 	document.getElementById("status").innerHTML = "<option value='0'>Please Select</option>";
+	
+	blockUI()
 	$.get("getissue/issueId",{"issueId" : quesId}, function(data) {
+		
+		unblockUI()
 		document.getElementById("issueid").value = data.id;
 		$("#title").val(data.title);
         $("#description").val(data.description);
@@ -566,8 +615,10 @@ function showIssueDetail(quesId) {
 			 
 			if(unitTypeId != "Please Select") {
 
+				blockUI()
 				$.get("<%=request.getContextPath()%>"+"/issue/getunitno/category/" + categoryId + "/unittype/" + unitTypeId, function(data) {
 			        
+					unblockUI()
 					 var unitNo = document.getElementById("unitNoIssue");
 			       	    $("#unitNoIssue").html("<option value='0'>Please Select</option>");
 			         if(data.unitNos != null && data.unitNos.length > 0) {
@@ -589,8 +640,10 @@ function showIssueDetail(quesId) {
 			 var unitTypeName = $('#unitType :selected').text();
 
 			 if(unitTypeName != "Please Select") {
+				 blockUI()
 				 $.get("getcategories/unittype/"+unitTypeName, function(data) {
 			      
+					 unblockUI()
 				      var category = document.getElementById("issueCategory");
 				      $("#issueCategory").empty();
 				      category.options[0] = new Option("Please Select");		      
@@ -620,11 +673,14 @@ function showIssueDetail(quesId) {
         	emptyMessageDiv();
         	clearAll();
         	if(quesId == 0) {
+        		
+        		blockUI()
         		$("#mainDiv").hide();
        			$("#issueIds").html("");
        			$("#invoceNoDiv").hide();
             	$("#invoiceNo").val("");
             	$.get("<%=request.getContextPath()%>"+"/po/getopenadd", function(data) {
+            		unblockUI()
     	           
     	            var vendor = document.getElementById("vendorId");
     	            for(var i = 0;i < data.vendorList.length;i++) {
@@ -652,7 +708,9 @@ function showIssueDetail(quesId) {
        			$("#issueIds").html("");
        			$("#invoceNoDiv").hide();
             	$("#invoiceNo").val("");
+        		blockUI()
         		$.get('<%=request.getContextPath()%>'+"/getpo/poId",{"poId" : quesId}, function(data) {
+        			unblockUI()
         			document.getElementById("poid").value = data.id;
                     
         			var vendor = document.getElementById("vendorId");
@@ -795,25 +853,6 @@ function showIssueDetail(quesId) {
                	}); 
         	}
         	
-        	/* $("#unitNo").change(function() {
-	        	if($("#unitNo").val() != "Please Select") {
-	        		var msg = $("#msg");
-	        		msg.show();
-	        		var msgvalue = $("#msgvalue");
-	        		msgvalue.show();
-	        		msgvalue.text("Click on Go to fetch latest issues.");
-	        	} 
-	        	
-	        	if($("#unitNo").val() == null) {
-	        		var msg = $("#msg");
-	        		msg.hide();
-	        		var msgvalue = $("#msgvalue");
-	        		msgvalue.hide();
-	        		msgvalue.text("");
-	        		$("#mainDiv").hide();
-	            	$("#issuesTable").html("");
-	        	}
-        	}); */
         	$("#btnGo").click(function() {
         		var msg = $("#msg");
         		msg.hide();
@@ -834,30 +873,10 @@ function showIssueDetail(quesId) {
         }
         
 function check() {
-	var title = $(".poIssueIds");
 	var msg = $("#msg");
 	var msgvalue = $("#msgvalue");
 	msg.hide();
 	msgvalue.val("");
-	/* if(title.length == 0) {
-		msg.show();
-		$("#categoryId").focus();
-		msgvalue.text("Assign Some Issues to PO");
-		return false;
-	} else if(title.length != 0){
-		var issues = $(".poIssueIds");
-		var flag = false;
-		for(var i=0;i<issues.length;i++){
-			if(issues[i].checked) {
-				flag = true;
-			}
-		}
-		if(!flag) {
-			msg.show();
-			msgvalue.text("Choose any issue");
-			return false;
-		}
-	}  */
 	if($('#message').val() == "") {
 		msg.show();
 		$("#message").focus();
@@ -872,20 +891,50 @@ function check() {
 		return false;
 
     }
-	
-	/* var invoiceNo = $("#invoiceNo");
-	var invoceNoDiv = $("#invoceNoDiv");
-	if(invoceNoDiv.is(':visible') && invoiceNo.length != 0) {
-		if(invoiceNo.val() == "") {
-			msg.show();
-			invoiceNo.focus();
-			msgvalue.text("Invoice no is mandatory");
-			return false;			
-		}
-	} */
-	/* $('#modal').modal('toggle'); */
 	return true;
 }
+
+function checkInvoice() {
+	var invoiceAmount = $("#invoiceAmount").val();
+	var invoiceNo = $("#invoiceNo").val();
+	var invoiceDate = $("#invoiceDate").val();
+	var msg = $("#msgInvoice");
+	var msgvalue = $("#msgvalueInvoice");
+	msg.hide();
+	msgvalue.val("");
+	if(invoiceAmount == "") {
+		msg.show();
+		$("#invoiceAmount").focus();
+		msgvalue.text("Invoice Amount cannot be left blank.");
+		return false;
+    }
+	if(!isDecimal(invoiceAmount)) {
+		msg.show();
+		msgvalue.text("Only numerics & dot allowed in Invoice Amount");
+		$("#invoiceAmount").focus();
+		return false;
+	}
+	if(invoiceNo == "") {
+		msg.show();
+		$("#invoiceNo").focus();
+		msgvalue.text("Invoice No cannot be left blank.");
+		return false;
+    }
+	if(!isNumeric(invoiceNo)) {
+		msg.show();
+		msgvalue.text("Only numerics allowed in Invoice No");
+		$("#invoiceNo").focus();
+		return false;
+	}
+	if(invoiceDate == "") {
+		msg.show();
+		$("#invoiceDate").focus();
+		msgvalue.text("Invoice Date cannot be left blank.");
+		return false;
+    }
+	return true;
+}
+
 function emptyMessageDiv(){
 	var msg = $("#msg");
 	var msgvalue = $("#msgvalue");
@@ -894,6 +943,7 @@ function emptyMessageDiv(){
 }
  function changeStatusToComplete(poId, statusId) {
 	
+	 blockUI()
 	 $.ajax({url: BASE_URL + poId + "/complete/"+statusId,
 	      type:"GET",
 	      success: function(result){
@@ -903,17 +953,22 @@ function emptyMessageDiv(){
 				
    		  toastr.success(result.message, 'Success!')
 		  }catch(e){
+			  unblockUI();
 			toastr.error('Something went wrong', 'Error!')
 		  }
- },error:function(result){
-	  try{
-		  	var obj = JSON.parse(result.responseText);
-		  	toastr.error(obj.message, 'Error!')
-		  }catch(e){
-			  toastr.error('Something went wrong', 'Error!')
-		  }
- }});
- return true;
+		 },error:function(result){
+			  try{
+				  unblockUI();
+				  	var obj = JSON.parse(result.responseText);
+				  	toastr.error(obj.message, 'Error!')
+				  }catch(e){
+					  unblockUI();
+					  toastr.error('Something went wrong', 'Error!')
+				  }
+		 }}).done(function(){
+			  unblockUI();
+		  });
+		 return true;
 	
 } 
  
@@ -934,17 +989,33 @@ function emptyMessageDiv(){
  }
  
  function changeStatusToInvoice() {
-		var poId = invoicePoId;
-		var statusId = invoiceStatusId;
-	 	var amount = $("#invoiceAmount").val();
-	 	var invoiceNo = $("#invoiceNo").val();
-	 	var invoiceDate = $("#invoiceDate").val();
-	 $.ajax({url: BASE_URL + poId + "/complete/" + statusId + "/invoiced",
-	      type:"GET",
+	 
+	 if(!checkInvoice()) {
+		 return false;
+	 }
+	 
+	 var poId = invoicePoId;
+	 var statusId = invoiceStatusId;
+ 	 var amount = $("#invoiceAmount").val();
+ 	 var invoiceNo = $("#invoiceNo").val();
+     var invoiceDate = $("#invoiceDate").val();
+	 var url = "";
+	 var methodType = "GET";
+	 if($("#invoiceFlag").val() == 'add') {
+		 url = BASE_URL + poId + "/complete/" + statusId + "/invoiced";
+	 } else {
+		 methodType = "POST";
+		 url = BASE_URL + "updateinvoice";		 
+	 }
+	 
+	 blockUI()
+	 $.ajax({url: url,
+	      type:methodType,
 	      data:{
 		    	invoiceDate:invoiceDate,
 		    	invoiceNo:invoiceNo,
-		    	invoiceAmount:amount
+		    	amount:amount,
+		    	poid:poId
 		      },
 	      success: function(result){
    	  try{	
@@ -955,21 +1026,26 @@ function emptyMessageDiv(){
 				
    		  toastr.success(result.message, 'Success!')
 		  }catch(e){
+			  unblockUI();
 			toastr.error('Something went wrong', 'Error!')
 		  }
- },error:function(result){
-	  try{
-		  	var obj = JSON.parse(result.responseText);
-		  	toastr.error(obj.message, 'Error!')
-		  }catch(e){
-			  toastr.error('Something went wrong', 'Error!')
-		  }
- }});
- return true;
-	
-} 
+		 },error:function(result){
+			  try{
+				  unblockUI();
+				  	var obj = JSON.parse(result.responseText);
+				  	toastr.error(obj.message, 'Error!')
+				  }catch(e){
+					  unblockUI();
+					  toastr.error('Something went wrong', 'Error!')
+				  }
+		 }}).done(function(){
+			  unblockUI();
+		  });
+		 return true;
+	} 
 
   function showCompletePOs() {
+	  blockUI();
 	 $.ajax({url: BASE_URL + "showpo/status/Complete",
 	      type:"GET",
 	      success: function(result){
@@ -979,20 +1055,26 @@ function emptyMessageDiv(){
 				
   		  //toastr.success(result.message, 'Success!')
 		  }catch(e){
+			  unblockUI();
 			toastr.error('Something went wrong', 'Error!')
 		  }
-},error:function(result){
-	  try{
-		  	var obj = JSON.parse(result.responseText);
-		  	toastr.error(obj.message, 'Error!')
-		  }catch(e){
-			  toastr.error('Something went wrong', 'Error!')
-		  }
-}});
-return true;
+		},error:function(result){
+			  try{
+				  unblockUI();
+				  	var obj = JSON.parse(result.responseText);
+				  	toastr.error(obj.message, 'Error!')
+				  }catch(e){
+					  unblockUI();
+					  toastr.error('Something went wrong', 'Error!')
+				  }
+		}}).done(function(){
+			  unblockUI();
+		  });
+		return true;
  } 
   
   function showInvoicedPOs() {
+	     blockUI()
 		 $.ajax({url: BASE_URL + "showpo/status/Invoiced",
 		      type:"GET",
 		      success: function(result){
@@ -1002,20 +1084,26 @@ return true;
 					
 	  		  //toastr.success(result.message, 'Success!')
 			  }catch(e){
+				  unblockUI();
 				toastr.error('Something went wrong', 'Error!')
 			  }
 	},error:function(result){
 		  try{
+			  unblockUI();
 			  	var obj = JSON.parse(result.responseText);
 			  	toastr.error(obj.message, 'Error!')
 			  }catch(e){
+				  unblockUI();
 				  toastr.error('Something went wrong', 'Error!')
 			  }
-	}});
+	}}).done(function(){
+		  unblockUI();
+	  });
 	return true;
-	 } 
+} 
   
   function showActivePOs() {
+	     blockUI()
 		 $.ajax({url: BASE_URL + "showpo/status/Active",
 		      type:"GET",
 		      success: function(result){
@@ -1026,23 +1114,31 @@ return true;
 					
 	  		  //toastr.success(result.message, 'Success!')
 			  }catch(e){
+				  unblockUI();
 				toastr.error('Something went wrong', 'Error!')
 			  }
 	},error:function(result){
 		  try{
+			  unblockUI();
 			  	var obj = JSON.parse(result.responseText);
 			  	toastr.error(obj.message, 'Error!')
 			  }catch(e){
+				  unblockUI();
 				  toastr.error('Something went wrong', 'Error!')
 			  }
-	}});
+	}}).done(function(){
+		  unblockUI();
+	  });
 	return true;
   }
  function getUnitNos() {
 		var unitTypeId = $('#unitType :selected').val();
 		var categoryId = $('#issueCategory :selected').val();
+		
+		blockUI()
 		$.get("issue/getunitno/category/"+categoryId+"/unittype/"+unitTypeId, function(data) {
-         
+			
+		 unblockUI();
          var unitNo = document.getElementById("unitNo");
          $("#unitNo").empty();
          for(var i = 0;i < data.unitNos.length;i++) {
@@ -1056,8 +1152,11 @@ return true;
 	 var unitTypeName = $('#unitTypeId :selected').text();
 
 	 if(unitTypeName != "Please Select") {
+		 
+		 blockUI()
 		 $.get("getcategories/unittype/"+unitTypeName, function(data) {
 	      
+			 unblockUI();
 		      var category = document.getElementById("categoryId");
 		      $("#categoryId").empty();
 		      category.options[0] = new Option("Please Select");		      
@@ -1085,8 +1184,11 @@ return true;
 	 var unitTypeName = $('#unitType :selected').text();
 
 	 if(unitTypeName != "Please Select") {
+		 
+		 blockUI()
 		 $.get("getcategories/unittype/"+unitTypeName, function(data) {
 	      
+			  unblockUI();
 		      var category = document.getElementById("issueCategory");
 		      $("#issueCategory").empty();
 		      category.options[0] = new Option("Please Select");		      
@@ -1118,8 +1220,10 @@ function getOnlyUnitNosOnUnitTypeChange() {
  	 
  	if(unitTypeId != "Please Select") {
 
+ 		blockUI()
  		$.get("<%=request.getContextPath()%>"+"/issue/getunitno/category/" + categoryId + "/unittype/" + unitTypeId, function(data) {
  	        
+ 			 unblockUI();
  			 var unitNo = document.getElementById("unitNo");
  	         $("#unitNo").empty();
  	         var opt = "";
@@ -1164,8 +1268,10 @@ function getOnlyUnitNosOnUnitTypeChange() {
  	}
  	if(unitTypeId != "Please Select") {
 
+ 		blockUI()
  		$.get("<%=request.getContextPath()%>"+"/issue/getunitno/category/" + categoryId + "/unittype/" + unitTypeId, function(data) {
  	        
+ 			 unblockUI();
  			 var unitNo = document.getElementById("unitNo");
  	         $("#unitNo").empty();
  	         var opt = "";
@@ -1210,40 +1316,25 @@ function getOnlyUnitNosOnUnitTypeChange() {
  	}
  	if(unitTypeId != "Please Select") {
 
- 		$.get("<%=request.getContextPath()%>"+"/issue/getunitno/category/" + categoryId + "/unittype/" + unitTypeId, function(data) {
- 	        
- 			 var unitNo = document.getElementById("unitNo");
- 	         $("#unitNo").empty();
- 	         var opt = "";
- 	         if(data.unitNos != null && data.unitNos.length > 0) {
- 		         if(data.unitNos != null && data.unitNos.length > 0) {
- 			         for(var i = 0;i < data.unitNos.length;i++) {
- 			         	opt += "<option value='"+data.unitNos[i]+"' id='chk"+data.unitNos[i]+"'>"+data.unitNos[i]+"</option>"
- 			         }
- 		         } else {
- 					toastr.error('No such UnitNo. exists for selected UnitType and Category', 'Error!')
- 		         }
- 		         
-		 		 $('#unitNo').multiselect('destroy');
- 		         $("#unitNo").html(opt);
- 		         $('#unitNo').multiselect({
- 			 		  	includeSelectAllOption: true
- 				 });
- 		         
- 		         var issuesFroDropDown;
- 		         var selectedUnitNos = [];
- 		         
- 		         var allUnitNos = data.unitNos;
- 		        
- 	         } else {
- 	        	$('#unitNo').multiselect('destroy');
- 				$("#unitNo").html("<option value='0'>Please Select</option>");
- 	         }
- 	    });
- 	} else {
- 		$('#unitNo').multiselect('destroy');
-		$("#unitNo").html("<option value='0'>Please Select</option>");
- 	}
+		blockUI()
+		$.get("<%=request.getContextPath()%>"+"/issue/getunitno/category/" + categoryId + "/unittype/" + unitTypeId, function(data) {
+	        
+			 unblockUI()
+			 var unitNo = document.getElementById("unitNoIssue");
+	       	    $("#unitNoIssue").html("<option>Please Select</option>");
+	         if(data.unitNos != null && data.unitNos.length > 0) {
+	        	 for(var i = 0;i < data.unitNos.length;i++) {
+                   	unitNo.options[unitNo.options.length] = new Option(data.unitNos[i]);
+                   	unitNo.options[i+1].value = data.unitNos[i];
+                 }
+	         } else {
+				toastr.error('No such UnitNo. exists for selected UnitType and Category', 'Error!')
+				$("#unitNoIssue").html("<option value='0'>Please Select</option>");
+	         }
+	    });
+	} else {
+		$("#unitNoIssue").html("<option value='0'>Please Select</option>");
+	}
  }
 function functionToBeCalledOnGo() {
 	
@@ -1252,6 +1343,8 @@ function functionToBeCalledOnGo() {
 	 if(unitNo1 != null) {
 		 
       var issuesFroDropDown;
+      
+      blockUI()
       $.ajax({url: BASE_URL + "/getissuesbasedonunitnoandunittype/unittypeid/" + unitTypeId,
 		      async:false,
 		      type:"POST",
@@ -1318,16 +1411,21 @@ function functionToBeCalledOnGo() {
 	     		}
 	        	
 			} catch(e){
+				unblockUI();
 				toastr.error('Something went wrong', 'Error!')
 			}
 		  },error:function(result){
 			  try{
+				  unblockUI();
 				  	var obj = JSON.parse(result.responseText);
 				  	toastr.error(obj.message, 'Error!')
 				  }catch(e){
+					  unblockUI();
 					  toastr.error('Something went wrong', 'Error!')
 				  }
-		  }});
+		  }}).done(function(){
+			  unblockUI();
+		  });
 	 }
 }
 </script>
@@ -1505,16 +1603,18 @@ function functionToBeCalledOnGo() {
 					    <div class="modal-dialog">
 						<form method="POST" name="po" id="frm2">
 						<input type="hidden" id = "invoicePoId" value = "" />					
-						<input type="hidden" id = "invoiceStatusId" value = "" />					
+						<input type="hidden" id = "invoiceStatusId" value = "" />
+						<input type="hidden" id = "invoiceFlag" value = "" />					
+										
 	
 					      <!-- Modal content-->
 					      <div class="modal-content">
 					        <div class="modal-header">
 					          <button type="button" class="close" data-dismiss="modal">&times;</button>
 					          <h4 class="modal-title"><p id ="invoiceTitle">Create Invoice</p></h4>
-					          <div class="alert alert-danger fade in" id="msg" style="display: none;">
+					          <div class="alert alert-danger fade in" id="msgInvoice" style="display: none;">
 									<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-									<strong id = "msgvalue"></strong>
+									<strong id = "msgvalueInvoice"></strong>
 							  </div>
 					        </div>
 					        <div class="modal-body">
@@ -1573,8 +1673,6 @@ function functionToBeCalledOnGo() {
 					        </div>
 					        <div class="modal-footer">
 					          <input type="button" class="btn btn-primary" id= "btnChangeToInvoice" value="Create" onclick="changeStatusToInvoice()" />
-					    	  <!-- <input type="button" class="btn btn-primary" id= "btnExit" value="Save&Exit" /> -->
-					    	  <input type="reset" class="btn btn-primary" id= "btnReset" value="Reset" />
 							  <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
 					        </div>
 					      </div>
