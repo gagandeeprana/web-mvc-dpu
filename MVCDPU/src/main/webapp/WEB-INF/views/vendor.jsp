@@ -519,23 +519,25 @@ function check() {
 	}
 	var country = $('#countryId :selected').text();
 	if(country == 'USA') {
-		if(zip == "") {
+		/* if(zip == "") {
 			msg.show();
 			msgvalue.text("Zip cannot be left blank.");
 			$("#zip").focus();
 			return false;
-		}
-		if(!isNumeric(zip)) {
-			msg.show();
-			msgvalue.text("Only numerics allowed in Zip");
-			$("#zip").focus();
-			return false;
-		}
-		if(zip.length != 5) {
-			msg.show();
-			msgvalue.text("Length 5 allowed in Zip");
-			$("#zip").focus();
-			return false;
+		} */
+		if(zip != "") {
+			if(!isNumeric(zip)) {
+				msg.show();
+				msgvalue.text("Only numerics allowed in Zip");
+				$("#zip").focus();
+				return false;
+			}
+			if(zip.length != 5) {
+				msg.show();
+				msgvalue.text("Length 5 allowed in Zip");
+				$("#zip").focus();
+				return false;
+			}
 		}
 		if($('#stateId :selected').val() == 0) {
 			msg.show();
@@ -546,29 +548,31 @@ function check() {
 	}
 	var country = $('#countryId :selected').text();
 	if(country == 'Canada') {
-		if(zip == "") {
+		/* if(zip == "") {
 			msg.show();
 			msgvalue.text("PostalCode cannot be left blank.");
 			$("#zip").focus();
 			return false;
-		}
-		if(!isAlphaNumeric(zip)) {
-			msg.show();
-			msgvalue.text("Only alphanumerics allowed in PostalCode");
-			$("#zip").focus();
-			return false;
-		}
-		if(zip.length != 6) {
-			msg.show();
-			msgvalue.text("Length 6 allowed in PostalCode");
-			$("#zip").focus();
-			return false;
-		}
-		if((!isNameWithoutSpace(zip[0])) || (!isNumeric(zip[1])) || (!isNameWithoutSpace(zip[2])) || (!isNumeric(zip[3])) || (!isNameWithoutSpace(zip[4])) || (!isNumeric(zip[5]))) {
-			msg.show();
-			msgvalue.text("Invalid pattern PostalCode");
-			$("#zip").focus();
-			return false;
+		} */
+		if(zip != "") {
+			if(!isAlphaNumeric(zip)) {
+				msg.show();
+				msgvalue.text("Only alphanumerics allowed in PostalCode");
+				$("#zip").focus();
+				return false;
+			}
+			if(zip.length != 6) {
+				msg.show();
+				msgvalue.text("Length 6 allowed in PostalCode");
+				$("#zip").focus();
+				return false;
+			}
+			if((!isNameWithoutSpace(zip[0])) || (!isNumeric(zip[1])) || (!isNameWithoutSpace(zip[2])) || (!isNumeric(zip[3])) || (!isNameWithoutSpace(zip[4])) || (!isNumeric(zip[5]))) {
+				msg.show();
+				msgvalue.text("Invalid pattern PostalCode");
+				$("#zip").focus();
+				return false;
+			}
 		}
 		if($('#stateId :selected').val() == 0) {
 			msg.show();

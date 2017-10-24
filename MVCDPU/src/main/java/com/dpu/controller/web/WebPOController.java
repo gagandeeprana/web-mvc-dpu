@@ -192,8 +192,15 @@ public class WebPOController {
 			if(!ValidationUtil.isNull(purchaseOrderModel.getCategoryId()) && !ValidationUtil.isNull(purchaseOrderModel.getUnitTypeId())) {
 				List<IssueModel> issueModelList = purchaseOrderService.getCategoryAndUnitTypeIssues(
 						purchaseOrderModel.getCategoryId(), purchaseOrderModel.getUnitTypeId());
+				
+				List<IssueModel> finalIssueList = new ArrayList<IssueModel>();
 				if (purchaseOrderModel.getIssueList() != null && purchaseOrderModel.getIssueList().size() > 0) {
-					purchaseOrderModel.getIssueList().addAll(issueModelList);
+					for(IssueModel issueModel : purchaseOrderModel.getIssueList()) {
+						if(!issueModelList.contains(issueModel)) {
+							finalIssueList.add(issueModel);
+						}
+					}
+					purchaseOrderModel.getIssueList().addAll(finalIssueList);
 				} else {
 					purchaseOrderModel.setIssueList(issueModelList);
 				}
@@ -312,5 +319,15 @@ public class WebPOController {
 		}
 		return new ResponseEntity<Object>(createFailedObject(Iconstants.SESSION_TIME_OUT_MESSAGE),
 				HttpStatus.BAD_REQUEST);
+	}
+	
+	@RequestMapping(value = "/deleteinvoice/{poid}" , method = RequestMethod.GET)
+	@ResponseBody public Object deleteInvoice(@PathVariable("poid") Long poId) {
+		Object response = purchaseOrderService.deleteInvoice(poId);
+		if(response instanceof Failed) {
+			return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
+		} else {
+			return new ResponseEntity<Object>(response, HttpStatus.OK);
+		}
 	}
 }

@@ -35,4 +35,6 @@ public interface PurchaseOrderService {
 
 	Object getInvoiceData(Long poId);
 
+	Object deleteInvoice(Long poId);
+
 }

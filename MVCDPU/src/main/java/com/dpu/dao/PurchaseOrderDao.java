@@ -33,4 +33,6 @@ public interface PurchaseOrderDao extends GenericDao<PurchaseOrder> {
 
 	PurchaseOrderInvoice getPOInvoice(Session session, Long poId);
 
+	void deleteInvoice(PurchaseOrderInvoice purchaseOrderInvoice, Session session);
+
 }

@@ -204,6 +204,7 @@ function createPO(urlToHit,methodType){
 	   	var unitNo = $('#unitNo').val();
 	    var issueIds = new Array();
 	    var issueStatusIds = new Array();
+	    var currentStatusVal = $("#statusFlag").val();
 	    
 	    if(unitNo == null) {
 	    	unitNo = "";
@@ -232,7 +233,8 @@ function createPO(urlToHit,methodType){
 			    	issueIds:issueIds.toString(),
 			    	issueStatusIds:issueStatusIds.toString(),
 			    	selectedUnitNos:unitNo.toString(),
-			    	poid:poId
+			    	poid:poId,
+			    	currentStatusVal:currentStatusVal
 			      },
 			      success: function(result){
 		        try{
@@ -258,6 +260,35 @@ function createPO(urlToHit,methodType){
 			  unblockUI();
 		  });
 		  return true;
+}
+
+function deleteInvoice(poId){
+	 
+	blockUI()
+	  $.ajax({url: BASE_URL + "deleteinvoice/" + poId,
+		      type:"GET",
+		      success: function(result){
+	    	  try{	
+					var list = result.resultList;
+					fillPOData(list);
+					
+	    		  toastr.success(result.message, 'Success!');
+			  }catch(e){
+				  unblockUI();
+				toastr.error('Something went wrong', 'Error!');
+			  }
+	  },error:function(result){
+		  try{
+				  unblockUI();
+			  	var obj = JSON.parse(result.responseText);
+			  	toastr.error(obj.message, 'Error!')
+			  }catch(e){
+				  toastr.error('Something went wrong', 'Error!')
+			  }
+	  }}).done(function(){
+		  unblockUI();
+	  });
+	  return true;
 }
 
 function fillPOData(list) {
@@ -302,10 +333,10 @@ function fillPOData(list) {
 	    		tableValue = tableValue + "<a href = '#' data-toggle='modal' data-target='#myModal'  onclick=checkFlag('update');onClickMethodQuestion('"+(obj.id)+"')>Update</a> / <a href='#' onclick=deletePO('"+(obj.id)+"')>Delete</a>";
     		}
     		if($("#statusFlag").val() == 'Complete') {
-	    		tableValue = tableValue + "<a href = '#' data-toggle='modal' data-target='#myModal'  onclick=checkFlag('view');onClickMethodQuestion('"+(obj.id)+"')>View</a> / <a href='#' data-toggle='modal' data-target='#invoiceModal' onclick=pastePoNo('"+(poNo)+"');pastePoIdAndStatusId('"+(obj.id)+"','"+(obj.invoiceStatusId)+"');toggleInvoice('add')>Change to Invoice</a>";	    			
+	    		tableValue = tableValue + "<a href = '#' data-toggle='modal' data-target='#myModal'  onclick=checkFlag('update');onClickMethodQuestion('"+(obj.id)+"')>Update</a> / <a href='#' data-toggle='modal' data-target='#invoiceModal' onclick=pastePoNo('"+(poNo)+"');pastePoIdAndStatusId('"+(obj.id)+"','"+(obj.invoiceStatusId)+"');toggleInvoice('add')>Change to Invoice</a> / <a href='#' onclick=deletePO('"+(obj.id)+"')>Delete</a>";	    			
     		}
     		if($("#statusFlag").val() == 'Invoiced') {
-	    		tableValue = tableValue + "<a href = '#' data-toggle='modal' data-target='#myModal'  onclick=checkFlag('view');onClickMethodQuestion('"+(obj.id)+"')>View</a> / <a href = '#' data-toggle='modal' data-target='#invoiceModal'  onclick=pastePoIdAndStatusId('"+(obj.id)+"','"+(obj.invoiceStatusId)+"');getInvoice('" + (obj.id) + "','" + (poNo) + "');toggleInvoice('update')>Edit Invoice</a>";	    			
+	    		tableValue = tableValue + "<a href = '#' data-toggle='modal' data-target='#myModal'  onclick=checkFlag('update');onClickMethodQuestion('"+(obj.id)+"')>Update</a> / <a href = '#' data-toggle='modal' data-target='#invoiceModal'  onclick=pastePoIdAndStatusId('"+(obj.id)+"','"+(obj.invoiceStatusId)+"');getInvoice('" + (obj.id) + "','" + (poNo) + "');toggleInvoice('update')>Edit Invoice</a> / <a href = '#' onclick=deleteInvoice('" + (obj.id) + "')>Delete Invoice</a> / <a href = '#' onclick=popUpForInvoiceToComplete('" + (obj.id) + "')>Change to Complete</a> / <a href='#' onclick=deletePO('"+(obj.id)+"')>Delete</a>";	    			
     		}
     		if(obj.isComplete == true) {
     			tableValue = tableValue + " / <a href='#' onclick=changeStatusToComplete('"+ (obj.id) + "','" + (obj.completeStatusId) + "') id='changeStatus'>Change to Complete</a>";
@@ -457,8 +488,10 @@ function checkFlag(field) {
 		document.getElementById("frm1").action = "showques";
 		document.getElementById("frm1").submit(); */
 	} else if(field == 'view') {
+		document.getElementById("btnNew").value = "Update";
+
 		$("#modelTitle").html("Edit PO");
-		$("#btnNew").hide();
+		//$("#btnNew").hide();
 	}
 }
 
@@ -988,6 +1021,27 @@ function emptyMessageDiv(){
 	 $("#invoiceStatusId").val(statusId);	 
  }
  
+ function popUpForInvoiceToComplete(poId) {
+	 
+	$.confirm({
+	    title: 'Do you want to make this PO as complete ?',
+	    content: 'You may lose its invoice data.',
+	    buttons: {
+	        cancel: {
+	            text: 'Not Now',
+	        },
+	        confirm: {
+	            text: 'Yes',
+	            btnClass: 'btn-blue',
+	            keys: ['enter', 'shift'],
+	            action: function(){
+	                deleteInvoice(poId);
+	            }
+	        }
+	    }
+	});
+ }
+ 
  function changeStatusToInvoice() {
 	 
 	 if(!checkInvoice()) {
@@ -1015,7 +1069,8 @@ function emptyMessageDiv(){
 		    	invoiceDate:invoiceDate,
 		    	invoiceNo:invoiceNo,
 		    	amount:amount,
-		    	poid:poId
+		    	poid:poId,
+		    	invoiceAmount:amount
 		      },
 	      success: function(result){
    	  try{	

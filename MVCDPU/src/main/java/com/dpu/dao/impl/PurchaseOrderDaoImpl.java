@@ -125,4 +125,9 @@ public class PurchaseOrderDaoImpl extends GenericDaoImpl<PurchaseOrder> implemen
 		return (PurchaseOrderInvoice) query.list().get(0);
 	}
 
+	@Override
+	public void deleteInvoice(PurchaseOrderInvoice purchaseOrderInvoice, Session session) {
+		session.delete(purchaseOrderInvoice);
+	}
+
 }

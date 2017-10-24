@@ -96,6 +96,12 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService  {
 	@Value("${po_invoice_unable_update_message}")
 	private String po_invoice_unable_update_message;
 
+	@Value("${po_invoice_delete_message}")
+	private String po_invoice_delete_message;
+
+	@Value("${po_invoice_unable_delete_message}")
+	private String po_invoice_unable_delete_message;
+
 	@Override
 	public List<PurchaseOrderModel> getAll() {
 
@@ -283,7 +289,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService  {
 		}
 
 		logger.info("PurchaseOrderServiceImpl update() ends.");
-		return createSuccessObject(po_updated_message, "Active");
+		return createSuccessObject(po_updated_message, poModel.getCurrentStatusVal());
 	}
 
 	@Override
@@ -586,10 +592,12 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService  {
 			List<Issue> issues, Session session, String type, List<PurchaseOrderUnitNos> poUnitNos) {
 		
 		List<IssueModel> issueData = poModel.getIssue();
-
+		Boolean isSuccess = true;
 		if (!ValidationUtil.isNull(poModel.getUnitTypeId())) {
 			Type unitType = (Type) session.get(Type.class, poModel.getUnitTypeId());
 			po.setUnitType(unitType);
+		} else {
+			isSuccess = false;
 		}
 
 		if (!ValidationUtil.isNull(poModel.getCategoryId())) {
@@ -599,6 +607,8 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService  {
 		if (!ValidationUtil.isNull(poModel.getVendorId())) {
 			Vendor vendor = (Vendor) session.get(Vendor.class, poModel.getVendorId());
 			po.setVendor(vendor);
+		} else {
+			isSuccess = false;
 		}
 		List<String> unitNos = poModel.getSelectedUnitNos();
 		
@@ -644,12 +654,21 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService  {
 
 				if (!ValidationUtil.isNull(issueModel.getStatusId())) {
 					Type issueStatus = (Type) session.get(Type.class, issueModel.getStatusId());
+					if (!"Complete".equals(issue.getStatus().getTypeName())
+							&& !"Incomplete".equals(issue.getStatus().getTypeName())) {
+						isSuccess = false;
+						break;
+					}
 					issue.setStatus(issueStatus);
 				}
 				issues.add(issue);
 			}
 		}
 		
+		if (!isSuccess) {
+			Type status = (Type) session.get(Type.class, 108l);
+			po.setStatus(status);
+		}
 		if (unitNos != null) {
 			for (String unitNo : unitNos) {
 				PurchaseOrderUnitNos poUnitNo = new PurchaseOrderUnitNos();
@@ -758,6 +777,49 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService  {
 		invoice.setInvoiceDate(DateUtil.changeStringToDate(poModel.getInvoiceDate()));
 		invoice.setPurchaseOrder(po);
 		return invoice;
+	}
+
+	@Override
+	public Object deleteInvoice(Long poId) {
+
+		logger.info("PurchaseOrderServiceImpl deleteInvoice() starts.");
+		Session session = null;
+		Transaction tx = null;
+		Type status = null;
+		try {
+			session = sessionFactory.openSession();
+			tx = session.beginTransaction();
+			PurchaseOrder po = (PurchaseOrder) session.get(PurchaseOrder.class, poId);
+			if (po != null) {
+
+				List<PurchaseOrderInvoice> poInvoices = po.getPoInvoices();
+				if (poInvoices != null && !poInvoices.isEmpty()) {
+					for (PurchaseOrderInvoice purchaseOrderInvoice : poInvoices) {
+						poDao.deleteInvoice(purchaseOrderInvoice, session);
+					}
+				}
+				status = (Type) session.get(Type.class, 109l);
+				poDao.updateStatus(po, status, session);
+
+				tx.commit();
+			} else {
+				return createFailedObject(po_invoice_unable_delete_message);
+			}
+
+		} catch (Exception e) {
+			if (tx != null) {
+				tx.rollback();
+			}
+			logger.info("Exception inside PurchaseOrderServiceImpl deleteInvoice() :" + e.getMessage());
+			return createFailedObject(po_invoice_unable_delete_message);
+		} finally {
+			if (session != null) {
+				session.close();
+			}
+		}
+
+		logger.info("PurchaseOrderServiceImpl deleteInvoice() ends.");
+		return createSuccessObject(po_invoice_delete_message, "Invoiced");
 	}
 
 }
