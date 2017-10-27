@@ -192,15 +192,8 @@ public class WebPOController {
 			if(!ValidationUtil.isNull(purchaseOrderModel.getCategoryId()) && !ValidationUtil.isNull(purchaseOrderModel.getUnitTypeId())) {
 				List<IssueModel> issueModelList = purchaseOrderService.getCategoryAndUnitTypeIssues(
 						purchaseOrderModel.getCategoryId(), purchaseOrderModel.getUnitTypeId());
-				
-				List<IssueModel> finalIssueList = new ArrayList<IssueModel>();
 				if (purchaseOrderModel.getIssueList() != null && purchaseOrderModel.getIssueList().size() > 0) {
-					for(IssueModel issueModel : purchaseOrderModel.getIssueList()) {
-						if(!issueModelList.contains(issueModel)) {
-							finalIssueList.add(issueModel);
-						}
-					}
-					purchaseOrderModel.getIssueList().addAll(finalIssueList);
+					purchaseOrderModel.getIssueList().addAll(issueModelList);
 				} else {
 					purchaseOrderModel.setIssueList(issueModelList);
 				}

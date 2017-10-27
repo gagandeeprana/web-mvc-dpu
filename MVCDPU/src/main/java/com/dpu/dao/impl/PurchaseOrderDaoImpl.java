@@ -54,6 +54,7 @@ public class PurchaseOrderDaoImpl extends GenericDaoImpl<PurchaseOrder> implemen
 			session.save(purchaseOrderUnitNos);
 		}
 		for (Issue issue : issues) {
+			issue.setStatus(assignStatus);
 			session.update(issue);
 		}
 	}
