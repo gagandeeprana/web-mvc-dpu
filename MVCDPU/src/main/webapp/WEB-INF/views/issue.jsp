@@ -349,43 +349,51 @@ function checkFlag(field) {
                     
                     var category = document.getElementById("issueCategory");
                     var categoryList = data.categoryList;
-                    for(var i = 0;i < categoryList.length;i++) {
-                    	category.options[category.options.length] = new Option(categoryList[i].name);
-                    	category.options[i+1].value = categoryList[i].categoryId;
-                    	if(categoryList[i].categoryId == data.categoryId) {
-                    		document.getElementById("issueCategory").selectedIndex = i+1;
-                    	}
+                    if(categoryList != null && categoryList.length > 0) {
+	                   for(var i = 0;i < categoryList.length;i++) {
+	                   	category.options[category.options.length] = new Option(categoryList[i].name);
+	                   	category.options[i+1].value = categoryList[i].categoryId;
+	                   	if(categoryList[i].categoryId == data.categoryId) {
+	                   		document.getElementById("issueCategory").selectedIndex = i+1;
+	                   	}
+	                   }
                     }
                     
                     var unitNo = document.getElementById("unitNo");
                     var unitNos = data.unitNos;
-                    for(var i = 0;i < unitNos.length;i++) {
-                    	unitNo.options[unitNo.options.length] = new Option(unitNos[i]);
-                    	unitNo.options[i+1].value = unitNos[i];
-                    	if(unitNos[i] == data.unitNo) {
-                    		document.getElementById("unitNo").selectedIndex = i+1;
-                    	}
+                    if(unitNos != null && unitNos.length > 0) {
+	                    for(var i = 0;i < unitNos.length;i++) {
+	                    	unitNo.options[unitNo.options.length] = new Option(unitNos[i]);
+	                    	unitNo.options[i+1].value = unitNos[i];
+	                    	if(unitNos[i] == data.unitNo) {
+	                    		document.getElementById("unitNo").selectedIndex = i+1;
+	                    	}
+	                    }
                     }
                     
                     var reportedBy = document.getElementById("reportedBy");
                     var reportedByList = data.reportedByList;
-                    for(var i = 0;i < reportedByList.length;i++) {
-                    	reportedBy.options[reportedBy.options.length] = new Option(reportedByList[i].fullName);
-                    	reportedBy.options[i+1].value = reportedByList[i].driverId;
-                    	if(reportedByList[i].driverId == data.reportedById) {
-                    		document.getElementById("reportedBy").selectedIndex = i+1;
-                    	}
+                    if(reportedByList != null && reportedByList.length > 0) {
+	                    for(var i = 0;i < reportedByList.length;i++) {
+	                    	reportedBy.options[reportedBy.options.length] = new Option(reportedByList[i].fullName);
+	                    	reportedBy.options[i+1].value = reportedByList[i].driverId;
+	                    	if(reportedByList[i].driverId == data.reportedById) {
+	                    		document.getElementById("reportedBy").selectedIndex = i+1;
+	                    	}
+	                    }
                     }
                     
                     var status = document.getElementById("status");
                     var statusList = data.statusList;
-    	            for(var i = 0;i < data.statusList.length;i++) {
-    	            	status.options[status.options.length] = new Option(data.statusList[i].typeName);
-    	            	status.options[i+1].value = data.statusList[i].typeId;
-    	            	if(statusList[i].typeId == data.statusId) {
-                    		document.getElementById("status").selectedIndex = i+1;
-                    	}
-    	            }
+                    if(statusList != null && statusList.length > 0) {
+	    	            for(var i = 0;i < data.statusList.length;i++) {
+	    	            	status.options[status.options.length] = new Option(data.statusList[i].typeName);
+	    	            	status.options[i+1].value = data.statusList[i].typeId;
+	    	            	if(statusList[i].typeId == data.statusId) {
+	                    		document.getElementById("status").selectedIndex = i+1;
+	                    	}
+	    	            }
+                    }
                	}); 
         	}
         }
@@ -442,7 +450,7 @@ function getCategories() {
 		      var category = document.getElementById("issueCategory");
 		      $("#issueCategory").empty();
 		      category.options[0] = new Option("Please Select");		      
-		      
+		      category.options[0].value = "0";
 		      if(data != null && data.length > 0) {
 		    	  for(var i = 0;i < data.length;i++) {
 			    	  category.options[category.options.length] = new Option(data[i].name);
@@ -478,7 +486,7 @@ function getOnlyUnitNos() {
 	        
 			 unblockUI()
 			 var unitNo = document.getElementById("unitNo");
-	       	    $("#unitNo").html("<option>Please Select</option>");
+	       	    $("#unitNo").html("<option value='0'>Please Select</option>");
 	         if(data.unitNos != null && data.unitNos.length > 0) {
 	        	 for(var i = 0;i < data.unitNos.length;i++) {
                    	unitNo.options[unitNo.options.length] = new Option(data.unitNos[i]);
@@ -506,7 +514,7 @@ function getOnlyUnitNosOnUnitTypeChange() {
 	        
 			 unblockUI()
 			 var unitNo = document.getElementById("unitNo");
-	       	    $("#unitNo").html("<option>Please Select</option>");
+	       	    $("#unitNo").html("<option value='0'>Please Select</option>");
 	         if(data.unitNos != null && data.unitNos.length > 0) {
 	        	 for(var i = 0;i < data.unitNos.length;i++) {
                    	unitNo.options[unitNo.options.length] = new Option(data.unitNos[i]);
