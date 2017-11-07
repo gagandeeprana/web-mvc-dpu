@@ -114,19 +114,23 @@ function createShipper(urlToHit,methodType){
 		      },
 		      success: function(result){
 	        try{
+	        	
 	        	$('#myModal').modal('toggle');
 	        	var list = result.resultList;
 				fillShipperData(list);
 
 		        toastr.success(result.message, 'Success!')
 			} catch(e){
+				unblockUI()
 				toastr.error('Something went wrong', 'Error!')
 			}
 	  },error:function(result){
 		  try{
+			  unblockUI()
 			  	var obj = JSON.parse(result.responseText);
 			  	toastr.error(obj.message, 'Error!')
 			  }catch(e){
+				  unblockUI()
 				  toastr.error('Something went wrong', 'Error!')
 			  }
 	  }}).done(function(){

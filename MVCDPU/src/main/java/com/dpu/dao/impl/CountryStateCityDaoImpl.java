@@ -24,7 +24,7 @@ public class CountryStateCityDaoImpl implements CountryStateCityDao{
 	@Override
 	public List<Object[]> findStatesByCountryId(Long countryId, Session session) {
 
-		String countryQuery = "SELECT state_id, state_name, state_code FROM state WHERE country_id = :countryId ";
+		String countryQuery = "SELECT state_id, state_name, state_code FROM state WHERE country_id = :countryId order by state_code";
 		Query query = session.createSQLQuery(countryQuery);
 		query.setParameter("countryId", countryId);
 		return query.list();

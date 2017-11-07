@@ -330,13 +330,13 @@ function fillPOData(list) {
     		tableValue = tableValue + ("<td>"+(vendorName)+"</td>");
     		tableValue = tableValue + "<td>";
     		if($("#statusFlag").val() == 'Active') {
-	    		tableValue = tableValue + "<a href = '#' data-toggle='modal' data-target='#myModal'  onclick=checkFlag('update');onClickMethodQuestion('"+(obj.id)+"')>Update</a> / <a href='#' onclick=deletePO('"+(obj.id)+"')>Delete</a>";
+	    		tableValue = tableValue + "<a href = '#' data-toggle='modal' data-target='#myModal'  onclick=checkFlag('update');onClickMethodQuestion('"+(obj.id)+"')>Update</a>";
     		}
     		if($("#statusFlag").val() == 'Complete') {
-	    		tableValue = tableValue + "<a href = '#' data-toggle='modal' data-target='#myModal'  onclick=checkFlag('update');onClickMethodQuestion('"+(obj.id)+"')>Update</a> / <a href='#' data-toggle='modal' data-target='#invoiceModal' onclick=pastePoNo('"+(poNo)+"');pastePoIdAndStatusId('"+(obj.id)+"','"+(obj.invoiceStatusId)+"');toggleInvoice('add')>Change to Invoice</a> / <a href='#' onclick=deletePO('"+(obj.id)+"')>Delete</a>";	    			
+	    		tableValue = tableValue + "<a href = '#' data-toggle='modal' data-target='#myModal'  onclick=checkFlag('update');onClickMethodQuestion('"+(obj.id)+"')>Update</a> / <a href='#' data-toggle='modal' data-target='#invoiceModal' onclick=pastePoNo('"+(poNo)+"');pastePoIdAndStatusId('"+(obj.id)+"','"+(obj.invoiceStatusId)+"');toggleInvoice('add')>Change to Invoice</a>";	    			
     		}
     		if($("#statusFlag").val() == 'Invoiced') {
-	    		tableValue = tableValue + "<a href = '#' data-toggle='modal' data-target='#myModal'  onclick=checkFlag('update');onClickMethodQuestion('"+(obj.id)+"')>Update</a> / <a href = '#' data-toggle='modal' data-target='#invoiceModal'  onclick=pastePoIdAndStatusId('"+(obj.id)+"','"+(obj.invoiceStatusId)+"');getInvoice('" + (obj.id) + "','" + (poNo) + "');toggleInvoice('update')>Edit Invoice</a> / <a href = '#' onclick=deleteInvoice('" + (obj.id) + "')>Delete Invoice</a> / <a href = '#' onclick=popUpForInvoiceToComplete('" + (obj.id) + "')>Change to Complete</a> / <a href='#' onclick=deletePO('"+(obj.id)+"')>Delete</a>";	    			
+	    		tableValue = tableValue + "<a href = '#' data-toggle='modal' data-target='#myModal'  onclick=checkFlag('update');onClickMethodQuestion('"+(obj.id)+"')>Update</a> / <a href = '#' data-toggle='modal' data-target='#invoiceModal'  onclick=pastePoIdAndStatusId('"+(obj.id)+"','"+(obj.invoiceStatusId)+"');getInvoice('" + (obj.id) + "','" + (poNo) + "');toggleInvoice('update')>Edit Invoice</a> / <a href = '#' onclick=deleteInvoice('" + (obj.id) + "')>Delete Invoice</a> / <a href = '#' onclick=popUpForInvoiceToComplete('" + (obj.id) + "')>Change to Complete</a>";	    			
     		}
     		if(obj.isComplete == true) {
     			tableValue = tableValue + " / <a href='#' onclick=changeStatusToComplete('"+ (obj.id) + "','" + (obj.completeStatusId) + "') id='changeStatus'>Change to Complete</a>";
@@ -839,9 +839,9 @@ function showIssueDetail(quesId) {
 			            			incomplete = "";
 			            		}
 			            		if((obj.statusName == "Assigned") || (obj.statusName == "Complete") || (obj.statusName == "Incomplete")) {
-				            		tableValue = tableValue + ("<td><div style='margin-top: -11px;'><input type='checkbox' on class='form-control poIssueIds' value='"+(obj.id) + "' id='issueId" + (obj.id) + "' name='issueIds' checked /></div></td>");
+				            		tableValue = tableValue + ("<td><div style='margin-top: -11px;'><input type='checkbox' on class='form-control poIssueIds' value='"+(obj.id) + "' id='issueId" + (obj.id) + "' onclick=selectUnSelectDropDown('" + (obj.id) + "') name='issueIds' checked /></div></td>");
 			            		} else {
-				            		tableValue = tableValue + ("<td><div style='margin-top: -11px;'><input type='checkbox' class='form-control poIssueIds' value='"+(obj.id) + "' id='issueId" + (obj.id) + "' name='issueIds' /></div></td>");		            			
+				            		tableValue = tableValue + ("<td><div style='margin-top: -11px;'><input type='checkbox' class='form-control poIssueIds' value='"+(obj.id) + "' id='issueId" + (obj.id) + "' name='issueIds' onclick=selectUnSelectDropDown('" + (obj.id) + "') /></div></td>");		            			
 			            		}
 	     						tableValue = tableValue + ("<td><a href='#' onclick=showIssueDetail('"+(obj.id) + "') data-toggle='modal' data-target='#issueModal'>" + (obj.title)+"</a></td>");
 			            		tableValue = tableValue + ("<td>"+(obj.vmcName)+"</td>");
@@ -871,7 +871,7 @@ function showIssueDetail(quesId) {
 
                     $("#message").val(data.message);
                     
-                    if(issueList != null) {
+                    /* if(issueList != null) {
 	                    for(var i=0;i<issueList.length;i++) {
 			            	var obj = issueList[i];
 			     			$("#issueId" + obj.id).on('click',function (){
@@ -882,7 +882,7 @@ function showIssueDetail(quesId) {
 			     				}
 			     			});
 		            	}
-                    }
+                    } */
                	}); 
         	}
         	
@@ -1418,7 +1418,7 @@ function functionToBeCalledOnGo() {
 	     				if($("#addUpdateFlag").val() == 'update') {
 	     					if(!editIssueIds.includes(obj.id)) {
 	     						tableValue = tableValue + ("<tr class='info " + unitNo + "'>");
-	     						tableValue = tableValue + ("<td><div style='margin-top: -11px;'><input type='checkbox' class='form-control poIssueIds' value='"+(obj.id)+"' id='issueId" + (obj.id) + "' name='issueIds' /></div></td>");
+	     						tableValue = tableValue + ("<td><div style='margin-top: -11px;'><input type='checkbox' class='form-control poIssueIds' value='"+(obj.id)+"' id='issueId" + (obj.id) + "' name='issueIds' onclick=selectUnSelectDropDown('" + (obj.id) + "') /></div></td>");
 	     						tableValue = tableValue + ("<td><a href='#' onclick=showIssueDetail('"+(obj.id) + "') data-toggle='modal' data-target='#issueModal'>" + (obj.title)+"</a></td>");
 	     						tableValue = tableValue + ("<td>"+(obj.vmcName)+"</td>");
 	     						tableValue = tableValue + ("<td>"+(obj.categoryName)+"</td>");
@@ -1431,7 +1431,7 @@ function functionToBeCalledOnGo() {
 	     				}
 	     				else {
 	     					tableValue = tableValue + ("<tr class='info " + unitNo + "'>");
-	     					tableValue = tableValue + ("<td><div style='margin-top: -11px;'><input type='checkbox' class='form-control poIssueIds' value='"+(obj.id) + "' id='issueId" + (obj.id) + "' name='issueIds' /></div></td>");
+	     					tableValue = tableValue + ("<td><div style='margin-top: -11px;'><input type='checkbox' class='form-control poIssueIds' value='"+(obj.id) + "' id='issueId" + (obj.id) + "' name='issueIds' onclick=selectUnSelectDropDown('" + (obj.id) + "') /></div></td>");
 	     					tableValue = tableValue + ("<td><a href='#' onclick=showIssueDetail('"+(obj.id) + "') data-toggle='modal' data-target='#issueModal'>"+(obj.title)+"</a></td>");
 	     					tableValue = tableValue + ("<td>"+(obj.vmcName)+"</td>");
 	     					tableValue = tableValue + ("<td>"+(obj.categoryName)+"</td>");
@@ -1454,7 +1454,7 @@ function functionToBeCalledOnGo() {
 	     			$("#issuesTable").html(editInitialValue);
 	     		}
 	     		
-	     		for(var k=0;k<issuesFroDropDown.length;k++) {
+	     		/* for(var k=0;k<issuesFroDropDown.length;k++) {
 	     			var obj = issuesFroDropDown[k];
 	     			$("#issueId" + obj.id).click(function (){
 	     				if ($(this).is(':checked')) {
@@ -1463,7 +1463,7 @@ function functionToBeCalledOnGo() {
 	     					document.getElementById("issueStatusId" + $(this).val()).selectedIndex = 0;	     					
 	     				}
 	     			});
-	     		}
+	     		} */
 	        	
 			} catch(e){
 				unblockUI();
@@ -1482,6 +1482,14 @@ function functionToBeCalledOnGo() {
 			  unblockUI();
 		  });
 	 }
+}
+
+function selectUnSelectDropDown(id) {
+	if ($("#issueId" + id).is(':checked')) {
+		document.getElementById("issueStatusId" + id).selectedIndex = 3;
+	} else {
+		document.getElementById("issueStatusId" + id).selectedIndex = 0;	     					
+	}
 }
 </script>
 

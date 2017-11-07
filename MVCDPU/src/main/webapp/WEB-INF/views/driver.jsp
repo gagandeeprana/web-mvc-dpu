@@ -119,13 +119,16 @@ function createDriver(urlToHit, methodType){
 
 		        toastr.success(result.message, 'Success!')
 			} catch(e){
+				unblockUI()
 				toastr.error('Something went wrong', 'Error!')
 			}
 	  },error:function(result){
 		  try{
+			    unblockUI()
 			  	var obj = JSON.parse(result.responseText);
 			  	toastr.error(obj.message, 'Error!')
 			  }catch(e){
+				  unblockUI()
 				  toastr.error('Something went wrong', 'Error!')
 			  }
 	  }}).done(function(){
@@ -270,7 +273,7 @@ function fillDriverData(list) {
 	function changeStateLabel() {
 		
 		var country = $('#countryId :selected').text();
-		if(country == 'USA') {
+		if(country == 'United States') {
 			$("#zipLabel").text("Zip");
 			$("#zip").attr("placeholder","Enter Zip");
 			$("#stateLabel").text("State");
@@ -347,7 +350,7 @@ function fillDriverData(list) {
 		            }
 		            
 		            var country = document.getElementById("countryId");
-		            for(var i = 0;i < data.countryList.length;i++) {
+		            for(var i = 0;i < data.countryList.length-1;i++) {
 		            	country.options[country.options.length] = new Option(data.countryList[i].countryName);
 		            	country.options[i+1].value = data.countryList[i].countryId;
 		            }
@@ -459,7 +462,7 @@ function fillDriverData(list) {
 		            var countryList = data.countryList;
 		            
 		            if(countryList != null && countryList.length > 0) {
-			            for(var i = 0;i < data.countryList.length;i++) {
+			            for(var i = 0;i < data.countryList.length-1;i++) {
 			            	country.options[country.options.length] = new Option(data.countryList[i].countryName);
 			            	country.options[i+1].value = data.countryList[i].countryId;
 			            	if(countryList[i].countryId == data.countryId) {
@@ -662,7 +665,7 @@ function check() {
 		return false;
 	} */
 	var country = $('#countryId :selected').text();
-	if(country == 'USA') {
+	if(country == 'United States') {
 		/* if(zip == "") {
 			msg.show();
 			msgvalue.text("Zip cannot be left blank.");

@@ -94,13 +94,16 @@ function createDivision(urlToHit,methodType){
 
 			        toastr.success(result.message, 'Success!')
 				} catch(e){
+					unblockUI()
 					toastr.error('Something went wrong', 'Error!')
 				}
 		  },error:function(result){
 			  try{
+				  unblockUI()
 				  	var obj = JSON.parse(result.responseText);
 				  	toastr.error(obj.message, 'Error!')
 				  }catch(e){
+					  unblockUI()
 					  toastr.error('Something went wrong', 'Error!')
 				  }
 		  }}).done(function(){
