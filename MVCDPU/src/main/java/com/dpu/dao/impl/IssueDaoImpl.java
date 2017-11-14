@@ -134,7 +134,7 @@ public class IssueDaoImpl extends GenericDaoImpl<Issue> implements IssueDao{
 		Type unitType = (Type) session.get(Type.class, unitTypeId);
 
 		StringBuilder sb = new StringBuilder(" ");
-		sb.append(" from Issue i join fetch i.vmc join fetch i.unitType join fetch i.reportedBy join fetch i.status ")
+		sb.append(" from Issue i left join fetch i.vmc left join fetch i.unitType left join fetch i.reportedBy left join fetch i.status ")
 				.append("  where i.unitType =:unitType and i.unitNo in (:unitNos) and i.status.typeId in (103, 105, 107) ");
 
 		Query query = session.createQuery(sb.toString());
