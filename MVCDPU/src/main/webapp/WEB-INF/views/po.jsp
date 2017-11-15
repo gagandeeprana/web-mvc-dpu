@@ -1420,11 +1420,31 @@ function functionToBeCalledOnGo() {
 	     						tableValue = tableValue + ("<tr class='info " + unitNo + "'>");
 	     						tableValue = tableValue + ("<td><div style='margin-top: -11px;'><input type='checkbox' class='form-control poIssueIds' value='"+(obj.id)+"' id='issueId" + (obj.id) + "' name='issueIds' onclick=selectUnSelectDropDown('" + (obj.id) + "') /></div></td>");
 	     						tableValue = tableValue + ("<td><a href='#' onclick=showIssueDetail('"+(obj.id) + "') data-toggle='modal' data-target='#issueModal'>" + (obj.title)+"</a></td>");
-	     						tableValue = tableValue + ("<td>"+(obj.vmcName)+"</td>");
-	     						tableValue = tableValue + ("<td>"+(obj.categoryName)+"</td>");
-	     						tableValue = tableValue + ("<td>"+(obj.unitTypeName)+"</td>");
-	     						tableValue = tableValue + ("<td>"+(obj.unitNo)+"</td>");
-	     						tableValue = tableValue + ("<td>"+(obj.reportedByName)+"</td>");
+	     						if(obj.vmcName != null) {
+		     						tableValue = tableValue + ("<td>"+(obj.vmcName)+"</td>");
+	     						} else {
+		     						tableValue = tableValue + ("<td></td>");	     							
+	     						}
+	     						if(obj.categoryName != null) {
+		     						tableValue = tableValue + ("<td>"+(obj.categoryName)+"</td>");
+	     						} else {
+		     						tableValue = tableValue + ("<td></td>");	     							
+	     						}
+	     						if(obj.unitTypeName != null) {
+			     					tableValue = tableValue + ("<td>"+(obj.unitTypeName)+"</td>");
+	     						} else {
+		     						tableValue = tableValue + ("<td></td>");	     							
+	     						}
+	     						if(obj.unitNo != null) {
+		     						tableValue = tableValue + ("<td>"+(obj.unitNo)+"</td>");
+	     						} else {
+		     						tableValue = tableValue + ("<td></td>");	     							
+	     						}
+	     						if(obj.reportedByName != null) {
+		     						tableValue = tableValue + ("<td>"+(obj.reportedByName)+"</td>");
+	     						} else {
+		     						tableValue = tableValue + ("<td></td>");	     							
+	     						}
 	     						tableValue = tableValue + ("<td><select class='form-control issueStatusClass' id='issueStatusId" + (obj.id)+"'><option value='-1'>Please Select</option><option value='104'>Complete</option><option value='105'>Incomplete</option><option value='106'>Assigned</option></select></td>");
 	     						tableValue = tableValue + ("</tr>");
 	     					}
@@ -1433,11 +1453,31 @@ function functionToBeCalledOnGo() {
 	     					tableValue = tableValue + ("<tr class='info " + unitNo + "'>");
 	     					tableValue = tableValue + ("<td><div style='margin-top: -11px;'><input type='checkbox' class='form-control poIssueIds' value='"+(obj.id) + "' id='issueId" + (obj.id) + "' name='issueIds' onclick=selectUnSelectDropDown('" + (obj.id) + "') /></div></td>");
 	     					tableValue = tableValue + ("<td><a href='#' onclick=showIssueDetail('"+(obj.id) + "') data-toggle='modal' data-target='#issueModal'>"+(obj.title)+"</a></td>");
-	     					tableValue = tableValue + ("<td>"+(obj.vmcName)+"</td>");
-	     					tableValue = tableValue + ("<td>"+(obj.categoryName)+"</td>");
-	     					tableValue = tableValue + ("<td>"+(obj.unitTypeName)+"</td>");
-	     					tableValue = tableValue + ("<td>"+(obj.unitNo)+"</td>");
-	     					tableValue = tableValue + ("<td>"+(obj.reportedByName)+"</td>");
+	     					if(obj.vmcName != null) {
+	     						tableValue = tableValue + ("<td>"+(obj.vmcName)+"</td>");
+     						} else {
+	     						tableValue = tableValue + ("<td></td>");	     							
+     						}
+	     					if(obj.categoryName != null) {
+	     						tableValue = tableValue + ("<td>"+(obj.categoryName)+"</td>");
+     						} else {
+	     						tableValue = tableValue + ("<td></td>");	     							
+     						}
+	     					if(obj.unitTypeName != null) {
+		     					tableValue = tableValue + ("<td>"+(obj.unitTypeName)+"</td>");
+     						} else {
+	     						tableValue = tableValue + ("<td></td>");	     							
+     						}
+	     					if(obj.unitNo != null) {
+	     						tableValue = tableValue + ("<td>"+(obj.unitNo)+"</td>");
+     						} else {
+	     						tableValue = tableValue + ("<td></td>");	     							
+     						}
+     						if(obj.reportedByName != null) {
+	     						tableValue = tableValue + ("<td>"+(obj.reportedByName)+"</td>");
+     						} else {
+	     						tableValue = tableValue + ("<td></td>");	     							
+     						}
 	     					tableValue = tableValue + ("<td><select class='form-control issueStatusClass' id='issueStatusId" + (obj.id)+"'><option value='-1'>Please Select</option><option value='104'>Complete</option><option value='105'>Incomplete</option><option value='106'>Assigned</option></select></td>");
 	     					tableValue = tableValue + ("</tr>");
 	     				}
