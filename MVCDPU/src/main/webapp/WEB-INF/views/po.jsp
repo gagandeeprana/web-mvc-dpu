@@ -419,8 +419,8 @@ function deletePO(terminalId){
 			$("#statusFlag").val("Active");
 		});
 		$('#message').keyup(function() {
-		    if($('#message').val().length > 200) {
-				toastr.error('Only 200 words allowed', 'Error!')
+		    if($('#message').val().length > 1000) {
+				toastr.error('Only 1000 words allowed', 'Error!')
 				return false;
 		    }
 		});
@@ -917,10 +917,10 @@ function check() {
 		return false;
 
     }
-	if($('#message').val().length > 200) {
+	if($('#message').val().length > 1000) {
 		msg.show();
 		$("#message").focus();
-		msgvalue.text("Only 200 words allowed in message");
+		msgvalue.text("Only 1000 words allowed in message");
 		return false;
 
     }
