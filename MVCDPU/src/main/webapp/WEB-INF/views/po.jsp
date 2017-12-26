@@ -29,6 +29,10 @@
 .multiselect-container>li {
 	margin-left: 10px;
 }
+.multiselect-container {
+	overflow: auto;
+	height: 200px;
+}
 #unitNoIssue {
     max-height: 33px;
     max-width: 130px

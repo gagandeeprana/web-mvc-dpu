@@ -3,6 +3,7 @@ package com.dpu.service.impl;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -611,7 +612,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService  {
 			isSuccess = false;
 		}
 		List<String> unitNos = poModel.getSelectedUnitNos();
-		
+		List<Issue> existingIsssues = new ArrayList<Issue>();
 		if(Iconstants.ADD_PO.equals(type)) {
 			Long poNo = poDao.getMaxPoNO(session);
 			po.setPoNo(poNo+1);
@@ -622,11 +623,13 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService  {
 			// existing issues
 			List<PurchaseOrderIssue> existingPoIssues = po.getPoIssues();
 			if (existingPoIssues != null && !existingPoIssues.isEmpty()) {
-				Type openStatus = typeService.get(103l);
+				//Type openStatus = typeService.get(103l);
+				
 				for (PurchaseOrderIssue purchaseOrderIssue : existingPoIssues) {
 					Issue issue = purchaseOrderIssue.getIssue();
-					issue.setStatus(openStatus);
-					session.update(issue);
+					existingIsssues.add(issue);
+					//issue.setStatus(openStatus);
+					//session.update(issue);
 					session.delete(purchaseOrderIssue);
 				}
 			}
@@ -651,6 +654,17 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService  {
 				Issue issue = (Issue) session.get(Issue.class, issueId);
 				poIssue.setIssue(issue);
 				poIssues.add(poIssue);
+				
+				Iterator<Issue> itr = existingIsssues.iterator();
+				
+				while (itr.hasNext()) {
+					Issue issueRecord = (Issue) itr.next();
+					if(issueRecord.getId()== issue.getId()) {
+						itr.remove();
+						break;
+					}
+					
+				}
 
 				if (!ValidationUtil.isNull(issueModel.getStatusId())) {
 					Type issueStatus = (Type) session.get(Type.class, issueModel.getStatusId());
@@ -662,6 +676,13 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService  {
 				}
 				issues.add(issue);
 			}
+			
+			for (Issue issue : existingIsssues) {
+				Type openStatus = typeService.get(103l);
+				issue.setStatus(openStatus);
+				session.update(issue);
+			}
+			
 		}
 		
 		if (!isSuccess
